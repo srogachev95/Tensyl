@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import NoReturn
+
 import numpy as np
 import pytest
 
@@ -12,6 +14,7 @@ from tensyl import (
     EnergyHomogenizer,
     FlatPlate,
     LinearABDWall,
+    StrainConvention,
     ValidityContext,
     ValidityReport,
     WallAtlas,
@@ -102,6 +105,7 @@ def test_homogenized_wall_field_rejects_frame_mismatch() -> None:
     from tensyl import HomogenizedWallField
 
     cylinder = Cylinder(radius=2.0)
+    calls = 0
 
     def factory(surface: Surface, point: SurfacePoint) -> CanonicalUnitCell:
         del surface, point
@@ -111,10 +115,24 @@ def test_homogenized_wall_field_rejects_frame_mismatch() -> None:
             members=(BeamMember(_section(), length=1.0, angle_rad=0.0, eccentricity=0.0),),
         )
 
-    field = HomogenizedWallField(cylinder, factory, EnergyHomogenizer())
+    class CountingHomogenizer:
+        def compute(
+            self,
+            cell: CanonicalUnitCell,
+            *,
+            validity_context: ValidityContext | None = None,
+        ) -> NoReturn:
+            nonlocal calls
+            del cell, validity_context
+            calls += 1
+            raise AssertionError("homogenizer should not run for a bad cell frame")
+
+    field = HomogenizedWallField(cylinder, factory, CountingHomogenizer())
 
     with pytest.raises(ValueError, match="frame"):
         field.law_at(cylinder, 0.1, 0.2)
+
+    assert calls == 0
 
 
 class _LinearField:
@@ -149,6 +167,21 @@ def test_wall_atlas_bilinearly_interpolates_linear_walls() -> None:
     )
 
     law = atlas.law_at(surface, 0.25, 0.5)
+
+    assert atlas.metadata["u_values"] == (0.0, 1.0)
+    assert atlas.metadata["v_values"] == (0.0, 1.0)
+    assert atlas.metadata["sample_shape"] == (2, 2)
+    assert isinstance(atlas.metadata["sample_digest"], str)
+    assert len(atlas.metadata["sample_digest"]) == 64
+    assert atlas.metadata["sample_warning_ids"] == ("sample_warning",)
+    assert atlas.metadata["max_adjacent_c8_gradient_frobenius"] == pytest.approx(2.0 * np.sqrt(8.0))
+    atlas_again = WallAtlas.from_field(
+        surface,
+        _LinearField(validity),
+        u_values=(0.0, 1.0),
+        v_values=(0.0, 1.0),
+    )
+    assert atlas_again.metadata["sample_digest"] == atlas.metadata["sample_digest"]
 
     np.testing.assert_allclose(law.C8, 2.25 * np.eye(8))
     assert law.areal_mass == pytest.approx(2.25)
@@ -186,3 +219,43 @@ def test_wall_atlas_rejects_invalid_grid_and_out_of_bounds_lookup() -> None:
 
     with pytest.raises(ValueError, match="outside"):
         atlas.law_at(surface, -0.1, 0.5)
+
+
+def test_wall_atlas_rejects_frame_mismatched_samples() -> None:
+    surface = Cylinder(radius=2.0)
+    laws = (
+        (_wall(), _wall()),
+        (_wall(), _wall()),
+    )
+
+    with pytest.raises(ValueError, match="surface point frame"):
+        WallAtlas(
+            surface=surface,
+            u_values=(0.0, 1.0),
+            v_values=(0.0, 1.0),
+            laws=laws,
+        )
+
+
+def test_wall_atlas_rejects_mixed_conventions() -> None:
+    surface = FlatPlate()
+    point = surface.point_at(0.0, 0.0)
+    other_convention = StrainConvention(reference_surface="shifted_reference")
+    law = _wall(frame=point.frame)
+    other_law = LinearABDWall.from_tangent(
+        np.eye(8),
+        frame=point.frame,
+        convention=other_convention,
+    )
+    laws = (
+        (law, law),
+        (law, other_law),
+    )
+
+    with pytest.raises(ValueError, match="same strain convention"):
+        WallAtlas(
+            surface=surface,
+            u_values=(0.0, 1.0),
+            v_values=(0.0, 1.0),
+            laws=laws,
+        )

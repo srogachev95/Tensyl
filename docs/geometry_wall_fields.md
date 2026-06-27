@@ -103,7 +103,8 @@ the local wall law is constant in the surface coordinates.
 `HomogenizedWallField` builds a local `CanonicalUnitCell` at each surface point
 and sends it through a `Homogenizer`. The cell factory must return a cell whose
 skin and frame match the `SurfacePoint.frame`; otherwise Tensyl raises
-`ValueError` instead of silently attaching a tangent to the wrong frame.
+`ValueError` before homogenization instead of silently attaching a tangent to
+the wrong frame.
 
 Pointwise validity can be computed with `validity_report_for_law`. Flat
 surfaces use `min_radius=np.inf`, which gives zero curvature ratios. Curved
@@ -120,13 +121,20 @@ It does not interpolate arbitrary nonlinear `ConstitutiveLaw` objects. Atlas
 metadata records:
 
 - the interpolation method;
+- sampled `u` and `v` grid coordinates;
+- sample shape;
+- Tensyl version;
+- deterministic digest of the grid and sampled C8/frame/convention data;
+- warning IDs present on sampled validity reports;
+- the maximum adjacent-sample C8 Frobenius gradient;
 - grid-cell indices and weights;
 - warning IDs present on the four corner validity reports;
 - the maximum Frobenius distance between the interpolated tangent and the
   corner tangents.
 
-Out-of-grid lookup raises `ValueError`; interpolation error is metadata, not a
-hidden guarantee of accuracy.
+All atlas samples must match the corresponding surface-point frame and share a
+single strain convention. Out-of-grid lookup raises `ValueError`;
+interpolation error is metadata, not a hidden guarantee of accuracy.
 
 ## Example
 
