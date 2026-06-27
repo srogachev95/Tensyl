@@ -16,6 +16,7 @@ nav:
   - Level 1 Homogenization: level1_homogenization.md
   - Development and Releases: development.md
   - Markdown Authoring: markdown_authoring.md
+  - Design Review: tensyl-design-review.md
   - White Paper: white_paper.md
   - References:
       - NASA SP-8007: references/NASA SP-8007.md

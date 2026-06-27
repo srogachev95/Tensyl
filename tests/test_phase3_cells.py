@@ -210,6 +210,33 @@ def test_kagome_matches_isosceles_triangle_energy_output() -> None:
     )
 
 
+def test_canonical_cell_reconstruction_is_idempotent() -> None:
+    cell = kagome_cell(
+        skin=_zero_skin(),
+        stringer_section=_section(),
+        diagonal_section=_section(),
+        base=2.0,
+        height=1.5,
+        stringer_eccentricity=0.02,
+        diagonal_eccentricity=0.03,
+    )
+
+    reconstructed = type(cell)(
+        area=cell.area,
+        skin=cell.skin,
+        members=cell.members,
+        frame=cell.frame,
+        convention=cell.convention,
+        metadata=cell.metadata,
+    )
+
+    assert reconstructed == cell
+    np.testing.assert_allclose(
+        EnergyHomogenizer().compute(reconstructed).law.C8,
+        EnergyHomogenizer().compute(cell).law.C8,
+    )
+
+
 @pytest.mark.parametrize(
     "cell",
     [

@@ -310,36 +310,50 @@ The current `EquivalentWall` concept is correct as a concrete data product but t
 The public abstraction should be:
 
 ```python
-class ConstitutiveLaw(Protocol):
+class HyperelasticLaw(Protocol):
     frame: Frame2D
     convention: StrainConvention
 
-    def energy(self, eta: FloatArray) -> float: ...
-    def resultants(self, eta: FloatArray) -> FloatArray: ...
-    def tangent(self, eta: FloatArray | None = None) -> FloatArray: ...
+    def energy(self, eta: GeneralizedStrain) -> float: ...
+    def resultants(self, eta: GeneralizedStrain) -> GeneralizedResultant: ...
+    def tangent(self, eta: GeneralizedStrain) -> FloatArray: ...
+
+
+class LinearLaw(HyperelasticLaw, Protocol):
+    @property
+    def constant_tangent(self) -> FloatArray: ...
 ```
+
+"Hyperelastic" here means a small-strain generalized-wall stored-energy
+potential \(W(\eta)\), not finite-strain continuum hyperelasticity. The
+resultants are \(\partial W/\partial\eta\), and the tangent is
+\(\partial^2 W/\partial\eta^2\). A linear law is a refinement whose tangent is
+constant; it should expose that constant tangent explicitly instead of using
+`tangent(eta=None)`.
 
 A Level 1 `EquivalentWall` is then one implementation:
 
 ```python
 @dataclass(frozen=True, slots=True)
 class LinearABDWall:
-    A: FloatArray
-    B: FloatArray
-    D: FloatArray
-    As: FloatArray
+    C8: FloatArray
     frame: Frame2D
     convention: StrainConvention
     areal_mass: float | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    validity: ValidityReport | None = None
 
-    def tangent(self, eta: FloatArray | None = None) -> FloatArray:
+    @property
+    def constant_tangent(self) -> FloatArray:
         return self.C8
 
-    def resultants(self, eta: FloatArray) -> FloatArray:
+    def tangent(self, eta: GeneralizedStrain) -> FloatArray:
+        return self.constant_tangent
+
+    def resultants(self, eta: GeneralizedStrain) -> GeneralizedResultant:
         return self.C8 @ eta
 
-    def energy(self, eta: FloatArray) -> float:
+    def energy(self, eta: GeneralizedStrain) -> float:
         return 0.5 * float(eta @ self.C8 @ eta)
 ```
 
@@ -669,7 +683,7 @@ $$
 }
 $$
 
-This equation should be the implementation oracle for Level 1 cells. It is compact, testable, and naturally supports graph cells, named cells, and arbitrary combinations of member families.
+This equation should be the implementation oracle for Level 1 cells. It is compact, testable, symmetry-safe by construction, and naturally supports graph cells, named cells, and arbitrary combinations of member families. Direct-vs-energy agreement is necessary but not sufficient because both paths share the same strain-equivalence map \(\mathbf T_m\); literature cases, NASA-derived regressions, and future FE patch checks close that loop.
 
 ### 9.2 Direct equilibrium-compatibility method as a validated specialization
 
@@ -1237,7 +1251,7 @@ JAX should not be a default dependency. It should be considered when one of the 
 - inverse identification of stiffener parameters from test data;
 - very large batched evaluation where JIT compilation and accelerator execution are beneficial.
 
-JAX supports automatic differentiation and JIT compilation, but those capabilities come with tracing and control-flow constraints that complicate ordinary object-oriented scientific code [JAX autodiff docs; JAX JIT docs]. Keep it behind an optional backend with a restricted functional API.
+JAX supports automatic differentiation and JIT compilation, but those capabilities come with tracing and control-flow constraints that complicate ordinary object-oriented scientific code [JAX autodiff docs; JAX JIT docs]. Keep it behind an optional backend with a restricted functional API. A JAX backend is not a transparent runtime swap: the kernel data that participates in differentiation must be functional and pytree-compatible, or an explicitly functional kernel variant must be provided.
 
 ### 17.4 Symbolic computation
 
@@ -1269,6 +1283,7 @@ Hypothesis should be used for invariants such as:
 - nonnegative strain energy;
 - objectivity under rotation;
 - equivalence between direct and energy methods for canonical cells;
+- canonicalization idempotence, `canon(canon(x)) == canon(x)`;
 - isotropy identities for ideal equilateral isogrid;
 - consistency of `energy`, `resultants`, and `tangent`.
 
@@ -1276,7 +1291,7 @@ Hypothesis is well suited because many mechanics correctness properties are univ
 
 ### 18.3 Static typing
 
-Use strict type checking for the public API. Type annotations will not prove mechanics correctness, but they catch many category errors: passing a surface where a cell is expected, passing an uncanonicalized cell to a homogenizer, returning a raw array where a constitutive law is required, or confusing resultants with strains. Python's `typing` module supports type hints and Protocol-based interfaces, and static checkers can use these annotations even though Python does not enforce them at runtime [Python typing docs].
+Use strict type checking for the public API. Type annotations will not prove mechanics correctness, but they catch many category errors: passing a surface where a cell is expected, passing an uncanonicalized cell to a homogenizer, returning a raw array where a constitutive law is required, or confusing resultants with strains. Generalized strains and generalized resultants should be distinct public boundary types, even if they unwrap to NumPy arrays internally. Python's `typing` module supports type hints and Protocol-based interfaces, and static checkers can use these annotations even though Python does not enforce them at runtime [Python typing docs].
 
 ### 18.4 Packaging
 
@@ -1358,6 +1373,7 @@ wall = result.law
 
 assert result.diagnostics["symmetric"]
 assert result.diagnostics["energy_consistent"]
+assert wall.validity == result.validity
 
 barrel = Cylinder(radius=120.0, length=300.0)
 cap = SphericalCap(radius=120.0, half_angle_deg=35.0)
@@ -1448,10 +1464,11 @@ Deliver:
 - FE property export;
 - simple shell-section adapter;
 - Nastran or solver-neutral JSON/YAML export;
+- explicit serialization schema version and documented migration policy;
 - basic optimization workflow;
 - benchmark suite.
 
-Exit criterion: an analyst can compute a wall law, validate it, and export it to an external solver.
+Exit criterion: an analyst can compute a wall law, validate it, and export it to an external solver through a versioned schema.
 
 ### Phase 6: advanced research extensions
 
@@ -1623,8 +1640,11 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, Protocol
 import numpy as np
 import numpy.typing as npt
+from typing import NewType
 
 FloatArray = npt.NDArray[np.float64]
+GeneralizedStrain = NewType("GeneralizedStrain", FloatArray)
+GeneralizedResultant = NewType("GeneralizedResultant", FloatArray)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1644,43 +1664,39 @@ class Frame2D:
     label: str = "local_tangent"
 
 
-class ConstitutiveLaw(Protocol):
+class HyperelasticLaw(Protocol):
     frame: Frame2D
     convention: StrainConvention
 
-    def energy(self, eta: FloatArray) -> float: ...
-    def resultants(self, eta: FloatArray) -> FloatArray: ...
-    def tangent(self, eta: FloatArray | None = None) -> FloatArray: ...
+    def energy(self, eta: GeneralizedStrain) -> float: ...
+    def resultants(self, eta: GeneralizedStrain) -> GeneralizedResultant: ...
+    def tangent(self, eta: GeneralizedStrain) -> FloatArray: ...
+
+
+class LinearLaw(HyperelasticLaw, Protocol):
+    @property
+    def constant_tangent(self) -> FloatArray: ...
 
 
 @dataclass(frozen=True, slots=True)
 class LinearABDWall:
-    A: FloatArray
-    B: FloatArray
-    D: FloatArray
-    As: FloatArray
+    C8: FloatArray
     frame: Frame2D
     convention: StrainConvention
     areal_mass: float | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     @property
-    def C8(self) -> FloatArray:
-        C = np.zeros((8, 8), dtype=np.float64)
-        C[0:3, 0:3] = self.A
-        C[0:3, 3:6] = self.B
-        C[3:6, 0:3] = self.B
-        C[3:6, 3:6] = self.D
-        C[6:8, 6:8] = self.As
-        return C
-
-    def tangent(self, eta: FloatArray | None = None) -> FloatArray:
+    def constant_tangent(self) -> FloatArray:
         return self.C8
 
-    def resultants(self, eta: FloatArray) -> FloatArray:
+    def tangent(self, eta: GeneralizedStrain) -> FloatArray:
+        return self.C8
+
+    def resultants(self, eta: GeneralizedStrain) -> GeneralizedResultant:
         return self.C8 @ eta
 
-    def energy(self, eta: FloatArray) -> float:
+    def energy(self, eta: GeneralizedStrain) -> float:
         return 0.5 * float(eta @ self.C8 @ eta)
 
 

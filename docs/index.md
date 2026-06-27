@@ -8,6 +8,7 @@ that will guide implementation:
 
 - [Development and releases](development.md)
 - [Markdown authoring](markdown_authoring.md)
+- [Design review](tensyl-design-review.md)
 - [White Paper](white_paper.md)
 - [Constitutive kernel](constitutive_kernel.md)
 - [Level 1 homogenization](level1_homogenization.md)

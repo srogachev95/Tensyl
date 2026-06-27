@@ -23,24 +23,44 @@ from tensyl.cells import (
     star_cell,
     unidirectional_cell,
 )
-from tensyl.constitutive import (
+from tensyl.core.constitutive import (
     ConstitutiveLaw,
+    HyperelasticLaw,
     LinearABDWall,
+    LinearLaw,
     shift_reference_surface,
     superpose_linear_abd_walls,
 )
-from tensyl.conventions import DEFAULT_FRAME, DEFAULT_STRAIN_CONVENTION, Frame2D, StrainConvention
+from tensyl.core.conventions import (
+    DEFAULT_FRAME,
+    DEFAULT_STRAIN_CONVENTION,
+    Frame2D,
+    StrainConvention,
+)
+from tensyl.core.typing import (
+    GeneralizedResultant,
+    GeneralizedStrain,
+    generalized_resultant,
+    generalized_strain,
+)
 from tensyl.homogenizers import (
     DirectECHomogenizer,
     EnergyHomogenizer,
+    HomogenizationFailure,
+    HomogenizationInputError,
     HomogenizationResult,
     Homogenizer,
     ValidityContext,
     ValidityReport,
     ValidityThresholds,
 )
-from tensyl.laminates import Ply, isotropic_plate, laminate_plate
-from tensyl.materials import IsotropicMaterial, OrthotropicPlyMaterial
+from tensyl.materials import (
+    IsotropicMaterial,
+    OrthotropicPlyMaterial,
+    Ply,
+    isotropic_plate,
+    laminate_plate,
+)
 from tensyl.sections import BeamSection
 
 try:
@@ -60,10 +80,16 @@ __all__ = [
     "DirectECHomogenizer",
     "EnergyHomogenizer",
     "Frame2D",
+    "GeneralizedResultant",
+    "GeneralizedStrain",
+    "HomogenizationFailure",
+    "HomogenizationInputError",
     "HomogenizationResult",
     "Homogenizer",
+    "HyperelasticLaw",
     "IsotropicMaterial",
     "LinearABDWall",
+    "LinearLaw",
     "OrthotropicPlyMaterial",
     "Ply",
     "StiffenerFamily",
@@ -75,6 +101,8 @@ __all__ = [
     "braced_orthogrid_cell",
     "equilateral_isogrid_cell",
     "equilateral_star_cell",
+    "generalized_resultant",
+    "generalized_strain",
     "graph_unit_cell",
     "hexagonal_grid_cell",
     "isotropic_plate",

@@ -34,3 +34,22 @@ APIs are still taking shape.
   documentation build pass.
 
 The package version is currently declared in `pyproject.toml`.
+
+## Package Layout
+
+Tensyl uses the standard `src/` layout. Implementation code is organized by
+mechanics boundary:
+
+```text
+src/tensyl/
+    core/
+    materials/
+    sections/
+    cells/
+    homogenizers/
+    verification/
+```
+
+Root modules such as `tensyl.constitutive` and `tensyl.laminates` remain as
+compatibility exports. New implementation work should go into the focused
+subpackage that owns the behavior.

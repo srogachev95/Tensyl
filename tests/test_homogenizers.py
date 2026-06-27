@@ -7,6 +7,7 @@ from tensyl import (
     BeamSection,
     DirectECHomogenizer,
     EnergyHomogenizer,
+    HomogenizationInputError,
     IsotropicMaterial,
     LinearABDWall,
     StiffenerFamily,
@@ -213,6 +214,26 @@ def test_validity_report_warns_for_large_scale_ratios() -> None:
     assert result.validity.h_over_R == pytest.approx(0.05)
     assert result.validity.p_over_R == pytest.approx(0.25)
     assert result.validity.p_over_L_response == pytest.approx(0.1)
+    assert result.law.validity == result.validity
     assert "h_over_R_exceeds_threshold" in result.validity.warnings
     assert "p_over_R_exceeds_threshold" in result.validity.warnings
     assert "p_over_L_response_exceeds_threshold" in result.validity.warnings
+
+
+def test_rank_deficient_tangent_is_reported_not_raised() -> None:
+    cell = unidirectional_cell(
+        skin=_zero_skin(),
+        member_section=_section(shear=False),
+        spacing=1.0,
+        eccentricity=0.0,
+    )
+
+    result = EnergyHomogenizer().compute(cell)
+
+    assert result.diagnostics["rank"] < 8
+    assert "rank_deficient_tangent" in result.validity.warnings
+
+
+def test_direct_homogenizer_uses_typed_input_error() -> None:
+    with pytest.raises(HomogenizationInputError, match="requires at least one stiffener family"):
+        DirectECHomogenizer().compute(skin=_zero_skin(), families=())
