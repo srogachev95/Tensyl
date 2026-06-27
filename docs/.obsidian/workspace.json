@@ -1,0 +1,196 @@
+{
+  "main": {
+    "id": "c332adefff80eab4",
+    "type": "split",
+    "children": [
+      {
+        "id": "972534cd16e69af5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1033a00b535566c9",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "680e15c954cffd39",
+    "type": "split",
+    "children": [
+      {
+        "id": "7d0468c45fb7a878",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "258212201dc29f31",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "f0b9ba9535e4cb71",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "a573687c1bb504ed",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "cb932e96873489ef",
+    "type": "split",
+    "children": [
+      {
+        "id": "4e9d64803d5075d8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "98b4970116ad6d90",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "f798276a6f8e5330",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "21e13123ce4b5853",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "6dc3236bb53fa0c5",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "52a668c4216dfbdc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "1033a00b535566c9",
+  "lastOpenFiles": [
+    "llm_wiki/master_plan.md",
+    "equivalent_wall_homogenization_library_white_paper_rewrite.md",
+    "white_paper.md",
+    "llm_wiki/bootstrap-notes.md",
+    "llm_wiki/index.md",
+    "llm_wiki/AGENTS.md",
+    "index.md",
+    "llm_wiki",
+    "references/NASA SP-8007.md",
+    "references/A Treatise on Equivalent-Plate Stiffnesses.md",
+    "references/20205011530 Rev 2FINALa 1-2023.md",
+    "references",
+    "untitled folder",
+    "20205011530 Rev 2FINALa 1-2023.md"
+  ]
+}

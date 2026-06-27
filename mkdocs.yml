@@ -1,0 +1,15 @@
+site_name: Tensyl
+site_description: Equivalent-wall homogenization tools for stiffened thin-wall structures.
+repo_url: https://github.com/srogachev/Tensyl
+docs_dir: docs
+strict: true
+nav:
+  - Home: index.md
+  - White Paper: white_paper.md
+  - References:
+      - NASA SP-8007: references/NASA SP-8007.md
+      - Equivalent-Plate Stiffnesses: references/A Treatise on Equivalent-Plate Stiffnesses.md
+  - Agent Wiki:
+      - Overview: llm_wiki/index.md
+      - Master Plan: llm_wiki/master_plan.md
+      - Instructions: llm_wiki/AGENTS.md
