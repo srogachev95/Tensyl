@@ -10,6 +10,7 @@ from typing import Any, Literal, Protocol
 import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
+from tensyl.core._validation import optional_positive_number, positive_number, readonly_array
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
 from tensyl.core.rotations import generalized_strain_transform
@@ -29,17 +30,11 @@ class HomogenizationInputError(HomogenizationFailure, ValueError):
 
 
 def _positive(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked) or checked <= 0.0:
-        msg = f"{name} must be finite and positive."
-        raise ValueError(msg)
-    return checked
+    return positive_number(value, name=name)
 
 
 def _optional_positive(value: float | None, *, name: str) -> float | None:
-    if value is None:
-        return None
-    return _positive(value, name=name)
+    return optional_positive_number(value, name=name)
 
 
 def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
@@ -52,15 +47,7 @@ def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
-    matrix = np.array(values, dtype=np.float64, copy=True)
-    if matrix.shape != shape:
-        msg = f"{name} must have shape {shape}, got {matrix.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(matrix)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    matrix.setflags(write=False)
-    return matrix
+    return readonly_array(values, shape=shape, name=name)
 
 
 @dataclass(frozen=True, slots=True)

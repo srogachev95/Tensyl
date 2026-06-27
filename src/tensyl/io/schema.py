@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
-from importlib.metadata import PackageNotFoundError, version
 from os import PathLike
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -13,6 +12,7 @@ import numpy as np
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
+from tensyl._version import tensyl_version
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.conventions import Frame2D, StrainConvention
 from tensyl.homogenizers import HomogenizationResult, ValidityReport
@@ -34,13 +34,6 @@ class SchemaError(ValueError):
 
 class _SchemaModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
-
-
-def _tensyl_version() -> str:
-    try:
-        return version("tensyl")
-    except PackageNotFoundError:  # pragma: no cover - editable tree before install
-        return "0.0.0"
 
 
 def _validation_error(exc: ValidationError) -> SchemaError:
@@ -138,7 +131,7 @@ class ProducerSchema(_SchemaModel):
 
     @classmethod
     def from_tensyl(cls) -> ProducerSchema:
-        return cls(name="tensyl", version=_tensyl_version())
+        return cls(name="tensyl", version=tensyl_version())
 
 
 class FrameSchema(_SchemaModel):

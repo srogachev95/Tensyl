@@ -1,7 +1,6 @@
 """Tensyl public package."""
 
-from importlib.metadata import PackageNotFoundError, version
-
+from tensyl._version import tensyl_version
 from tensyl.cells import (
     BeamMember,
     CanonicalUnitCell,
@@ -66,10 +65,7 @@ from tensyl.materials import (
 )
 from tensyl.sections import BeamSection
 
-try:
-    __version__ = version("tensyl")
-except PackageNotFoundError:  # pragma: no cover - editable tree before install
-    __version__ = "0.0.0"
+__version__ = tensyl_version()
 
 __all__ = [
     "DEFAULT_FRAME",

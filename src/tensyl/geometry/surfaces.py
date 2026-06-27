@@ -4,11 +4,17 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 from typing import Any, Protocol
 
 import numpy as np
 
+from tensyl.core._validation import (
+    finite_number,
+    normalized_vector3,
+    positive_number,
+    readonly_array,
+    readonly_mapping,
+)
 from tensyl.core.conventions import Frame2D
 from tensyl.core.typing import FloatArray
 
@@ -16,60 +22,23 @@ _TOLERANCE = 1.0e-12
 
 
 def _finite(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked):
-        msg = f"{name} must be finite."
-        raise ValueError(msg)
-    return checked
+    return finite_number(value, name=name)
 
 
 def _positive(value: float, *, name: str) -> float:
-    checked = _finite(value, name=name)
-    if checked <= 0.0:
-        msg = f"{name} must be positive."
-        raise ValueError(msg)
-    return checked
+    return positive_number(value, name=name, finite_and_positive_message=False)
 
 
 def _unit_vector(values: FloatArray, *, name: str) -> FloatArray:
-    vector = np.array(values, dtype=np.float64, copy=True)
-    if vector.shape != (3,):
-        msg = f"{name} must have shape (3,), got {vector.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(vector)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    norm = float(np.linalg.norm(vector))
-    if norm <= _TOLERANCE:
-        msg = f"{name} must have nonzero length."
-        raise ValueError(msg)
-    vector /= norm
-    vector.setflags(write=False)
-    return vector
+    return normalized_vector3(values, name=name, tolerance=_TOLERANCE)
 
 
 def _readonly_vector(values: FloatArray, *, name: str) -> FloatArray:
-    vector = np.array(values, dtype=np.float64, copy=True)
-    if vector.shape != (3,):
-        msg = f"{name} must have shape (3,), got {vector.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(vector)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    vector.setflags(write=False)
-    return vector
+    return readonly_array(values, shape=(3,), name=name)
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
-    matrix = np.array(values, dtype=np.float64, copy=True)
-    if matrix.shape != shape:
-        msg = f"{name} must have shape {shape}, got {matrix.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(matrix)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    matrix.setflags(write=False)
-    return matrix
+    return readonly_array(values, shape=shape, name=name)
 
 
 def _principal_curvatures(metric: FloatArray, curvature: FloatArray) -> tuple[float, float]:
@@ -140,7 +109,7 @@ class SurfacePoint:
             msg = "min_radius must be nonnegative or infinite."
             raise ValueError(msg)
         object.__setattr__(self, "min_radius", min_radius)
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
 
 class Surface(Protocol):

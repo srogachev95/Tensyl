@@ -9,12 +9,10 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from tensyl import (
-    BeamSection,
     CellEdge,
     CellNode,
     EnergyHomogenizer,
     IsotropicMaterial,
-    LinearABDWall,
     braced_orthogrid_cell,
     equilateral_isogrid_cell,
     equilateral_star_cell,
@@ -29,48 +27,18 @@ from tensyl import (
     star_cell,
     superpose_linear_abd_walls,
 )
-from tensyl.homogenizers import member_energy
-
-
-def _zero_skin() -> LinearABDWall:
-    return LinearABDWall(
-        A=np.zeros((3, 3)),
-        B=np.zeros((3, 3)),
-        D=np.zeros((3, 3)),
-        As=np.zeros((2, 2)),
-    )
-
-
-def _membrane_skin(stiffness: float = 10.0) -> LinearABDWall:
-    return LinearABDWall(
-        A=stiffness * np.eye(3),
-        B=np.zeros((3, 3)),
-        D=np.zeros((3, 3)),
-        As=np.zeros((2, 2)),
-    )
-
-
-def _section(*, shear: bool = True) -> BeamSection:
-    return BeamSection(
-        EA=1200.0,
-        EIy=50.0,
-        EIz=30.0,
-        GJ=20.0,
-        kGAy=400.0 if shear else None,
-        kGAz=300.0 if shear else None,
-    )
-
-
-def _assert_energy_consistent(cell) -> None:
-    eta = np.array([0.003, -0.002, 0.001, 0.02, -0.01, 0.04, 0.005, -0.006])
-    result = EnergyHomogenizer().compute(cell)
-    wall_energy = 0.5 * cell.area * float(eta @ result.law.C8 @ eta)
-    explicit_energy = cell.area * cell.skin.energy(eta) + sum(
-        member_energy(member, eta) for member in cell.members
-    )
-    np.testing.assert_allclose(wall_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
-    assert result.diagnostics["symmetric"] is True
-    assert result.diagnostics["positive_semidefinite"] is True
+from tests._helpers import (
+    assert_energy_consistent as _assert_energy_consistent,
+)
+from tests._helpers import (
+    beam_section as _section,
+)
+from tests._helpers import (
+    membrane_skin as _membrane_skin,
+)
+from tests._helpers import (
+    zero_skin as _zero_skin,
+)
 
 
 def test_phase3_reference_inventory_is_present() -> None:

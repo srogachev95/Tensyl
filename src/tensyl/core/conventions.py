@@ -6,21 +6,14 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from tensyl.core._validation import readonly_array
 from tensyl.core.typing import FloatArray
 
 _DEFAULT_TOLERANCE = 1.0e-10
 
 
 def _readonly_vector(values: FloatArray, *, name: str) -> FloatArray:
-    vector = np.array(values, dtype=np.float64, copy=True)
-    if vector.shape != (3,):
-        msg = f"{name} must have shape (3,), got {vector.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(vector)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    vector.setflags(write=False)
-    return vector
+    return readonly_array(values, shape=(3,), name=name)
 
 
 @dataclass(frozen=True, slots=True)

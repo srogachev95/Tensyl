@@ -5,13 +5,13 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-from importlib.metadata import PackageNotFoundError, version
-from types import MappingProxyType
 from typing import Any, Protocol
 
 import numpy as np
 
+from tensyl._version import tensyl_version
 from tensyl.cells import CanonicalUnitCell
+from tensyl.core._validation import finite_number, readonly_mapping
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.typing import FloatArray
 from tensyl.geometry import Surface, SurfacePoint
@@ -29,19 +29,8 @@ CellFactory = Callable[[Surface, SurfacePoint], CanonicalUnitCell]
 ValidityContextFactory = Callable[[SurfacePoint, CanonicalUnitCell], ValidityContext | None]
 
 
-def _tensyl_version() -> str:
-    try:
-        return version("tensyl")
-    except PackageNotFoundError:  # pragma: no cover - editable tree before install
-        return "0.0.0"
-
-
 def _finite(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked):
-        msg = f"{name} must be finite."
-        raise ValueError(msg)
-    return checked
+    return finite_number(value, name=name)
 
 
 def _increasing(values: tuple[float, ...], *, name: str) -> tuple[float, ...]:
@@ -302,7 +291,7 @@ class WallAtlas:
                 "u_values": u_values,
                 "v_values": v_values,
                 "sample_shape": (len(u_values), len(v_values)),
-                "tensyl_version": _tensyl_version(),
+                "tensyl_version": tensyl_version(),
                 "sample_digest": _sample_digest(u_values, v_values, law_rows),
                 "sample_warning_ids": _corner_warnings(
                     tuple(wall for row in law_rows for wall in row)
@@ -317,7 +306,7 @@ class WallAtlas:
         object.__setattr__(self, "u_values", u_values)
         object.__setattr__(self, "v_values", v_values)
         object.__setattr__(self, "laws", law_rows)
-        object.__setattr__(self, "metadata", MappingProxyType(metadata))
+        object.__setattr__(self, "metadata", readonly_mapping(metadata))
 
     @classmethod
     def from_field(

@@ -6,25 +6,16 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from tensyl.core._validation import optional_nonnegative_number, positive_number
 from tensyl.core.typing import FloatArray
 
 
 def _positive(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked) or checked <= 0.0:
-        msg = f"{name} must be finite and positive."
-        raise ValueError(msg)
-    return checked
+    return positive_number(value, name=name)
 
 
 def _optional_nonnegative(value: float | None, *, name: str) -> float | None:
-    if value is None:
-        return None
-    checked = float(value)
-    if not np.isfinite(checked) or checked < 0.0:
-        msg = f"{name} must be finite and nonnegative."
-        raise ValueError(msg)
-    return checked
+    return optional_nonnegative_number(value, name=name)
 
 
 @dataclass(frozen=True, slots=True)
