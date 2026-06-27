@@ -1,9 +1,11 @@
 # Tensyl
 
 Tensyl is a Python scientific-computing library for equivalent-wall homogenization
-of stiffened plates and shells. The project is currently in bootstrap: the
-mechanics direction is documented, and the implementation will be developed in
-phases.
+of stiffened plates and shells. The library provides a constitutive kernel,
+tangent-plane stiffener-cell homogenizers, geometry/wall-field helpers, and
+solver-neutral YAML/JSON export.
+
+The formal documentation is built with MkDocs from `docs/`.
 
 ## Development
 
