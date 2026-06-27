@@ -2,7 +2,7 @@
 
 
 **Primary application domain:** integrally stiffened aerospace thin-wall structures, including flat panels, cylindrical barrels, spherical and ellipsoidal domes, conical and doubly curved shell segments, and smooth parametric shell surfaces.  
-**Computational target:** a Python scientific-computing library with a NumPy reference implementation; optional Numba acceleration for profiled kernels; optional JAX, finite-element RVE, or solver-adapter backends only where their benefits are demonstrable.  
+**Computational target:** a Python scientific-computing library with a NumPy reference implementation; optional Numba acceleration for profiled kernels; optional finite-element RVE or solver-adapter backends only where their benefits are demonstrable. JAX is explicitly out of scope.  
 **Technical basis:** first-approximation equivalent-continuum stiffness methods for stiffened laminated-composite plates and plate-like lattices, especially Nemeth's NASA/TP-2011-216882 formulation, extended as a rigorously verified constitutive kernel that can be embedded into geometry-specific shell kinematics [Nemeth 2011].  
 **Status:** architecture and formulation proposal; not yet a substitute for detailed local stress, crippling, discrete-stiffener buckling, nonlinear postbuckling, or certification analysis.
 
@@ -1203,16 +1203,14 @@ tensyl/
     optimize/
         sizing.py
         sensitivities.py
-        jax_backend.py
 ```
 
 ### 16.3 Kernel versus adapters
 
-The kernel should have minimal dependencies: Python standard library, NumPy, and optionally a units package if adopted. Numba, JAX, FEM frameworks, and solver exporters should be optional extras:
+The kernel should have minimal dependencies: Python standard library, NumPy, and optionally a units package if adopted. Numba, FEM frameworks, and solver exporters should be optional extras:
 
 ```text
 tensyl[numba]
-tensyl[jax]
 tensyl[fem]
 tensyl[nastran]
 tensyl[dev]
@@ -1242,16 +1240,13 @@ Numba should be introduced only for measured hot spots. Candidate kernels includ
 
 Numba's performance guidance emphasizes no-Python mode and notes that explicit loops are acceptable in Numba-compiled functions [Numba docs]. Therefore, the design should keep object-heavy orchestration in Python and move only pure numerical kernels into Numba-compatible functions.
 
-### 17.3 JAX as an optional differentiable backend
+### 17.3 JAX is out of scope
 
-JAX should not be a default dependency. It should be considered when one of the following is central:
-
-- automatic differentiation through the homogenization kernel;
-- gradient-based sizing optimization;
-- inverse identification of stiffener parameters from test data;
-- very large batched evaluation where JIT compilation and accelerator execution are beneficial.
-
-JAX supports automatic differentiation and JIT compilation, but those capabilities come with tracing and control-flow constraints that complicate ordinary object-oriented scientific code [JAX autodiff docs; JAX JIT docs]. Keep it behind an optional backend with a restricted functional API. A JAX backend is not a transparent runtime swap: the kernel data that participates in differentiation must be functional and pytree-compatible, or an explicitly functional kernel variant must be provided.
+JAX is fully descoped for Tensyl. Do not add a `tensyl[jax]` extra, pytree
+registration, JAX-specific kernels, or JAX-oriented API constraints. Gradient
+based workflows should use the NumPy reference implementation and explicit
+finite-difference or analytic sensitivities until the project direction is
+formally reopened.
 
 ### 17.4 Symbolic computation
 
@@ -1333,7 +1328,7 @@ Use an airspeed velocity (`asv`) benchmark suite to track performance regression
 - wall-field evaluation over a grid;
 - direct versus energy method performance;
 - Numba kernel speedups;
-- optional JAX backend compilation and evaluation time.
+- sensitivity and optimization driver evaluation time.
 
 Performance should be measured after correctness is established, not before.
 
@@ -1478,7 +1473,6 @@ Deliver selectively:
 - nonlinear or temperature-dependent constitutive laws;
 - higher-order or strain-gradient prototypes;
 - micropolar/rotational continuum experiments;
-- optional JAX backend for autodiff optimization.
 
 Exit criterion: each advanced feature satisfies the same operator and diagnostics contracts without destabilizing the Level 1 core.
 
@@ -1508,7 +1502,7 @@ Exit criterion: each advanced feature satisfies the same operator and diagnostic
 
 ### Risk 6: premature backend complexity
 
-**Mitigation:** keep NumPy as the reference implementation; add Numba only after profiling; add JAX and FEM backends only as optional extras.
+**Mitigation:** keep NumPy as the reference implementation; add Numba only after profiling; keep JAX out of scope; add FEM backends only as optional extras.
 
 ---
 
@@ -1612,8 +1606,6 @@ Everything in the proposed architecture follows from that rule.
 **Harris, C. R., et al. (2020).** Array programming with NumPy. *Nature*, 585, 357--362.
 
 **Numba Developers.** Performance tips documentation. https://numba.readthedocs.io/en/stable/user/performance-tips.html
-
-**JAX Developers.** Automatic differentiation and just-in-time compilation documentation. https://docs.jax.dev/
 
 **pytest Developers.** Good integration practices. https://docs.pytest.org/en/stable/explanation/goodpractices.html
 
@@ -1786,5 +1778,5 @@ The rewritten paper makes the following major changes:
 6. Separates **kernel**, **fields**, **geometry**, and **adapters**.
 7. Adds a **fidelity ladder** from skin-only laws to Level 1 tangent-plane homogenization, spatial wall fields, FE-RVE methods, and future higher-order models.
 8. Clarifies that the project is not proposing a new homogenization theory in the MVP, but a rigorous software realization and extension architecture grounded in NASA's equivalent-plate framework.
-9. Adds current scientific Python best practices for typing, dataclasses, NumPy, optional Numba/JAX, pytest, Hypothesis, `pyproject.toml`, and benchmarking.
+9. Adds current scientific Python best practices for typing, dataclasses, NumPy, optional Numba, pytest, Hypothesis, `pyproject.toml`, and benchmarking.
 10. Strengthens warnings about scalar engineering constants and equivalent thickness.
