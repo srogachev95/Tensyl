@@ -91,7 +91,7 @@ For a `LinearABDWall`, the payload stores:
 
 For a `HomogenizationResult`, the payload stores the wall payload plus:
 
-- result-level validity;
+- result validity;
 - diagnostics;
 - assumptions;
 - homogenizer source.

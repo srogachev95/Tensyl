@@ -1,4 +1,4 @@
-"""Beam-section stiffness value objects for Level 1 homogenization."""
+"""Beam-section stiffness value objects for tangent-plane homogenization."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def _finite(value: float, *, name: str) -> float:
 
 @dataclass(frozen=True, slots=True)
 class BeamSection:
-    """Centroidal beam-section stiffnesses for a Level 1 stiffener member.
+    """Centroidal beam-section stiffnesses for a tangent-plane stiffener member.
 
     ``EA`` is the axial stiffness, ``EIy`` is the out-of-plane bending stiffness,
     ``EIz`` is the in-plane bending stiffness retained for provenance, and

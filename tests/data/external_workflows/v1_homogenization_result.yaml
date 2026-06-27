@@ -134,7 +134,7 @@ payload:
     - Nemeth 2011 eqs. 30-39
     energy_consistent: true
   assumptions:
-  - Level 1 local tangent-plane homogenization.
+  - Local tangent-plane equivalent-wall homogenization.
   - Centroidal beam-section stiffnesses with member eccentricity measured along +n.
   - Beam members use first-approximation wall kinematics.
   source: energy

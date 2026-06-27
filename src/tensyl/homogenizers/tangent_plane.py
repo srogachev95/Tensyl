@@ -1,4 +1,4 @@
-"""Level 1 equivalent-wall homogenizers."""
+"""Tangent-plane equivalent-wall homogenizers."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from typing import Any, Literal, Protocol
 
 import numpy as np
 
-from tensyl.cells.level1 import BeamMember, CanonicalUnitCell, StiffenerFamily
+from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
 from tensyl.core.rotations import generalized_strain_transform
@@ -65,7 +65,7 @@ def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -
 
 @dataclass(frozen=True, slots=True)
 class ValidityContext:
-    """Optional geometric scale data for Level 1 validity checks."""
+    """Optional geometric scale data for tangent-plane validity checks."""
 
     characteristic_height: float | None = None
     pitch: float | None = None
@@ -93,7 +93,7 @@ class ValidityContext:
 
 @dataclass(frozen=True, slots=True)
 class ValidityThresholds:
-    """Default warning thresholds for Level 1 scale-separation checks."""
+    """Default warning thresholds for tangent-plane scale-separation checks."""
 
     h_over_R: float = 0.05
     p_over_R: float = 0.05
@@ -137,7 +137,7 @@ class ValidityReport:
 
 @dataclass(frozen=True, slots=True)
 class HomogenizationResult:
-    """A Level 1 homogenization result and its verification context."""
+    """A homogenization result and its verification context."""
 
     law: LinearABDWall
     validity: ValidityReport
@@ -155,7 +155,7 @@ class HomogenizationResult:
 
 
 class Homogenizer(Protocol):
-    """Protocol for Level 1 homogenizers."""
+    """Protocol for tangent-plane homogenizers."""
 
     def compute(
         self,
@@ -241,7 +241,7 @@ def member_energy(member: BeamMember, eta: FloatArray) -> float:
 
 def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
     assumptions = [
-        "Level 1 local tangent-plane homogenization.",
+        "Local tangent-plane equivalent-wall homogenization.",
         "Centroidal beam-section stiffnesses with member eccentricity measured along +n.",
         "Beam members use first-approximation wall kinematics.",
     ]
@@ -343,7 +343,7 @@ def validity_report_for_law(
     context: ValidityContext | None = None,
     thresholds: ValidityThresholds | None = None,
 ) -> ValidityReport:
-    """Return Level 1 validity diagnostics for an existing wall law."""
+    """Return tangent-plane validity diagnostics for an existing wall law."""
 
     return _validity_report(
         law,
@@ -370,7 +370,7 @@ def _wall_from_tangent(
 
 @dataclass(frozen=True, slots=True)
 class EnergyHomogenizer:
-    """Reference Level 1 energy-equivalence homogenizer."""
+    """Reference tangent-plane energy-equivalence homogenizer."""
 
     thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
 

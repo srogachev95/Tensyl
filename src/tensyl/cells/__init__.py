@@ -1,6 +1,6 @@
-"""Level 1 canonical cell value objects and constructors."""
+"""Tangent-plane canonical cell value objects and constructors."""
 
-from tensyl.cells.level1 import (
+from tensyl.cells.tangent_plane import (
     BeamMember,
     CanonicalUnitCell,
     CellEdge,
