@@ -76,6 +76,16 @@ class Frame2D:
             )
         )
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Frame2D):
+            return NotImplemented
+        return (
+            np.array_equal(self.e1, other.e1)
+            and np.array_equal(self.e2, other.e2)
+            and np.array_equal(self.n, other.n)
+            and self.label == other.label
+        )
+
     @classmethod
     def canonical(cls, *, label: str = "local_tangent") -> Frame2D:
         """Create the canonical Cartesian wall frame."""

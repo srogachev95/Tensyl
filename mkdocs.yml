@@ -14,6 +14,7 @@ nav:
   - Home: index.md
   - Constitutive Kernel: constitutive_kernel.md
   - Level 1 Homogenization: level1_homogenization.md
+  - Geometry and Wall Fields: geometry_wall_fields.md
   - Development and Releases: development.md
   - Markdown Authoring: markdown_authoring.md
   - Design Review: tensyl-design-review.md
@@ -28,6 +29,7 @@ nav:
       - Phase 1 Status: llm_wiki/phase-1-status.md
       - Phase 2 Status: llm_wiki/phase-2-status.md
       - Phase 3 Status: llm_wiki/phase-3-status.md
+      - Phase 4 Status: llm_wiki/phase-4-status.md
       - Documentation Standards: llm_wiki/documentation_standards.md
       - Git Hygiene: llm_wiki/git_hygiene.md
       - Instructions: llm_wiki/AGENTS.md

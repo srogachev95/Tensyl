@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any, Literal, Protocol
@@ -41,6 +42,15 @@ def _optional_positive(value: float | None, *, name: str) -> float | None:
     return _positive(value, name=name)
 
 
+def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
+    if value is None:
+        return None
+    checked = float(value)
+    if checked == np.inf:
+        return checked
+    return _positive(checked, name=name)
+
+
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
     matrix = np.array(values, dtype=np.float64, copy=True)
     if matrix.shape != shape:
@@ -72,7 +82,7 @@ class ValidityContext:
         object.__setattr__(
             self,
             "min_radius",
-            _optional_positive(self.min_radius, name="min_radius"),
+            _optional_positive_or_inf(self.min_radius, name="min_radius"),
         )
         object.__setattr__(
             self,
@@ -112,7 +122,7 @@ class ValidityReport:
     h_over_R: float | None
     p_over_R: float | None
     p_over_L_response: float | None
-    coupling_ratios: MappingProxyType[str, float]
+    coupling_ratios: Mapping[str, float]
     warnings: tuple[str, ...]
 
     def __post_init__(self) -> None:
@@ -327,6 +337,21 @@ def _validity_report(
     )
 
 
+def validity_report_for_law(
+    law: LinearABDWall,
+    *,
+    context: ValidityContext | None = None,
+    thresholds: ValidityThresholds | None = None,
+) -> ValidityReport:
+    """Return Level 1 validity diagnostics for an existing wall law."""
+
+    return _validity_report(
+        law,
+        context=context,
+        thresholds=ValidityThresholds() if thresholds is None else thresholds,
+    )
+
+
 def _wall_from_tangent(
     tangent: FloatArray,
     *,
@@ -438,4 +463,5 @@ __all__ = [
     "member_energy",
     "member_tangent_contribution",
     "member_tangent_density",
+    "validity_report_for_law",
 ]
