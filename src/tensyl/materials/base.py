@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from tensyl.typing import FloatArray
+from tensyl.core.typing import FloatArray
 
 
 def _positive(value: float, *, name: str) -> float:

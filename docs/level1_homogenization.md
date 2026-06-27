@@ -9,6 +9,14 @@ equivalent-plate formulation, where stiffener-member strain energy is expressed
 in terms of generalized plate strains and divided by the basic-cell area
 [Nemeth 2011].
 
+The energy method is the reference implementation for Tensyl's direct formulas
+because its assembled contribution
+\(\sum_m (\mu_m L_m / A_\text{cell})\mathbf T_m^T\mathbf K_m\mathbf T_m\)
+is symmetric by construction. This agreement is necessary but not sufficient:
+both paths share the member strain map \(\mathbf T_m\), so external
+literature, NASA, and future FE patch evidence remain the ground truth for that
+map.
+
 ## Scope
 
 The current implementation supports:
@@ -168,6 +176,8 @@ cell = orthogrid_cell(
 
 result = EnergyHomogenizer().compute(cell)
 wall = result.law
+
+assert wall.validity == result.validity
 ```
 
 ## Direct Family Homogenizer
@@ -213,3 +223,18 @@ with a default warning threshold of `0.10`.
 These warnings do not make a law invalid by themselves. They mark cases where
 the analyst should review whether a local tangent-plane equivalent wall is
 appropriate for the intended structural response.
+
+`HomogenizationResult.law` carries the same validity report on `wall.validity`.
+This keeps warnings attached when the law is passed to a later shell or export
+workflow.
+
+## Failure Channel
+
+Homogenizers use typed exceptions for malformed or unsupported inputs. For
+example, `DirectECHomogenizer` raises `HomogenizationInputError` when called
+without any stiffener families or with an unsupported strain convention.
+
+Finite but rank-deficient assemblies are returned with diagnostics instead of
+being hidden or raised as generic failures. The result includes
+`diagnostics["rank"]` and the validity warning `rank_deficient_tangent` so a
+caller can decide whether the mechanism is acceptable for the intended use.

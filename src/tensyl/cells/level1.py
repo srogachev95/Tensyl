@@ -8,9 +8,18 @@ from typing import Any, Literal
 
 import numpy as np
 
-from tensyl.constitutive import LinearABDWall, shift_reference_surface, superpose_linear_abd_walls
-from tensyl.conventions import DEFAULT_FRAME, DEFAULT_STRAIN_CONVENTION, Frame2D, StrainConvention
-from tensyl.sections import BeamSection
+from tensyl.core.constitutive import (
+    LinearABDWall,
+    shift_reference_surface,
+    superpose_linear_abd_walls,
+)
+from tensyl.core.conventions import (
+    DEFAULT_FRAME,
+    DEFAULT_STRAIN_CONVENTION,
+    Frame2D,
+    StrainConvention,
+)
+from tensyl.sections.beam import BeamSection
 
 
 def _positive(value: float, *, name: str) -> float:

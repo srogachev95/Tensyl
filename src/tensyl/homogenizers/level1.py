@@ -8,15 +8,23 @@ from typing import Any, Literal, Protocol
 
 import numpy as np
 
-from tensyl.cells import BeamMember, CanonicalUnitCell, StiffenerFamily
-from tensyl.constitutive import LinearABDWall
-from tensyl.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
-from tensyl.rotations import generalized_strain_transform
-from tensyl.sections import BeamSection
-from tensyl.typing import FloatArray
+from tensyl.cells.level1 import BeamMember, CanonicalUnitCell, StiffenerFamily
+from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
+from tensyl.core.rotations import generalized_strain_transform
+from tensyl.core.typing import FloatArray
+from tensyl.sections.beam import BeamSection
 
 _SYMMETRY_TOLERANCE = 1.0e-9
 _PSD_TOLERANCE = 1.0e-8
+
+
+class HomogenizationFailure(Exception):
+    """Base exception for homogenization failures."""
+
+
+class HomogenizationInputError(HomogenizationFailure, ValueError):
+    """Raised when a homogenizer receives malformed or unsupported input."""
 
 
 def _positive(value: float, *, name: str) -> float:
@@ -128,6 +136,10 @@ class HomogenizationResult:
     source: Literal["energy", "direct_ec", "rve", "imported"]
 
     def __post_init__(self) -> None:
+        law = self.law
+        if getattr(law, "validity", None) != self.validity:
+            law = law.with_validity(self.validity)
+        object.__setattr__(self, "law", law)
         object.__setattr__(self, "diagnostics", MappingProxyType(dict(self.diagnostics)))
         object.__setattr__(self, "assumptions", tuple(self.assumptions))
 
@@ -135,7 +147,12 @@ class HomogenizationResult:
 class Homogenizer(Protocol):
     """Protocol for Level 1 homogenizers."""
 
-    def compute(self, cell: CanonicalUnitCell) -> HomogenizationResult:
+    def compute(
+        self,
+        cell: CanonicalUnitCell,
+        *,
+        validity_context: ValidityContext | None = None,
+    ) -> HomogenizationResult:
         """Compute an equivalent wall law for a canonical unit cell."""
 
 
@@ -240,10 +257,12 @@ def _diagnostics(
     eigenvalues = np.linalg.eigvalsh(0.5 * (matrix + matrix.T))
     min_eigenvalue = float(eigenvalues[0])
     psd = bool(min_eigenvalue >= -_PSD_TOLERANCE)
+    rank = int(np.linalg.matrix_rank(matrix, tol=_PSD_TOLERANCE))
     return {
         "symmetric": symmetric,
         "positive_semidefinite": psd,
         "minimum_eigenvalue": min_eigenvalue,
+        "rank": rank,
         "member_count": member_count,
         "cell_area": cell_area,
         "source_equations": ("Nemeth 2011 eqs. 30-39",),
@@ -294,6 +313,11 @@ def _validity_report(
     coupling = _coupling_ratio(law)
     if coupling >= thresholds.coupling_ratio:
         warnings.append("membrane_bending_coupling_exceeds_threshold")
+    matrix = law.C8
+    if np.linalg.matrix_rank(matrix, tol=_PSD_TOLERANCE) < matrix.shape[0]:
+        warnings.append("rank_deficient_tangent")
+    if float(np.linalg.eigvalsh(0.5 * (matrix + matrix.T))[0]) < -_PSD_TOLERANCE:
+        warnings.append("negative_energy_mode")
     return ValidityReport(
         h_over_R=h_over_R,
         p_over_R=p_over_R,
@@ -310,11 +334,8 @@ def _wall_from_tangent(
     metadata: dict[str, Any],
 ) -> LinearABDWall:
     matrix = 0.5 * (np.array(tangent, dtype=np.float64, copy=True) + np.array(tangent).T)
-    return LinearABDWall(
-        A=matrix[0:3, 0:3],
-        B=matrix[0:3, 3:6],
-        D=matrix[3:6, 3:6],
-        As=matrix[6:8, 6:8],
+    return LinearABDWall.from_tangent(
+        matrix,
         frame=skin.frame,
         convention=skin.convention,
         areal_mass=skin.areal_mass,
@@ -339,7 +360,7 @@ class EnergyHomogenizer:
                 "EnergyHomogenizer currently supports Tensyl's default engineering-shear "
                 "convention only."
             )
-            raise ValueError(msg)
+            raise HomogenizationInputError(msg)
         tangent = np.array(cell.skin.C8, dtype=np.float64, copy=True)
         for member in cell.members:
             tangent += member_tangent_contribution(member, cell_area=cell.area)
@@ -374,13 +395,13 @@ class DirectECHomogenizer:
         family_tuple = tuple(families)
         if not family_tuple:
             msg = "DirectECHomogenizer requires at least one stiffener family."
-            raise ValueError(msg)
+            raise HomogenizationInputError(msg)
         if skin.convention != convention or convention != DEFAULT_STRAIN_CONVENTION:
             msg = (
                 "DirectECHomogenizer currently supports Tensyl's default engineering-shear "
                 "convention only."
             )
-            raise ValueError(msg)
+            raise HomogenizationInputError(msg)
         tangent = np.array(skin.C8, dtype=np.float64, copy=True)
         for family in family_tuple:
             tangent += (family.multiplicity / family.spacing) * member_tangent_density(family)
@@ -407,6 +428,8 @@ class DirectECHomogenizer:
 __all__ = [
     "DirectECHomogenizer",
     "EnergyHomogenizer",
+    "HomogenizationFailure",
+    "HomogenizationInputError",
     "HomogenizationResult",
     "Homogenizer",
     "ValidityContext",

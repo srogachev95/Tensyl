@@ -1,10 +1,17 @@
-"""Shared typing aliases for Tensyl arrays."""
+"""Compatibility exports for core typing helpers."""
 
-from __future__ import annotations
+from tensyl.core.typing import (
+    FloatArray,
+    GeneralizedResultant,
+    GeneralizedStrain,
+    generalized_resultant,
+    generalized_strain,
+)
 
-import numpy as np
-from numpy.typing import NDArray
-
-FloatArray = NDArray[np.float64]
-
-__all__ = ["FloatArray"]
+__all__ = [
+    "FloatArray",
+    "GeneralizedResultant",
+    "GeneralizedStrain",
+    "generalized_resultant",
+    "generalized_strain",
+]

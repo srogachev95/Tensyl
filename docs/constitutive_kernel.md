@@ -70,10 +70,25 @@ wall mid-surface.
 
 ## Linear ABD Wall Law
 
-`LinearABDWall` implements the public `ConstitutiveLaw` protocol:
+Tensyl's public constitutive contract is hyperelastic in the small-strain,
+generalized-wall sense. "Hyperelastic" here means that every law derives from a
+stored-energy potential \(W(\boldsymbol\eta)\). It does not mean finite-strain
+continuum hyperelasticity.
+
+The derivative tower is:
+
+$$
+\mathbf r(\boldsymbol\eta)=\frac{\partial W}{\partial\boldsymbol\eta},
+\qquad
+\mathbf C(\boldsymbol\eta)=
+\frac{\partial^2 W}{\partial\boldsymbol\eta^2}.
+$$
+
+`LinearABDWall` implements `LinearLaw`, a refinement of the public
+`ConstitutiveLaw`/`HyperelasticLaw` protocol:
 
 ```python
-from tensyl import ConstitutiveLaw, LinearABDWall
+from tensyl import ConstitutiveLaw, HyperelasticLaw, LinearABDWall, LinearLaw
 ```
 
 The linear tangent has the block structure:
@@ -92,15 +107,25 @@ $$
 
 The operator methods are:
 
-- `tangent(eta=None)`, which returns the constant $8\times8$ tangent;
-- `resultants(eta)`, which returns $\mathbf C_\text{wall}\boldsymbol\eta$;
 - `energy(eta)`, which returns
-  $\frac{1}{2}\boldsymbol\eta^T\mathbf C_\text{wall}\boldsymbol\eta$;
+  \(\frac{1}{2}\boldsymbol\eta^T\mathbf C_\text{wall}\boldsymbol\eta\);
+- `resultants(eta)`, which returns $\mathbf C_\text{wall}\boldsymbol\eta$;
+- `tangent(eta)`, which returns the tangent required by the general
+  hyperelastic contract;
+- `constant_tangent`, which is the no-argument $8\times8$ tangent path for
+  linear laws;
 - `rotate(angle_rad)`, which returns the same wall law expressed in a rotated
   local frame.
 
 The implementation validates matrix shapes, finite entries, and symmetry of the
-ABD and transverse-shear blocks.
+ABD and transverse-shear blocks. The assembled C8 matrix is the canonical
+operator payload; A/B/D/As are exposed as read-only block views. Public
+generalized vectors can be wrapped with `generalized_strain(...)` and
+`generalized_resultant(...)` so static checkers can distinguish strains from
+resultants at API boundaries.
+
+Homogenized laws also carry validity diagnostics through `wall.validity`, so
+using `result.law` does not discard the scale-separation and coupling report.
 
 ## Skin-Only Plates and Laminates
 
