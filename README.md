@@ -19,3 +19,6 @@ uv run mkdocs build --strict
 ```
 
 The public Python package name is `tensyl`.
+
+Documentation math should use `$...$` for inline equations and `$$...$$` for
+display equations so the same Markdown renders in Obsidian and MkDocs.

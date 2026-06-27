@@ -14,15 +14,15 @@ This white paper proposes a Python library for computing and managing equivalent
 
 The governing design principle is:
 
-\[
+$$
 \boxed{\text{Compute a local equivalent-wall constitutive law; embed that law into geometry-specific shell kinematics.}}
-\]
+$$
 
 The library should therefore not begin as a collection of separate calculators for barrels, domes, plates, orthogrids, isogrids, and Kagome grids. It should begin as a **constitutive kernel**. That kernel computes a local wall law from materials, laminate skins, beam sections, stiffener families, and unit cells. Geometry then enters through a separate embedding layer: plates, cylinders, spherical caps, ellipsoids, and general parametric surfaces provide frames, metrics, curvatures, integration measures, and strain-displacement operators, but they do not alter the Level 1 local wall homogenization unless an explicitly higher-fidelity curved-cell model is selected.
 
 The primary output is not a scalar equivalent modulus, scalar equivalent thickness, or single smeared isotropic material. The primary output is a constitutive operator whose first implementation is a linear wall law in laminated-plate notation:
 
-\[
+$$
 \begin{bmatrix}
 \mathbf N \\
 \mathbf M
@@ -38,23 +38,23 @@ The primary output is not a scalar equivalent modulus, scalar equivalent thickne
 \end{bmatrix},
 \qquad
 \mathbf Q = \mathbf A_s \boldsymbol\gamma_s^0.
-\]
+$$
 
-Here \(\mathbf A\) is the membrane stiffness matrix, \(\mathbf B\) is the membrane-bending coupling matrix, \(\mathbf D\) is the bending/twisting stiffness matrix, and \(\mathbf A_s\) is the transverse-shear stiffness matrix. Engineering constants such as \(E_1\), \(E_2\), \(G_{12}\), \(\nu_{12}\), and equivalent thickness are secondary interpretations with explicitly declared assumptions and thickness criteria. This mirrors the laminated-plate and equivalent-plate literature and avoids misleading reductions of anisotropic or membrane-bending coupled walls to scalar surrogates [Jones 1975; Reddy 2004; Nemeth 2011].
+Here $\mathbf A$ is the membrane stiffness matrix, $\mathbf B$ is the membrane-bending coupling matrix, $\mathbf D$ is the bending/twisting stiffness matrix, and $\mathbf A_s$ is the transverse-shear stiffness matrix. Engineering constants such as $E_1$, $E_2$, $G_{12}$, $\nu_{12}$, and equivalent thickness are secondary interpretations with explicitly declared assumptions and thickness criteria. This mirrors the laminated-plate and equivalent-plate literature and avoids misleading reductions of anisotropic or membrane-bending coupled walls to scalar surrogates [Jones 1975; Reddy 2004; Nemeth 2011].
 
 The main architectural changes proposed in this rewrite are:
 
 1. **Make the energy-equivalence homogenizer the reference implementation.** Nemeth presents both a direct equilibrium-compatibility method and a basic-cell strain-energy method, and shows that they agree under the same first-approximation assumptions [Nemeth 2011]. The energy-equivalence method should be the oracle implementation because it generalizes naturally to graph-like cells and arbitrary beam-member layouts. Closed-form direct formulas should be implemented as validated accelerators for canonical rectilinear stiffener families.
 
-2. **Elevate the matrix object into a constitutive operator.** An `EquivalentWall` may contain \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), and \(\mathbf A_s\), but the public contract should be `ConstitutiveLaw`: `energy(eta)`, `resultants(eta)`, `tangent(eta)`, `rotate(...)`, and `metadata`. This preserves the current linear theory while leaving room for temperature dependence, uncertainty, nonlinear material response, FE-RVE models, and higher-order homogenization.
+2. **Elevate the matrix object into a constitutive operator.** An `EquivalentWall` may contain $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$, but the public contract should be `ConstitutiveLaw`: `energy(eta)`, `resultants(eta)`, `tangent(eta)`, `rotate(...)`, and `metadata`. This preserves the current linear theory while leaving room for temperature dependence, uncertainty, nonlinear material response, FE-RVE models, and higher-order homogenization.
 
 3. **Add canonicalization before homogenization.** Inputs must be normalized for units, frames, strain conventions, member multiplicities, section principal axes, eccentricity signs, reference surfaces, and cell topology before stiffness assembly. This prevents common errors in shear conventions, twist conventions, and coordinate rotations.
 
-4. **Attach verification and validity reports to every result.** Symmetry, positive semidefiniteness, energy consistency, rotation objectivity, isotropy/orthotropy identities, and literature regression status should be reported with the wall law. Scale-separation diagnostics such as \(h_s/R\), \(p/R\), and \(p/L_\text{response}\) should be machine-readable, not only documentation prose.
+4. **Attach verification and validity reports to every result.** Symmetry, positive semidefiniteness, energy consistency, rotation objectivity, isotropy/orthotropy identities, and literature regression status should be reported with the wall law. Scale-separation diagnostics such as $h_s/R$, $p/R$, and $p/L_\text{response}$ should be machine-readable, not only documentation prose.
 
 5. **Stage shell analysis and FE export behind adapters.** The MVP should be a solver-agnostic constitutive platform. Shell embedding, finite-element property export, FE-RVE cell solves, and optimization interfaces should be adapters or optional packages rather than hard dependencies of the mechanics kernel.
 
-For stiffeners about 1 inch tall on radii greater than 100 inches, the local curvature ratio \(h_s/R\) is approximately \(0.01\), which is favorable for a Level 1 tangent-plane homogenization. However, the cell pitch, target mode wavelength, local curvature variation, and stiffener topology must also be checked. Homogenization is a scale-separated approximation, not a universal replacement for a discrete model [Sanchez-Palencia 1980; Bensoussan et al. 1978; Nemeth 2011].
+For stiffeners about 1 inch tall on radii greater than 100 inches, the local curvature ratio $h_s/R$ is approximately $0.01$, which is favorable for a Level 1 tangent-plane homogenization. However, the cell pitch, target mode wavelength, local curvature variation, and stiffener topology must also be checked. Homogenization is a scale-separated approximation, not a universal replacement for a discrete model [Sanchez-Palencia 1980; Bensoussan et al. 1978; Nemeth 2011].
 
 ---
 
@@ -65,7 +65,7 @@ For stiffeners about 1 inch tall on radii greater than 100 inches, the local cur
 The proposed library is a mechanics-and-software platform for constructing, validating, transforming, and exporting equivalent-wall constitutive laws for stiffened thin-wall structures. It is intended to help analysts answer questions such as:
 
 - What are the effective membrane, bending, membrane-bending coupling, twisting, and transverse-shear stiffnesses of this stiffened wall?
-- How do stiffener eccentricity, section properties, cell pitch, and grid orientation affect the full \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), and \(\mathbf A_s\) law?
+- How do stiffener eccentricity, section properties, cell pitch, and grid orientation affect the full $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ law?
 - Does a nominally isogrid wall behave isotropically in membrane and bending response, or do manufacturing/geometry deviations create anisotropy?
 - Can a single local wall law be embedded into a flat panel, a cylindrical barrel, and a spherical or ellipsoidal dome without rewriting the homogenization theory?
 - What validity warnings should accompany a smeared model before it is used for buckling, sizing, or optimization?
@@ -128,9 +128,9 @@ The present library should preserve that traceability. Equations, conventions, a
 
 ### 2.2 Laminated-plate and first-order shear-deformation theory
 
-The \(\mathbf A\), \(\mathbf B\), and \(\mathbf D\) stiffness blocks come from classical and shear-deformation laminated-plate theory, where in-plane resultants and bending resultants are related to mid-surface strains and curvatures. First-order transverse-shear deformation theories are associated with Reissner and Mindlin and are now standard in many composite plate and shell treatments [Reissner 1945; Mindlin 1951; Reddy 2004].
+The $\mathbf A$, $\mathbf B$, and $\mathbf D$ stiffness blocks come from classical and shear-deformation laminated-plate theory, where in-plane resultants and bending resultants are related to mid-surface strains and curvatures. First-order transverse-shear deformation theories are associated with Reissner and Mindlin and are now standard in many composite plate and shell treatments [Reissner 1945; Mindlin 1951; Reddy 2004].
 
-A key reason to retain this notation is interoperability. Structural analysts already understand \(A_{ij}\), \(B_{ij}\), \(D_{ij}\), \(A_{44}\), \(A_{45}\), and \(A_{55}\). Finite-element shell sections, laminate calculators, Nastran-style property cards, and analytical buckling formulas often use closely related concepts. The library should therefore remain matrix-first in payload, even though its public API should be operator-first.
+A key reason to retain this notation is interoperability. Structural analysts already understand $A_{ij}$, $B_{ij}$, $D_{ij}$, $A_{44}$, $A_{45}$, and $A_{55}$. Finite-element shell sections, laminate calculators, Nastran-style property cards, and analytical buckling formulas often use closely related concepts. The library should therefore remain matrix-first in payload, even though its public API should be operator-first.
 
 ### 2.3 Homogenization and scale separation
 
@@ -148,7 +148,7 @@ The library should expose a fidelity ladder rather than a single implied truth m
 
 Level 0 computes a conventional plate or laminate constitutive law without stiffener homogenization. It is useful for testing, baseline comparison, and skin-only regions.
 
-Inputs include isotropic materials, orthotropic plies, ply angles, ply thicknesses, transverse-shear correction factors, and a reference surface. Outputs are \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), and \(\mathbf A_s\) blocks.
+Inputs include isotropic materials, orthotropic plies, ply angles, ply thicknesses, transverse-shear correction factors, and a reference surface. Outputs are $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ blocks.
 
 ### 3.2 Level 1: local tangent-plane equivalent wall
 
@@ -156,15 +156,15 @@ Level 1 is the initial production target. It treats the repeating stiffened wall
 
 This level is appropriate when:
 
-\[
+$$
 \frac{h_s}{R_\text{min}} \ll 1,
 \qquad
 \frac{p}{R_\text{min}} \ll 1,
 \qquad
 \frac{p}{L_\text{response}} \ll 1,
-\]
+$$
 
-where \(h_s\) is a characteristic stiffener height, \(p\) is a characteristic cell pitch, \(R_\text{min}\) is the smaller local radius of curvature, and \(L_\text{response}\) is the relevant deformation or buckling wavelength.
+where $h_s$ is a characteristic stiffener height, $p$ is a characteristic cell pitch, $R_\text{min}$ is the smaller local radius of curvature, and $L_\text{response}$ is the relevant deformation or buckling wavelength.
 
 The Level 1 wall law may be computed by:
 
@@ -176,9 +176,9 @@ The Level 1 wall law may be computed by:
 
 Level 2 retains the Level 1 local homogenizer but allows the wall law to vary over a surface:
 
-\[
+$$
 \mathbf C_\text{wall}=\mathbf C_\text{wall}(u,v).
-\]
+$$
 
 This is necessary for domes, ellipsoids, tapered barrels, variable-pitch stiffeners, geodesic or principal-direction stiffeners, and manufacturing-driven grid layouts where local spacing or orientation is not constant.
 
@@ -188,26 +188,26 @@ The key new abstraction at this level is `WallField`, not a new constitutive the
 
 Level 3 introduces finite-element or numerical RVE solves for cells that cannot be represented adequately by analytic beam-member energy. Examples include open-section warping effects, local eccentricity details, nonlinear material behavior, contact-like assumptions, complex intersections, or non-beam stiffener geometry.
 
-The Level 3 result should still implement `ConstitutiveLaw`. For linear problems, it may return the same \(8\times 8\) tangent as Level 1. For nonlinear problems, it may return a state-dependent tangent.
+The Level 3 result should still implement `ConstitutiveLaw`. For linear problems, it may return the same $8\times 8$ tangent as Level 1. For nonlinear problems, it may return a state-dependent tangent.
 
 ### 3.5 Level 4: higher-order, strain-gradient, micropolar, or curved-cell models
 
 Level 4 is a research extension, not an MVP requirement. It covers models where a classical Cauchy-like wall law is insufficient. Candidate extensions include:
 
-- strain-gradient wall energy, with \(W(\boldsymbol\eta,\nabla\boldsymbol\eta)\);
+- strain-gradient wall energy, with $W(\boldsymbol\eta,\nabla\boldsymbol\eta)$;
 - micropolar or Cosserat-like lattice continua when rotational degrees of freedom are essential;
 - curved-cell homogenization when cell curvature is not negligible;
 - bifurcation-aware or instability-aware homogenization.
 
 A future higher-order wall law might take the schematic form:
 
-\[
+$$
 W(\boldsymbol\eta,\nabla\boldsymbol\eta)
 =
 \frac{1}{2}\boldsymbol\eta^T\mathbf C\boldsymbol\eta
 +
 \frac{1}{2}\nabla\boldsymbol\eta : \mathbf H : \nabla\boldsymbol\eta.
-\]
+$$
 
 This should not be forced into the Level 1 API. Instead, the public interface should be broad enough that such a law can later satisfy `ConstitutiveLaw` or a richer `HigherOrderConstitutiveLaw` protocol.
 
@@ -219,17 +219,17 @@ This should not be forced into the Level 1 API. Instead, the public interface sh
 
 At each point on a shell midsurface, define a local orthonormal frame:
 
-\[
+$$
 \{\mathbf e_1,\mathbf e_2,\mathbf n\},
-\]
+$$
 
-where \(\mathbf e_1\) and \(\mathbf e_2\) are tangent directions and \(\mathbf n\) is the unit normal. For a cylinder, \(\mathbf e_1\) may be axial and \(\mathbf e_2\) circumferential. For a dome, \(\mathbf e_1\) may be meridional and \(\mathbf e_2\) hoop/circumferential. These are choices, not hidden assumptions; the frame must be explicit.
+where $\mathbf e_1$ and $\mathbf e_2$ are tangent directions and $\mathbf n$ is the unit normal. For a cylinder, $\mathbf e_1$ may be axial and $\mathbf e_2$ circumferential. For a dome, $\mathbf e_1$ may be meridional and $\mathbf e_2$ hoop/circumferential. These are choices, not hidden assumptions; the frame must be explicit.
 
 ### 4.2 Generalized strain vector
 
 The internal generalized strain vector should use a documented ordering. The recommended internal ordering is:
 
-\[
+$$
 \boldsymbol\eta
 =
 \begin{bmatrix}
@@ -242,15 +242,15 @@ The internal generalized strain vector should use a documented ordering. The rec
 \gamma_{13}^0 &
 \gamma_{23}^0
 \end{bmatrix}^T.
-\]
+$$
 
-The library must document whether \(\gamma_{12}\), \(\gamma_{13}\), and \(\gamma_{23}\) are engineering shear strains or tensor shear strains. The Level 1 recommendation is to use engineering shear strains internally because that matches much of laminated-plate and engineering shell practice, but the convention must be encoded in `StrainConvention` and carried through transformations.
+The library must document whether $\gamma_{12}$, $\gamma_{13}$, and $\gamma_{23}$ are engineering shear strains or tensor shear strains. The Level 1 recommendation is to use engineering shear strains internally because that matches much of laminated-plate and engineering shell practice, but the convention must be encoded in `StrainConvention` and carried through transformations.
 
 ### 4.3 Generalized resultant vector
 
 The corresponding resultant vector is:
 
-\[
+$$
 \mathbf r
 =
 \begin{bmatrix}
@@ -263,17 +263,17 @@ M_{12} &
 Q_{13} &
 Q_{23}
 \end{bmatrix}^T.
-\]
+$$
 
-A mapping table must relate this internal convention to Nemeth-style \((x,y,z)\), \((X,Y,Z)\), \(Q_{xz}\), \(Q_{yz}\), \(A_{44}\), \(A_{45}\), and \(A_{55}\) notation. Nemeth's derivation uses ordered transverse shear quantities \(Q_{yz}\), \(Q_{xz}\) and the \(A_{44},A_{45},A_{55}\) matrix in a particular convention [Nemeth 2011]. Ambiguity here is a high-risk implementation error.
+A mapping table must relate this internal convention to Nemeth-style $(x,y,z)$, $(X,Y,Z)$, $Q_{xz}$, $Q_{yz}$, $A_{44}$, $A_{45}$, and $A_{55}$ notation. Nemeth's derivation uses ordered transverse shear quantities $Q_{yz}$, $Q_{xz}$ and the $A_{44},A_{45},A_{55}$ matrix in a particular convention [Nemeth 2011]. Ambiguity here is a high-risk implementation error.
 
 ### 4.4 Reference surface and eccentricity
 
-The reference surface is not metadata decoration; it changes \(\mathbf B\) and \(\mathbf D\). The default reference surface should be the skin or wall mid-surface used in the Nemeth derivation unless the user explicitly selects a different reference surface [Nemeth 2011].
+The reference surface is not metadata decoration; it changes $\mathbf B$ and $\mathbf D$. The default reference surface should be the skin or wall mid-surface used in the Nemeth derivation unless the user explicitly selects a different reference surface [Nemeth 2011].
 
 The sign convention for stiffener eccentricity must be explicit. A recommended convention is:
 
-- positive eccentricity means the stiffness-weighted stiffener centroid lies in the positive \(\mathbf n\) direction from the chosen reference surface;
+- positive eccentricity means the stiffness-weighted stiffener centroid lies in the positive $\mathbf n$ direction from the chosen reference surface;
 - the `Frame2D.n` direction defines the positive normal;
 - transformations that flip the normal must update eccentricity signs or reject the operation.
 
@@ -281,13 +281,13 @@ The sign convention for stiffener eccentricity must be explicit. A recommended c
 
 For the Level 1 linear law, define:
 
-\[
+$$
 \mathbf r=\mathbf C_\text{wall}\boldsymbol\eta,
-\]
+$$
 
 with
 
-\[
+$$
 \mathbf C_\text{wall}
 =
 \begin{bmatrix}
@@ -295,7 +295,7 @@ with
 \mathbf B & \mathbf D & \mathbf 0 \\
 \mathbf 0 & \mathbf 0 & \mathbf A_s
 \end{bmatrix}.
-\]
+$$
 
 The zero coupling between transverse shear and membrane/bending is consistent with standard first-order plate theories for ordinary laminates and with the first implementation target. Future laws may relax this structure, but they should do so by implementing a richer constitutive interface rather than by overloading undocumented matrix entries.
 
@@ -394,7 +394,7 @@ Python dataclasses support frozen instances and slot generation, which helps cre
 
 The library should not homogenize raw user input directly. It should first canonicalize the model.
 
-\[
+$$
 \boxed{
 \text{raw input}
 \rightarrow
@@ -408,7 +408,7 @@ The library should not homogenize raw user input directly. It should first canon
 \rightarrow
 \text{wall law}
 }
-\]
+$$
 
 ### 6.1 Raw input
 
@@ -529,11 +529,11 @@ These correspond to configurations treated or surveyed in Nemeth's NASA report a
 
 The Level 1 beam section should expose the stiffnesses needed by the shear-deformable beam model:
 
-\[
+$$
 EA, \quad EI_y, \quad EI_z, \quad GJ, \quad k_yGA, \quad k_zGA,
-\]
+$$
 
-with optional coupling terms such as \(EI_{yz}\) and stiffness-weighted centroid offsets for nonhomogeneous sections.
+with optional coupling terms such as $EI_{yz}$ and stiffness-weighted centroid offsets for nonhomogeneous sections.
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -552,31 +552,31 @@ class BeamSection:
     metadata: Mapping[str, Any] = field(default_factory=dict)
 ```
 
-The names `y` and `z` must be tied to the member local frame and mapped to Nemeth's \((X,Y,Z)\) convention.
+The names `y` and `z` must be tied to the member local frame and mapped to Nemeth's $(X,Y,Z)$ convention.
 
 ### 8.2 Nonhomogeneous and composite sections
 
 Nemeth's formulation permits nonhomogeneous stiffeners constructed from specially orthotropic materials with one axis aligned to the stiffener and the other two axes aligned to cross-sectional axes [Nemeth 2011]. The library should preserve this capability through numerical section integration:
 
-\[
+$$
 EA = \int_A E_X(y,z)\,dA,
-\]
+$$
 
-\[
+$$
 EI_y = \int_A E_X(y,z)z^2\,dA,
 \qquad
 EI_z = \int_A E_X(y,z)y^2\,dA,
 \qquad
 EI_{yz}=\int_A E_X(y,z)yz\,dA.
-\]
+$$
 
 Stiffness-weighted centroids should be computed as:
 
-\[
+$$
 \bar y_E=\frac{\int_A E_X y\,dA}{\int_A E_X\,dA},
 \qquad
 \bar z_E=\frac{\int_A E_X z\,dA}{\int_A E_X\,dA}.
-\]
+$$
 
 This enables pultruded cap reinforcements, hybrid metallic-composite ribs, locally reinforced stiffeners, and tailored composite sections.
 
@@ -584,28 +584,28 @@ This enables pultruded cap reinforcements, hybrid metallic-composite ribs, local
 
 For a laminate skin, use the standard through-thickness integration:
 
-\[
+$$
 A_{ij}^{\text{skin}}=\sum_k \bar Q_{ij}^{(k)}(z_k-z_{k-1}),
-\]
+$$
 
-\[
+$$
 B_{ij}^{\text{skin}}=\frac{1}{2}\sum_k \bar Q_{ij}^{(k)}(z_k^2-z_{k-1}^2),
-\]
+$$
 
-\[
+$$
 D_{ij}^{\text{skin}}=\frac{1}{3}\sum_k \bar Q_{ij}^{(k)}(z_k^3-z_{k-1}^3).
-\]
+$$
 
 For an isotropic metallic skin under plane stress:
 
-\[
+$$
 \mathbf Q = \frac{E}{1-\nu^2}
 \begin{bmatrix}
 1 & \nu & 0 \\
 \nu & 1 & 0 \\
 0 & 0 & \frac{1-\nu}{2}
 \end{bmatrix}.
-\]
+$$
 
 Transverse shear should be represented with an explicit shear correction factor and documented convention [Mindlin 1951; Reddy 2004; Nemeth 2011].
 
@@ -615,50 +615,50 @@ Transverse shear should be represented with an explicit shear correction factor 
 
 ### 9.1 Energy-equivalence method as the reference implementation
 
-For a canonical cell with area \(A_\text{cell}\), the total cell energy is:
+For a canonical cell with area $A_\text{cell}$, the total cell energy is:
 
-\[
+$$
 U_\text{cell}(\boldsymbol\eta)
 =
 U_\text{skin}(\boldsymbol\eta)
 +
 \sum_{m=1}^{n_m} U_m(\boldsymbol\eta),
-\]
+$$
 
-where \(m\) indexes beam members in the cell.
+where $m$ indexes beam members in the cell.
 
-For member \(m\), define the beam strain vector:
+For member $m$, define the beam strain vector:
 
-\[
+$$
 \boldsymbol\epsilon_m
 = \mathbf T_m\boldsymbol\eta,
-\]
+$$
 
-where \(\mathbf T_m\) maps generalized plate/shell strains into the member's axial, bending, torsional, and shear strain measures. Nemeth denotes the corresponding strain-equivalence matrix in his basic-cell method and uses it to express member energy in terms of plate strains [Nemeth 2011].
+where $\mathbf T_m$ maps generalized plate/shell strains into the member's axial, bending, torsional, and shear strain measures. Nemeth denotes the corresponding strain-equivalence matrix in his basic-cell method and uses it to express member energy in terms of plate strains [Nemeth 2011].
 
-Let \(\mathbf K_m\) be the member constitutive matrix in the selected beam theory. Then:
+Let $\mathbf K_m$ be the member constitutive matrix in the selected beam theory. Then:
 
-\[
+$$
 U_m
 =
 \frac{1}{2}L_m\boldsymbol\epsilon_m^T\mathbf K_m\boldsymbol\epsilon_m
 =
 \frac{1}{2}L_m\boldsymbol\eta^T\mathbf T_m^T\mathbf K_m\mathbf T_m\boldsymbol\eta.
-\]
+$$
 
 The member contribution to the wall tangent is:
 
-\[
+$$
 \boxed{
 \Delta \mathbf C_m
 =
 \frac{L_m}{A_\text{cell}}\mathbf T_m^T\mathbf K_m\mathbf T_m.
 }
-\]
+$$
 
 Thus:
 
-\[
+$$
 \boxed{
 \mathbf C_\text{wall}
 =
@@ -667,7 +667,7 @@ Thus:
 \sum_m
 \frac{L_m}{A_\text{cell}}\mathbf T_m^T\mathbf K_m\mathbf T_m.
 }
-\]
+$$
 
 This equation should be the implementation oracle for Level 1 cells. It is compact, testable, and naturally supports graph cells, named cells, and arbitrary combinations of member families.
 
@@ -675,11 +675,11 @@ This equation should be the implementation oracle for Level 1 cells. It is compa
 
 The direct method remains valuable for canonical rectilinear stiffener families. In Nemeth's derivation, a discrete stiffener force or moment is related to a distributed plate stress resultant by statical equivalence; the beam strain measures are then related to the equivalent-plate strains by kinematical equivalence [Nemeth 2011].
 
-For example, for a unidirectional stiffener family with spacing \(d_S\), axial beam force \(P\) contributes to the equivalent membrane resultant in the member direction as:
+For example, for a unidirectional stiffener family with spacing $d_S$, axial beam force $P$ contributes to the equivalent membrane resultant in the member direction as:
 
-\[
+$$
 N_{XX}^{\text{stiffener}}=\frac{P}{d_S}.
-\]
+$$
 
 The resulting family stiffness contribution is transformed into the global plate or tangent-plane frame and superposed with other family and skin contributions. This is fast and traceable, but it is also more vulnerable to formula drift and convention mistakes. Therefore:
 
@@ -709,15 +709,15 @@ Coordinate transformations must be first-class operations. The implementation ne
 
 Nemeth explicitly uses distinct transformation matrices for stress, strain, and transverse-shear quantities in the direct derivation [Nemeth 2011]. The software should mirror that distinction rather than using a single generic rotation matrix.
 
-For a rotation by angle \(\psi\) from the local surface frame \((1,2,n)\) to the stiffener frame \((X,Y,Z)\), define:
+For a rotation by angle $\psi$ from the local surface frame $(1,2,n)$ to the stiffener frame $(X,Y,Z)$, define:
 
-\[
+$$
 \boldsymbol\epsilon_P=\mathbf T_\epsilon(\psi)\boldsymbol\epsilon_p,
 \qquad
 \mathbf N_P=\mathbf T_\sigma(\psi)\mathbf N_p,
 \qquad
 \boldsymbol\gamma_P=\mathbf T_\tau(\psi)\boldsymbol\gamma_p.
-\]
+$$
 
 The exact matrices depend on engineering-shear convention. They must be generated from `StrainConvention`, not copied ad hoc into unrelated modules.
 
@@ -725,18 +725,18 @@ The exact matrices depend on engineering-shear convention. They must be generate
 
 A rotated cell should homogenize to a rotated wall law. Homogenizing a cell after rotation and rotating the resulting stiffness back should recover the original law:
 
-\[
+$$
 \mathcal R(-\alpha)
 \left[\text{Homogenize}(\mathcal R(\alpha)\text{Cell})\right]
 \approx
 \text{Homogenize}(\text{Cell}).
-\]
+$$
 
 This should be a property-based test over random angles and representative cells.
 
 ### 10.3 Why this matters
 
-Nemeth's report discusses discrepancies in previous literature associated with shear/twist averaging factors and notes that omitting certain \(1/2\) factors can break constitutive symmetry [Nemeth 2011]. This is a direct warning for software design. A plausible matrix is not necessarily a correct matrix. Objectivity, symmetry, and energy tests should be mandatory.
+Nemeth's report discusses discrepancies in previous literature associated with shear/twist averaging factors and notes that omitting certain $1/2$ factors can break constitutive symmetry [Nemeth 2011]. This is a direct warning for software design. A plausible matrix is not necessarily a correct matrix. Objectivity, symmetry, and energy tests should be mandatory.
 
 ---
 
@@ -748,7 +748,7 @@ At Level 1, geometry supplies the local tangent frame, metric, curvature, Jacobi
 
 In finite-element or weak-form notation:
 
-\[
+$$
 \mathbf K
 =
 \int_{\Omega}
@@ -756,44 +756,44 @@ In finite-element or weak-form notation:
 \mathbf C_\text{wall}
 \mathbf B_\text{shell}
 \,d\Omega.
-\]
+$$
 
-The constitutive law \(\mathbf C_\text{wall}\) is local material-structure information. The operator \(\mathbf B_\text{shell}\) is geometry and kinematics.
+The constitutive law $\mathbf C_\text{wall}$ is local material-structure information. The operator $\mathbf B_\text{shell}$ is geometry and kinematics.
 
 ### 11.2 Parametric surface representation
 
 A smooth shell midsurface is represented parametrically:
 
-\[
+$$
 \mathbf r=\mathbf r(u,v).
-\]
+$$
 
 The covariant tangent vectors are:
 
-\[
+$$
 \mathbf a_1=\frac{\partial\mathbf r}{\partial u},
 \qquad
 \mathbf a_2=\frac{\partial\mathbf r}{\partial v}.
-\]
+$$
 
 The metric tensor is:
 
-\[
+$$
 g_{\alpha\beta}=\mathbf a_\alpha\cdot\mathbf a_\beta.
-\]
+$$
 
 The unit normal is:
 
-\[
+$$
 \mathbf n=\frac{\mathbf a_1\times\mathbf a_2}{\|\mathbf a_1\times\mathbf a_2\|}.
-\]
+$$
 
 The curvature tensor is:
 
-\[
+$$
 b_{\alpha\beta}=\mathbf n\cdot
 \frac{\partial^2\mathbf r}{\partial\xi^\alpha\partial\xi^\beta}.
-\]
+$$
 
 The geometry layer should compute these quantities and provide a local orthonormal frame. The constitutive kernel should not depend on shell geometry classes.
 
@@ -801,62 +801,62 @@ The geometry layer should compute these quantities and provide a local orthonorm
 
 For a plate:
 
-\[
+$$
 \mathbf r(x,y)=x\mathbf e_x+y\mathbf e_y,
-\]
+$$
 
 with zero curvature. The local wall law is used directly in the plate frame.
 
 ### 11.4 Cylindrical barrel
 
-For a cylinder of radius \(R\):
+For a cylinder of radius $R$:
 
-\[
+$$
 \mathbf r(x,\theta)=
 \begin{bmatrix}
 x \\
 R\cos\theta \\
 R\sin\theta
 \end{bmatrix}.
-\]
+$$
 
-Using circumferential arc coordinate \(s=R\theta\), the principal curvatures are:
+Using circumferential arc coordinate $s=R\theta$, the principal curvatures are:
 
-\[
+$$
 k_x=0,
 \qquad
 k_s=\frac{1}{R}.
-\]
+$$
 
 The wall law is unchanged. Curvature enters shell strain-displacement relations, for example through the normal-displacement contribution to circumferential strain in cylindrical-shell kinematics. The chosen shell theory must be explicit: Donnell, Sanders-Koiter, Reissner-Mindlin shell, or another model [Flügge 1934; Sanders 1963; Koiter 1966; Reddy 2004].
 
 ### 11.5 Spherical cap
 
-A spherical cap of radius \(R\) can be parameterized as:
+A spherical cap of radius $R$ can be parameterized as:
 
-\[
+$$
 \mathbf r(\phi,\theta)=R
 \begin{bmatrix}
 \sin\phi\cos\theta \\
 \sin\phi\sin\theta \\
 \cos\phi
 \end{bmatrix}.
-\]
+$$
 
-Both principal curvatures have magnitude \(1/R\). If stiffener spacing and orientation are locally uniform, a constant wall field may be adequate. If meridional stiffeners converge, hoop spacing changes, or local cell shape changes, a spatially varying wall field is required.
+Both principal curvatures have magnitude $1/R$. If stiffener spacing and orientation are locally uniform, a constant wall field may be adequate. If meridional stiffeners converge, hoop spacing changes, or local cell shape changes, a spatially varying wall field is required.
 
 ### 11.6 Ellipsoid
 
 An ellipsoid can be represented as:
 
-\[
+$$
 \mathbf r(\phi,\theta)=
 \begin{bmatrix}
 a\sin\phi\cos\theta \\
 b\sin\phi\sin\theta \\
 c\cos\phi
 \end{bmatrix}.
-\]
+$$
 
 The metric, curvature, and local principal directions vary with position. Level 1 homogenization remains local and tangent-plane based, but wall fields must be evaluated pointwise if stiffener spacing, orientation, or section properties vary over the surface.
 
@@ -915,9 +915,9 @@ Correctness is a primary feature of the library.
 
 For a conservative linear elastic wall law:
 
-\[
+$$
 \mathbf C_\text{wall}=\mathbf C_\text{wall}^T.
-\]
+$$
 
 Any significant asymmetry should fail verification unless the user has explicitly selected a nonconservative or nonsymmetric law.
 
@@ -925,9 +925,9 @@ Any significant asymmetry should fail verification unless the user has explicitl
 
 For any generalized strain state:
 
-\[
+$$
 \boldsymbol\eta^T\mathbf C_\text{wall}\boldsymbol\eta\ge 0.
-\]
+$$
 
 A complete nonmechanism cell should usually be positive definite on the modeled strain subspace. Near-zero eigenvalues may indicate a legitimate mechanism, incomplete transverse-shear modeling, invalid section properties, or a bug.
 
@@ -935,11 +935,11 @@ A complete nonmechanism cell should usually be positive definite on the modeled 
 
 For random generalized strain states, compare homogenized energy with explicit cell energy:
 
-\[
+$$
 \frac{1}{2}A_\text{cell}\boldsymbol\eta^T\mathbf C_\text{wall}\boldsymbol\eta
 \approx
 U_\text{skin}(\boldsymbol\eta)+\sum_m U_m(\boldsymbol\eta).
-\]
+$$
 
 This is the defining test for the energy-equivalence homogenizer.
 
@@ -951,13 +951,13 @@ The rotation objectivity test in Section 10 should be automated for every canoni
 
 An ideal equilateral isogrid with identical members should be approximately isotropic in membrane response:
 
-\[
+$$
 A_{11}\approx A_{22},
 \qquad
 A_{16}\approx A_{26}\approx 0,
 \qquad
 A_{66}\approx\frac{A_{11}-A_{12}}{2}.
-\]
+$$
 
 Similar checks can be defined for bending and twisting terms where symmetry permits.
 
@@ -995,19 +995,19 @@ This step is essential for user confidence even if the underlying formulas are l
 
 At a surface point:
 
-\[
+$$
 \rho_h=\frac{h_s}{R_\text{min}},
 \qquad
 \rho_p=\frac{p}{R_\text{min}}.
-\]
+$$
 
 Recommended default interpretation:
 
 | Ratio | Interpretation |
 |---:|---|
-| \(<0.02\) | generally favorable for Level 1 tangent-plane homogenization |
-| \(0.02\) to \(0.10\) | use with caution; validate against a discrete or curved-cell model |
-| \(>0.10\) | Level 1 may be inadequate for local cell behavior |
+| $<0.02$ | generally favorable for Level 1 tangent-plane homogenization |
+| $0.02$ to $0.10$ | use with caution; validate against a discrete or curved-cell model |
+| $>0.10$ | Level 1 may be inadequate for local cell behavior |
 
 These are engineering heuristics, not universal laws. They should be configurable and clearly labeled.
 
@@ -1015,9 +1015,9 @@ These are engineering heuristics, not universal laws. They should be configurabl
 
 For global analysis:
 
-\[
+$$
 \rho_\lambda=\frac{p}{L_\text{response}}.
-\]
+$$
 
 Smeared wall models are least reliable when buckling or vibration modes have wavelengths comparable to stiffener pitch.
 
@@ -1025,9 +1025,9 @@ Smeared wall models are least reliable when buckling or vibration modes have wav
 
 Membrane-bending coupling should be flagged when:
 
-\[
+$$
 \chi_{ij}=\frac{|B_{ij}|}{\sqrt{|A_{ii}D_{jj}|}}
-\]
+$$
 
 exceeds a configurable threshold. Strong coupling does not make the wall invalid, but it does make scalar equivalent engineering constants especially misleading.
 
@@ -1049,27 +1049,27 @@ The library should report stiffness matrices first and engineering constants sec
 
 For membrane-only apparent constants, let:
 
-\[
+$$
 \mathbf a=\mathbf A^{-1}.
-\]
+$$
 
-Given an explicitly selected equivalent thickness \(h_\text{eq}\):
+Given an explicitly selected equivalent thickness $h_\text{eq}$:
 
-\[
+$$
 E_1^\text{mem}=\frac{1}{a_{11}h_\text{eq}},
 \qquad
 E_2^\text{mem}=\frac{1}{a_{22}h_\text{eq}},
-\]
+$$
 
-\[
+$$
 G_{12}^\text{mem}=\frac{1}{a_{66}h_\text{eq}},
 \qquad
 \nu_{12}^\text{mem}=-\frac{a_{12}}{a_{11}},
 \qquad
 \nu_{21}^\text{mem}=-\frac{a_{12}}{a_{22}}.
-\]
+$$
 
-But these are interpretations, not the constitutive truth. Nemeth explicitly discusses multiple equivalent-thickness criteria, and the ambiguity is inherent: a thickness that matches mass need not match \(A_{11}\), \(D_{11}\), or isotropic least-squares behavior [Nemeth 2011].
+But these are interpretations, not the constitutive truth. Nemeth explicitly discusses multiple equivalent-thickness criteria, and the ambiguity is inherent: a thickness that matches mass need not match $A_{11}$, $D_{11}$, or isotropic least-squares behavior [Nemeth 2011].
 
 Recommended API:
 
@@ -1105,15 +1105,15 @@ class EngineeringConstants:
 
 The dependency graph should be one-way:
 
-\[
+$$
 \text{materials}\rightarrow\text{sections}\rightarrow\text{cells}\rightarrow\text{homogenizers}\rightarrow\text{constitutive laws}.
-\]
+$$
 
 Geometry and shell adapters should depend on constitutive laws, not the reverse:
 
-\[
+$$
 \text{geometry}\rightarrow\text{shell adapter}\rightarrow\text{analysis/export}.
-\]
+$$
 
 The homogenization layer must not import barrel, dome, or finite-element solver modules.
 
@@ -1475,11 +1475,11 @@ Exit criterion: each advanced feature satisfies the same operator and diagnostic
 
 ### Risk 2: users overinterpret engineering constants
 
-**Mitigation:** make \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), and \(\mathbf A_s\) the primary output. Require explicit thickness methods and warnings when \(\mathbf B\) coupling is significant.
+**Mitigation:** make $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ the primary output. Require explicit thickness methods and warnings when $\mathbf B$ coupling is significant.
 
 ### Risk 3: Level 1 is used outside its scale-separation envelope
 
-**Mitigation:** attach validity reports to results and expose configurable warning thresholds for \(h_s/R\), \(p/R\), and \(p/L_\text{response}\).
+**Mitigation:** attach validity reports to results and expose configurable warning thresholds for $h_s/R$, $p/R$, and $p/L_\text{response}$.
 
 ### Risk 4: direct formulas drift from the reference theory
 
@@ -1505,10 +1505,10 @@ MVP capabilities:
 2. Define a rectangular or property-based beam section.
 3. Define unidirectional, orthogrid, and equilateral isogrid cells.
 4. Canonicalize input geometry and conventions.
-5. Compute \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), and \(\mathbf A_s\) using the energy-equivalence oracle.
+5. Compute $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ using the energy-equivalence oracle.
 6. Compute the same canonical cases using direct formulas where available.
 7. Verify symmetry, positive semidefiniteness, energy equivalence, rotation objectivity, and isotropy identities.
-8. Report \(h_s/R\), \(p/R\), coupling ratios, assumptions, and warnings.
+8. Report $h_s/R$, $p/R$, coupling ratios, assumptions, and warnings.
 9. Embed the same wall in a flat plate and cylinder adapter.
 10. Export the wall law to a solver-neutral JSON/YAML schema.
 
@@ -1520,17 +1520,17 @@ The MVP should not attempt to solve every shell problem. It should prove that th
 
 The proposed library should be built around a solver-agnostic equivalent-wall constitutive kernel. The kernel computes local wall laws from materials, skins, stiffeners, and cells. Geometry then embeds those laws into shell kinematics. This architecture preserves the mathematical separation between constitutive behavior and geometric strain-displacement operators.
 
-The Level 1 implementation should remain faithful to Nemeth's equivalent-plate stiffness theory: first-approximation, Reissner--Mindlin-type shear-deformation plate kinematics, shear-deformable beam stiffeners, and equivalent stiffnesses in \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), and \(\mathbf A_s\) notation [Nemeth 2011]. The main improvement over a formula collection is software architecture: explicit conventions, canonicalization, an energy-equivalence oracle, verification diagnostics, validity reports, wall fields, and adapters.
+The Level 1 implementation should remain faithful to Nemeth's equivalent-plate stiffness theory: first-approximation, Reissner--Mindlin-type shear-deformation plate kinematics, shear-deformable beam stiffeners, and equivalent stiffnesses in $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ notation [Nemeth 2011]. The main improvement over a formula collection is software architecture: explicit conventions, canonicalization, an energy-equivalence oracle, verification diagnostics, validity reports, wall fields, and adapters.
 
 For the motivating regime of roughly 1 inch stiffeners on radii greater than 100 inches, Level 1 local tangent-plane homogenization is a defensible starting point. Curvature should be retained in shell kinematics and validity reports, but not inserted into the local wall homogenizer unless the user selects a higher-fidelity curved-cell or RVE model.
 
 The central rule remains:
 
-\[
+$$
 \boxed{
 \text{Equivalent wall stiffness is local; shell geometry enters through kinematics, metrics, and curvature.}
 }
-\]
+$$
 
 Everything in the proposed architecture follows from that rule.
 
@@ -1749,11 +1749,11 @@ class Homogenizer(Protocol):
 - Isotropy identities for ideal equilateral isogrid.
 - Orthotropy identities for orthogrids with symmetric properties.
 - Transverse-shear ordering checks against Nemeth convention.
-- Reference-surface translation checks for \(\mathbf A\), \(\mathbf B\), and \(\mathbf D\).
-- Unit consistency checks for \(\mathbf A\), \(\mathbf B\), \(\mathbf D\), \(\mathbf A_s\), \(\mathbf N\), \(\mathbf M\), and \(\mathbf Q\).
+- Reference-surface translation checks for $\mathbf A$, $\mathbf B$, and $\mathbf D$.
+- Unit consistency checks for $\mathbf A$, $\mathbf B$, $\mathbf D$, $\mathbf A_s$, $\mathbf N$, $\mathbf M$, and $\mathbf Q$.
 - Regression against NASA-derived examples.
 - Discrete FE patch comparison for at least one orthogrid and one isogrid case.
-- Validity warning generation for large \(h_s/R\), large \(p/R\), large \(p/L_\text{response}\), and large coupling ratios.
+- Validity warning generation for large $h_s/R$, large $p/R$, large $p/L_\text{response}$, and large coupling ratios.
 - Metadata provenance for source equations, homogenizer type, assumptions, version, and input hash.
 
 ---
