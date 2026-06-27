@@ -13,6 +13,7 @@ extra_javascript:
 nav:
   - Home: index.md
   - Constitutive Kernel: constitutive_kernel.md
+  - Level 1 Homogenization: level1_homogenization.md
   - Development and Releases: development.md
   - Markdown Authoring: markdown_authoring.md
   - White Paper: white_paper.md
@@ -24,6 +25,7 @@ nav:
       - Master Plan: llm_wiki/master_plan.md
       - Phase 0 Status: llm_wiki/phase-0-status.md
       - Phase 1 Status: llm_wiki/phase-1-status.md
+      - Phase 2 Status: llm_wiki/phase-2-status.md
       - Documentation Standards: llm_wiki/documentation_standards.md
       - Git Hygiene: llm_wiki/git_hygiene.md
       - Instructions: llm_wiki/AGENTS.md
