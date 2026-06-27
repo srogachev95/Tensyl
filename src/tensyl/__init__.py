@@ -43,6 +43,8 @@ from tensyl.core.typing import (
     generalized_resultant,
     generalized_strain,
 )
+from tensyl.fields import ConstantWallField, HomogenizedWallField, WallAtlas, WallCache, WallField
+from tensyl.geometry import Cylinder, Ellipsoid, FlatPlate, SphericalCap, Surface, SurfacePoint
 from tensyl.homogenizers import (
     DirectECHomogenizer,
     EnergyHomogenizer,
@@ -53,6 +55,7 @@ from tensyl.homogenizers import (
     ValidityContext,
     ValidityReport,
     ValidityThresholds,
+    validity_report_for_law,
 )
 from tensyl.materials import (
     IsotropicMaterial,
@@ -77,8 +80,12 @@ __all__ = [
     "CellEdge",
     "CellNode",
     "ConstitutiveLaw",
+    "ConstantWallField",
+    "Cylinder",
     "DirectECHomogenizer",
     "EnergyHomogenizer",
+    "Ellipsoid",
+    "FlatPlate",
     "Frame2D",
     "GeneralizedResultant",
     "GeneralizedStrain",
@@ -92,11 +99,18 @@ __all__ = [
     "LinearLaw",
     "OrthotropicPlyMaterial",
     "Ply",
+    "HomogenizedWallField",
+    "SphericalCap",
     "StiffenerFamily",
     "StrainConvention",
+    "Surface",
+    "SurfacePoint",
     "ValidityContext",
     "ValidityReport",
     "ValidityThresholds",
+    "WallAtlas",
+    "WallCache",
+    "WallField",
     "__version__",
     "braced_orthogrid_cell",
     "equilateral_isogrid_cell",
@@ -118,4 +132,5 @@ __all__ = [
     "star_cell",
     "superpose_linear_abd_walls",
     "unidirectional_cell",
+    "validity_report_for_law",
 ]

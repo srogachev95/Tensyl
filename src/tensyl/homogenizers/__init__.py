@@ -13,6 +13,7 @@ from tensyl.homogenizers.level1 import (
     member_energy,
     member_tangent_contribution,
     member_tangent_density,
+    validity_report_for_law,
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "member_energy",
     "member_tangent_contribution",
     "member_tangent_density",
+    "validity_report_for_law",
 ]
