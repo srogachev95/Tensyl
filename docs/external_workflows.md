@@ -11,6 +11,7 @@ The current implementation supports:
 - `HomogenizationResult` artifacts;
 - YAML read/write through `tensyl.io`;
 - explicit schema versioning and producer metadata;
+- Pydantic v2 validation for the schema payload;
 - frame, convention, validity, diagnostics, assumptions, and metadata
   preservation.
 
@@ -91,7 +92,8 @@ validity warnings continue to travel with the wall law after reload.
 
 ## Validation And Safety
 
-YAML loading uses PyYAML's safe loader. Tensyl rejects:
+YAML loading uses PyYAML's safe loader, then validates the payload with
+Pydantic v2 models before reconstructing Tensyl value objects. Tensyl rejects:
 
 - custom or unsafe YAML tags;
 - non-mapping roots;
