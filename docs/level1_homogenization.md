@@ -11,15 +11,18 @@ in terms of generalized plate strains and divided by the basic-cell area
 
 ## Scope
 
-The Phase 2 implementation supports:
+The current implementation supports:
 
 - centroidal beam-section stiffnesses;
 - straight beam members with length, angle, eccentricity, and multiplicity;
+- graph cells via `CellNode`, `CellEdge`, and `graph_unit_cell`;
 - canonical unit cells with a skin `LinearABDWall`;
 - the energy-equivalence homogenizer as the reference method;
 - direct equilibrium-compatibility homogenization for straight stiffener
   families;
-- unidirectional, orthogrid, and equilateral-isogrid constructors;
+- unidirectional, orthogrid, braced orthogrid, isosceles-triangle, Kagome,
+  hexagonal, and star-cell constructors;
+- sandwich-core constructors with explicit face-sheet reference-surface offsets;
 - diagnostics and validity reports.
 
 It does not recover local stresses, model stiffener intersections, solve
@@ -65,6 +68,51 @@ $$
 The one-half factors follow the first-approximation shear and twist averaging
 used in Nemeth's beam-cell energy method [Nemeth 2011].
 
+## Graph And Canonical Cells
+
+`graph_unit_cell` converts a local tangent-plane graph into `BeamMember`
+objects by computing each edge length and orientation from its endpoint
+coordinates. Node indices are zero-based. The resulting cell still uses the
+same energy-equivalence equation as every other canonical cell.
+
+Named constructors are convenience layers over the same member-density model:
+
+- `braced_orthogrid_cell` supports crossed diagonal braces and an alternating
+  single-brace case. The single-brace case keeps both diagonal orientations but
+  assigns each half the crossed-brace density, matching Nemeth's \(n=1/2\)
+  convention for singly braced bays [Nemeth 2011].
+- `isosceles_triangle_grid_cell` and `kagome_cell` use the same family-density
+  reduction for matching inputs, consistent with Nemeth's Appendix C statement
+  that the Kagome output is identical to the isosceles-triangle output under the
+  listed assumptions [Nemeth 2011].
+- `hexagonal_grid_cell` and `star_cell` follow the basic-cell layouts used in
+  Nemeth's Appendix E program. `regular_hexagonal_grid_cell` and
+  `equilateral_star_cell` provide identical-member special cases.
+
+These constructors do not model joint details, local stress recovery, or
+finite-width intersection effects. They only define member energy contributions
+for the first-approximation equivalent wall.
+
+## Reference Surfaces And Sandwich Faces
+
+`shift_reference_surface(wall, offset)` expresses a `LinearABDWall` about a new
+reference surface. The signed `offset` is measured from the wall's current
+reference surface to the new one along `Frame2D.n`.
+
+For a new reference surface offset by \(d\), membrane strain at the old surface
+is:
+
+$$
+\boldsymbol\epsilon_\text{old}
+= \boldsymbol\epsilon_\text{new} - d\boldsymbol\kappa .
+$$
+
+Tensyl applies that strain transformation to the full wall tangent. This makes
+face-sheet superposition explicit for sandwich cells: shift each face sheet to
+the sandwich reference plane, superpose the shifted face laws with
+`superpose_linear_abd_walls`, then add the core members through the ordinary
+energy homogenizer.
+
 ## Energy Homogenizer
 
 For a cell with area \(A_\text{cell}\), each member contributes:
@@ -90,7 +138,7 @@ $$
 $$
 
 The result is returned as a `LinearABDWall`, so transverse-shear coupling to
-membrane or bending terms is still outside the Phase 2 public law.
+membrane or bending terms is still outside the current public law.
 
 Example:
 

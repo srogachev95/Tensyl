@@ -1,0 +1,44 @@
+[
+  {
+    "id": "braced_orthogrid_double",
+    "source": "Nemeth 2011 Appendix E IGRID=2/3, Figure 14",
+    "constructor": "braced_orthogrid_cell",
+    "regression": "double brace has twice each diagonal-family density of the single-brace alternating case"
+  },
+  {
+    "id": "braced_orthogrid_single",
+    "source": "Nemeth 2011 Appendix E IGRID=4/5, Figure 16",
+    "constructor": "braced_orthogrid_cell",
+    "regression": "single brace is represented by two diagonal families at half density"
+  },
+  {
+    "id": "isosceles_triangle",
+    "source": "Nemeth 2011 Appendix C and Appendix E IGRID=6/7, Figure 17",
+    "constructor": "isosceles_triangle_grid_cell",
+    "regression": "equilateral special case matches equilateral_isogrid_cell"
+  },
+  {
+    "id": "kagome",
+    "source": "Nemeth 2011 Appendix C and Appendix E IGRID=8, Figure 18",
+    "constructor": "kagome_cell",
+    "regression": "matching family inputs produce the same tangent as the isosceles-triangle output"
+  },
+  {
+    "id": "hexagonal",
+    "source": "Nemeth 2011 Appendix F and Appendix E IGRID=9/10, Figure 21",
+    "constructor": "hexagonal_grid_cell",
+    "regression": "regular identical-member case is invariant under 60 degree rotation"
+  },
+  {
+    "id": "star",
+    "source": "Nemeth 2011 Appendix G and Appendix E IGRID=11/12, Figure 23",
+    "constructor": "star_cell",
+    "regression": "equilateral identical-member case is invariant under 60 degree rotation"
+  },
+  {
+    "id": "sandwich_cores",
+    "source": "Nemeth 2011 Appendices H-J, Figures 25-27",
+    "constructor": "sandwich_*_core_cell",
+    "regression": "shifted face sheets are superposed about the sandwich reference surface"
+  }
+]

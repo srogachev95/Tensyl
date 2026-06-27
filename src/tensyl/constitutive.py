@@ -145,4 +145,82 @@ class LinearABDWall:
         return rotate_linear_abd_wall(self, angle_rad)
 
 
-__all__ = ["ConstitutiveLaw", "LinearABDWall"]
+def shift_reference_surface(wall: LinearABDWall, offset: float) -> LinearABDWall:
+    """Return ``wall`` expressed about a reference surface shifted by ``offset``.
+
+    ``offset`` is the signed distance from the wall's current reference surface
+    to the new reference surface along ``+n``. Curvatures and transverse-shear
+    strains are unchanged.
+    """
+
+    checked_offset = float(offset)
+    if not np.isfinite(checked_offset):
+        msg = "offset must be finite."
+        raise ValueError(msg)
+
+    transform = np.eye(8, dtype=np.float64)
+    transform[0:3, 3:6] = -checked_offset * np.eye(3, dtype=np.float64)
+    shifted = transform.T @ wall.C8 @ transform
+    shifted = 0.5 * (shifted + shifted.T)
+    metadata = dict(wall.metadata)
+    metadata.update(
+        {
+            "reference_surface_shift": checked_offset,
+            "source": "shift_reference_surface",
+        }
+    )
+    return LinearABDWall(
+        A=shifted[0:3, 0:3],
+        B=shifted[0:3, 3:6],
+        D=shifted[3:6, 3:6],
+        As=shifted[6:8, 6:8],
+        frame=wall.frame,
+        convention=wall.convention,
+        areal_mass=wall.areal_mass,
+        metadata=metadata,
+    )
+
+
+def superpose_linear_abd_walls(
+    *walls: LinearABDWall,
+    metadata: dict[str, Any] | None = None,
+) -> LinearABDWall:
+    """Return the stiffness superposition of compatible linear wall laws."""
+
+    if not walls:
+        msg = "at least one wall is required."
+        raise ValueError(msg)
+    first = walls[0]
+    for wall in walls[1:]:
+        if wall.frame != first.frame:
+            msg = "all walls must use the same frame."
+            raise ValueError(msg)
+        if wall.convention != first.convention:
+            msg = "all walls must use the same strain convention."
+            raise ValueError(msg)
+
+    areal_mass = None
+    if all(wall.areal_mass is not None for wall in walls):
+        areal_mass = sum(wall.areal_mass for wall in walls if wall.areal_mass is not None)
+
+    combined_metadata = {"source": "superpose_linear_abd_walls", "wall_count": len(walls)}
+    if metadata is not None:
+        combined_metadata.update(metadata)
+    return LinearABDWall(
+        A=sum((wall.A for wall in walls), start=np.zeros((3, 3))),
+        B=sum((wall.B for wall in walls), start=np.zeros((3, 3))),
+        D=sum((wall.D for wall in walls), start=np.zeros((3, 3))),
+        As=sum((wall.As for wall in walls), start=np.zeros((2, 2))),
+        frame=first.frame,
+        convention=first.convention,
+        areal_mass=areal_mass,
+        metadata=combined_metadata,
+    )
+
+
+__all__ = [
+    "ConstitutiveLaw",
+    "LinearABDWall",
+    "shift_reference_surface",
+    "superpose_linear_abd_walls",
+]
