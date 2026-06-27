@@ -13,6 +13,7 @@ that will guide implementation:
 - [Constitutive kernel](constitutive_kernel.md)
 - [Level 1 homogenization](level1_homogenization.md)
 - [Geometry and wall fields](geometry_wall_fields.md)
+- [External workflows](external_workflows.md)
 - [NASA SP-8007 reference notes](references/NASA%20SP-8007.md)
 - [Nemeth equivalent-plate stiffness reference notes](references/A%20Treatise%20on%20Equivalent-Plate%20Stiffnesses.md)
 
