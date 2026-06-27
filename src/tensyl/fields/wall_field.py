@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+from importlib.metadata import PackageNotFoundError, version
 from types import MappingProxyType
 from typing import Any, Protocol
 
@@ -11,6 +13,7 @@ import numpy as np
 
 from tensyl.cells import CanonicalUnitCell
 from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.typing import FloatArray
 from tensyl.geometry import Surface, SurfacePoint
 from tensyl.homogenizers import HomogenizationResult, Homogenizer, ValidityContext
 
@@ -24,6 +27,13 @@ class WallField(Protocol):
 
 CellFactory = Callable[[Surface, SurfacePoint], CanonicalUnitCell]
 ValidityContextFactory = Callable[[SurfacePoint, CanonicalUnitCell], ValidityContext | None]
+
+
+def _tensyl_version() -> str:
+    try:
+        return version("tensyl")
+    except PackageNotFoundError:  # pragma: no cover - editable tree before install
+        return "0.0.0"
 
 
 def _finite(value: float, *, name: str) -> float:
@@ -56,6 +66,12 @@ def _metadata_for_surface(metadata: Mapping[str, Any], point: SurfacePoint) -> d
         }
     )
     return combined
+
+
+def _validate_law_matches_point(law: LinearABDWall, point: SurfacePoint, *, context: str) -> None:
+    if law.frame != point.frame:
+        msg = f"{context} law frame must match the surface point frame."
+        raise ValueError(msg)
 
 
 def _bind_wall_to_point(wall: LinearABDWall, point: SurfacePoint, *, source: str) -> LinearABDWall:
@@ -134,6 +150,9 @@ class HomogenizedWallField:
 
         point = self.surface.point_at(u, v)
         cell = self.cell_factory(self.surface, point)
+        if cell.frame != point.frame:
+            msg = "cell frame must match the surface point frame."
+            raise ValueError(msg)
         validity_context = (
             None
             if self.validity_context_factory is None
@@ -143,9 +162,7 @@ class HomogenizedWallField:
             cell,
             validity_context=validity_context,
         )
-        if result.law.frame != point.frame:
-            msg = "homogenized law frame must match the surface point frame."
-            raise ValueError(msg)
+        _validate_law_matches_point(result.law, point, context="homogenized")
         law = _bind_wall_to_point(result.law, point, source="homogenized_wall_field")
         if self.cache is not None:
             self.cache.set(u, v, law)
@@ -181,6 +198,84 @@ def _shared_validity(corners: tuple[LinearABDWall, ...]) -> Any:
     return None
 
 
+def _update_hash_with_float64(digest: Any, values: tuple[float, ...] | FloatArray) -> None:
+    array = np.ascontiguousarray(values, dtype=np.float64)
+    digest.update(array.shape[0].to_bytes(8, byteorder="big", signed=False))
+    digest.update(array.tobytes())
+
+
+def _update_hash_with_text(digest: Any, text: str) -> None:
+    encoded = text.encode("utf-8")
+    digest.update(len(encoded).to_bytes(8, byteorder="big", signed=False))
+    digest.update(encoded)
+
+
+def _sample_digest(
+    u_values: tuple[float, ...],
+    v_values: tuple[float, ...],
+    laws: tuple[tuple[LinearABDWall, ...], ...],
+) -> str:
+    digest = hashlib.sha256()
+    _update_hash_with_float64(digest, u_values)
+    _update_hash_with_float64(digest, v_values)
+    for row in laws:
+        for law in row:
+            digest.update(np.ascontiguousarray(law.C8, dtype=np.float64).tobytes())
+            _update_hash_with_float64(digest, law.frame.e1)
+            _update_hash_with_float64(digest, law.frame.e2)
+            _update_hash_with_float64(digest, law.frame.n)
+            _update_hash_with_text(digest, law.frame.label)
+            for name in law.convention.membrane_order:
+                _update_hash_with_text(digest, name)
+            for name in law.convention.bending_order:
+                _update_hash_with_text(digest, name)
+            for name in law.convention.shear_order:
+                _update_hash_with_text(digest, name)
+            digest.update(b"\x01" if law.convention.engineering_shear else b"\x00")
+            _update_hash_with_text(digest, law.convention.reference_surface)
+            _update_hash_with_text(digest, law.convention.normal_positive)
+            digest.update(b"\x00" if law.areal_mass is None else b"\x01")
+            if law.areal_mass is not None:
+                digest.update(np.float64(law.areal_mass).tobytes())
+    return digest.hexdigest()
+
+
+def _max_adjacent_c8_gradient(
+    u_values: tuple[float, ...],
+    v_values: tuple[float, ...],
+    laws: tuple[tuple[LinearABDWall, ...], ...],
+) -> float:
+    max_gradient = 0.0
+    for i, (left, right) in enumerate(zip(u_values[:-1], u_values[1:], strict=True)):
+        span = right - left
+        for j in range(len(v_values)):
+            delta = laws[i + 1][j].C8 - laws[i][j].C8
+            max_gradient = max(max_gradient, float(np.linalg.norm(delta, ord="fro") / span))
+    for j, (left, right) in enumerate(zip(v_values[:-1], v_values[1:], strict=True)):
+        span = right - left
+        for i in range(len(u_values)):
+            delta = laws[i][j + 1].C8 - laws[i][j].C8
+            max_gradient = max(max_gradient, float(np.linalg.norm(delta, ord="fro") / span))
+    return max_gradient
+
+
+def _validate_atlas_samples(
+    surface: Surface,
+    u_values: tuple[float, ...],
+    v_values: tuple[float, ...],
+    laws: tuple[tuple[LinearABDWall, ...], ...],
+) -> None:
+    convention = laws[0][0].convention
+    for i, u in enumerate(u_values):
+        for j, v in enumerate(v_values):
+            law = laws[i][j]
+            if law.convention != convention:
+                msg = "all atlas samples must use the same strain convention."
+                raise ValueError(msg)
+            point = surface.point_at(u, v)
+            _validate_law_matches_point(law, point, context="atlas sample")
+
+
 @dataclass(frozen=True, slots=True)
 class WallAtlas:
     """Rectangular bilinear atlas of sampled linear wall laws."""
@@ -198,10 +293,31 @@ class WallAtlas:
         if len(law_rows) != len(u_values) or any(len(row) != len(v_values) for row in law_rows):
             msg = "laws must have shape (len(u_values), len(v_values))."
             raise ValueError(msg)
+        _validate_atlas_samples(self.surface, u_values, v_values, law_rows)
+        metadata = dict(self.metadata)
+        metadata.setdefault("source", "wall_atlas")
+        metadata.setdefault("interpolation", "bilinear_c8")
+        metadata.update(
+            {
+                "u_values": u_values,
+                "v_values": v_values,
+                "sample_shape": (len(u_values), len(v_values)),
+                "tensyl_version": _tensyl_version(),
+                "sample_digest": _sample_digest(u_values, v_values, law_rows),
+                "sample_warning_ids": _corner_warnings(
+                    tuple(wall for row in law_rows for wall in row)
+                ),
+                "max_adjacent_c8_gradient_frobenius": _max_adjacent_c8_gradient(
+                    u_values,
+                    v_values,
+                    law_rows,
+                ),
+            }
+        )
         object.__setattr__(self, "u_values", u_values)
         object.__setattr__(self, "v_values", v_values)
         object.__setattr__(self, "laws", law_rows)
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", MappingProxyType(metadata))
 
     @classmethod
     def from_field(
