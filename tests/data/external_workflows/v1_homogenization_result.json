@@ -1,0 +1,181 @@
+{
+  "schema_name": "tensyl.external_workflow",
+  "schema_version": 1,
+  "artifact_type": "homogenization_result",
+  "producer": {
+    "name": "tensyl",
+    "version": "0.1.0"
+  },
+  "units": null,
+  "payload": {
+    "law": {
+      "tangent_c8": [
+        [
+          314219881.7753339,
+          103692065.98586018,
+          0.0,
+          60.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          103692065.98586018,
+          314218381.7753339,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          105263282.89473683,
+          0.0,
+          0.0,
+          -5.0,
+          0.0,
+          0.0
+        ],
+        [
+          60.0,
+          0.0,
+          0.0,
+          483.85784236711186,
+          138.25608798114692,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          138.25608798114692,
+          456.4578423671119,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -5.0,
+          0.0,
+          0.0,
+          146.80087719298243,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          87719673.24561404,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          87719298.24561404
+        ]
+      ],
+      "frame": {
+        "e1": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "e2": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "n": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "label": "local_tangent"
+      },
+      "strain_convention": {
+        "membrane_order": [
+          "e11",
+          "e22",
+          "g12"
+        ],
+        "bending_order": [
+          "k11",
+          "k22",
+          "k12"
+        ],
+        "shear_order": [
+          "g13",
+          "g23"
+        ],
+        "engineering_shear": true,
+        "reference_surface": "wall_mid_surface",
+        "normal_positive": "+n"
+      },
+      "areal_mass": null,
+      "metadata": {
+        "source": "energy_homogenizer",
+        "cell": {
+          "source": "unidirectional",
+          "spacing": 0.8
+        }
+      },
+      "validity": {
+        "h_over_R": 0.002,
+        "p_over_R": 0.04,
+        "p_over_L_response": 0.08,
+        "coupling_ratios": {
+          "B_fro": 0.00010326833031299523
+        },
+        "warnings": [
+          "p_over_L_response_exceeds_threshold"
+        ]
+      }
+    },
+    "validity": {
+      "h_over_R": 0.002,
+      "p_over_R": 0.04,
+      "p_over_L_response": 0.08,
+      "coupling_ratios": {
+        "B_fro": 0.00010326833031299523
+      },
+      "warnings": [
+        "p_over_L_response_exceeds_threshold"
+      ]
+    },
+    "diagnostics": {
+      "symmetric": true,
+      "positive_semidefinite": true,
+      "minimum_eigenvalue": 146.80087695548238,
+      "rank": 8,
+      "member_count": 1,
+      "cell_area": 0.8,
+      "source_equations": [
+        "Nemeth 2011 eqs. 30-39"
+      ],
+      "energy_consistent": true
+    },
+    "assumptions": [
+      "Level 1 local tangent-plane homogenization.",
+      "Centroidal beam-section stiffnesses with member eccentricity measured along +n.",
+      "Beam members use first-approximation wall kinematics."
+    ],
+    "source": "energy"
+  }
+}
