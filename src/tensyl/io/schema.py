@@ -10,6 +10,7 @@ from typing import Any, Literal, cast
 
 import numpy as np
 import yaml
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.conventions import Frame2D, StrainConvention
@@ -19,12 +20,19 @@ from tensyl.typing import FloatArray
 SCHEMA_NAME = "tensyl.external_workflow"
 SCHEMA_VERSION = 1
 
-_SUPPORTED_ARTIFACTS = {"linear_abd_wall", "homogenization_result"}
-_SUPPORTED_SOURCES = {"energy", "direct_ec", "rve", "imported"}
+type SchemaName = Literal["tensyl.external_workflow"]
+type SchemaVersion = Literal[1]
+type ArtifactType = Literal["linear_abd_wall", "homogenization_result"]
+type HomogenizationSource = Literal["energy", "direct_ec", "rve", "imported"]
+type PlainYaml = None | str | bool | int | float | list[PlainYaml] | dict[str, PlainYaml]
 
 
 class SchemaError(ValueError):
     """Raised when a Tensyl external-workflow payload is malformed."""
+
+
+class _SchemaModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
 
 def _tensyl_version() -> str:
@@ -34,15 +42,24 @@ def _tensyl_version() -> str:
         return "0.0.0"
 
 
-def _plain_value(value: Any, *, path: str) -> Any:
+def _validation_error(exc: ValidationError) -> SchemaError:
+    message = "; ".join(
+        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}" for error in exc.errors()
+    )
+    if not message:
+        message = "invalid schema payload."
+    return SchemaError(message)
+
+
+def _plain_yaml_value(value: Any, *, path: str) -> PlainYaml:
     if value is None or isinstance(value, (str, bool)):
         return value
     if isinstance(value, int) and not isinstance(value, bool):
-        return value
+        return int(value)
     if isinstance(value, float):
         if not np.isfinite(value):
             msg = f"{path} must be finite."
-            raise SchemaError(msg)
+            raise ValueError(msg)
         return value
     if isinstance(value, np.integer):
         return int(value)
@@ -50,284 +67,351 @@ def _plain_value(value: Any, *, path: str) -> Any:
         checked = float(value)
         if not np.isfinite(checked):
             msg = f"{path} must be finite."
-            raise SchemaError(msg)
+            raise ValueError(msg)
         return checked
     if isinstance(value, Mapping):
-        result: dict[str, Any] = {}
+        result: dict[str, PlainYaml] = {}
         for key, item in value.items():
             if not isinstance(key, str):
                 msg = f"{path} mapping keys must be strings."
-                raise SchemaError(msg)
-            result[key] = _plain_value(item, path=f"{path}.{key}")
+                raise ValueError(msg)
+            result[key] = _plain_yaml_value(item, path=f"{path}.{key}")
         return result
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return [_plain_value(item, path=f"{path}[]") for item in value]
+        return [_plain_yaml_value(item, path=f"{path}[]") for item in value]
     msg = f"{path} is not YAML-schema compatible."
-    raise SchemaError(msg)
+    raise ValueError(msg)
 
 
-def _mapping(value: Any, *, name: str) -> Mapping[str, Any]:
-    if not isinstance(value, Mapping):
-        msg = f"{name} must be a mapping."
-        raise SchemaError(msg)
-    return value
-
-
-def _required(mapping: Mapping[str, Any], key: str, *, name: str) -> Any:
-    if key not in mapping:
-        msg = f"{name} is missing required key {key!r}."
-        raise SchemaError(msg)
-    return mapping[key]
-
-
-def _string(value: Any, *, name: str) -> str:
-    if not isinstance(value, str):
-        msg = f"{name} must be a string."
-        raise SchemaError(msg)
-    return value
-
-
-def _optional_string(value: Any, *, name: str) -> str | None:
+def _plain_yaml_mapping(
+    value: Mapping[str, Any] | None,
+    *,
+    path: str,
+) -> dict[str, PlainYaml] | None:
     if value is None:
         return None
-    return _string(value, name=name)
+    return cast(dict[str, PlainYaml], _plain_yaml_value(value, path=path))
 
 
-def _float(value: Any, *, name: str) -> float:
+def _finite_float(value: Any, *, path: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        msg = f"{name} must be a finite number."
-        raise SchemaError(msg)
+        msg = f"{path} must be a finite number."
+        raise ValueError(msg)
     checked = float(value)
     if not np.isfinite(checked):
-        msg = f"{name} must be finite."
-        raise SchemaError(msg)
+        msg = f"{path} must be finite."
+        raise ValueError(msg)
     return checked
 
 
-def _optional_float(value: Any, *, name: str) -> float | None:
-    if value is None:
-        return None
-    return _float(value, name=name)
-
-
-def _float_vector(value: Any, *, length: int, name: str) -> FloatArray:
+def _finite_vector(value: Any, *, length: int, path: str) -> list[float]:
     if not isinstance(value, Sequence) or isinstance(value, (str, bytes, bytearray)):
-        msg = f"{name} must be a sequence."
-        raise SchemaError(msg)
+        msg = f"{path} must be a sequence."
+        raise ValueError(msg)
     if len(value) != length:
-        msg = f"{name} must have length {length}."
-        raise SchemaError(msg)
-    return np.array([_float(item, name=f"{name}[]") for item in value], dtype=np.float64)
+        msg = f"{path} must have length {length}."
+        raise ValueError(msg)
+    return [_finite_float(item, path=f"{path}[]") for item in value]
 
 
-def _float_matrix(value: Any, *, shape: tuple[int, int], name: str) -> FloatArray:
+def _finite_matrix(value: Any, *, shape: tuple[int, int], path: str) -> list[list[float]]:
     if not isinstance(value, Sequence) or isinstance(value, (str, bytes, bytearray)):
-        msg = f"{name} must be a sequence of rows."
-        raise SchemaError(msg)
+        msg = f"{path} must be a sequence of rows."
+        raise ValueError(msg)
     rows, cols = shape
     if len(value) != rows:
-        msg = f"{name} must have {rows} rows."
-        raise SchemaError(msg)
-    matrix = []
-    for index, row in enumerate(value):
-        matrix.append(_float_vector(row, length=cols, name=f"{name}[{index}]"))
-    return np.array(matrix, dtype=np.float64)
+        msg = f"{path} must have {rows} rows."
+        raise ValueError(msg)
+    return [
+        _finite_vector(row, length=cols, path=f"{path}[{index}]") for index, row in enumerate(value)
+    ]
 
 
-def _frame_to_schema(frame: Frame2D) -> dict[str, Any]:
-    return {
-        "e1": frame.e1.tolist(),
-        "e2": frame.e2.tolist(),
-        "n": frame.n.tolist(),
-        "label": frame.label,
-    }
+def _as_array(values: Sequence[float] | Sequence[Sequence[float]]) -> FloatArray:
+    return np.array(values, dtype=np.float64)
 
 
-def _frame_from_schema(value: Any) -> Frame2D:
-    payload = _mapping(value, name="frame")
-    return Frame2D(
-        e1=_float_vector(_required(payload, "e1", name="frame"), length=3, name="frame.e1"),
-        e2=_float_vector(_required(payload, "e2", name="frame"), length=3, name="frame.e2"),
-        n=_float_vector(_required(payload, "n", name="frame"), length=3, name="frame.n"),
-        label=_string(_required(payload, "label", name="frame"), name="frame.label"),
-    )
+class ProducerSchema(_SchemaModel):
+    name: str
+    version: str
+
+    @classmethod
+    def from_tensyl(cls) -> ProducerSchema:
+        return cls(name="tensyl", version=_tensyl_version())
 
 
-def _convention_to_schema(convention: StrainConvention) -> dict[str, Any]:
-    return {
-        "membrane_order": list(convention.membrane_order),
-        "bending_order": list(convention.bending_order),
-        "shear_order": list(convention.shear_order),
-        "engineering_shear": convention.engineering_shear,
-        "reference_surface": convention.reference_surface,
-        "normal_positive": convention.normal_positive,
-    }
+class FrameSchema(_SchemaModel):
+    e1: list[float]
+    e2: list[float]
+    n: list[float]
+    label: str
+
+    @field_validator("e1", "e2", "n", mode="before")
+    @classmethod
+    def _validate_vector(cls, value: Any) -> list[float]:
+        return _finite_vector(value, length=3, path="frame vector")
+
+    @classmethod
+    def from_tensyl(cls, frame: Frame2D) -> FrameSchema:
+        return cls(
+            e1=frame.e1.tolist(),
+            e2=frame.e2.tolist(),
+            n=frame.n.tolist(),
+            label=frame.label,
+        )
+
+    def to_tensyl(self) -> Frame2D:
+        return Frame2D(
+            e1=_as_array(self.e1),
+            e2=_as_array(self.e2),
+            n=_as_array(self.n),
+            label=self.label,
+        )
 
 
-def _string_tuple(value: Any, *, name: str) -> tuple[str, ...]:
-    if not isinstance(value, Sequence) or isinstance(value, (str, bytes, bytearray)):
-        msg = f"{name} must be a sequence of strings."
-        raise SchemaError(msg)
-    return tuple(_string(item, name=f"{name}[]") for item in value)
+class StrainConventionSchema(_SchemaModel):
+    membrane_order: tuple[str, str, str]
+    bending_order: tuple[str, str, str]
+    shear_order: tuple[str, str]
+    engineering_shear: bool
+    reference_surface: str
+    normal_positive: str
+
+    @classmethod
+    def from_tensyl(cls, convention: StrainConvention) -> StrainConventionSchema:
+        return cls(
+            membrane_order=convention.membrane_order,
+            bending_order=convention.bending_order,
+            shear_order=convention.shear_order,
+            engineering_shear=convention.engineering_shear,
+            reference_surface=convention.reference_surface,
+            normal_positive=convention.normal_positive,
+        )
+
+    def to_tensyl(self) -> StrainConvention:
+        return StrainConvention(
+            membrane_order=self.membrane_order,
+            bending_order=self.bending_order,
+            shear_order=self.shear_order,
+            engineering_shear=self.engineering_shear,
+            reference_surface=self.reference_surface,
+            normal_positive=self.normal_positive,
+        )
 
 
-def _string_tuple3(value: Any, *, name: str) -> tuple[str, str, str]:
-    items = _string_tuple(value, name=name)
-    if len(items) != 3:
-        msg = f"{name} must have length 3."
-        raise SchemaError(msg)
-    return items
+class ValidityReportSchema(_SchemaModel):
+    h_over_R: float | None = Field(default=None, allow_inf_nan=False)
+    p_over_R: float | None = Field(default=None, allow_inf_nan=False)
+    p_over_L_response: float | None = Field(default=None, allow_inf_nan=False)
+    coupling_ratios: dict[str, float]
+    warnings: tuple[str, ...]
+
+    @field_validator("h_over_R", "p_over_R", "p_over_L_response", mode="before")
+    @classmethod
+    def _validate_optional_float(cls, value: Any) -> float | None:
+        if value is None:
+            return None
+        return _finite_float(value, path="validity ratio")
+
+    @field_validator("coupling_ratios", mode="before")
+    @classmethod
+    def _validate_coupling_ratios(cls, value: Any) -> dict[str, float]:
+        if not isinstance(value, Mapping):
+            msg = "coupling_ratios must be a mapping."
+            raise ValueError(msg)
+        return {
+            str(key): _finite_float(item, path=f"coupling_ratios.{key}")
+            for key, item in value.items()
+        }
+
+    @classmethod
+    def from_tensyl(cls, validity: ValidityReport) -> ValidityReportSchema:
+        return cls(
+            h_over_R=validity.h_over_R,
+            p_over_R=validity.p_over_R,
+            p_over_L_response=validity.p_over_L_response,
+            coupling_ratios=dict(validity.coupling_ratios),
+            warnings=validity.warnings,
+        )
+
+    def to_tensyl(self) -> ValidityReport:
+        return ValidityReport(
+            h_over_R=self.h_over_R,
+            p_over_R=self.p_over_R,
+            p_over_L_response=self.p_over_L_response,
+            coupling_ratios=self.coupling_ratios,
+            warnings=self.warnings,
+        )
 
 
-def _string_tuple2(value: Any, *, name: str) -> tuple[str, str]:
-    items = _string_tuple(value, name=name)
-    if len(items) != 2:
-        msg = f"{name} must have length 2."
-        raise SchemaError(msg)
-    return items
+class LinearABDWallSchema(_SchemaModel):
+    tangent_c8: list[list[float]]
+    frame: FrameSchema
+    strain_convention: StrainConventionSchema
+    areal_mass: float | None = Field(default=None, allow_inf_nan=False)
+    metadata: dict[str, PlainYaml]
+    validity: ValidityReportSchema | None
+
+    @field_validator("tangent_c8", mode="before")
+    @classmethod
+    def _validate_tangent(cls, value: Any) -> list[list[float]]:
+        return _finite_matrix(value, shape=(8, 8), path="C8")
+
+    @field_validator("areal_mass", mode="before")
+    @classmethod
+    def _validate_optional_areal_mass(cls, value: Any) -> float | None:
+        if value is None:
+            return None
+        return _finite_float(value, path="areal_mass")
+
+    @field_validator("metadata", mode="before")
+    @classmethod
+    def _validate_metadata(cls, value: Any) -> dict[str, PlainYaml]:
+        checked = _plain_yaml_mapping(value, path="metadata")
+        return {} if checked is None else checked
+
+    @classmethod
+    def from_tensyl(cls, wall: LinearABDWall) -> LinearABDWallSchema:
+        if wall.validity is not None and not isinstance(wall.validity, ValidityReport):
+            msg = "validity must be None or a ValidityReport for schema export."
+            raise SchemaError(msg)
+        return cls(
+            tangent_c8=wall.C8.tolist(),
+            frame=FrameSchema.from_tensyl(wall.frame),
+            strain_convention=StrainConventionSchema.from_tensyl(wall.convention),
+            areal_mass=wall.areal_mass,
+            metadata=cast(dict[str, PlainYaml], _plain_yaml_value(wall.metadata, path="metadata")),
+            validity=(
+                None if wall.validity is None else ValidityReportSchema.from_tensyl(wall.validity)
+            ),
+        )
+
+    def to_tensyl(self) -> LinearABDWall:
+        return LinearABDWall.from_tangent(
+            _as_array(self.tangent_c8),
+            frame=self.frame.to_tensyl(),
+            convention=self.strain_convention.to_tensyl(),
+            areal_mass=self.areal_mass,
+            metadata=self.metadata,
+            validity=None if self.validity is None else self.validity.to_tensyl(),
+        )
 
 
-def _convention_from_schema(value: Any) -> StrainConvention:
-    payload = _mapping(value, name="strain_convention")
-    engineering_shear = _required(payload, "engineering_shear", name="strain_convention")
-    if not isinstance(engineering_shear, bool):
-        msg = "strain_convention.engineering_shear must be a boolean."
-        raise SchemaError(msg)
-    return StrainConvention(
-        membrane_order=_string_tuple3(
-            _required(payload, "membrane_order", name="strain_convention"),
-            name="strain_convention.membrane_order",
-        ),
-        bending_order=_string_tuple3(
-            _required(payload, "bending_order", name="strain_convention"),
-            name="strain_convention.bending_order",
-        ),
-        shear_order=_string_tuple2(
-            _required(payload, "shear_order", name="strain_convention"),
-            name="strain_convention.shear_order",
-        ),
-        engineering_shear=engineering_shear,
-        reference_surface=_string(
-            _required(payload, "reference_surface", name="strain_convention"),
-            name="strain_convention.reference_surface",
-        ),
-        normal_positive=_string(
-            _required(payload, "normal_positive", name="strain_convention"),
-            name="strain_convention.normal_positive",
-        ),
-    )
+class HomogenizationResultSchema(_SchemaModel):
+    law: LinearABDWallSchema
+    validity: ValidityReportSchema
+    diagnostics: dict[str, PlainYaml]
+    assumptions: tuple[str, ...]
+    source: HomogenizationSource
+
+    @field_validator("diagnostics", mode="before")
+    @classmethod
+    def _validate_diagnostics(cls, value: Any) -> dict[str, PlainYaml]:
+        checked = _plain_yaml_mapping(value, path="diagnostics")
+        return {} if checked is None else checked
+
+    @model_validator(mode="after")
+    def _validate_law_validity(self) -> HomogenizationResultSchema:
+        if self.law.validity is not None and self.law.validity != self.validity:
+            msg = "homogenization_result law validity does not match result validity."
+            raise ValueError(msg)
+        return self
+
+    @classmethod
+    def from_tensyl(cls, result: HomogenizationResult) -> HomogenizationResultSchema:
+        return cls(
+            law=LinearABDWallSchema.from_tensyl(result.law),
+            validity=ValidityReportSchema.from_tensyl(result.validity),
+            diagnostics=cast(
+                dict[str, PlainYaml],
+                _plain_yaml_value(result.diagnostics, path="diagnostics"),
+            ),
+            assumptions=result.assumptions,
+            source=result.source,
+        )
+
+    def to_tensyl(self) -> HomogenizationResult:
+        validity = self.validity.to_tensyl()
+        law = self.law.to_tensyl()
+        return HomogenizationResult(
+            law=law.with_validity(validity),
+            validity=validity,
+            diagnostics=self.diagnostics,
+            assumptions=self.assumptions,
+            source=self.source,
+        )
 
 
-def _validity_to_schema(validity: Any) -> dict[str, Any] | None:
-    if validity is None:
-        return None
-    if not isinstance(validity, ValidityReport):
-        msg = "validity must be None or a ValidityReport for schema export."
-        raise SchemaError(msg)
-    return {
-        "h_over_R": validity.h_over_R,
-        "p_over_R": validity.p_over_R,
-        "p_over_L_response": validity.p_over_L_response,
-        "coupling_ratios": _plain_value(validity.coupling_ratios, path="validity.coupling_ratios"),
-        "warnings": list(validity.warnings),
-    }
+class ExternalWorkflowEnvelope(_SchemaModel):
+    schema_name: SchemaName
+    schema_version: SchemaVersion
+    artifact_type: ArtifactType
+    producer: ProducerSchema
+    units: dict[str, PlainYaml] | None = None
+    payload: LinearABDWallSchema | HomogenizationResultSchema
 
+    @field_validator("units", mode="before")
+    @classmethod
+    def _validate_units(cls, value: Any) -> dict[str, PlainYaml] | None:
+        return _plain_yaml_mapping(value, path="units")
 
-def _validity_from_schema(value: Any) -> ValidityReport | None:
-    if value is None:
-        return None
-    payload = _mapping(value, name="validity")
-    coupling_ratios = _mapping(
-        _required(payload, "coupling_ratios", name="validity"),
-        name="validity.coupling_ratios",
-    )
-    return ValidityReport(
-        h_over_R=_optional_float(
-            _required(payload, "h_over_R", name="validity"), name="validity.h_over_R"
-        ),
-        p_over_R=_optional_float(
-            _required(payload, "p_over_R", name="validity"), name="validity.p_over_R"
-        ),
-        p_over_L_response=_optional_float(
-            _required(payload, "p_over_L_response", name="validity"),
-            name="validity.p_over_L_response",
-        ),
-        coupling_ratios={
-            _string(key, name="validity.coupling_ratios key"): _float(
-                item, name=f"validity.coupling_ratios.{key}"
+    @model_validator(mode="after")
+    def _validate_artifact_payload(self) -> ExternalWorkflowEnvelope:
+        if self.artifact_type == "linear_abd_wall" and not isinstance(
+            self.payload, LinearABDWallSchema
+        ):
+            msg = "linear_abd_wall artifact requires a LinearABDWall payload."
+            raise ValueError(msg)
+        if self.artifact_type == "homogenization_result" and not isinstance(
+            self.payload, HomogenizationResultSchema
+        ):
+            msg = "homogenization_result artifact requires a HomogenizationResult payload."
+            raise ValueError(msg)
+        return self
+
+    @classmethod
+    def from_tensyl(
+        cls,
+        obj: LinearABDWall | HomogenizationResult,
+        *,
+        units: Mapping[str, Any] | None = None,
+    ) -> ExternalWorkflowEnvelope:
+        if isinstance(obj, HomogenizationResult):
+            artifact_type: ArtifactType = "homogenization_result"
+            payload: LinearABDWallSchema | HomogenizationResultSchema = (
+                HomogenizationResultSchema.from_tensyl(obj)
             )
-            for key, item in coupling_ratios.items()
-        },
-        warnings=_string_tuple(
-            _required(payload, "warnings", name="validity"), name="validity.warnings"
-        ),
-    )
+        elif isinstance(obj, LinearABDWall):
+            artifact_type = "linear_abd_wall"
+            payload = LinearABDWallSchema.from_tensyl(obj)
+        else:
+            msg = f"unsupported schema object type {type(obj).__name__!r}."
+            raise SchemaError(msg)
 
+        return cls(
+            schema_name=SCHEMA_NAME,
+            schema_version=SCHEMA_VERSION,
+            artifact_type=artifact_type,
+            producer=ProducerSchema.from_tensyl(),
+            units=_plain_yaml_mapping(units, path="units"),
+            payload=payload,
+        )
 
-def _wall_to_payload(wall: LinearABDWall) -> dict[str, Any]:
-    return {
-        "tangent_c8": wall.C8.tolist(),
-        "frame": _frame_to_schema(wall.frame),
-        "strain_convention": _convention_to_schema(wall.convention),
-        "areal_mass": wall.areal_mass,
-        "metadata": _plain_value(wall.metadata, path="metadata"),
-        "validity": _validity_to_schema(wall.validity),
-    }
-
-
-def _wall_from_payload(value: Any) -> LinearABDWall:
-    payload = _mapping(value, name="payload")
-    return LinearABDWall.from_tangent(
-        _float_matrix(_required(payload, "tangent_c8", name="payload"), shape=(8, 8), name="C8"),
-        frame=_frame_from_schema(_required(payload, "frame", name="payload")),
-        convention=_convention_from_schema(_required(payload, "strain_convention", name="payload")),
-        areal_mass=_optional_float(
-            _required(payload, "areal_mass", name="payload"),
-            name="areal_mass",
-        ),
-        metadata=_mapping(_required(payload, "metadata", name="payload"), name="metadata"),
-        validity=_validity_from_schema(_required(payload, "validity", name="payload")),
-    )
-
-
-def _result_to_payload(result: HomogenizationResult) -> dict[str, Any]:
-    return {
-        "law": _wall_to_payload(result.law),
-        "validity": _validity_to_schema(result.validity),
-        "diagnostics": _plain_value(result.diagnostics, path="diagnostics"),
-        "assumptions": list(result.assumptions),
-        "source": result.source,
-    }
-
-
-def _result_from_payload(value: Any) -> HomogenizationResult:
-    payload = _mapping(value, name="payload")
-    validity = _validity_from_schema(_required(payload, "validity", name="payload"))
-    if validity is None:
-        msg = "homogenization_result validity must not be null."
+    def to_tensyl(self) -> LinearABDWall | HomogenizationResult:
+        if self.artifact_type == "linear_abd_wall" and isinstance(
+            self.payload, LinearABDWallSchema
+        ):
+            return self.payload.to_tensyl()
+        if self.artifact_type == "homogenization_result" and isinstance(
+            self.payload, HomogenizationResultSchema
+        ):
+            return self.payload.to_tensyl()
+        msg = "artifact type and payload are inconsistent."
         raise SchemaError(msg)
-    law = _wall_from_payload(_required(payload, "law", name="payload"))
-    if law.validity is not None and law.validity != validity:
-        msg = "homogenization_result law validity does not match result validity."
-        raise SchemaError(msg)
-    source = _string(_required(payload, "source", name="payload"), name="source")
-    if source not in _SUPPORTED_SOURCES:
-        msg = f"unsupported homogenization source {source!r}."
-        raise SchemaError(msg)
-    diagnostics = _plain_value(
-        _mapping(_required(payload, "diagnostics", name="payload"), name="diagnostics"),
-        path="diagnostics",
-    )
-    assumptions = _string_tuple(
-        _required(payload, "assumptions", name="payload"), name="assumptions"
-    )
-    return HomogenizationResult(
-        law=law.with_validity(validity),
-        validity=validity,
-        diagnostics=diagnostics,
-        assumptions=assumptions,
-        source=cast(Literal["energy", "direct_ec", "rve", "imported"], source),
-    )
+
+
+def _model_dump(model: BaseModel) -> dict[str, Any]:
+    return model.model_dump(mode="json")
 
 
 def to_schema(
@@ -337,52 +421,23 @@ def to_schema(
 ) -> dict[str, Any]:
     """Return a versioned solver-neutral schema payload for ``obj``."""
 
-    if isinstance(obj, HomogenizationResult):
-        artifact_type = "homogenization_result"
-        payload = _result_to_payload(obj)
-    elif isinstance(obj, LinearABDWall):
-        artifact_type = "linear_abd_wall"
-        payload = _wall_to_payload(obj)
-    else:
-        msg = f"unsupported schema object type {type(obj).__name__!r}."
-        raise SchemaError(msg)
-
-    return {
-        "schema_name": SCHEMA_NAME,
-        "schema_version": SCHEMA_VERSION,
-        "artifact_type": artifact_type,
-        "producer": {"name": "tensyl", "version": _tensyl_version()},
-        "units": None if units is None else _plain_value(units, path="units"),
-        "payload": payload,
-    }
+    try:
+        return _model_dump(ExternalWorkflowEnvelope.from_tensyl(obj, units=units))
+    except ValidationError as exc:
+        raise _validation_error(exc) from exc
+    except ValueError as exc:
+        raise SchemaError(str(exc)) from exc
 
 
 def from_schema(payload: Mapping[str, Any]) -> LinearABDWall | HomogenizationResult:
     """Reconstruct a Tensyl object from a versioned solver-neutral schema payload."""
 
-    root = _mapping(payload, name="schema")
-    schema_name = _string(_required(root, "schema_name", name="schema"), name="schema_name")
-    if schema_name != SCHEMA_NAME:
-        msg = f"unsupported schema_name {schema_name!r}."
-        raise SchemaError(msg)
-    schema_version = _required(root, "schema_version", name="schema")
-    if schema_version != SCHEMA_VERSION:
-        msg = f"unsupported schema_version {schema_version!r}."
-        raise SchemaError(msg)
-    artifact_type = _string(_required(root, "artifact_type", name="schema"), name="artifact_type")
-    if artifact_type not in _SUPPORTED_ARTIFACTS:
-        msg = f"unsupported artifact_type {artifact_type!r}."
-        raise SchemaError(msg)
-
-    _mapping(_required(root, "producer", name="schema"), name="producer")
-    units = _required(root, "units", name="schema")
-    if units is not None:
-        _plain_value(_mapping(units, name="units"), path="units")
-
-    artifact_payload = _required(root, "payload", name="schema")
-    if artifact_type == "linear_abd_wall":
-        return _wall_from_payload(artifact_payload)
-    return _result_from_payload(artifact_payload)
+    try:
+        return ExternalWorkflowEnvelope.model_validate(payload).to_tensyl()
+    except ValidationError as exc:
+        raise _validation_error(exc) from exc
+    except ValueError as exc:
+        raise SchemaError(str(exc)) from exc
 
 
 def to_yaml(

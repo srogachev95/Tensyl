@@ -116,9 +116,9 @@ def test_yaml_file_round_trip(tmp_path) -> None:
 @pytest.mark.parametrize(
     ("key", "value", "match"),
     [
-        ("schema_version", SCHEMA_VERSION + 1, "unsupported schema_version"),
-        ("artifact_type", "nastran_property", "unsupported artifact_type"),
-        ("schema_name", "other.schema", "unsupported schema_name"),
+        ("schema_version", SCHEMA_VERSION + 1, "schema_version: Input should be 1"),
+        ("artifact_type", "nastran_property", "artifact_type: Input should be"),
+        ("schema_name", "other.schema", "schema_name: Input should be"),
     ],
 )
 def test_schema_rejects_unsupported_root_fields(key: str, value: object, match: str) -> None:
@@ -126,6 +126,14 @@ def test_schema_rejects_unsupported_root_fields(key: str, value: object, match: 
     payload[key] = value
 
     with pytest.raises(SchemaError, match=match):
+        from_schema(payload)
+
+
+def test_schema_rejects_extra_fields() -> None:
+    payload = to_schema(_wall())
+    payload["unexpected"] = True
+
+    with pytest.raises(SchemaError, match="unexpected: Extra inputs are not permitted"):
         from_schema(payload)
 
 
