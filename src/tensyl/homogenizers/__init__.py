@@ -1,6 +1,6 @@
-"""Level 1 equivalent-wall homogenizers."""
+"""Tangent-plane equivalent-wall homogenizers."""
 
-from tensyl.homogenizers.level1 import (
+from tensyl.homogenizers.tangent_plane import (
     DirectECHomogenizer,
     EnergyHomogenizer,
     HomogenizationFailure,

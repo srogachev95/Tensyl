@@ -13,7 +13,7 @@ extra_javascript:
 nav:
   - Home: index.md
   - Constitutive Kernel: constitutive_kernel.md
-  - Level 1 Homogenization: level1_homogenization.md
+  - Tangent-Plane Homogenization: tangent_plane_homogenization.md
   - Geometry and Wall Fields: geometry_wall_fields.md
   - External Workflows: external_workflows.md
   - Development and Releases: development.md

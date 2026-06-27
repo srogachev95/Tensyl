@@ -1,4 +1,4 @@
-"""Canonical Level 1 stiffener-cell value objects and constructors."""
+"""Canonical tangent-plane stiffener-cell value objects and constructors."""
 
 from __future__ import annotations
 
@@ -87,7 +87,7 @@ class CellEdge:
 
 @dataclass(frozen=True, slots=True)
 class CanonicalUnitCell:
-    """Canonical tangent-plane cell consumed by Level 1 homogenizers."""
+    """Canonical tangent-plane cell consumed by tangent-plane homogenizers."""
 
     area: float
     skin: LinearABDWall

@@ -11,7 +11,7 @@ that will guide implementation:
 - [Design review](tensyl-design-review.md)
 - [White Paper](white_paper.md)
 - [Constitutive kernel](constitutive_kernel.md)
-- [Level 1 homogenization](level1_homogenization.md)
+- [Tangent-plane homogenization](tangent_plane_homogenization.md)
 - [Geometry and wall fields](geometry_wall_fields.md)
 - [External workflows](external_workflows.md)
 - [NASA SP-8007 reference notes](references/NASA%20SP-8007.md)

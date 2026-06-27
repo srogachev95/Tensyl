@@ -18,7 +18,7 @@ $$
 \boxed{\text{Compute a local equivalent-wall constitutive law; embed that law into geometry-specific shell kinematics.}}
 $$
 
-The library should therefore not begin as a collection of separate calculators for barrels, domes, plates, orthogrids, isogrids, and Kagome grids. It should begin as a **constitutive kernel**. That kernel computes a local wall law from materials, laminate skins, beam sections, stiffener families, and unit cells. Geometry then enters through a separate embedding layer: plates, cylinders, spherical caps, ellipsoids, and general parametric surfaces provide frames, metrics, curvatures, integration measures, and strain-displacement operators, but they do not alter the Level 1 local wall homogenization unless an explicitly higher-fidelity curved-cell model is selected.
+The library should therefore not begin as a collection of separate calculators for barrels, domes, plates, orthogrids, isogrids, and Kagome grids. It should begin as a **constitutive kernel**. That kernel computes a local wall law from materials, laminate skins, beam sections, stiffener families, and unit cells. Geometry then enters through a separate embedding layer: plates, cylinders, spherical caps, ellipsoids, and general parametric surfaces provide frames, metrics, curvatures, integration measures, and strain-displacement operators, but they do not alter the local tangent-plane wall homogenization unless an explicitly higher-fidelity curved-cell model is selected.
 
 The primary output is not a scalar equivalent modulus, scalar equivalent thickness, or single smeared isotropic material. The primary output is a constitutive operator whose first implementation is a linear wall law in laminated-plate notation:
 
@@ -54,7 +54,7 @@ The main architectural changes proposed in this rewrite are:
 
 5. **Stage shell analysis and FE export behind adapters.** The MVP should be a solver-agnostic constitutive platform. Shell embedding, finite-element property export, FE-RVE cell solves, and optimization interfaces should be adapters or optional packages rather than hard dependencies of the mechanics kernel.
 
-For stiffeners about 1 inch tall on radii greater than 100 inches, the local curvature ratio $h_s/R$ is approximately $0.01$, which is favorable for a Level 1 tangent-plane homogenization. However, the cell pitch, target mode wavelength, local curvature variation, and stiffener topology must also be checked. Homogenization is a scale-separated approximation, not a universal replacement for a discrete model [Sanchez-Palencia 1980; Bensoussan et al. 1978; Nemeth 2011].
+For stiffeners about 1 inch tall on radii greater than 100 inches, the local curvature ratio $h_s/R$ is approximately $0.01$, which is favorable for tangent-plane homogenization. However, the cell pitch, target mode wavelength, local curvature variation, and stiffener topology must also be checked. Homogenization is a scale-separated approximation, not a universal replacement for a discrete model [Sanchez-Palencia 1980; Bensoussan et al. 1978; Nemeth 2011].
 
 ---
 
@@ -75,7 +75,7 @@ The library is therefore best understood as a **constitutive kernel plus adapter
 
 ### 1.2 What the library is not
 
-The Level 1 implementation is not a local-stress recovery tool, a certification-grade buckling solver, or a replacement for detailed finite-element modeling. It should not claim to resolve:
+The tangent-plane implementation is not a local-stress recovery tool, a certification-grade buckling solver, or a replacement for detailed finite-element modeling. It should not claim to resolve:
 
 - local skin buckling between stiffeners;
 - stiffener crippling;
@@ -124,7 +124,7 @@ Nemeth's report is the primary basis for the MVP because it provides:
 - nonhomogeneous specially orthotropic stiffener section capability;
 - canonical stiffener configurations including orthogonal grids, braced orthogrids, isosceles-triangle/isogrid-like grids, Kagome grids, hexagonal grids, star cells, and sandwich-plate cores [Nemeth 2011].
 
-The present library should preserve that traceability. Equations, conventions, and test cases should be traceable to the NASA report where the Level 1 implementation is derived from it.
+The present library should preserve that traceability. Equations, conventions, and test cases should be traceable to the NASA report where the tangent-plane implementation is derived from it.
 
 ### 2.2 Laminated-plate and first-order shear-deformation theory
 
@@ -134,27 +134,27 @@ A key reason to retain this notation is interoperability. Structural analysts al
 
 ### 2.3 Homogenization and scale separation
 
-The Level 1 formulation is a classical scale-separated model. It assumes the cell size and stiffener height are small relative to geometric radii and structural response length scales. This aligns with the broader homogenization literature, in which a heterogeneous medium is replaced by an effective continuum when the microstructural length scale is sufficiently small relative to the macroscopic variation scale [Bensoussan et al. 1978; Sanchez-Palencia 1980; Bakhvalov and Panasenko 1989].
+The tangent-plane formulation is a classical scale-separated model. It assumes the cell size and stiffener height are small relative to geometric radii and structural response length scales. This aligns with the broader homogenization literature, in which a heterogeneous medium is replaced by an effective continuum when the microstructural length scale is sufficiently small relative to the macroscopic variation scale [Bensoussan et al. 1978; Sanchez-Palencia 1980; Bakhvalov and Panasenko 1989].
 
 Modern work on higher-order and computational homogenization reinforces the need to encode validity boundaries. Recent second-order homogenization of beam networks shows that strain-gradient terms can materially improve accuracy when gradients are significant, while two-scale computational homogenization of truss-based lattices highlights the value and cost of RVE-based microproblem solves [Ye et al. 2024; Danesh et al. 2024; Guo et al. 2024; De Souza Neto and Feijóo 2008]. These results do not undermine the MVP. They justify a staged architecture that begins with classical first-order wall laws and leaves explicit extension points for FE-RVE, higher-order, and micropolar or strain-gradient models.
 
 ---
 
-## 3. Scope and Fidelity Ladder
+## 3. Scope and Model Families
 
-The library should expose a fidelity ladder rather than a single implied truth model.
+The library should expose named model families rather than a single implied truth model. The names should describe the modeling assumption that matters to an analyst.
 
-### 3.1 Level 0: skin-only laminate or isotropic plate
+### 3.1 Skin-only laminate or isotropic plate
 
-Level 0 computes a conventional plate or laminate constitutive law without stiffener homogenization. It is useful for testing, baseline comparison, and skin-only regions.
+The skin-only family computes a conventional plate or laminate constitutive law without stiffener homogenization. It is useful for testing, baseline comparison, and skin-only regions.
 
 Inputs include isotropic materials, orthotropic plies, ply angles, ply thicknesses, transverse-shear correction factors, and a reference surface. Outputs are $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ blocks.
 
-### 3.2 Level 1: local tangent-plane equivalent wall
+### 3.2 Tangent-plane equivalent wall
 
-Level 1 is the initial production target. It treats the repeating stiffened wall cell as locally flat in the tangent plane. Curvature is used in shell kinematics and validity checks, but not in local homogenization.
+Tangent-plane homogenization is the initial production target. It treats the repeating stiffened wall cell as locally flat in the tangent plane. Curvature is used in shell kinematics and validity checks, but not in local homogenization.
 
-This level is appropriate when:
+This model family is appropriate when:
 
 $$
 \frac{h_s}{R_\text{min}} \ll 1,
@@ -166,15 +166,15 @@ $$
 
 where $h_s$ is a characteristic stiffener height, $p$ is a characteristic cell pitch, $R_\text{min}$ is the smaller local radius of curvature, and $L_\text{response}$ is the relevant deformation or buckling wavelength.
 
-The Level 1 wall law may be computed by:
+The tangent-plane wall law may be computed by:
 
 - direct equilibrium-compatibility formulas for canonical rectilinear families;
 - the reference energy-equivalence beam-cell method;
 - later, an FE-RVE method that reduces to a linear constitutive law in the same convention.
 
-### 3.3 Level 2: spatially varying wall fields
+### 3.3 Spatially varying wall fields
 
-Level 2 retains the Level 1 local homogenizer but allows the wall law to vary over a surface:
+Spatial wall fields retain the local tangent-plane homogenizer but allow the wall law to vary over a surface:
 
 $$
 \mathbf C_\text{wall}=\mathbf C_\text{wall}(u,v).
@@ -182,17 +182,17 @@ $$
 
 This is necessary for domes, ellipsoids, tapered barrels, variable-pitch stiffeners, geodesic or principal-direction stiffeners, and manufacturing-driven grid layouts where local spacing or orientation is not constant.
 
-The key new abstraction at this level is `WallField`, not a new constitutive theory.
+The key new abstraction is `WallField`, not a new constitutive theory.
 
-### 3.4 Level 3: FE-RVE or cell-problem homogenization
+### 3.4 FE-RVE or cell-problem homogenization
 
-Level 3 introduces finite-element or numerical RVE solves for cells that cannot be represented adequately by analytic beam-member energy. Examples include open-section warping effects, local eccentricity details, nonlinear material behavior, contact-like assumptions, complex intersections, or non-beam stiffener geometry.
+FE-RVE and cell-problem homogenization introduce numerical solves for cells that cannot be represented adequately by analytic beam-member energy. Examples include open-section warping effects, local eccentricity details, nonlinear material behavior, contact-like assumptions, complex intersections, or non-beam stiffener geometry.
 
-The Level 3 result should still implement `ConstitutiveLaw`. For linear problems, it may return the same $8\times 8$ tangent as Level 1. For nonlinear problems, it may return a state-dependent tangent.
+The numerical homogenization result should still implement `ConstitutiveLaw`. For linear problems, it may return the same $8\times 8$ tangent shape as tangent-plane homogenization. For nonlinear problems, it may return a state-dependent tangent.
 
-### 3.5 Level 4: higher-order, strain-gradient, micropolar, or curved-cell models
+### 3.5 Higher-order, strain-gradient, micropolar, or curved-cell models
 
-Level 4 is a research extension, not an MVP requirement. It covers models where a classical Cauchy-like wall law is insufficient. Candidate extensions include:
+Higher-order modeling is a research extension, not an MVP requirement. It covers models where a classical Cauchy-like wall law is insufficient. Candidate extensions include:
 
 - strain-gradient wall energy, with $W(\boldsymbol\eta,\nabla\boldsymbol\eta)$;
 - micropolar or Cosserat-like lattice continua when rotational degrees of freedom are essential;
@@ -209,7 +209,7 @@ W(\boldsymbol\eta,\nabla\boldsymbol\eta)
 \frac{1}{2}\nabla\boldsymbol\eta : \mathbf H : \nabla\boldsymbol\eta.
 $$
 
-This should not be forced into the Level 1 API. Instead, the public interface should be broad enough that such a law can later satisfy `ConstitutiveLaw` or a richer `HigherOrderConstitutiveLaw` protocol.
+This should not be forced into the tangent-plane API. Instead, the public interface should be broad enough that such a law can later satisfy `ConstitutiveLaw` or a richer `HigherOrderConstitutiveLaw` protocol.
 
 ---
 
@@ -244,7 +244,7 @@ $$
 \end{bmatrix}^T.
 $$
 
-The library must document whether $\gamma_{12}$, $\gamma_{13}$, and $\gamma_{23}$ are engineering shear strains or tensor shear strains. The Level 1 recommendation is to use engineering shear strains internally because that matches much of laminated-plate and engineering shell practice, but the convention must be encoded in `StrainConvention` and carried through transformations.
+The library must document whether $\gamma_{12}$, $\gamma_{13}$, and $\gamma_{23}$ are engineering shear strains or tensor shear strains. The tangent-plane implementation uses engineering shear strains internally because that matches much of laminated-plate and engineering shell practice, but the convention must be encoded in `StrainConvention` and carried through transformations.
 
 ### 4.3 Generalized resultant vector
 
@@ -279,7 +279,7 @@ The sign convention for stiffener eccentricity must be explicit. A recommended c
 
 ### 4.5 Constitutive matrix
 
-For the Level 1 linear law, define:
+For the tangent-plane linear law, define:
 
 $$
 \mathbf r=\mathbf C_\text{wall}\boldsymbol\eta,
@@ -331,7 +331,7 @@ resultants are \(\partial W/\partial\eta\), and the tangent is
 constant; it should expose that constant tangent explicitly instead of using
 `tangent(eta=None)`.
 
-A Level 1 `EquivalentWall` is then one implementation:
+A tangent-plane `LinearABDWall` is then one implementation:
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -470,7 +470,7 @@ The result includes not only the constitutive law but also diagnostics and assum
 
 ### 7.1 Graph-based cell as the general representation
 
-The most general Level 1 cell should be a local tangent-plane graph:
+The most general tangent-plane cell should be a local graph:
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -541,7 +541,7 @@ These correspond to configurations treated or surveyed in Nemeth's NASA report a
 
 ### 8.1 Minimal beam-section stiffnesses
 
-The Level 1 beam section should expose the stiffnesses needed by the shear-deformable beam model:
+The tangent-plane beam section should expose the stiffnesses needed by the shear-deformable beam model:
 
 $$
 EA, \quad EI_y, \quad EI_z, \quad GJ, \quad k_yGA, \quad k_zGA,
@@ -683,7 +683,7 @@ $$
 }
 $$
 
-This equation should be the implementation oracle for Level 1 cells. It is compact, testable, symmetry-safe by construction, and naturally supports graph cells, named cells, and arbitrary combinations of member families. Direct-vs-energy agreement is necessary but not sufficient because both paths share the same strain-equivalence map \(\mathbf T_m\); literature cases, NASA-derived regressions, and future FE patch checks close that loop.
+This equation should be the implementation oracle for tangent-plane cells. It is compact, testable, symmetry-safe by construction, and naturally supports graph cells, named cells, and arbitrary combinations of member families. Direct-vs-energy agreement is necessary but not sufficient because both paths share the same strain-equivalence map \(\mathbf T_m\); literature cases, NASA-derived regressions, and future FE patch checks close that loop.
 
 ### 9.2 Direct equilibrium-compatibility method as a validated specialization
 
@@ -758,7 +758,7 @@ Nemeth's report discusses discrepancies in previous literature associated with s
 
 ### 11.1 Geometry does not own the wall law
 
-At Level 1, geometry supplies the local tangent frame, metric, curvature, Jacobian, and shell strain-displacement operator. It does not modify the local tangent-plane homogenization unless an explicitly curved-cell theory is selected.
+For tangent-plane homogenization, geometry supplies the local tangent frame, metric, curvature, Jacobian, and shell strain-displacement operator. It does not modify the local homogenization unless an explicitly curved-cell theory is selected.
 
 In finite-element or weak-form notation:
 
@@ -872,7 +872,7 @@ c\cos\phi
 \end{bmatrix}.
 $$
 
-The metric, curvature, and local principal directions vary with position. Level 1 homogenization remains local and tangent-plane based, but wall fields must be evaluated pointwise if stiffener spacing, orientation, or section properties vary over the surface.
+The metric, curvature, and local principal directions vary with position. Tangent-plane homogenization remains local, but wall fields must be evaluated pointwise if stiffener spacing, orientation, or section properties vary over the surface.
 
 ---
 
@@ -1019,9 +1019,9 @@ Recommended default interpretation:
 
 | Ratio | Interpretation |
 |---:|---|
-| $<0.02$ | generally favorable for Level 1 tangent-plane homogenization |
+| $<0.02$ | generally favorable for tangent-plane homogenization |
 | $0.02$ to $0.10$ | use with caution; validate against a discrete or curved-cell model |
-| $>0.10$ | Level 1 may be inadequate for local cell behavior |
+| $>0.10$ | tangent-plane homogenization may be inadequate for local cell behavior |
 
 These are engineering heuristics, not universal laws. They should be configurable and clearly labeled.
 
@@ -1412,7 +1412,7 @@ Deliver:
 
 Exit criterion: skin-only isotropic and laminate cases match known plate stiffnesses and pass objectivity tests.
 
-### Phase 2: Level 1 homogenization
+### Phase 2: tangent-plane homogenization
 
 Deliver:
 
@@ -1474,7 +1474,7 @@ Deliver selectively:
 - higher-order or strain-gradient prototypes;
 - micropolar/rotational continuum experiments;
 
-Exit criterion: each advanced feature satisfies the same operator and diagnostics contracts without destabilizing the Level 1 core.
+Exit criterion: each advanced feature satisfies the same operator and diagnostics contracts without destabilizing the tangent-plane core.
 
 ---
 
@@ -1488,7 +1488,7 @@ Exit criterion: each advanced feature satisfies the same operator and diagnostic
 
 **Mitigation:** make $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ the primary output. Require explicit thickness methods and warnings when $\mathbf B$ coupling is significant.
 
-### Risk 3: Level 1 is used outside its scale-separation envelope
+### Risk 3: tangent-plane homogenization is used outside its scale-separation envelope
 
 **Mitigation:** attach validity reports to results and expose configurable warning thresholds for $h_s/R$, $p/R$, and $p/L_\text{response}$.
 
@@ -1531,9 +1531,9 @@ The MVP should not attempt to solve every shell problem. It should prove that th
 
 The proposed library should be built around a solver-agnostic equivalent-wall constitutive kernel. The kernel computes local wall laws from materials, skins, stiffeners, and cells. Geometry then embeds those laws into shell kinematics. This architecture preserves the mathematical separation between constitutive behavior and geometric strain-displacement operators.
 
-The Level 1 implementation should remain faithful to Nemeth's equivalent-plate stiffness theory: first-approximation, Reissner--Mindlin-type shear-deformation plate kinematics, shear-deformable beam stiffeners, and equivalent stiffnesses in $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ notation [Nemeth 2011]. The main improvement over a formula collection is software architecture: explicit conventions, canonicalization, an energy-equivalence oracle, verification diagnostics, validity reports, wall fields, and adapters.
+The tangent-plane implementation should remain faithful to Nemeth's equivalent-plate stiffness theory: first-approximation, Reissner--Mindlin-type shear-deformation plate kinematics, shear-deformable beam stiffeners, and equivalent stiffnesses in $\mathbf A$, $\mathbf B$, $\mathbf D$, and $\mathbf A_s$ notation [Nemeth 2011]. The main improvement over a formula collection is software architecture: explicit conventions, canonicalization, an energy-equivalence oracle, verification diagnostics, validity reports, wall fields, and adapters.
 
-For the motivating regime of roughly 1 inch stiffeners on radii greater than 100 inches, Level 1 local tangent-plane homogenization is a defensible starting point. Curvature should be retained in shell kinematics and validity reports, but not inserted into the local wall homogenizer unless the user selects a higher-fidelity curved-cell or RVE model.
+For the motivating regime of roughly 1 inch stiffeners on radii greater than 100 inches, tangent-plane homogenization is a defensible starting point. Curvature should be retained in shell kinematics and validity reports, but not inserted into the local wall homogenizer unless the user selects a higher-fidelity curved-cell or RVE model.
 
 The central rule remains:
 
@@ -1776,7 +1776,7 @@ The rewritten paper makes the following major changes:
 4. Adds explicit **canonicalization** before homogenization.
 5. Adds **validity reports** and machine-readable diagnostics as returned results.
 6. Separates **kernel**, **fields**, **geometry**, and **adapters**.
-7. Adds a **fidelity ladder** from skin-only laws to Level 1 tangent-plane homogenization, spatial wall fields, FE-RVE methods, and future higher-order models.
+7. Adds named model families from skin-only laws to tangent-plane homogenization, spatial wall fields, FE-RVE methods, and future higher-order models.
 8. Clarifies that the project is not proposing a new homogenization theory in the MVP, but a rigorous software realization and extension architecture grounded in NASA's equivalent-plate framework.
 9. Adds current scientific Python best practices for typing, dataclasses, NumPy, optional Numba, pytest, Hypothesis, `pyproject.toml`, and benchmarking.
 10. Strengthens warnings about scalar engineering constants and equivalent thickness.

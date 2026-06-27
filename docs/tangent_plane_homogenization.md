@@ -1,8 +1,9 @@
-# Level 1 Homogenization
+# Tangent-Plane Homogenization
 
-Level 1 computes a local tangent-plane equivalent wall law for a repeating
-stiffened cell. It follows Tensyl's core rule: homogenization computes a local
-constitutive law, while shell geometry remains a separate embedding layer.
+Tangent-plane homogenization computes a local equivalent wall law for a
+repeating stiffened cell that is treated as flat in the local tangent plane. It
+follows Tensyl's core rule: homogenization computes a local constitutive law,
+while shell geometry remains a separate embedding layer.
 
 The implementation is anchored in Nemeth's first-approximation
 equivalent-plate formulation, where stiffener-member strain energy is expressed

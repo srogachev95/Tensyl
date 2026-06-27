@@ -157,5 +157,5 @@ local_law = atlas.law_at(barrel, 75.0, 0.5 * np.pi)
 ```
 
 The same wall law can be embedded in flat or curved geometry. Curvature enters
-later shell kinematics and validity checks; it does not modify the Level 1
+later shell kinematics and validity checks; it does not modify the tangent-plane
 homogenized tangent.

@@ -1,6 +1,6 @@
 # Tensyl — Software Design & Abstraction Review
 
-**Reviewer perspective:** principal-level software engineering, focused on the constitutive-kernel abstraction and downstream usability.
+**Reviewer perspective:** principal software engineering, focused on the constitutive-kernel abstraction and downstream usability.
 **Scope of this document:** the software architecture and API contracts proposed in the Tensyl white paper. It does not re-derive the mechanics; it evaluates whether the abstractions are elegant *and* survivable once other teams build on them.
 **Key scoping decision adopted:** the constitutive kernel is **hyperelastic-only** (no inelasticity / path dependence) for its lifetime. Several recommendations below depend on that decision and are marked accordingly.
 
@@ -45,7 +45,7 @@ Producing a distinct `CanonicalUnitCell` type that raw user input cannot masquer
 
 ## 3. The Hyperelastic Decision and Its Consequences
 
-> **Scope:** the kernel is hyperelastic-only. "Hyperelastic" here means *every law derives from a generalized-strain stored-energy potential `W(η)`, and no law remembers its past.* This is **not** finite-strain continuum hyperelasticity (no large deformation, no work-conjugacy machinery, no finite-rotation frame-indifference baggage). At Level 1 the potential is simply quadratic, `W(η) = ½ ηᵀ C η`, whose gradient is the linear ABD wall law.
+> **Scope:** the kernel is hyperelastic-only. "Hyperelastic" here means *every law derives from a generalized-strain stored-energy potential `W(η)`, and no law remembers its past.* This is **not** finite-strain continuum hyperelasticity (no large deformation, no work-conjugacy machinery, no finite-rotation frame-indifference baggage). For the tangent-plane linear wall law, the potential is simply quadratic, `W(η) = ½ ηᵀ C η`, whose gradient is the linear ABD wall law.
 
 This decision is more than the removal of a worry. It changes the *shape* of the right protocol, because the three public quantities stop being independent:
 
@@ -210,11 +210,11 @@ canon(canon(x)) == canon(x)
 
 It is not in the Hypothesis list, which currently jumps straight to objectivity. Add it.
 
-### 6.5 The fidelity ladder must stay metadata, never a class hierarchy
+### 6.5 Model-family provenance must stay metadata, never a class hierarchy
 
-The ladder is an excellent communication device. The moment `Level1Wall` / `Level3Wall` become *types*, real problems that are Level 1 in membrane response and need Level 3 for a local detail will not fit the hierarchy.
+The named model-family ladder is useful communication. The moment `TangentPlaneWall` / `RVEWall` become *types*, real problems that use tangent-plane membrane response and need an RVE for a local detail will not fit the hierarchy.
 
-**Fix:** keep "level" a field on `source` / diagnostics. The unifying contract is the law plus its provenance — which the document already does correctly elsewhere.
+**Fix:** keep model-family provenance on `source` / diagnostics. The unifying contract is the law plus its provenance — which the document already does correctly elsewhere.
 
 ### 6.6 No defined error channel
 
