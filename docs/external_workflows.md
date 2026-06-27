@@ -1,6 +1,6 @@
 # External Workflows
 
-Phase 5 starts with solver-neutral YAML serialization. The goal is to let an
+Phase 5 starts with solver-neutral YAML and JSON serialization. The goal is to let an
 analyst compute, validate, save, reload, and hand off a Tensyl wall law without
 binding the mechanics kernel to Nastran, a finite-element package, or a shell
 solver.
@@ -9,7 +9,7 @@ The current implementation supports:
 
 - `LinearABDWall` artifacts;
 - `HomogenizationResult` artifacts;
-- YAML read/write through `tensyl.io`;
+- YAML and JSON read/write through `tensyl.io`;
 - explicit schema versioning and producer metadata;
 - Pydantic v2 validation for the schema payload;
 - frame, convention, validity, diagnostics, assumptions, and metadata
@@ -18,23 +18,32 @@ The current implementation supports:
 It does not export solver property cards, shell sections, mesh data, or local
 stress recovery data.
 
-## YAML API
+## YAML And JSON API
 
 ```python
 from pathlib import Path
 
-from tensyl.io import from_yaml, read_yaml, to_yaml, write_yaml
+from tensyl.io import from_json, from_yaml, read_json, read_yaml
+from tensyl.io import to_json, to_yaml, write_json, write_yaml
 
 text = to_yaml(result, units={"length": "m", "force": "N", "mass": "kg"})
 loaded = from_yaml(text)
 
 write_yaml(result, Path("wall-law.yaml"), units={"length": "m", "force": "N"})
 same_result = read_yaml(Path("wall-law.yaml"))
+
+json_text = to_json(result, units={"length": "m", "force": "N"})
+same_from_json = from_json(json_text)
+
+write_json(result, Path("wall-law.json"), units={"length": "m", "force": "N"})
+same_json_file = read_json(Path("wall-law.json"))
 ```
 
-`to_yaml` and `write_yaml` accept either a `LinearABDWall` or a
-`HomogenizationResult`. `from_yaml` and `read_yaml` reconstruct the appropriate
-object from the artifact type stored in the file.
+`to_yaml`, `to_json`, `write_yaml`, and `write_json` accept either a
+`LinearABDWall` or a `HomogenizationResult`. The matching load functions
+reconstruct the appropriate object from the artifact type stored in the file.
+JSON output is deterministic, two-space indented, and written with a trailing
+newline. YAML output uses PyYAML's safe dumper.
 
 Tensyl records unit labels but does not infer or convert units. All stiffnesses,
 lengths, masses, diagnostics, and metadata must already be in a consistent unit
@@ -42,7 +51,7 @@ system chosen by the caller.
 
 ## Schema V1
 
-Every file uses a mapping root:
+Every YAML or JSON file uses a mapping root:
 
 ```yaml
 schema_name: tensyl.external_workflow
@@ -106,6 +115,12 @@ Pydantic v2 models before reconstructing Tensyl value objects. Tensyl rejects:
 
 Malformed payloads raise `SchemaError`.
 
+Committed v1 YAML and JSON fixture files live under
+`tests/data/external_workflows/`. They are compatibility assets for future
+schema changes: a v1 reader should continue to load them, and any incompatible
+wire-shape change should add a new fixture set for the incremented schema
+version.
+
 ## Migration Policy
 
 `schema_version` is an integer. Version 1 is the first public external-workflow
@@ -117,6 +132,7 @@ ignore them safely. Any incompatible wire-shape change must increment
 Solver-specific export formats should consume this neutral schema instead of
 becoming the canonical persistence format.
 
-Deferred Phase 5 work includes JSON, Nastran and other finite-element adapters,
-shell-section export, sizing and optimization workflows, and performance
-benchmarks.
+Deferred Phase 5 work includes Nastran and other finite-element adapters,
+shell-section export, and sizing and optimization workflows. The initial ASV
+benchmark harness covers implemented workflows only: single-cell homogenization,
+direct EC comparison, wall-field grid evaluation, and YAML/JSON serialization.

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "project": "Tensyl",
+  "project_url": "https://github.com/srogachev95/Tensyl",
+  "repo": ".",
+  "build_command": [
+    "python -m pip install build",
+    "python -m build --wheel --outdir {build_cache_dir} {build_dir}"
+  ],
+  "branches": [
+    "main"
+  ],
+  "dvcs": "git",
+  "environment_type": "virtualenv",
+  "pythons": [
+    "3.12"
+  ],
+  "benchmark_dir": "benchmarks",
+  "env_dir": ".asv/env",
+  "results_dir": ".asv/results",
+  "html_dir": ".asv/html",
+  "show_commit_url": "https://github.com/srogachev95/Tensyl/commit/"
+}

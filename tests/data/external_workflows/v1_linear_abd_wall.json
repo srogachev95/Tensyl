@@ -1,0 +1,154 @@
+{
+  "schema_name": "tensyl.external_workflow",
+  "schema_version": 1,
+  "artifact_type": "linear_abd_wall",
+  "producer": {
+    "name": "tensyl",
+    "version": "0.1.0"
+  },
+  "units": {
+    "length": "m",
+    "force": "N",
+    "mass": "kg"
+  },
+  "payload": {
+    "tangent_c8": [
+      [
+        10.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        12.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        3.0,
+        0.0,
+        0.0,
+        0.5,
+        0.0,
+        0.0
+      ],
+      [
+        1.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        6.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.5,
+        0.0,
+        0.0,
+        1.5,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.5
+      ]
+    ],
+    "frame": {
+      "e1": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "e2": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "n": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "label": "local_tangent"
+    },
+    "strain_convention": {
+      "membrane_order": [
+        "e11",
+        "e22",
+        "g12"
+      ],
+      "bending_order": [
+        "k11",
+        "k22",
+        "k12"
+      ],
+      "shear_order": [
+        "g13",
+        "g23"
+      ],
+      "engineering_shear": true,
+      "reference_surface": "wall_mid_surface",
+      "normal_positive": "+n"
+    },
+    "areal_mass": 2.7,
+    "metadata": {
+      "source": "unit_test",
+      "tags": [
+        "alpha",
+        "beta"
+      ]
+    },
+    "validity": {
+      "h_over_R": 0.01,
+      "p_over_R": 0.02,
+      "p_over_L_response": null,
+      "coupling_ratios": {
+        "B_fro": 0.03
+      },
+      "warnings": [
+        "review_scale_separation"
+      ]
+    }
+  }
+}

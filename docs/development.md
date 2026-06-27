@@ -21,6 +21,17 @@ uv run mkdocs build --strict
 These checks are the phase 0 quality gate. Hosted CI is intentionally deferred
 for now; when CI is added, it should run the same commands.
 
+Performance benchmarks use ASV. Run a quick benchmark smoke test with:
+
+```bash
+uv run asv run --quick
+```
+
+ASV environments and results are written under `.asv/`, which is ignored by
+version control. The tracked benchmark suite should cover implemented workflows
+only; do not add optional solver, optimization, or acceleration benchmarks until
+those features exist.
+
 ## Versioning
 
 Tensyl uses pre-1.0 semantic versioning while the mechanics kernel and public

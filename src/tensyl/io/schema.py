@@ -1,7 +1,8 @@
-"""Versioned solver-neutral YAML schema for external workflows."""
+"""Versioned solver-neutral schema for external workflows."""
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping, Sequence
 from importlib.metadata import PackageNotFoundError, version
 from os import PathLike
@@ -450,6 +451,19 @@ def to_yaml(
     return yaml.safe_dump(to_schema(obj, units=units), sort_keys=False)
 
 
+def to_json(
+    obj: LinearABDWall | HomogenizationResult,
+    *,
+    units: Mapping[str, Any] | None = None,
+) -> str:
+    """Serialize ``obj`` to a deterministic JSON string."""
+
+    try:
+        return json.dumps(to_schema(obj, units=units), indent=2, allow_nan=False) + "\n"
+    except ValueError as exc:
+        raise SchemaError(str(exc)) from exc
+
+
 def from_yaml(text: str) -> LinearABDWall | HomogenizationResult:
     """Load a Tensyl object from a safe YAML string."""
 
@@ -460,6 +474,25 @@ def from_yaml(text: str) -> LinearABDWall | HomogenizationResult:
         raise SchemaError(msg) from exc
     if not isinstance(payload, Mapping):
         msg = "YAML root must be a mapping."
+        raise SchemaError(msg)
+    return from_schema(payload)
+
+
+def _reject_json_constant(value: str) -> None:
+    msg = f"invalid JSON constant {value!r}."
+    raise ValueError(msg)
+
+
+def from_json(text: str) -> LinearABDWall | HomogenizationResult:
+    """Load a Tensyl object from a JSON string."""
+
+    try:
+        payload = json.loads(text, parse_constant=_reject_json_constant)
+    except (json.JSONDecodeError, ValueError) as exc:
+        msg = "invalid JSON payload."
+        raise SchemaError(msg) from exc
+    if not isinstance(payload, Mapping):
+        msg = "JSON root must be a mapping."
         raise SchemaError(msg)
     return from_schema(payload)
 
@@ -475,20 +508,41 @@ def write_yaml(
     Path(path).write_text(to_yaml(obj, units=units), encoding="utf-8")
 
 
+def write_json(
+    obj: LinearABDWall | HomogenizationResult,
+    path: str | PathLike[str],
+    *,
+    units: Mapping[str, Any] | None = None,
+) -> None:
+    """Write ``obj`` to ``path`` as JSON."""
+
+    Path(path).write_text(to_json(obj, units=units), encoding="utf-8")
+
+
 def read_yaml(path: str | PathLike[str]) -> LinearABDWall | HomogenizationResult:
     """Read a Tensyl object from a safe YAML file."""
 
     return from_yaml(Path(path).read_text(encoding="utf-8"))
 
 
+def read_json(path: str | PathLike[str]) -> LinearABDWall | HomogenizationResult:
+    """Read a Tensyl object from a JSON file."""
+
+    return from_json(Path(path).read_text(encoding="utf-8"))
+
+
 __all__ = [
     "SCHEMA_NAME",
     "SCHEMA_VERSION",
     "SchemaError",
+    "from_json",
     "from_schema",
     "from_yaml",
+    "read_json",
     "read_yaml",
+    "to_json",
     "to_schema",
     "to_yaml",
+    "write_json",
     "write_yaml",
 ]

@@ -172,6 +172,9 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# ASV benchmark environments and results
+.asv/
+
 # Obsidian local vault state
 docs/.obsidian/
 
