@@ -9,6 +9,7 @@ from typing import Any
 
 import numpy as np
 
+from tensyl.core._validation import positive_number
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.conventions import (
     DEFAULT_FRAME,
@@ -23,11 +24,7 @@ PlyMaterial = IsotropicMaterial | OrthotropicPlyMaterial
 
 
 def _positive(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked) or checked <= 0.0:
-        msg = f"{name} must be finite and positive."
-        raise ValueError(msg)
-    return checked
+    return positive_number(value, name=name)
 
 
 def _metadata(mapping: dict[str, Any] | None, *, source: str) -> dict[str, Any]:

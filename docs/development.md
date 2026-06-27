@@ -64,3 +64,8 @@ src/tensyl/
 Root modules such as `tensyl.constitutive` and `tensyl.laminates` remain as
 compatibility exports. New implementation work should go into the focused
 subpackage that owns the behavior.
+
+Use private shared helpers for repeated infrastructure. Scalar validation,
+read-only NumPy array normalization, and shallow read-only metadata copies live
+in `tensyl.core._validation`; package-version provenance lives in
+`tensyl._version`. These modules are implementation utilities, not public API.

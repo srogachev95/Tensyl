@@ -8,6 +8,7 @@ from typing import Any, Literal
 
 import numpy as np
 
+from tensyl.core._validation import finite_number, positive_number
 from tensyl.core.constitutive import (
     LinearABDWall,
     shift_reference_surface,
@@ -23,19 +24,11 @@ from tensyl.sections.beam import BeamSection
 
 
 def _positive(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked) or checked <= 0.0:
-        msg = f"{name} must be finite and positive."
-        raise ValueError(msg)
-    return checked
+    return positive_number(value, name=name)
 
 
 def _finite(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked):
-        msg = f"{name} must be finite."
-        raise ValueError(msg)
-    return checked
+    return finite_number(value, name=name)
 
 
 @dataclass(frozen=True, slots=True)
@@ -142,6 +135,42 @@ def _cell_frame_and_convention(
 
 def _same_or_second(first: BeamSection, second: BeamSection | None) -> BeamSection:
     return first if second is None else second
+
+
+def _same_or_value(first: float, second: float | None) -> float:
+    return first if second is None else second
+
+
+def _paired_oblique_members(
+    *,
+    section: BeamSection,
+    opposite_section: BeamSection | None,
+    length: float,
+    angle_rad: float,
+    eccentricity: float,
+    opposite_eccentricity: float | None,
+    multiplicity: float = 1.0,
+    positive_label: str,
+    negative_label: str,
+) -> tuple[BeamMember, BeamMember]:
+    return (
+        BeamMember(
+            section,
+            length,
+            angle_rad,
+            eccentricity,
+            multiplicity=multiplicity,
+            label=positive_label,
+        ),
+        BeamMember(
+            _same_or_second(section, opposite_section),
+            length,
+            -angle_rad,
+            _same_or_value(eccentricity, opposite_eccentricity),
+            multiplicity=multiplicity,
+            label=negative_label,
+        ),
+    )
 
 
 def graph_unit_cell(
@@ -358,23 +387,16 @@ def braced_orthogrid_cell(
         members=(
             BeamMember(stringer_section, dr, 0.0, stringer_eccentricity, label="stringer"),
             BeamMember(rib_section, ds, np.pi / 2.0, rib_eccentricity, label="rib"),
-            BeamMember(
-                brace_section,
-                diagonal_length,
-                diagonal_angle,
-                brace_eccentricity,
+            *_paired_oblique_members(
+                section=brace_section,
+                opposite_section=opposite_brace_section,
+                length=diagonal_length,
+                angle_rad=diagonal_angle,
+                eccentricity=brace_eccentricity,
+                opposite_eccentricity=opposite_brace_eccentricity,
                 multiplicity=brace_multiplier,
-                label="+brace",
-            ),
-            BeamMember(
-                _same_or_second(brace_section, opposite_brace_section),
-                diagonal_length,
-                -diagonal_angle,
-                brace_eccentricity
-                if opposite_brace_eccentricity is None
-                else opposite_brace_eccentricity,
-                multiplicity=brace_multiplier,
-                label="-brace",
+                positive_label="+brace",
+                negative_label="-brace",
             ),
         ),
         frame=cell_frame,
@@ -414,21 +436,15 @@ def isosceles_triangle_grid_cell(
         skin=skin,
         members=(
             BeamMember(stringer_section, b, 0.0, stringer_eccentricity, label="stringer"),
-            BeamMember(
-                diagonal_section,
-                diagonal_length,
-                diagonal_angle,
-                diagonal_eccentricity,
-                label="+diagonal",
-            ),
-            BeamMember(
-                _same_or_second(diagonal_section, opposite_diagonal_section),
-                diagonal_length,
-                -diagonal_angle,
-                diagonal_eccentricity
-                if opposite_diagonal_eccentricity is None
-                else opposite_diagonal_eccentricity,
-                label="-diagonal",
+            *_paired_oblique_members(
+                section=diagonal_section,
+                opposite_section=opposite_diagonal_section,
+                length=diagonal_length,
+                angle_rad=diagonal_angle,
+                eccentricity=diagonal_eccentricity,
+                opposite_eccentricity=opposite_diagonal_eccentricity,
+                positive_label="+diagonal",
+                negative_label="-diagonal",
             ),
         ),
         frame=cell_frame,
@@ -470,21 +486,15 @@ def kagome_cell(
                 multiplicity=2.0,
                 label="stringer",
             ),
-            BeamMember(
-                diagonal_section,
-                diagonal_length,
-                diagonal_angle,
-                diagonal_eccentricity,
-                label="+diagonal",
-            ),
-            BeamMember(
-                _same_or_second(diagonal_section, opposite_diagonal_section),
-                diagonal_length,
-                -diagonal_angle,
-                diagonal_eccentricity
-                if opposite_diagonal_eccentricity is None
-                else opposite_diagonal_eccentricity,
-                label="-diagonal",
+            *_paired_oblique_members(
+                section=diagonal_section,
+                opposite_section=opposite_diagonal_section,
+                length=diagonal_length,
+                angle_rad=diagonal_angle,
+                eccentricity=diagonal_eccentricity,
+                opposite_eccentricity=opposite_diagonal_eccentricity,
+                positive_label="+diagonal",
+                negative_label="-diagonal",
             ),
         ),
         frame=cell_frame,
@@ -520,23 +530,16 @@ def hexagonal_grid_cell(
         area=2.0 * a * (b + c),
         skin=skin,
         members=(
-            BeamMember(
-                diagonal_section,
-                diagonal_length,
-                diagonal_angle,
-                diagonal_eccentricity,
+            *_paired_oblique_members(
+                section=diagonal_section,
+                opposite_section=opposite_diagonal_section,
+                length=diagonal_length,
+                angle_rad=diagonal_angle,
+                eccentricity=diagonal_eccentricity,
+                opposite_eccentricity=opposite_diagonal_eccentricity,
                 multiplicity=2.0,
-                label="+diagonal",
-            ),
-            BeamMember(
-                _same_or_second(diagonal_section, opposite_diagonal_section),
-                diagonal_length,
-                -diagonal_angle,
-                diagonal_eccentricity
-                if opposite_diagonal_eccentricity is None
-                else opposite_diagonal_eccentricity,
-                multiplicity=2.0,
-                label="-diagonal",
+                positive_label="+diagonal",
+                negative_label="-diagonal",
             ),
             BeamMember(rib_section, c, np.pi / 2.0, rib_eccentricity, label="rib"),
         ),

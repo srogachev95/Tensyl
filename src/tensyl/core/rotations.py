@@ -4,16 +4,13 @@ from __future__ import annotations
 
 import numpy as np
 
+from tensyl.core._validation import finite_number, readonly_array
 from tensyl.core.constitutive import LinearABDWall
 from tensyl.core.typing import FloatArray
 
 
 def _finite_angle(angle_rad: float) -> float:
-    angle = float(angle_rad)
-    if not np.isfinite(angle):
-        msg = "angle_rad must be finite."
-        raise ValueError(msg)
-    return angle
+    return finite_number(angle_rad, name="angle_rad")
 
 
 def engineering_strain_transform(angle_rad: float) -> FloatArray:
@@ -85,13 +82,7 @@ def generalized_resultant_transform(angle_rad: float) -> FloatArray:
 def rotate_tangent(tangent: FloatArray, angle_rad: float) -> FloatArray:
     """Rotate an 8x8 wall tangent into a rotated local frame."""
 
-    matrix = np.array(tangent, dtype=np.float64, copy=True)
-    if matrix.shape != (8, 8):
-        msg = f"tangent must have shape (8, 8), got {matrix.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(matrix)):
-        msg = "tangent must contain only finite values."
-        raise ValueError(msg)
+    matrix = readonly_array(tangent, shape=(8, 8), name="tangent")
     strain_transform = generalized_strain_transform(angle_rad)
     resultant = generalized_resultant_transform(angle_rad)
     rotated = resultant @ matrix @ np.linalg.inv(strain_transform)

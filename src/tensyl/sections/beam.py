@@ -2,33 +2,28 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 from typing import Any
 
-import numpy as np
+from tensyl.core._validation import (
+    finite_number,
+    optional_positive_number,
+    positive_number,
+    readonly_mapping,
+)
 
 
 def _positive(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked) or checked <= 0.0:
-        msg = f"{name} must be finite and positive."
-        raise ValueError(msg)
-    return checked
+    return positive_number(value, name=name)
 
 
 def _optional_positive(value: float | None, *, name: str) -> float | None:
-    if value is None:
-        return None
-    return _positive(value, name=name)
+    return optional_positive_number(value, name=name)
 
 
 def _finite(value: float, *, name: str) -> float:
-    checked = float(value)
-    if not np.isfinite(checked):
-        msg = f"{name} must be finite."
-        raise ValueError(msg)
-    return checked
+    return finite_number(value, name=name)
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,7 +43,7 @@ class BeamSection:
     kGAy: float | None = None
     kGAz: float | None = None
     EIyz: float = 0.0
-    metadata: dict[str, Any] | MappingProxyType[str, Any] = field(default_factory=dict)
+    metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "EA", _positive(self.EA, name="EA"))
@@ -62,7 +57,7 @@ class BeamSection:
             msg = "section bending stiffness block must be positive definite."
             raise ValueError(msg)
         object.__setattr__(self, "EIyz", EIyz)
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
 
 __all__ = ["BeamSection"]

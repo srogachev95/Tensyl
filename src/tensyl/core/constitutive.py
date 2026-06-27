@@ -4,11 +4,16 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 from typing import Any, Protocol, runtime_checkable
 
 import numpy as np
 
+from tensyl.core._validation import (
+    finite_number,
+    nonnegative_number,
+    readonly_array,
+    readonly_mapping,
+)
 from tensyl.core.conventions import (
     DEFAULT_FRAME,
     DEFAULT_STRAIN_CONVENTION,
@@ -28,18 +33,13 @@ GeneralizedStrainInput = GeneralizedStrain | FloatArray
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
-    matrix = np.array(values, dtype=np.float64, copy=True)
-    if matrix.shape != shape:
-        msg = f"{name} must have shape {shape}, got {matrix.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(matrix)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    if not np.allclose(matrix, matrix.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0):
-        msg = f"{name} must be symmetric."
-        raise ValueError(msg)
-    matrix.setflags(write=False)
-    return matrix
+    return readonly_array(
+        values,
+        shape=shape,
+        name=name,
+        symmetric=True,
+        symmetry_tolerance=_SYMMETRY_TOLERANCE,
+    )
 
 
 def _build_tangent(A: FloatArray, B: FloatArray, D: FloatArray, As: FloatArray) -> FloatArray:
@@ -54,18 +54,13 @@ def _build_tangent(A: FloatArray, B: FloatArray, D: FloatArray, As: FloatArray) 
 
 
 def _readonly_tangent(values: FloatArray, *, name: str) -> FloatArray:
-    tangent = np.array(values, dtype=np.float64, copy=True)
-    if tangent.shape != (8, 8):
-        msg = f"{name} must have shape (8, 8), got {tangent.shape}."
-        raise ValueError(msg)
-    if not np.all(np.isfinite(tangent)):
-        msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    if not np.allclose(tangent, tangent.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0):
-        msg = f"{name} must be symmetric."
-        raise ValueError(msg)
-    tangent.setflags(write=False)
-    return tangent
+    return readonly_array(
+        values,
+        shape=(8, 8),
+        name=name,
+        symmetric=True,
+        symmetry_tolerance=_SYMMETRY_TOLERANCE,
+    )
 
 
 def _hash_array(values: FloatArray) -> int:
@@ -148,18 +143,18 @@ class LinearABDWall:
             msg = "assembled wall tangent must be symmetric."
             raise ValueError(msg)
         if self.areal_mass is not None:
-            areal_mass = float(self.areal_mass)
-            if not np.isfinite(areal_mass) or areal_mass < 0.0:
-                msg = "areal_mass must be finite and nonnegative."
-                raise ValueError(msg)
-            object.__setattr__(self, "areal_mass", areal_mass)
+            object.__setattr__(
+                self,
+                "areal_mass",
+                nonnegative_number(self.areal_mass, name="areal_mass"),
+            )
 
         object.__setattr__(self, "_c8", c8)
         object.__setattr__(self, "A", c8[0:3, 0:3])
         object.__setattr__(self, "B", c8[0:3, 3:6])
         object.__setattr__(self, "D", c8[3:6, 3:6])
         object.__setattr__(self, "As", c8[6:8, 6:8])
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
     @classmethod
     def from_tangent(
@@ -259,10 +254,7 @@ def shift_reference_surface(wall: LinearABDWall, offset: float) -> LinearABDWall
     strains are unchanged.
     """
 
-    checked_offset = float(offset)
-    if not np.isfinite(checked_offset):
-        msg = "offset must be finite."
-        raise ValueError(msg)
+    checked_offset = finite_number(offset, name="offset")
 
     transform = np.eye(8, dtype=np.float64)
     transform[0:3, 3:6] = -checked_offset * np.eye(3, dtype=np.float64)

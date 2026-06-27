@@ -9,7 +9,6 @@ from tensyl import (
     EnergyHomogenizer,
     HomogenizationInputError,
     IsotropicMaterial,
-    LinearABDWall,
     StiffenerFamily,
     ValidityContext,
     equilateral_isogrid_cell,
@@ -19,26 +18,8 @@ from tensyl import (
 )
 from tensyl.cells import BeamMember, CanonicalUnitCell
 from tensyl.homogenizers import member_energy
-
-
-def _zero_skin() -> LinearABDWall:
-    return LinearABDWall(
-        A=np.zeros((3, 3)),
-        B=np.zeros((3, 3)),
-        D=np.zeros((3, 3)),
-        As=np.zeros((2, 2)),
-    )
-
-
-def _section(*, shear: bool = True) -> BeamSection:
-    return BeamSection(
-        EA=1200.0,
-        EIy=50.0,
-        EIz=30.0,
-        GJ=20.0,
-        kGAy=400.0 if shear else None,
-        kGAz=300.0 if shear else None,
-    )
+from tests._helpers import beam_section as _section
+from tests._helpers import zero_skin as _zero_skin
 
 
 def test_beam_section_rejects_invalid_stiffness() -> None:
