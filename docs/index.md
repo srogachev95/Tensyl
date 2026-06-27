@@ -1,20 +1,74 @@
-# Tensyl Documentation
+# Tensyl
 
-Tensyl is a Python library for equivalent-wall homogenization of stiffened plates
-and shells.
+Tensyl is a Python library for equivalent-wall homogenization of stiffened
+thin-wall structures. It helps structural analysts build, check, transform, and
+export local wall laws for skins, laminates, and stiffened repeating cells.
 
-The current documentation set captures the mechanics and architecture proposal
-that will guide implementation:
+The public package name is `tensyl`.
 
-- [Development and releases](development.md)
-- [Markdown authoring](markdown_authoring.md)
-- [Design review](tensyl-design-review.md)
-- [White Paper](white_paper.md)
-- [Constitutive kernel](constitutive_kernel.md)
-- [Tangent-plane homogenization](tangent_plane_homogenization.md)
-- [Geometry and wall fields](geometry_wall_fields.md)
-- [External workflows](external_workflows.md)
-- [NASA SP-8007 reference notes](references/NASA%20SP-8007.md)
-- [Nemeth equivalent-plate stiffness reference notes](references/A%20Treatise%20on%20Equivalent-Plate%20Stiffnesses.md)
+## What Tensyl Computes
 
-The implementation package is named `tensyl`.
+Tensyl computes a local wall constitutive law in laminated-plate notation:
+
+$$
+\begin{bmatrix}
+\mathbf N \\
+\mathbf M \\
+\mathbf Q
+\end{bmatrix}
+=
+\mathbf C_\text{wall}
+\begin{bmatrix}
+\boldsymbol\epsilon^0 \\
+\boldsymbol\kappa \\
+\boldsymbol\gamma_s^0
+\end{bmatrix}.
+$$
+
+The first public wall law is `LinearABDWall`. It stores the membrane stiffness
+`A`, membrane-bending coupling `B`, bending/twisting stiffness `D`, and
+transverse-shear stiffness `As` as one canonical $8\times8$ tangent operator.
+
+## What Tensyl Is Not
+
+Tensyl is not a certification buckling solver, local stress recovery tool, or
+replacement for detailed finite-element analysis. The tangent-plane
+homogenization tools assume scale separation between stiffener pitch, stiffener
+height, local curvature radius, and the structural response length of interest.
+
+Use Tensyl to form and audit equivalent wall laws. Use detailed analysis for
+local buckling, crippling, joints, cutouts, load introduction, nonlinear
+postbuckling, and final allowables.
+
+## Documentation Map
+
+- [Getting started](getting-started/installation.md) covers installation and the
+  shortest path to a wall law.
+- [Background](background/motivation.md) introduces the engineering motivation,
+  history, and terminology.
+- [Theory](theory/equivalent-wall.md) explains conventions, wall laws, and
+  tangent-plane homogenization.
+- [User guide](user-guide/materials-and-laminates.md) documents the main
+  analyst workflows.
+- [Examples](examples/us-customary-orthogrid.md) provides worked examples and
+  executable snippets.
+- [API reference](api/core.md) exposes the public Python interfaces.
+- [References](references.md) lists the external sources used by the
+  documentation.
+
+## First Workflow
+
+```python
+from tensyl import IsotropicMaterial, isotropic_plate
+
+aluminum = IsotropicMaterial(E=10.0e6, nu=0.33, density=0.1)
+wall = isotropic_plate(aluminum, thickness=0.080)
+
+print(wall.A)
+print(wall.D)
+```
+
+This example uses a consistent US customary unit system: force in `lbf`, length
+in `in`, stress in `psi`, and mass density in units compatible with the
+analyst's workflow. Tensyl records unit labels in exported artifacts but does
+not convert units.
