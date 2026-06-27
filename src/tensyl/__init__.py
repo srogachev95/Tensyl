@@ -2,9 +2,27 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
+from tensyl.constitutive import ConstitutiveLaw, LinearABDWall
+from tensyl.conventions import DEFAULT_FRAME, DEFAULT_STRAIN_CONVENTION, Frame2D, StrainConvention
+from tensyl.laminates import Ply, isotropic_plate, laminate_plate
+from tensyl.materials import IsotropicMaterial, OrthotropicPlyMaterial
+
 try:
     __version__ = version("tensyl")
 except PackageNotFoundError:  # pragma: no cover - editable tree before install
     __version__ = "0.0.0"
 
-__all__ = ["__version__"]
+__all__ = [
+    "DEFAULT_FRAME",
+    "DEFAULT_STRAIN_CONVENTION",
+    "ConstitutiveLaw",
+    "Frame2D",
+    "IsotropicMaterial",
+    "LinearABDWall",
+    "OrthotropicPlyMaterial",
+    "Ply",
+    "StrainConvention",
+    "__version__",
+    "isotropic_plate",
+    "laminate_plate",
+]

@@ -12,6 +12,7 @@ extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 nav:
   - Home: index.md
+  - Constitutive Kernel: constitutive_kernel.md
   - Development and Releases: development.md
   - Markdown Authoring: markdown_authoring.md
   - White Paper: white_paper.md
@@ -22,6 +23,7 @@ nav:
       - Overview: llm_wiki/index.md
       - Master Plan: llm_wiki/master_plan.md
       - Phase 0 Status: llm_wiki/phase-0-status.md
+      - Phase 1 Status: llm_wiki/phase-1-status.md
       - Documentation Standards: llm_wiki/documentation_standards.md
       - Git Hygiene: llm_wiki/git_hygiene.md
       - Instructions: llm_wiki/AGENTS.md
