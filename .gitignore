@@ -221,6 +221,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-docs/llm_wiki
-docs/white_paper.md

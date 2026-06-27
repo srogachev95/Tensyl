@@ -12,4 +12,5 @@ nav:
   - Agent Wiki:
       - Overview: llm_wiki/index.md
       - Master Plan: llm_wiki/master_plan.md
+      - Git Hygiene: llm_wiki/git_hygiene.md
       - Instructions: llm_wiki/AGENTS.md
