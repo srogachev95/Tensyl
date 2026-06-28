@@ -92,7 +92,12 @@ plane-stress constants and let the solver build a conventional shell section.
 This is useful for preliminary modal, static, or sizing models when the ABD
 stiffness is nearly uncoupled.
 
-Choose an effective shell thickness `t_eff`. Then form:
+Choose an effective shell thickness `t_eff`. In this context, `t_eff` is the
+thickness that the downstream shell property will use with the reduced material
+constants. It is the bookkeeping thickness for the solver handoff, not something
+Tensyl can discover from the ABD matrix alone.
+
+The reduction forms:
 
 $$
 \mathbf Q_\mathrm{eff} = \frac{\mathbf A}{t_\mathrm{eff}},
@@ -128,22 +133,22 @@ Use the reduced route when the terms it discards are intentionally negligible:
   material and thickness.
 
 ```python
-import numpy as np
+props = result.reduced_orthotropic_properties(t_eff=0.080)
 
-
-def equivalent_orthotropic_from_A(stiffness, t_eff):
-    """Return membrane-equivalent plane-stress constants in Tensyl's units."""
-
-    q_eff = stiffness.A / t_eff
-    s_eff = np.linalg.inv(q_eff)
-    return {
-        "E1": 1.0 / s_eff[0, 0],
-        "E2": 1.0 / s_eff[1, 1],
-        "G12": 1.0 / s_eff[2, 2],
-        "nu12": -s_eff[0, 1] / s_eff[0, 0],
-        "nu21": -s_eff[0, 1] / s_eff[1, 1],
-    }
+print(props.E1, props.E2, props.G12, props.nu12)
+print(props.warnings)
 ```
+
+Common `t_eff` choices are:
+
+- the physical skin or laminate thickness when the model is skin-dominated;
+- the total smeared structural depth for a coarse stiffened-shell study;
+- a project-defined shell property thickness chosen to match mass, stress-output,
+  or legacy model conventions.
+
+Changing `t_eff` changes the reported `E1`, `E2`, and `G12`, but the membrane
+reduction remains consistent because `A = Q_eff * t_eff`. The trick is not to
+forget which thickness went into the trick.
 
 ## NX Nastran
 
@@ -157,7 +162,8 @@ release.
 
 For an uncoupled equivalent orthotropic stiffness:
 
-1. Convert `A/t_eff` to `E1`, `E2`, `G12`, and `nu12`.
+1. Use `result.reduced_orthotropic_properties(t_eff=...)` to obtain `E1`, `E2`,
+   `G12`, and `nu12`.
 2. Define a `MAT8` with those in-plane constants.
 3. Define a `PSHELL` with thickness `t_eff`, using the `MAT8` as the membrane and
    bending material.

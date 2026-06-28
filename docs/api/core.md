@@ -8,6 +8,7 @@
         - ConstitutiveModel
         - LinearModel
         - ABDStiffness
+        - ReducedOrthotropicProperties
         - shift_reference_surface
         - superpose_abd_stiffnesses
 

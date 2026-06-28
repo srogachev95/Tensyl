@@ -11,7 +11,7 @@ import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
 from tensyl.core._validation import optional_positive_number, positive_number, readonly_array
-from tensyl.core.constitutive import ABDStiffness
+from tensyl.core.constitutive import ABDStiffness, ReducedOrthotropicProperties
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
 from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
@@ -150,6 +150,19 @@ class HomogenizationResult:
         object.__setattr__(self, "diagnostics", MappingProxyType(dict(self.diagnostics)))
         object.__setattr__(self, "assumptions", tuple(self.assumptions))
 
+    def reduced_orthotropic_properties(
+        self,
+        t_eff: float,
+        *,
+        tolerance: float = 1.0e-9,
+    ) -> ReducedOrthotropicProperties:
+        """Return membrane-equivalent orthotropic properties for ``stiffness``."""
+
+        return self.stiffness.reduced_orthotropic_properties(
+            t_eff,
+            tolerance=tolerance,
+        )
+
 
 class Homogenizer(Protocol):
     """Protocol for tangent-plane homogenizers."""
@@ -211,8 +224,8 @@ def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
 
     transform = _member_transform(member)
     stiffness = _beam_stiffness(member.section)
-    # The transform maps wall generalized strain to member generalized strain,
-    # so the equivalent wall tangent contribution is T.T K T.
+    # The transform maps ABD generalized strain to member generalized strain,
+    # so the equivalent stiffness contribution is T.T K T.
     tangent = transform.T @ stiffness @ transform
     tangent = 0.5 * (tangent + tangent.T)
     tangent.setflags(write=False)
@@ -408,7 +421,7 @@ class EnergyHomogenizer:
             )
             raise HomogenizationInputError(msg)
         tangent = np.array(cell.skin.C8, dtype=np.float64, copy=True)
-        # The skin is the baseline wall law; members add energy-equivalent
+        # The skin is the baseline ABD stiffness; members add energy-equivalent
         # stiffness over the repeated tangent-plane cell.
         for member in cell.members:
             tangent += member_tangent_contribution(member, cell_area=cell.area)
