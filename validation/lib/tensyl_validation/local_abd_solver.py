@@ -270,7 +270,7 @@ def run_skin_only_solver_extraction(
         raw_outputs.append(dat_path)
         tables[extraction_case.component] = parse_calculix_stress_dat(
             dat_path.read_text(encoding="utf-8")
-        )
+        ).table_for_set("SKIN")
         magnitudes[extraction_case.component] = extraction_case.magnitude
 
     abd6 = extract_skin_only_abd6_from_stress_tables(
