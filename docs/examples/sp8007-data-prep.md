@@ -10,8 +10,12 @@ from tensyl import (
     Cylinder,
     EnergyHomogenizer,
     IsotropicMaterial,
+    OrthotropicPlyMaterial,
+    Ply,
     ValidityContext,
+    equilateral_isogrid_cell,
     isotropic_plate,
+    laminate_plate,
     orthogrid_cell,
 )
 from tensyl.io import from_yaml, to_yaml
@@ -103,6 +107,88 @@ assert loaded.law.C8.shape == (8, 8)
 assert report["sp8007"]["Ebar_x"] == result.law.A[0, 0]
 assert report["sp8007"]["Dbar_xy"] == 2.0 * result.law.D[0, 1] + 4.0 * result.law.D[2, 2]
 assert report["p_over_R"] == 8.0 / 120.0
+```
+
+## Isogrid Variant
+
+For an equilateral isogrid whose local `0` degree member family is axial,
+extract the same SP-8007 coefficient set from the homogenized wall law:
+
+```python
+isogrid_skin = isotropic_plate(
+    IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
+    thickness=0.060,
+)
+isogrid_section = BeamSection(
+    EA=2.8e6,
+    EIy=1.8e4,
+    EIz=5.2e3,
+    GJ=3.2e3,
+    kGAy=0.9e6,
+    kGAz=0.7e6,
+)
+isogrid_cell = equilateral_isogrid_cell(
+    skin=isogrid_skin,
+    member_section=isogrid_section,
+    pitch=6.0,
+    eccentricity=0.35,
+)
+isogrid_result = EnergyHomogenizer().compute(
+    isogrid_cell,
+    validity_context=ValidityContext(
+        characteristic_height=0.42,
+        pitch=6.0,
+        min_radius=120.0,
+        response_length=80.0,
+    ),
+)
+isogrid_sp8007 = sp8007_orthotropic_coefficients(isogrid_result.law)
+
+assert abs(isogrid_sp8007["Ebar_x"] - isogrid_sp8007["Ebar_y"]) < 1.0e-6
+assert abs(isogrid_sp8007["Cbar_x"] - isogrid_sp8007["Cbar_y"]) < 1.0e-6
+```
+
+The equality checks are not SP-8007 requirements. They are useful sanity checks
+for this equilateral, equal-member example because the isogrid should be
+balanced in the local axial and circumferential directions.
+
+## Symmetric Laminate Variant
+
+For a skin-only laminate cylinder, build the laminate wall law directly and
+extract the same barred coefficients. This example uses a symmetric cross-ply
+stack so the membrane-bending coupling block is negligible.
+
+```python
+carbon_epoxy = OrthotropicPlyMaterial(
+    E1=18.0e6,
+    E2=1.4e6,
+    G12=0.75e6,
+    nu12=0.28,
+    G13=0.75e6,
+    G23=0.50e6,
+    density=0.058,
+)
+laminate_wall = laminate_plate(
+    (
+        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
+        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=1.5707963267948966),
+        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=1.5707963267948966),
+        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
+    )
+)
+laminate_sp8007 = sp8007_orthotropic_coefficients(laminate_wall)
+laminate_report = {
+    "radius": surface.radius,
+    "length": surface.length,
+    "sp8007": laminate_sp8007,
+    "transverse_shear": {
+        "Abar_xz": laminate_wall.As[0, 0],
+        "Abar_yz": laminate_wall.As[1, 1],
+    },
+}
+
+assert abs(laminate_report["sp8007"]["Cbar_x"]) < 1.0e-9
+assert abs(laminate_report["sp8007"]["Cbar_y"]) < 1.0e-9
 ```
 
 For `Cylinder`, Tensyl's local `e1` direction is axial and local `e2` is

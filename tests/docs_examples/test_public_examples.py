@@ -9,11 +9,15 @@ from tensyl import (
     EnergyHomogenizer,
     HomogenizationResult,
     IsotropicMaterial,
+    OrthotropicPlyMaterial,
+    Ply,
     Sphere,
     SphericalCap,
     ValidityContext,
     WallAtlas,
+    equilateral_isogrid_cell,
     isotropic_plate,
+    laminate_plate,
     orthogrid_cell,
 )
 from tensyl.io import from_yaml, to_yaml
@@ -197,3 +201,71 @@ def test_sp8007_data_prep_and_serialization_example() -> None:
     assert report["sp8007"]["Ebar_x"] == result.law.A[0, 0]
     assert report["sp8007"]["Dbar_xy"] == 2.0 * result.law.D[0, 1] + 4.0 * result.law.D[2, 2]
     assert report["p_over_R"] == 8.0 / 120.0
+
+
+def test_sp8007_isogrid_data_prep_example() -> None:
+    isogrid_skin = isotropic_plate(
+        IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
+        thickness=0.060,
+    )
+    isogrid_section = BeamSection(
+        EA=2.8e6,
+        EIy=1.8e4,
+        EIz=5.2e3,
+        GJ=3.2e3,
+        kGAy=0.9e6,
+        kGAz=0.7e6,
+    )
+    isogrid_cell = equilateral_isogrid_cell(
+        skin=isogrid_skin,
+        member_section=isogrid_section,
+        pitch=6.0,
+        eccentricity=0.35,
+    )
+    isogrid_result = EnergyHomogenizer().compute(
+        isogrid_cell,
+        validity_context=ValidityContext(
+            characteristic_height=0.42,
+            pitch=6.0,
+            min_radius=120.0,
+            response_length=80.0,
+        ),
+    )
+    isogrid_sp8007 = _sp8007_orthotropic_coefficients(isogrid_result.law)
+
+    assert abs(isogrid_sp8007["Ebar_x"] - isogrid_sp8007["Ebar_y"]) < 1.0e-6
+    assert abs(isogrid_sp8007["Cbar_x"] - isogrid_sp8007["Cbar_y"]) < 1.0e-6
+
+
+def test_sp8007_symmetric_laminate_data_prep_example() -> None:
+    surface = Cylinder(radius=120.0, length=300.0)
+    carbon_epoxy = OrthotropicPlyMaterial(
+        E1=18.0e6,
+        E2=1.4e6,
+        G12=0.75e6,
+        nu12=0.28,
+        G13=0.75e6,
+        G23=0.50e6,
+        density=0.058,
+    )
+    laminate_wall = laminate_plate(
+        (
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.5 * np.pi),
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.5 * np.pi),
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
+        )
+    )
+    laminate_sp8007 = _sp8007_orthotropic_coefficients(laminate_wall)
+    laminate_report = {
+        "radius": surface.radius,
+        "length": surface.length,
+        "sp8007": laminate_sp8007,
+        "transverse_shear": {
+            "Abar_xz": laminate_wall.As[0, 0],
+            "Abar_yz": laminate_wall.As[1, 1],
+        },
+    }
+
+    assert abs(laminate_report["sp8007"]["Cbar_x"]) < 1.0e-9
+    assert abs(laminate_report["sp8007"]["Cbar_y"]) < 1.0e-9
