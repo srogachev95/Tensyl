@@ -52,6 +52,7 @@ nav:
       - Geometry and Stiffness Fields: user-guide/geometry-and-fields.md
       - Stiffened Surfaces: user-guide/stiffened-surfaces.md
       - External Workflows: user-guide/external-workflows.md
+      - FEM Solver Handoff: user-guide/solver-handoff.md
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
   - Examples:
       - Skin-Only ABD Stiffness: examples/skin-only.md
