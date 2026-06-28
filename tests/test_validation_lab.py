@@ -9,6 +9,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "validation" / "lib"))
 
+from tensyl_validation.barrels import BarrelSmearedResponseCase  # noqa: E402
 from tensyl_validation.cases import load_case, run_case  # noqa: E402
 from tensyl_validation.flat_panels import FlatPanelSmearedResponseCase  # noqa: E402
 
@@ -57,4 +58,26 @@ def test_flat_panel_smeared_case_writes_target_artifacts(tmp_path: Path) -> None
     assert metrics["checks"]["explicit_fe_comparison_available"] is False
     assert metrics["checks"]["smeared_equilibrium_relative_residual"] < 1.0e-12
     assert manifest["metadata"]["artifact_role"] == "tensyl_smeared_panel_target"
+    assert manifest["metadata"]["solver_required"] is False
+
+
+def test_barrel_smeared_case_writes_target_artifacts(tmp_path: Path) -> None:
+    spec = ROOT / "validation" / "cases" / "barrels" / "orthogrid_axial_smeared.yml"
+    case = load_case(spec)
+
+    assert isinstance(case, BarrelSmearedResponseCase)
+
+    outputs = run_case(spec, artifact_dir=tmp_path / "artifacts", command=["run_case.py"])
+    response = json.loads(outputs["response"].read_text(encoding="utf-8"))
+    metrics = json.loads(outputs["metrics"].read_text(encoding="utf-8"))
+    manifest = json.loads(outputs["manifest"].read_text(encoding="utf-8"))
+
+    assert response["schema_version"] == "tensyl.validation.barrel-smeared-response.v1"
+    assert response["explicit_fe_status"] == "planned"
+    assert response["barrel"]["radius"] == 120.0
+    assert response["validity_ratios"]["p_over_R"] == 8.0 / 120.0
+    assert response["response"]["axial_end_shortening_e1"] > 0.0
+    assert metrics["checks"]["explicit_fe_comparison_available"] is False
+    assert metrics["checks"]["smeared_equilibrium_relative_residual"] < 1.0e-12
+    assert manifest["metadata"]["artifact_role"] == "tensyl_smeared_barrel_target"
     assert manifest["metadata"]["solver_required"] is False

@@ -1,0 +1,47 @@
+{
+  "case_name": "barrel_orthogrid_axial_smeared",
+  "command": [
+    "validation/scripts/run_case.py",
+    "validation/cases/barrels/orthogrid_axial_smeared.yml",
+    "--artifacts",
+    "validation/artifacts/committed/barrels/orthogrid_axial_smeared"
+  ],
+  "created_utc": "2026-06-28T20:10:30+00:00",
+  "inputs": [
+    {
+      "path": "validation/cases/barrels/orthogrid_axial_smeared.yml",
+      "sha256": "34789efcdf78edf5cc9c646c6a49470a94530cc5c1d96bd4bf3c39897bf12d13"
+    },
+    {
+      "path": "validation/cases/local_abd/orthogrid_zero_eccentricity.yml",
+      "sha256": "3bac2354c80f69d9bdce2ed2204e19f29e4edcffd8a3199479420cf5b243e909"
+    }
+  ],
+  "metadata": {
+    "artifact_role": "tensyl_smeared_barrel_target",
+    "case_type": "barrel_smeared_response",
+    "explicit_fe_comparison": false,
+    "explicit_fe_status": "planned",
+    "local_abd_case": "local_abd_orthogrid_zero_eccentricity",
+    "phase": "phase_3_barrel_response",
+    "solver_required": false
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/barrels/orthogrid_axial_smeared/smeared_response.json"
+    },
+    {
+      "path": "validation/artifacts/committed/barrels/orthogrid_axial_smeared/metrics.json"
+    },
+    {
+      "path": "validation/artifacts/committed/barrels/orthogrid_axial_smeared/manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "40d25c8",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

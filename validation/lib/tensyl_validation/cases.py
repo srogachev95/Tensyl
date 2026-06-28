@@ -10,6 +10,7 @@ import yaml
 
 from tensyl import IsotropicMaterial, isotropic_plate
 from tensyl_validation.artifacts import ArtifactManifest, write_json
+from tensyl_validation.barrels import BarrelSmearedResponseCase, load_barrel_case, run_barrel_case
 from tensyl_validation.flat_panels import (
     FlatPanelSmearedResponseCase,
     load_flat_panel_case,
@@ -46,7 +47,9 @@ def _load_skin_only_smoke(data: dict[str, Any]) -> SkinOnlySmokeCase:
     )
 
 
-ValidationCase = SkinOnlySmokeCase | LocalABDCase | FlatPanelSmearedResponseCase
+ValidationCase = (
+    SkinOnlySmokeCase | LocalABDCase | FlatPanelSmearedResponseCase | BarrelSmearedResponseCase
+)
 
 
 def load_case(path: Path) -> ValidationCase:
@@ -68,6 +71,8 @@ def load_case(path: Path) -> ValidationCase:
         return load_local_abd_case(data)
     if case_type == "flat_panel_smeared_response":
         return load_flat_panel_case(data, base_dir=path.parent)
+    if case_type == "barrel_smeared_response":
+        return load_barrel_case(data, base_dir=path.parent)
     msg = f"unsupported validation case_type: {case_type!r}"
     raise ValueError(msg)
 
@@ -90,6 +95,13 @@ def run_case(
         )
     if isinstance(case, FlatPanelSmearedResponseCase):
         return run_flat_panel_case(
+            spec_path,
+            case,
+            artifact_dir=artifact_dir,
+            command=command,
+        )
+    if isinstance(case, BarrelSmearedResponseCase):
+        return run_barrel_case(
             spec_path,
             case,
             artifact_dir=artifact_dir,

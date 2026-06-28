@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_run_matrix_runs_multiple_cases(tmp_path: Path) -> None:
     smoke = ROOT / "validation" / "cases" / "smoke" / "skin_only.yml"
     flat_panel = ROOT / "validation" / "cases" / "flat_panels" / "orthogrid_axial_smeared.yml"
+    barrel = ROOT / "validation" / "cases" / "barrels" / "orthogrid_axial_smeared.yml"
     local = tmp_path / "local.yml"
     local.write_text(
         """
@@ -34,6 +35,7 @@ geometry: {}
             str(local),
             str(smoke),
             str(flat_panel),
+            str(barrel),
             "--artifacts",
             str(tmp_path / "artifacts"),
         ],
@@ -49,4 +51,7 @@ geometry: {}
     assert (tmp_path / "artifacts" / tmp_path.name / "local" / "target_abd.json").exists()
     assert (
         tmp_path / "artifacts" / "flat_panels" / "orthogrid_axial_smeared" / "smeared_response.json"
+    ).exists()
+    assert (
+        tmp_path / "artifacts" / "barrels" / "orthogrid_axial_smeared" / "smeared_response.json"
     ).exists()

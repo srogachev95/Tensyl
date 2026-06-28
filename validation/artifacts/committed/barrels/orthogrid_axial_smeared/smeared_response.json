@@ -1,0 +1,95 @@
+{
+  "barrel": {
+    "angle_rad": 6.283185307179586,
+    "arc_length_e2": 753.9822368615503,
+    "area": 72382.29473870882,
+    "length_e1": 96.0,
+    "radius": 120.0
+  },
+  "case_name": "barrel_orthogrid_axial_smeared",
+  "explicit_fe_status": "planned",
+  "generalized_strain": [
+    0.0007111501708805878,
+    -0.0001784299389590737,
+    5.441225282535097e-22,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "local_abd_reference": "validation/cases/local_abd/orthogrid_zero_eccentricity.yml",
+  "notes": [
+    "This artifact is a smeared cylindrical-wall target computed from Tensyl ABD stiffness.",
+    "It is not an explicit finite-element barrel comparison."
+  ],
+  "order": {
+    "generalized_strains": [
+      "epsilon_11",
+      "epsilon_22",
+      "gamma_12",
+      "kappa_11",
+      "kappa_22",
+      "kappa_12",
+      "gamma_13",
+      "gamma_23"
+    ],
+    "resultants": [
+      "N11",
+      "N22",
+      "N12",
+      "M11",
+      "M22",
+      "M12",
+      "Q13",
+      "Q23"
+    ]
+  },
+  "recovered_resultants": [
+    1000.0000000000003,
+    0.0,
+    3.944304526105059e-31,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "response": {
+    "axial_end_shortening_e1": 0.06827041640453643,
+    "circumferential_arc_change_e2": -0.13453300449943228,
+    "hoop_radius_change": -0.021411592675088846,
+    "strain_energy_density": 0.3555750854402939,
+    "total_strain_energy": 25737.340636080928,
+    "twist_shear_arc_shift": 4.102587209793434e-19
+  },
+  "resultants": [
+    1000.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "schema_version": "tensyl.validation.barrel-smeared-response.v1",
+  "source": "tensyl_smeared_abd_target",
+  "status": "smeared_target_only",
+  "title": "Smeared orthogrid barrel under axial resultant",
+  "units": {
+    "force": "lbf",
+    "length": "in",
+    "resultants": {
+      "M": "lbf",
+      "N": "lbf/in",
+      "Q": "lbf/in"
+    },
+    "stress": "psi"
+  },
+  "validity_ratios": {
+    "h_over_R": null,
+    "p_over_L_response": 0.08333333333333333,
+    "p_over_R": 0.06666666666666667
+  }
+}

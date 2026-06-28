@@ -1,0 +1,75 @@
+schema_version: tensyl.validation.barrel.case.v1
+case_type: barrel_smeared_response
+case_id: barrel_orthogrid_axial_smeared
+name: barrel_orthogrid_axial_smeared
+title: Smeared orthogrid barrel under axial resultant
+phase: phase_3_barrel_response
+status:
+  current_runner: tensyl_smeared_target_executable
+  command: uv run python validation/scripts/run_case.py validation/cases/barrels/orthogrid_axial_smeared.yml
+  explicit_fe_runner: planned
+  artifact_promotion: smeared_target_only
+  explicit_fe_agreement_claim: false
+units:
+  length: in
+  force: lbf
+  stress: psi
+  resultants:
+    N: lbf/in
+    M: lbf
+    Q: lbf/in
+local_abd_reference: ../local_abd/orthogrid_zero_eccentricity.yml
+source_stiffness:
+  kind: local_abd_case
+  spec: validation/cases/local_abd/orthogrid_zero_eccentricity.yml
+  required_artifact_role: tensyl_target
+barrel:
+  radius: 120.0
+  length_e1: 96.0
+  angle_rad: 6.283185307179586
+  local_frame:
+    e1: axial
+    e2: circumferential
+    normal: outward_radial
+load:
+  description: Uniform axial membrane resultant in local e1 on the smeared barrel wall.
+  resultants:
+    N11: 1000.0
+    N22: 0.0
+    N12: 0.0
+    M11: 0.0
+    M22: 0.0
+    M12: 0.0
+    Q13: 0.0
+    Q23: 0.0
+validity_context:
+  pitch: 8.0
+  characteristic_height: null
+  response_length: 96.0
+  min_radius: 120.0
+tensyl_reference:
+  stiffness_source: validation/cases/local_abd/orthogrid_zero_eccentricity.yml
+  response_model: uniform_resultant_linear_smeared_cylindrical_wall
+explicit_fe_model:
+  runner_status: planned
+  solver: CalculiX
+  model_family: explicit_cylindrical_skin_shells_with_stringer_and_ring_members
+  intended_comparison:
+    - axial_load_displacement_slope
+    - total_strain_energy
+    - radial_and_axial_displacement_fields
+    - low_order_buckling_modes
+expected_metrics:
+  oracle: tensyl_smeared_abd_target
+  checks:
+    - Smeared equilibrium residual is near machine precision.
+    - Axial end shortening is positive for positive N11.
+    - Validity ratios p_over_R and p_over_L_response are recorded.
+    - h_over_R remains null until a physical stiffener height is declared.
+    - No explicit FE comparison is claimed by this artifact.
+promotion:
+  scratch:
+    - Future explicit FE barrel runs belong under validation/artifacts/scratch/barrels/.
+  committed:
+    - Smeared target artifacts may be committed as the comparison oracle.
+    - Solver comparison metrics require a future explicit barrel model and manifest.

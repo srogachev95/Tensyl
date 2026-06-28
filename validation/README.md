@@ -16,6 +16,13 @@ smeared response oracle that a future explicit panel model must compare against:
 uv run python validation/scripts/run_case.py validation/cases/flat_panels/orthogrid_axial_smeared.yml
 ```
 
+The first Phase 3 barrel case follows the same target-only pattern and records
+curvature validity ratios for future explicit barrel comparisons:
+
+```bash
+uv run python validation/scripts/run_case.py validation/cases/barrels/orthogrid_axial_smeared.yml
+```
+
 Generated scratch output goes under `validation/artifacts/scratch/`, which is
 ignored by git. Commit only compact, curated artifacts such as metrics, plots,
 case summaries, and solver-version manifests.
