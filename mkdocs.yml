@@ -55,7 +55,7 @@ nav:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md
       - Orthogrid Panel and Barrel: examples/orthogrid-panel.md
       - Variable Stiffness Fields: examples/sampled-stiffness-atlas.md
-      - Ellipsoid Stiffness Map: examples/ellipsoid-stiffness-map.md
+      - Stiffness Field Maps: examples/stiffness-field-maps.md
   - API Reference:
       - Core: api/core.md
       - Materials: api/materials.md
