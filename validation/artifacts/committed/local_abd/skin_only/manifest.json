@@ -1,0 +1,38 @@
+{
+  "case_name": "local_abd_skin_only",
+  "command": [
+    "validation/scripts/run_matrix.py",
+    "validation/cases/local_abd/skin_only.yml"
+  ],
+  "created_utc": "2026-06-28T19:23:15+00:00",
+  "inputs": [
+    {
+      "path": "validation/cases/local_abd/skin_only.yml",
+      "sha256": "41b936726b8afd0a841fc5b2772de337722de5e467068792c2a224294c04052a"
+    }
+  ],
+  "metadata": {
+    "artifact_role": "tensyl_target",
+    "case_type": "local_abd",
+    "model": "skin_only",
+    "solver_required": false
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/local_abd/skin_only/target_abd.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/skin_only/metrics.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/skin_only/manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "20949a1",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

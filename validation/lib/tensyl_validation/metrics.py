@@ -22,6 +22,55 @@ def _relative_error(actual: float, expected: float) -> float:
     return abs(actual - expected) / scale
 
 
+def _relative_matrix_error(actual: np.ndarray, expected: np.ndarray) -> float:
+    scale = max(float(np.linalg.norm(expected)), 1.0)
+    return float(np.linalg.norm(actual - expected) / scale)
+
+
+def abd_comparison_metrics(
+    actual: np.ndarray,
+    expected: np.ndarray,
+    *,
+    case_name: str,
+) -> dict[str, Any]:
+    """Compare two canonical C8 stiffness matrices."""
+
+    actual_c8 = np.asarray(actual, dtype=np.float64)
+    expected_c8 = np.asarray(expected, dtype=np.float64)
+    if actual_c8.shape != (8, 8):
+        msg = f"actual stiffness must have shape (8, 8), got {actual_c8.shape}."
+        raise ValueError(msg)
+    if expected_c8.shape != (8, 8):
+        msg = f"expected stiffness must have shape (8, 8), got {expected_c8.shape}."
+        raise ValueError(msg)
+    delta = actual_c8 - expected_c8
+    return {
+        "schema_version": "tensyl.validation.abd-comparison-metrics.v1",
+        "case_name": case_name,
+        "checks": {
+            "C8_relative_frobenius_error": _relative_matrix_error(actual_c8, expected_c8),
+            "A_relative_frobenius_error": _relative_matrix_error(
+                actual_c8[:3, :3],
+                expected_c8[:3, :3],
+            ),
+            "B_relative_frobenius_error": _relative_matrix_error(
+                actual_c8[:3, 3:6],
+                expected_c8[:3, 3:6],
+            ),
+            "D_relative_frobenius_error": _relative_matrix_error(
+                actual_c8[3:6, 3:6],
+                expected_c8[3:6, 3:6],
+            ),
+            "As_relative_frobenius_error": _relative_matrix_error(
+                actual_c8[6:8, 6:8],
+                expected_c8[6:8, 6:8],
+            ),
+            "max_abs_entry_error": float(np.max(np.abs(delta))),
+            "symmetric_actual_C8": bool(np.allclose(actual_c8, actual_c8.T)),
+        },
+    }
+
+
 def skin_only_metrics(
     stiffness: ABDStiffness,
     *,

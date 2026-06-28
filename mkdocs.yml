@@ -53,6 +53,7 @@ nav:
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
   - Validation:
       - FEM Validation Laboratory: validation/index.md
+      - Phase 1 Local ABD Extraction: validation/local-abd.md
   - Examples:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md
       - Orthogrid Panel and Barrel: examples/orthogrid-panel.md

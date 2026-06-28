@@ -1,0 +1,38 @@
+{
+  "case_name": "local_abd_orthogrid_eccentric",
+  "command": [
+    "validation/scripts/run_matrix.py",
+    "validation/cases/local_abd/orthogrid_eccentric.yml"
+  ],
+  "created_utc": "2026-06-28T19:23:15+00:00",
+  "inputs": [
+    {
+      "path": "validation/cases/local_abd/orthogrid_eccentric.yml",
+      "sha256": "b1c077f0a1178a9b4651cd8a5bf7ca4599551ae659788ae66c0717990edaed52"
+    }
+  ],
+  "metadata": {
+    "artifact_role": "tensyl_target",
+    "case_type": "local_abd",
+    "model": "orthogrid",
+    "solver_required": false
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/local_abd/orthogrid_eccentric/target_abd.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/orthogrid_eccentric/metrics.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/orthogrid_eccentric/manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "20949a1",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

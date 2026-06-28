@@ -1,0 +1,133 @@
+schema_version: tensyl.validation.local_abd.case.v1
+case_type: local_abd_periodic_cell
+case_id: local_abd_orthogrid_eccentric
+name: local_abd_orthogrid_eccentric
+title: Positive-eccentric orthogrid
+phase: phase_1_local_abd
+status:
+  current_runner: tensyl_target_executable
+  command: uv run python validation/scripts/run_case.py validation/cases/local_abd/orthogrid_eccentric.yml
+  solver_runner: planned
+  artifact_promotion: draft
+units:
+  length: in
+  force: lbf
+  stress: psi
+materials:
+  aluminum:
+    E: 10600000.0
+    nu: 0.33
+    density: 0.1
+skin:
+  material: aluminum
+  thickness: 0.08
+  shear_correction: 0.8333333333333334
+section_library:
+  validation_stringer:
+    type: beam_section
+    EA: 3200000.0
+    EIy: 24000.0
+    EIz: 6500.0
+    GJ: 4000.0
+    kGAy: 1100000.0
+    kGAz: 900000.0
+  validation_rib:
+    type: beam_section
+    EA: 2400000.0
+    EIy: 18000.0
+    EIz: 5200.0
+    GJ: 3200.0
+    kGAy: 900000.0
+    kGAz: 700000.0
+local_frame:
+  e1: stringer_axis
+  e2: rib_axis
+  normal: skin_positive_z
+  handedness: e1_cross_e2_equals_normal
+reference_surface:
+  location: skin_midsurface
+  z_offset: 0.0
+  eccentricity_sign: positive_along_normal
+cell:
+  topology: orthogrid
+  constructor: orthogrid_cell
+  arguments:
+    stringer_section: validation_stringer
+    rib_section: validation_rib
+    stringer_spacing: 6.0
+    rib_spacing: 8.0
+    stringer_eccentricity: 0.45
+    rib_eccentricity: 0.35
+  representative_area: 48.0
+  boundary_condition: generalized_strain_periodic
+tensyl_reference:
+  constructor: EnergyHomogenizer.compute
+  cell_constructor: orthogrid_cell
+  comparison_frame: local_frame
+fe_model:
+  runner_status: planned
+  solver: CalculiX
+  mesh_generator: Gmsh
+  element_family: skin_shells_with_offset_beam_or_shell_stiffeners
+  nominal_element_size: 0.25
+extraction:
+  generalized_strain_order:
+    - epsilon_11
+    - epsilon_22
+    - gamma_12
+    - kappa_11
+    - kappa_22
+    - kappa_12
+    - gamma_13
+    - gamma_23
+  load_cases:
+    - id: epsilon_11
+      component: epsilon_11
+      magnitude: 0.0001
+    - id: epsilon_22
+      component: epsilon_22
+      magnitude: 0.0001
+    - id: gamma_12
+      component: gamma_12
+      magnitude: 0.0001
+    - id: kappa_11
+      component: kappa_11
+      magnitude: 0.001
+      units: 1/in
+    - id: kappa_22
+      component: kappa_22
+      magnitude: 0.001
+      units: 1/in
+    - id: kappa_12
+      component: kappa_12
+      magnitude: 0.001
+      units: 1/in
+    - id: gamma_13
+      component: gamma_13
+      magnitude: 0.0001
+    - id: gamma_23
+      component: gamma_23
+      magnitude: 0.0001
+expected_metrics:
+  oracle: tensyl_energy_homogenizer
+  blocks:
+    A: lbf_per_in
+    B: lbf
+    D: lbf_in
+    As: lbf_per_in
+  tolerances:
+    block_relative_linf: 0.03
+    energy_relative_linf: 0.03
+    symmetry_absolute_linf: 1.0e-7
+  invariants:
+    - B11 is positive for positive stringer eccentricity in the declared frame.
+    - B22 is positive for positive rib eccentricity in the declared frame.
+    - Reversing both eccentricity signs would reverse the leading B terms.
+    - A block remains close to the zero-eccentric orthogrid A block for the same section data.
+promotion:
+  scratch:
+    - Solver-backed runner completes all eight extraction load cases.
+    - Metrics and manifest are written under validation/artifacts/scratch/local_abd/orthogrid_eccentric/.
+  committed:
+    - Curated metrics, manifest, and mesh-convergence summary are copied under validation/artifacts/committed/local_abd/orthogrid_eccentric/.
+    - The committed summary reports B-block sign checks and the reference-surface convention.

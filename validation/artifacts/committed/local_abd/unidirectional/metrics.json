@@ -1,0 +1,33 @@
+{
+  "canonical_unit_strain_energies": [
+    742483.0733550293,
+    475816.40668836277,
+    182315.16290726815,
+    2253.7687502337935,
+    795.4354169004602,
+    168.34586466165416,
+    207832.08020050125,
+    132832.08020050125
+  ],
+  "case_name": "local_abd_unidirectional",
+  "case_type": "local_abd",
+  "checks": {
+    "condition_number_C8": 4842.06817117408,
+    "max_C8_eigenvalue": 1630284.3060539498,
+    "min_C8_eigenvalue": 336.6917293233083,
+    "rank_C8": 8,
+    "symmetric_ABD": true,
+    "symmetric_C8": true
+  },
+  "expected_status": "draft",
+  "model": "unidirectional",
+  "schema_version": "tensyl.validation.local-abd-metrics.v1",
+  "units": {
+    "force": "lbf",
+    "length": "in",
+    "stress": "psi"
+  },
+  "validity_warnings": [
+    "validity_context_missing"
+  ]
+}
