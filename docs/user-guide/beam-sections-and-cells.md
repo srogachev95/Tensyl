@@ -43,9 +43,25 @@ Named constructors are convenience layers over canonical `BeamMember`
 contributions. They do not model joint details, intersection stresses, or local
 crippling.
 
+The treatise figures below show the kind of repeated cell each named constructor
+is reducing to member contributions. They are topology references, not a promise
+that the constructor reproduces every label, dimension convention, or special
+case in the original report.
+
+| Constructor family | Treatise topology |
+| --- | --- |
+| `braced_orthogrid_cell` | ![Orthogonal stiffener pattern with two diagonal braces per bay and a basic cell.](../assets/nemeth-treatise/fig-14-braced-orthogrid-cell.jpg) |
+| `isosceles_triangle_grid_cell` | ![Isosceles-triangle stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-17-isosceles-triangle-cell.jpg) |
+| `kagome_cell` | ![Kagome stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-18-kagome-cell.jpg) |
+| `hexagonal_grid_cell` | ![Hexagon-shaped stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-21-hexagon-cell.jpg) |
+| `star_cell` | ![Isosceles-star-shaped stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-23-star-cell.jpg) |
+
+*Source for topology figures: Nemeth, NASA/TP-2011-216882, figures 14, 17, 18,
+21, and 23; full citation in [References](../references.md).*
+
 ## Angles And Eccentricity
 
-Angles are measured in the local local frame. `0` points along `e1`, `pi/2`
+Angles are measured in the local frame. `0` points along `e1`, `pi/2`
 points along `e2`, and positive angles follow the positive rotation convention
 about `n`.
 

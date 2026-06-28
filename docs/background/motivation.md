@@ -1,8 +1,13 @@
 # Motivation
 
-Stiffened stiffened plates and shells appear throughout aerospace engineering:
+Stiffened plates and shells appear throughout aerospace engineering:
 integrally stiffened panels, launch-vehicle barrels, ring-and-stringer shells,
 isogrids, orthogrids, sandwich sections, and lattice-like facesheets.
+
+![Two isogrid-stiffened cylinder specimens from Nemeth's equivalent-plate treatise.](../assets/nemeth-treatise/fig-03-isogrid-stiffened-cylinders.jpg)
+
+*Source: Nemeth, NASA/TP-2011-216882, figure 3; full citation in
+[References](../references.md).*
 
 Detailed stiffener-by-stiffener models are the gold standard — and a slog.
 Rebuilding every rib for a trade study you will throw away next week is a poor
