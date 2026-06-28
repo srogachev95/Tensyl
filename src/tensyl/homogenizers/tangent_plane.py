@@ -52,7 +52,13 @@ def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -
 
 @dataclass(frozen=True, slots=True)
 class ValidityContext:
-    """Optional geometric scale data for tangent-plane validity checks."""
+    """Optional geometric scale data for tangent-plane validity checks.
+
+    ``characteristic_height`` is a wall or stiffener height scale, ``pitch`` is
+    the repeated-cell spacing, ``min_radius`` is the smallest local curvature
+    radius, and ``response_length`` is the intended structural response length
+    such as a buckle wavelength or analysis feature size.
+    """
 
     characteristic_height: float | None = None
     pitch: float | None = None
@@ -124,7 +130,11 @@ class ValidityReport:
 
 @dataclass(frozen=True, slots=True)
 class HomogenizationResult:
-    """A homogenization result and its verification context."""
+    """A homogenization result and its verification context.
+
+    The law is returned with ``validity`` attached so warnings remain available
+    when only ``result.law`` is passed to fields, exports, or downstream tools.
+    """
 
     law: LinearABDWall
     validity: ValidityReport
@@ -357,7 +367,11 @@ def _wall_from_tangent(
 
 @dataclass(frozen=True, slots=True)
 class EnergyHomogenizer:
-    """Reference tangent-plane energy-equivalence homogenizer."""
+    """Reference tangent-plane energy-equivalence homogenizer.
+
+    Computes a ``LinearABDWall`` by adding skin stiffness and member energy
+    contributions over a ``CanonicalUnitCell``.
+    """
 
     thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
 
@@ -392,7 +406,11 @@ class EnergyHomogenizer:
 
 @dataclass(frozen=True, slots=True)
 class DirectECHomogenizer:
-    """Direct equilibrium-compatibility homogenizer for straight member families."""
+    """Direct equilibrium-compatibility homogenizer for straight member families.
+
+    Use this path for supported straight-family comparisons or accelerators,
+    not as a replacement for the more general energy cell path.
+    """
 
     thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
 

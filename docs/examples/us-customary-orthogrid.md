@@ -3,6 +3,12 @@
 This example computes a first equivalent wall law for an orthogrid panel. The
 numbers are illustrative and should not be used as allowables.
 
+## Problem
+
+Build a US customary orthogrid wall law about the skin reference surface. Both
+stringers and ribs are external to the `+n` side, so the eccentricity is
+positive and membrane-bending coupling is expected.
+
 ```python
 from tensyl import (
     BeamSection,
@@ -51,6 +57,26 @@ wall = result.law
 
 assert wall.constant_tangent.shape == (8, 8)
 assert result.diagnostics["symmetric"]
+assert result.law.B[0, 0] > 0.0
 ```
 
 Review `result.validity.warnings` before using the wall law downstream.
+
+## Selected Output
+
+Rounded diagonal values:
+
+| Block | Diagonal values |
+| --- | --- |
+| `A` | `1.485e6`, `1.352e6`, `3.990e5` `lbf/in` |
+| `B` | `2.400e5`, `1.800e5`, `-3.609e4` `lbf` |
+| `D` | `1.133e5`, `8.559e4`, `1.670e4` `lbf*in` |
+| `As` | `4.157e5`, `3.782e5` `lbf/in` |
+
+## Interpretation
+
+The diagonal `A` terms show the membrane stiffness added by the grid. Nonzero
+`B` comes from eccentric stiffeners relative to the reference surface.
+Diagnostics confirm the assembled tangent is symmetric and positive
+semidefinite for this model; they do not prove local stiffener strength,
+crippling resistance, or shell buckling margin.

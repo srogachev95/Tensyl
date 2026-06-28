@@ -120,7 +120,19 @@ ConstitutiveLaw = HyperelasticLaw
 
 @dataclass(frozen=True, slots=True)
 class LinearABDWall:
-    """Linear ABD wall law with uncoupled transverse shear block."""
+    """Linear equivalent-wall law in ABD plus transverse-shear form.
+
+    Args:
+        A: ``3x3`` extensional stiffness block in the active unit system.
+        B: ``3x3`` membrane-bending coupling block about the reference surface.
+        D: ``3x3`` bending and twisting stiffness block.
+        As: ``2x2`` transverse-shear stiffness block.
+        frame: Local right-handed wall frame for the matrix components.
+        convention: Generalized strain ordering and shear convention.
+        areal_mass: Optional mass per unit reference-surface area.
+        metadata: Provenance metadata preserved by serialization.
+        validity: Optional validity report attached by homogenization.
+    """
 
     A: FloatArray
     B: FloatArray
@@ -167,7 +179,12 @@ class LinearABDWall:
         metadata: Mapping[str, Any] | None = None,
         validity: Any = None,
     ) -> LinearABDWall:
-        """Build a linear wall law from the canonical 8x8 tangent."""
+        """Build a linear wall law from the canonical ``8x8`` tangent.
+
+        The tangent order is ``[N11, N22, N12, M11, M22, M12, Q13, Q23]`` by
+        ``[eps11, eps22, gamma12, kappa11, kappa22, kappa12, gamma13,
+        gamma23]``.
+        """
 
         c8 = _readonly_tangent(tangent, name="tangent")
         return cls(

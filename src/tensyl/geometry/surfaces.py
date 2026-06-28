@@ -164,7 +164,11 @@ class FlatPlate:
 
 @dataclass(frozen=True, slots=True)
 class Cylinder:
-    """Circular cylinder parameterized by axial coordinate and angle ``(x, theta)``."""
+    """Circular cylinder parameterized by axial coordinate and angle ``(x, theta)``.
+
+    The local frame has ``e1`` in the axial direction, ``e2`` in the
+    circumferential direction, and ``n`` outward.
+    """
 
     radius: float
     length: float | None = None
@@ -203,7 +207,11 @@ class Cylinder:
 
 @dataclass(frozen=True, slots=True)
 class SphericalCap:
-    """Spherical surface parameterized by polar angle and azimuth ``(phi, theta)``."""
+    """Spherical surface parameterized by polar angle and azimuth ``(phi, theta)``.
+
+    The pole and cap boundary are singular for the current coordinate chart and
+    are rejected by ``point_at``.
+    """
 
     radius: float
     half_angle_rad: float = np.pi

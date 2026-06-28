@@ -34,6 +34,8 @@ class BeamSection:
     ``EIz`` is the in-plane bending stiffness retained for provenance, and
     ``GJ`` is the torsional stiffness. ``kGAy`` and ``kGAz`` are optional shear
     stiffnesses in the member-local in-plane transverse and normal directions.
+    Tensyl expects stiffness products in a consistent unit system; it does not
+    calculate them from cross-section dimensions.
     """
 
     EA: float

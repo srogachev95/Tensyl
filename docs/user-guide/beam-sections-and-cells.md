@@ -15,6 +15,10 @@ section = BeamSection(
 )
 ```
 
+Tensyl asks for stiffness products instead of raw dimensions because the current
+homogenizer consumes centroidal beam stiffnesses. It does not calculate section
+properties from hat, blade, tee, z, or custom cross-section geometry.
+
 For US customary examples:
 
 - `EA`, `kGAy`, and `kGAz` use `lbf`;
@@ -38,6 +42,18 @@ Tensyl provides constructors for common tangent-plane patterns:
 Named constructors are convenience layers over canonical `BeamMember`
 contributions. They do not model joint details, intersection stresses, or local
 crippling.
+
+## Angles And Eccentricity
+
+Angles are measured in the local wall frame. `0` points along `e1`, `pi/2`
+points along `e2`, and positive angles follow the positive rotation convention
+about `n`.
+
+Every eccentricity is signed along `+n` from the wall reference surface to the
+member centroid. For an outward-normal cylinder, an external stringer has
+positive `stringer_eccentricity`; an internal stringer has negative
+eccentricity. The sign changes `B`, so a wrong sign can produce a different
+physical wall law without triggering a validation error.
 
 ## Graph Cells
 
@@ -63,3 +79,5 @@ cell = graph_unit_cell(
 ```
 
 Node coordinates and area must use the same length unit.
+
+Next: [Frames and Conventions](../theory/conventions.md).
