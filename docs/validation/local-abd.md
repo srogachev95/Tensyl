@@ -32,11 +32,20 @@ All five Tensyl target artifacts can be regenerated with:
 uv run python validation/scripts/run_matrix.py validation/cases/local_abd/*.yml --artifacts validation/artifacts/committed
 ```
 
+The first stiffened preflight deck set can be generated with:
+
+```bash
+uv run python validation/scripts/run_local_abd_solver.py validation/cases/local_abd/unidirectional.yml --prepare-probe-decks
+```
+
 Specs that include stiffeners use `case_type: local_abd_periodic_cell`. The
 current runner computes the Tensyl target ABD for that contract. The FE
-extraction side is being introduced skin-only first. Stiffened extraction cases
-remain planned until generated CalculiX/Gmsh models produce extracted stiffness
-artifacts and comparison metrics for those geometries.
+extraction side is being introduced skin-only first. The zero-eccentric
+unidirectional case now has deterministic CalculiX probe decks for beam/shell
+coupling review, but those decks are not promoted extraction artifacts. Standard
+CalculiX beam sections are geometry-plus-material definitions, while Tensyl's
+`BeamSection` stores stiffness products directly. Until the geometry-to-section
+mapping is audited, stiffened extraction cases remain planned.
 
 For the skin-only slice, separate the target and extraction artifact roles:
 
@@ -133,9 +142,12 @@ components first. Its `ABD6_relative_frobenius_error` is `3.79e-8`, with
 `A_relative_frobenius_error = 3.79e-8`, `B_relative_frobenius_error = 2.69e-10`,
 and `D_relative_frobenius_error = 1.03e-7`. Transverse shear extraction for
 `As`, full `8 x 8` assembly, mesh-convergence promotion, and stiffened-cell
-solver models are still open items. This staged approach is intentional; plates
-are easier to interrogate before ribs and stringers start rearranging the
-furniture.
+solver models are still open items. The unidirectional probe decks share the
+skin and beam nodes along the stiffener centerline and use a rectangular
+CalculiX beam proxy that preserves the target `EA` and `EIy` only. They are
+useful for coupling checks, not for FE-vs-Tensyl agreement claims. This staged
+approach is intentional; plates are easier to interrogate before ribs and
+stringers start rearranging the furniture.
 
 The initial tolerances in the YAML specs are promotion thresholds, not laws of
 nature. If the solver model exposes a better justified tolerance, update the spec

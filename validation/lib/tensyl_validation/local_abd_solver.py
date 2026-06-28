@@ -13,11 +13,14 @@ import yaml
 
 from tensyl_validation.artifacts import ArtifactManifest, write_json
 from tensyl_validation.calculix import (
+    CalculixBeamStiffness,
     CalculixSkinPatch,
     CalculixStressTable,
+    CalculixUnidirectionalStiffenedPatch,
     GeneralizedStrainLoadCase,
     parse_calculix_stress_dat,
     render_skin_patch_inp,
+    render_unidirectional_stiffened_probe_decks,
 )
 from tensyl_validation.cases import load_case as load_validation_case
 from tensyl_validation.local_abd import LocalABDCase, target_stiffness
@@ -32,6 +35,10 @@ _COMPONENT_INDEX = {
     "kappa_22": 4,
     "kappa_12": 5,
 }
+
+
+class UnsupportedSolverExtractionError(RuntimeError):
+    """Raised when a local ABD case has no promoted solver extraction path."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,6 +84,38 @@ def _skin_patch(case: LocalABDCase, data: dict[str, Any]) -> CalculixSkinPatch:
         divisions_x=max(1, round(length / nominal_size)),
         divisions_y=max(1, round(width / nominal_size)),
         name=case.name,
+    )
+
+
+def _unidirectional_stiffened_patch(
+    case: LocalABDCase,
+    data: dict[str, Any],
+) -> CalculixUnidirectionalStiffenedPatch:
+    if case.model != "unidirectional" or case.section is None:
+        msg = "unidirectional stiffener probe requires a unidirectional beam-section case."
+        raise ValueError(msg)
+    geometry = case.geometry
+    if float(geometry.get("eccentricity", 0.0)) != 0.0:
+        msg = "unidirectional stiffener probe currently supports zero eccentricity only."
+        raise UnsupportedSolverExtractionError(msg)
+    if float(geometry.get("angle_rad", 0.0)) != 0.0:
+        msg = "unidirectional stiffener probe currently supports members aligned with e1 only."
+        raise UnsupportedSolverExtractionError(msg)
+    spacing = float(geometry["spacing"])
+    patch = _skin_patch(case, data)
+    if abs(patch.width - spacing) > 1.0e-9:
+        msg = "unidirectional stiffener probe expects one pitch across the patch width."
+        raise UnsupportedSolverExtractionError(msg)
+    return CalculixUnidirectionalStiffenedPatch(
+        skin=patch,
+        beam=CalculixBeamStiffness(
+            EA=case.section.EA,
+            EIy=case.section.EIy,
+            EIz=case.section.EIz,
+            GJ=case.section.GJ,
+            kGAy=case.section.kGAy,
+            kGAz=case.section.kGAz,
+        ),
     )
 
 
@@ -271,3 +310,74 @@ def run_skin_only_solver_extraction(
         "comparison": comparison_path,
         "manifest": manifest_path,
     }
+
+
+def prepare_unidirectional_stiffened_probe_decks(
+    spec_path: Path,
+    *,
+    artifact_dir: Path,
+    work_dir: Path,
+    command: list[str] | None = None,
+) -> dict[str, Path]:
+    """Write CalculiX probe decks for the zero-eccentric unidirectional case."""
+
+    loaded = load_validation_case(spec_path)
+    if not isinstance(loaded, LocalABDCase) or loaded.model != "unidirectional":
+        msg = "prepare_unidirectional_stiffened_probe_decks requires a unidirectional case."
+        raise ValueError(msg)
+    data = _load_spec(spec_path)
+    patch = _unidirectional_stiffened_patch(loaded, data)
+    load_cases = tuple(
+        extraction_case.calculix_case() for extraction_case in _extraction_load_cases(data)
+    )
+
+    case_work_dir = work_dir / loaded.name
+    case_work_dir.mkdir(parents=True, exist_ok=True)
+    deck_paths: list[Path] = []
+    for case_id, deck in render_unidirectional_stiffened_probe_decks(patch, load_cases).items():
+        deck_path = case_work_dir / f"{case_id}.inp"
+        deck_path.write_text(deck, encoding="utf-8")
+        deck_paths.append(deck_path)
+
+    summary_path = artifact_dir / "probe_summary.json"
+    manifest_path = artifact_dir / "probe_manifest.json"
+    write_json(
+        summary_path,
+        {
+            "schema_version": "tensyl.validation.local-abd-probe.v1",
+            "case_name": loaded.name,
+            "model": loaded.model,
+            "status": "review_deck_only",
+            "solver_extraction_promoted": False,
+            "deck_count": len(deck_paths),
+            "deck_directory": str(case_work_dir),
+            "notes": [
+                "Decks use shared shell/beam nodes on the skin reference surface.",
+                "The CalculiX rectangular beam proxy preserves target EA and EIy only.",
+                "These decks are not promoted FE extraction artifacts.",
+            ],
+        },
+    )
+    manifest = ArtifactManifest(
+        case_name=loaded.name,
+        command=[] if command is None else command,
+        inputs=[spec_path],
+        outputs=[summary_path, manifest_path],
+        metadata={
+            "case_type": "local_abd",
+            "model": loaded.model,
+            "artifact_role": "calculix_probe_deck",
+            "solver_required": False,
+            "solver_extraction_promoted": False,
+            "raw_work_dir": str(case_work_dir),
+            "deck_paths": [str(path) for path in deck_paths],
+            "unsupported_blocks": ["A", "B", "D", "As"],
+            "reason_not_promoted": (
+                "CalculiX rectangular beam sections cannot yet represent the "
+                "Tensyl BeamSection stiffness tuple EA/EIy/EIz/GJ/kGAy/kGAz "
+                "with audited equivalence."
+            ),
+        },
+    )
+    write_json(manifest_path, manifest.as_dict())
+    return {"summary": summary_path, "manifest": manifest_path, "decks": case_work_dir}

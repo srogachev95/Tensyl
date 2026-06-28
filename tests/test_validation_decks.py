@@ -10,10 +10,13 @@ sys.path.insert(0, str(ROOT / "validation" / "lib"))
 
 from tensyl_validation.calculix import (  # noqa: E402
     STANDARD_ABD_LOAD_CASES,
+    CalculixBeamStiffness,
     CalculixSkinPatch,
+    CalculixUnidirectionalStiffenedPatch,
     parse_reaction_summary,
     render_skin_patch_decks,
     render_skin_patch_inp,
+    render_unidirectional_stiffened_probe_decks,
 )
 from tensyl_validation.calculix.decks import GeneralizedStrainLoadCase  # noqa: E402
 from tensyl_validation.gmsh import GmshSkinPatch, render_rectangular_skin_geo  # noqa: E402
@@ -90,6 +93,40 @@ def test_calculix_twist_load_case_prescribes_linear_rotations() -> None:
     assert "1, 5, 5, -0.25" in deck
     assert "4, 4, 4, -0.5" in deck
     assert "4, 5, 5, 0.25" in deck
+
+
+def test_unidirectional_stiffened_probe_deck_marks_proxy_beam_section() -> None:
+    skin = CalculixSkinPatch(
+        length=6.0,
+        width=6.0,
+        thickness=0.08,
+        youngs_modulus=10_600_000.0,
+        poissons_ratio=0.33,
+        divisions_x=6,
+        divisions_y=6,
+        name="local_abd_unidirectional",
+    )
+    patch = CalculixUnidirectionalStiffenedPatch(
+        skin=skin,
+        beam=CalculixBeamStiffness(
+            EA=3_200_000.0,
+            EIy=24_000.0,
+            EIz=6_500.0,
+            GJ=4_000.0,
+            kGAy=1_100_000.0,
+            kGAz=900_000.0,
+        ),
+    )
+    load_case = GeneralizedStrainLoadCase("epsilon_11", (1.0e-4, 0.0, 0.0, 0.0, 0.0, 0.0))
+
+    deck = render_unidirectional_stiffened_probe_decks(patch, (load_case,))["epsilon_11"]
+
+    assert "** probe_status: review_deck_only_not_promoted_validation" in deck
+    assert "** beam_proxy: CalculiX RECT section preserves target EA and EIy only" in deck
+    assert "*ELEMENT, TYPE=B31, ELSET=STIFFENER" in deck
+    assert "*BEAM SECTION, ELSET=STIFFENER, MATERIAL=STIFFENER_MATERIAL, SECTION=RECT" in deck
+    assert "target_beam_stiffness: EA=3200000" in deck
+    assert "37, 22, 23" in deck
 
 
 def test_compact_reaction_summary_parser_accepts_key_value_lines() -> None:
