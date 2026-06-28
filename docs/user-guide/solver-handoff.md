@@ -3,13 +3,14 @@
 Tensyl computes an equivalent ABD stiffness. A finite-element solver consumes
 that stiffness through whatever shell-section machinery it provides. Sometimes
 that machinery is a reduced orthotropic material. Sometimes it is a
-preintegrated shell stiffness. Sometimes it is a dialect-specific card that
-needs a careful audit before anyone lets it near a margin.
+preintegrated shell stiffness. Sometimes it is a solver-specific section option
+that benefits from a quick patch check before it joins the serious model.
 
-This page describes practical handoff routes for NASTRAN, ANSYS, and Abaqus. It
-does not make Tensyl a solver-deck writer. Use the YAML or JSON artifact from
-[External Workflows](external-workflows.md) as the traceable source, then translate
-the checked stiffness into the target solver input.
+This page describes practical handoff routes for NX Nastran, ANSYS, and Abaqus.
+A YAML or JSON artifact from [External Workflows](external-workflows.md) is still
+a useful traceability record: it keeps the stiffness, units, validity warnings,
+and assumptions together while the solver input gets the particular syntax it
+needs.
 
 ## Before Solver Input
 
@@ -79,18 +80,17 @@ Keep these checks explicit:
 - Align local solver material axes with Tensyl's `e1` and `e2`. For the built-in
   `Cylinder`, `e1` is axial and `e2` is circumferential.
 - Match the reference surface. Moving the solver section offset without shifting
-  the ABD law changes `B`.
-- Preserve the engineering shear and engineering twist convention. Quiet
-  factor-of-two errors are unusually good at looking respectable.
-- Review `result.validity.warnings` before export. A solver will not know whether
-  a stiffener pitch is too large for the homogenization assumption.
+  the ABD stiffness changes `B`.
+- Preserve the engineering shear and engineering twist convention.
+- Review `result.validity.warnings` before export. The solver sees stiffness
+  numbers; the validity context travels with the analyst.
 
 ## Reduced Orthotropic Properties
 
 The simplest route is to convert the membrane block to equivalent orthotropic
 plane-stress constants and let the solver build a conventional shell section.
-This is useful for preliminary modal, static, or sizing models when the wall is
-nearly uncoupled.
+This is useful for preliminary modal, static, or sizing models when the ABD
+stiffness is nearly uncoupled.
 
 Choose an effective shell thickness `t_eff`. Then form:
 
@@ -114,17 +114,18 @@ G_{12} = \frac{1}{S_{66}},
 \nu_{21} = -\frac{S_{12}}{S_{22}}.
 $$
 
-Use this route only when the terms it discards are intentionally negligible:
+!!! note "What the reduced route keeps"
+    This preserves the chosen membrane compliance. It does not generally
+    preserve the bending block, eccentric stiffener coupling, or transverse-shear
+    stiffness. If those are carrying the physics, use a richer workflow.
+
+Use the reduced route when the terms it discards are intentionally negligible:
 
 - membrane-bending coupling `B`;
 - off-axis membrane coupling `A16` and `A26`;
 - off-axis bending coupling `D16` and `D26`;
 - transverse shear details if the chosen shell element computes them from the
   material and thickness.
-
-This preserves the chosen membrane compliance. It does not generally preserve
-the bending block, eccentric stiffener coupling, or transverse-shear stiffness.
-If those are carrying the physics, use a richer workflow.
 
 ```python
 import numpy as np
@@ -144,16 +145,17 @@ def equivalent_orthotropic_from_A(stiffness, t_eff):
     }
 ```
 
-## NASTRAN
+## NX Nastran
 
-NASTRAN is a family name more than a single interface. MSC Nastran, NX Nastran,
-Autodesk Nastran, OptiStruct, and pyNastran-supported decks share familiar bulk
-data cards, but full shell-section stiffness support is not equally portable.
-Treat the target solver manual and a patch test as part of the data handoff.
+For NX Nastran, the most common handoff is through ordinary Bulk Data shell
+properties and materials. The examples below use NX Nastran-style `MAT8`,
+`PSHELL`, and laminate-property workflows. Check the installed Siemens NX Nastran
+Quick Reference Guide for the exact field definitions used by your solver
+release.
 
 ### Simple Route: `MAT8` And `PSHELL`
 
-For an uncoupled equivalent orthotropic wall:
+For an uncoupled equivalent orthotropic stiffness:
 
 1. Convert `A/t_eff` to `E1`, `E2`, `G12`, and `nu12`.
 2. Define a `MAT8` with those in-plane constants.
@@ -162,42 +164,49 @@ For an uncoupled equivalent orthotropic wall:
 4. Use element material-angle fields or coordinate systems so material direction
    1 matches Tensyl `e1`.
 
-This is the most portable route. It is also the most approximate route.
+This route is easy to inspect and works well when the equivalent stiffness is
+close to a conventional orthotropic shell.
 
 ```text
-$ Illustrative only: field layout and defaults vary by dialect.
+$ Illustrative NX Nastran-style Bulk Data fragment.
 MAT8, 101, E1, E2, NU12, G12, G1Z, G2Z, RHO
 PSHELL, 201, 101, T_EFF, 101
 ```
 
-Use `PCOMP` or `PCOMPG` instead when the equivalent wall is better represented as
-a laminate stack and you want the solver to integrate ply stiffnesses. An
-unsymmetric laminate can produce membrane-bending coupling, but it is still a
-laminate model, not an arbitrary ABD matrix fit.
+Use `PCOMP` or `PCOMPG` instead when the equivalent stiffness is better
+represented as a laminate stack and you want the solver to integrate ply
+stiffnesses. An unsymmetric laminate can produce membrane-bending coupling, but
+it is still a laminate model, not an arbitrary ABD matrix fit.
+
+!!! note "Good first model"
+    `MAT8` plus `PSHELL` is a useful first model when membrane behavior is the
+    main target. It is not meant to preserve every term of a general stiffened
+    ABD matrix.
 
 ### Higher Fidelity: `PSHELL` Material References
 
 The `PSHELL` card has separate material references for membrane, bending,
-transverse shear, and membrane-bending coupling in common NASTRAN-style card
-sets. pyNastran's public card reference, for example, exposes `MID1`, `MID2`,
-`MID3`, and `MID4`, where `MID4` is the membrane-bending coupling material and
-`MID3` is transverse shear.
+transverse shear, and membrane-bending coupling through `MID1`, `MID2`, `MID3`,
+and `MID4`. That lines up nicely with the way Tensyl reports `A`, `D`, `As`, and
+`B`, but the card fields still carry NX Nastran's shell-property scaling rules.
 
-That structure is tempting for Tensyl because `A`, `B`, `D`, and `As` are also
-separate blocks. Do not assume it is a direct arbitrary-ABD interface without
-verification. In many workflows the material cards and `PSHELL` thickness fields
-still imply solver-specific scaling. The safe workflow is:
+Use this path when you have verified the mapping for the NX Nastran solution
+sequence and element family you plan to use:
 
-1. Determine from the target NASTRAN manual whether `MAT2`/`MAT8` plus `MID1` to
-   `MID4` can represent the exact block you need.
-2. Account for all thickness and inertia scale factors, including `12I/T**3` and
-   transverse-shear factors.
-3. Print or recover the element section stiffness from the solver when possible.
+1. Decide whether `MAT2` or `MAT8` is the right material card for each block.
+2. Account for `PSHELL` thickness and bending-inertia factors, including
+   `12I/T**3`, and any transverse-shear factors.
+3. Print or recover the element section stiffness from NX Nastran when that
+   output is available.
 4. Run a one-element patch model with imposed membrane strains and curvatures,
    then compare recovered resultants with `K_ABD @ eta`.
 
-If the target dialect cannot reproduce the full `A/B/D` matrix within tolerance,
-keep the NASTRAN model reduced and document the approximation.
+!!! warning "Verify the section stiffness"
+    `MID1` through `MID4` can be a useful high-fidelity path, but it is not a
+    universal "paste the ABD matrix here" slot. If the recovered section
+    stiffness does not match the Tensyl matrix within the tolerance needed for
+    the analysis, keep the NX Nastran model reduced and document the
+    approximation.
 
 ## ANSYS
 
@@ -276,7 +285,7 @@ K26, K36, K46, K56, K66
 An illustrative input fragment:
 
 ```text
-*SHELL GENERAL SECTION, ELSET=wall, ORIENTATION=tensyl_axes, DENSITY=rho_area
+*SHELL GENERAL SECTION, ELSET=panel, ORIENTATION=tensyl_axes, DENSITY=rho_area
 A11, A12, A22, A16, A26, A66, B11, B12
 B16, D11, B12, B22, B26, D12, D22, B16
 B26, B66, D16, D26, D66
@@ -290,9 +299,9 @@ stiffness, second-direction stiffness, and coupling term fields.
 
 For a reduced workflow, define an engineering-constants material and use
 `*SHELL SECTION` or a material-based `*SHELL GENERAL SECTION`. That is convenient
-when `B = 0` and the wall behaves like a conventional orthotropic shell. It is
-not a substitute for the direct 21-entry stiffness when the stiffeners introduce
-important eccentricity coupling.
+when `B = 0` and the ABD stiffness behaves like a conventional orthotropic
+shell. It is not a substitute for the direct 21-entry stiffness when stiffener
+eccentricity coupling matters.
 
 ## Patch Check
 
@@ -310,8 +319,10 @@ check in the target solver:
 4. For transverse shear flexible elements, apply independent shear checks against
    `As`.
 
-The patch check is not busywork. It is how you catch axis swaps, offset mistakes,
-solver-specific scaling, and the occasional perfectly formatted wrong number.
+!!! tip "Small model, large leverage"
+    The patch check catches axis swaps, offset mistakes, solver-specific scaling,
+    and the occasional perfectly formatted wrong number. A single element is
+    cheap; a bad coordinate system can get expensive.
 
 Next: [SP-8007 Data Handoff](sp8007-data-handoff.md).
 
@@ -332,5 +343,9 @@ Next: [SP-8007 Data Handoff](sp8007-data-handoff.md).
   <https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPD.html>,
   and
   <https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPE.html>.
-- pyNastran shell property reference, `PSHELL` fields and material references:
+- Siemens NX Nastran Quick Reference Guide, `MAT8`, `PSHELL`, `PCOMP`, `PCOMPG`,
+  and `MAT2` Bulk Data entries. Use the guide installed with the NX Nastran
+  release being used for analysis.
+- pyNastran shell property reference, `PSHELL` fields and material references
+  as an accessible cross-check for common NASTRAN Bulk Data names:
   <https://pynastran-git.readthedocs.io/en/latest/reference/bdf/cards/properties/pyNastran.bdf.cards.properties.shell.html>.
