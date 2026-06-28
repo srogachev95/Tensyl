@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">Tangent-plane cell mapped to an equivalent ABD wall</title>
+  <desc id="desc">A Tensyl notation diagram showing local e1, e2, and n axes, repeated stiffener members, signed eccentricity from a reference surface, and the equivalent ABD wall stiffness.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#225ea8" />
+    </marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333333" />
+    </marker>
+    <style>
+      .panel { fill: #f7f7f4; stroke: #c7c7bd; stroke-width: 1.5; }
+      .surface { fill: #ece8df; stroke: #c8c0b2; stroke-width: 1.5; }
+      .cell { fill: rgba(34, 94, 168, 0.08); stroke: #444444; stroke-width: 2; stroke-dasharray: 8 6; }
+      .member-a { stroke: #202020; stroke-width: 7; stroke-linecap: round; }
+      .member-b { stroke: #225ea8; stroke-width: 5; stroke-linecap: round; }
+      .member-c { stroke: #d8473d; stroke-width: 5; stroke-linecap: round; }
+      .axis { stroke: #225ea8; stroke-width: 3; marker-end: url(#arrow-blue); }
+      .dim { stroke: #333333; stroke-width: 2; marker-end: url(#arrow-gray); }
+      .dash { stroke: #555555; stroke-width: 2; stroke-dasharray: 6 6; }
+      .node { fill: #d8473d; stroke: white; stroke-width: 2; }
+      .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 19px; fill: #1f1f1f; }
+      .small { font-size: 15px; }
+      .title { font-size: 23px; font-weight: 700; }
+      .mono { font-family: "SFMono-Regular", Consolas, monospace; font-size: 17px; }
+      .eqwall { fill: #d7d2c8; stroke: #918979; stroke-width: 2; }
+      .eqskin { fill: #b8b0a2; stroke: #7c7569; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect x="24" y="28" width="500" height="504" rx="8" class="panel" />
+  <rect x="596" y="28" width="500" height="504" rx="8" class="panel" />
+
+  <text x="56" y="68" class="label title">Canonical tangent-plane cell</text>
+  <text x="628" y="68" class="label title">Equivalent ABD wall</text>
+
+  <polygon points="86,344 392,226 472,264 162,388" class="surface" />
+  <line x1="154" y1="344" x2="412" y2="244" class="member-a" />
+  <line x1="122" y1="328" x2="430" y2="288" class="member-a" opacity="0.55" />
+  <line x1="170" y1="378" x2="420" y2="278" class="member-a" opacity="0.55" />
+  <line x1="184" y1="360" x2="354" y2="258" class="member-b" />
+  <line x1="246" y1="386" x2="414" y2="268" class="member-b" />
+  <line x1="178" y1="328" x2="326" y2="382" class="member-c" />
+  <line x1="258" y1="292" x2="434" y2="342" class="member-c" />
+
+  <polygon points="222,324 326,286 384,316 278,360" class="cell" />
+  <circle cx="222" cy="324" r="7" class="node" />
+  <circle cx="326" cy="286" r="7" class="node" />
+  <circle cx="384" cy="316" r="7" class="node" />
+  <circle cx="278" cy="360" r="7" class="node" />
+
+  <line x1="104" y1="360" x2="236" y2="306" class="axis" />
+  <line x1="104" y1="360" x2="210" y2="394" class="axis" />
+  <line x1="104" y1="360" x2="104" y2="246" class="axis" />
+  <text x="242" y="303" class="label mono">e1</text>
+  <text x="214" y="410" class="label mono">e2</text>
+  <text x="86" y="240" class="label mono">n</text>
+
+  <line x1="360" y1="312" x2="360" y2="204" class="dim" />
+  <line x1="360" y1="312" x2="404" y2="292" class="dash" />
+  <text x="370" y="206" class="label small">signed eccentricity</text>
+  <text x="382" y="229" class="label mono">+n</text>
+
+  <text x="66" y="456" class="label">Members store length, angle, stiffness,</text>
+  <text x="66" y="482" class="label">multiplicity, and eccentricity.</text>
+  <text x="66" y="508" class="label small">The dashed region is the area represented by one repeated cell.</text>
+
+  <path d="M526,282 C552,282 566,282 590,282" fill="none" stroke="#555555" stroke-width="3" marker-end="url(#arrow-gray)" />
+  <text x="510" y="260" class="label small">homogenize</text>
+
+  <rect x="704" y="252" width="258" height="72" class="eqskin" />
+  <rect x="704" y="176" width="258" height="76" class="eqwall" />
+  <line x1="672" y1="252" x2="998" y2="252" class="dash" />
+  <text x="796" y="228" class="label">smeared stiffener layer</text>
+  <text x="808" y="294" class="label">skin/reference wall</text>
+  <text x="748" y="348" class="label small">reference surface</text>
+
+  <line x1="680" y1="392" x2="832" y2="392" class="axis" />
+  <line x1="680" y1="392" x2="764" y2="438" class="axis" />
+  <line x1="680" y1="392" x2="680" y2="286" class="axis" />
+  <text x="840" y="398" class="label mono">e1</text>
+  <text x="770" y="456" class="label mono">e2</text>
+  <text x="662" y="280" class="label mono">n</text>
+
+  <rect x="724" y="94" width="218" height="58" rx="6" fill="#ffffff" stroke="#c7c7bd" />
+  <text x="746" y="119" class="label mono">r = C8 eta</text>
+  <text x="746" y="143" class="label small">A, B, D, and As are views</text>
+
+  <text x="628" y="456" class="label">The wall law is local constitutive data.</text>
+  <text x="628" y="482" class="label">Surface geometry supplies the frame,</text>
+  <text x="628" y="508" class="label">curvature, metric, and validity scales.</text>
+</svg>
