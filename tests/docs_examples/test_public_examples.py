@@ -3,17 +3,15 @@ import numpy as np
 from tensyl import (
     ABDAtlas,
     BeamSection,
-    ConicalFrustum,
     ConstantStiffnessField,
     Cylinder,
-    Ellipsoid,
     EnergyHomogenizer,
     HomogenizationResult,
+    HomogenizedStiffnessField,
     IsotropicMaterial,
     OrthotropicPlyMaterial,
     Ply,
-    Sphere,
-    SphericalCap,
+    StiffnessCache,
     ValidityContext,
     equilateral_isogrid_cell,
     isotropic_plate,
@@ -23,12 +21,12 @@ from tensyl import (
 from tensyl.io import from_yaml, to_yaml
 
 
-def _orthogrid_result():
-    skin = isotropic_plate(
-        IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
-        thickness=0.080,
-    )
-    section = BeamSection(
+def _material() -> IsotropicMaterial:
+    return IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
+
+
+def _section() -> BeamSection:
+    return BeamSection(
         EA=3.2e6,
         EIy=2.4e4,
         EIz=6.5e3,
@@ -36,6 +34,11 @@ def _orthogrid_result():
         kGAy=1.1e6,
         kGAz=0.9e6,
     )
+
+
+def _orthogrid_result():
+    skin = isotropic_plate(_material(), thickness=0.080)
+    section = _section()
     cell = orthogrid_cell(
         skin=skin,
         stringer_section=section,
@@ -90,11 +93,8 @@ def _sp8007_orthotropic_coefficients(stiffness, *, tolerance=1.0e-9):
     }
 
 
-def test_first_abd_stiffness_example() -> None:
-    stiffness = isotropic_plate(
-        IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
-        thickness=0.080,
-    )
+def test_skin_only_example() -> None:
+    stiffness = isotropic_plate(_material(), thickness=0.080)
 
     assert stiffness.A.shape == (3, 3)
     assert stiffness.B.shape == (3, 3)
@@ -103,7 +103,30 @@ def test_first_abd_stiffness_example() -> None:
     assert np.max(np.abs(stiffness.B)) == 0.0
 
 
-def test_first_homogenized_cell_and_result_interpretation_examples() -> None:
+def test_laminate_skin_example() -> None:
+    carbon_epoxy = OrthotropicPlyMaterial(
+        E1=18.0e6,
+        E2=1.4e6,
+        G12=0.75e6,
+        nu12=0.28,
+        G13=0.75e6,
+        G23=0.50e6,
+        density=0.058,
+    )
+    stiffness = laminate_plate(
+        (
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.5 * np.pi),
+            Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
+        )
+    )
+
+    assert stiffness.C8.shape == (8, 8)
+    assert abs(stiffness.B).max() < 1.0e-9
+    assert stiffness.A[0, 0] > stiffness.A[1, 1]
+
+
+def test_orthogrid_panel_example() -> None:
     result = _orthogrid_result()
 
     assert result.stiffness.C8.shape == (8, 8)
@@ -116,62 +139,99 @@ def test_first_homogenized_cell_and_result_interpretation_examples() -> None:
     assert "membrane_bending_coupling_exceeds_threshold" in result.validity.warnings
 
 
-def test_stiffened_barrel_example() -> None:
+def test_stiffened_barrel_constant_field_example() -> None:
     result = _orthogrid_result()
     surface = Cylinder(radius=120.0, length=300.0)
     field = ConstantStiffnessField(result.stiffness)
     stiffness_at_midbay = field.stiffness_at(surface, 150.0, 0.0)
 
     assert stiffness_at_midbay.frame.label == "cylinder"
+    assert stiffness_at_midbay.C8.shape == (8, 8)
     assert result.validity.p_over_R == 8.0 / 120.0
 
 
-def test_stiffened_dome_concept_example() -> None:
-    dome = SphericalCap(radius=96.0, half_angle_rad=1.0)
-    stiffness = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33), thickness=0.080)
-    field = ConstantStiffnessField(stiffness)
+class _TaperedSkinField:
+    def __init__(self, material: IsotropicMaterial) -> None:
+        self.material = material
+
+    def stiffness_at(self, surface, u, v):
+        point = surface.point_at(u, v)
+        thickness = 0.070 + 0.00010 * point.u
+        return isotropic_plate(
+            self.material,
+            thickness=thickness,
+            frame=point.frame,
+            metadata={"thickness": thickness},
+        )
+
+
+def test_sampled_stiffness_atlas_example() -> None:
+    surface = Cylinder(radius=120.0, length=300.0)
+    field = _TaperedSkinField(_material())
 
     atlas = ABDAtlas.from_field(
-        dome,
+        surface,
         field,
-        u_values=(0.20, 0.60, 0.95),
-        v_values=(0.0, np.pi, 2.0 * np.pi),
-    )
-
-    sample = atlas.stiffness_at(dome, 0.60, np.pi)
-    assert sample.C8.shape == (8, 8)
-
-
-def test_sphere_ellipsoid_and_cone_surface_examples() -> None:
-    stiffness = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33), thickness=0.080)
-    field = ConstantStiffnessField(stiffness)
-
-    sphere = Sphere(radius=96.0)
-    sphere_stiffness = field.stiffness_at(sphere, 0.60, np.pi)
-    assert sphere_stiffness.frame.label == "sphere"
-
-    ellipsoid = Ellipsoid(a=84.0, b=96.0, c=72.0)
-    atlas = ABDAtlas.from_field(
-        ellipsoid,
-        field,
-        u_values=(0.30, 0.70),
+        u_values=(0.0, 150.0, 300.0),
         v_values=(0.0, np.pi),
     )
-    ellipsoid_stiffness = atlas.stiffness_at(ellipsoid, 0.50, 0.50 * np.pi)
-    assert ellipsoid_stiffness.C8.shape == (8, 8)
 
-    frustum = ConicalFrustum(radius_start=80.0, radius_end=96.0, length=120.0)
-    point = frustum.point_at(60.0, 0.0)
-    context = ValidityContext(
-        characteristic_height=0.50,
-        pitch=8.0,
-        min_radius=point.min_radius,
-        response_length=80.0,
+    root = atlas.stiffness_at(surface, 0.0, 0.0)
+    mid = atlas.stiffness_at(surface, 75.0, 0.5 * np.pi)
+    tip = atlas.stiffness_at(surface, 300.0, np.pi)
+
+    assert root.A[0, 0] < mid.A[0, 0] < tip.A[0, 0]
+    assert mid.frame.label == "cylinder"
+    assert atlas.metadata["interpolation"] == "bilinear_c8"
+
+
+def test_non_constant_homogenized_stiffness_field_example() -> None:
+    surface = Cylinder(radius=120.0, length=300.0)
+    material = _material()
+    section = _section()
+
+    def cell_factory(surface, point):
+        del surface
+        stringer_spacing = 6.0 + point.u / 150.0
+        rib_spacing = 8.0
+        skin = isotropic_plate(material, thickness=0.080, frame=point.frame)
+        return orthogrid_cell(
+            skin=skin,
+            stringer_section=section,
+            rib_section=section,
+            stringer_spacing=stringer_spacing,
+            rib_spacing=rib_spacing,
+            stringer_eccentricity=0.45,
+            rib_eccentricity=0.45,
+            frame=point.frame,
+        )
+
+    def validity_context(point, cell):
+        return ValidityContext(
+            characteristic_height=0.50,
+            pitch=max(cell.metadata["stringer_spacing"], cell.metadata["rib_spacing"]),
+            min_radius=point.min_radius,
+            response_length=80.0,
+        )
+
+    field = HomogenizedStiffnessField(
+        surface,
+        cell_factory,
+        EnergyHomogenizer(),
+        cache=StiffnessCache(),
+        validity_context_factory=validity_context,
     )
-    assert context.min_radius == point.min_radius
+
+    station_0 = field.stiffness_at(surface, 0.0, 0.0)
+    station_150 = field.stiffness_at(surface, 150.0, 0.0)
+
+    assert station_0.frame.label == "cylinder"
+    assert station_150.validity is not None
+    assert station_0.A[0, 0] > station_150.A[0, 0]
+    assert station_150.validity.p_over_R == 8.0 / 120.0
 
 
-def test_sp8007_data_prep_and_serialization_example() -> None:
+def test_sp8007_data_prep_and_serialization_handoff() -> None:
     result = _orthogrid_result()
     surface = Cylinder(radius=120.0, length=300.0)
     sp8007 = _sp8007_orthotropic_coefficients(result.stiffness)
@@ -206,7 +266,7 @@ def test_sp8007_data_prep_and_serialization_example() -> None:
     assert report["p_over_R"] == 8.0 / 120.0
 
 
-def test_sp8007_isogrid_data_prep_example() -> None:
+def test_sp8007_isogrid_data_prep_handoff() -> None:
     isogrid_skin = isotropic_plate(
         IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
         thickness=0.060,
@@ -240,7 +300,7 @@ def test_sp8007_isogrid_data_prep_example() -> None:
     assert abs(isogrid_sp8007["Cbar_x"] - isogrid_sp8007["Cbar_y"]) < 1.0e-6
 
 
-def test_sp8007_symmetric_laminate_data_prep_example() -> None:
+def test_sp8007_symmetric_laminate_data_prep_handoff() -> None:
     surface = Cylinder(radius=120.0, length=300.0)
     carbon_epoxy = OrthotropicPlyMaterial(
         E1=18.0e6,

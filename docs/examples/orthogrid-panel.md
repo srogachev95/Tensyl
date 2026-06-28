@@ -1,13 +1,14 @@
-# US Customary Orthogrid Stiffness
+# Orthogrid Panel ABD Stiffness
 
-This example computes a first equivalent ABD stiffness for an orthogrid panel. The
-numbers are illustrative and should not be used as allowables.
+This example adds stiffeners to the skin and computes the first homogenized ABD
+stiffness. The numbers are illustrative, not allowables.
 
 ## Problem
 
-Build a US customary orthogrid ABD stiffness about the skin reference surface. Both
-stringers and ribs are external to the `+n` side, so the eccentricity is
-positive and membrane-bending coupling is expected.
+Build an orthogrid panel about the skin reference surface. Stringers run along
+local `e1`; ribs run along local `e2`. Both stiffener families are external to
+the `+n` side of the skin reference surface, so positive eccentricity should
+create membrane-bending coupling.
 
 ```python
 from tensyl import (
@@ -55,9 +56,10 @@ result = EnergyHomogenizer().compute(
 
 stiffness = result.stiffness
 
-assert stiffness.constant_tangent.shape == (8, 8)
+assert stiffness.C8.shape == (8, 8)
 assert result.diagnostics["symmetric"]
-assert result.stiffness.B[0, 0] > 0.0
+assert result.diagnostics["positive_semidefinite"]
+assert stiffness.B[0, 0] > 0.0
 ```
 
 Review `result.validity.warnings` before using the ABD stiffness downstream.
@@ -75,8 +77,8 @@ Rounded diagonal values:
 
 ## Interpretation
 
-The diagonal `A` terms show the membrane stiffness added by the grid. Nonzero
-`B` comes from eccentric stiffeners relative to the reference surface.
-Diagnostics confirm the assembled tangent is symmetric and positive
-semidefinite for this model; they do not prove local stiffener strength,
-crippling resistance, or shell buckling margin.
+The diagonal `A` terms show membrane stiffness added by the grid. Nonzero `B`
+comes from eccentric stiffeners relative to the reference surface. Diagnostics
+confirm the assembled tangent is symmetric and positive semidefinite for this
+model; they do not prove local stiffener strength, crippling resistance, or a
+shell buckling margin.

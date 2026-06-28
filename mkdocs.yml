@@ -53,14 +53,14 @@ nav:
       - Stiffened Surfaces: user-guide/stiffened-surfaces.md
       - External Workflows: user-guide/external-workflows.md
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
+      - SP-8007 Data Prep: user-guide/sp8007-data-prep.md
   - Examples:
-      - US Customary Skin: examples/us-customary-skin.md
-      - US Customary Orthogrid: examples/us-customary-orthogrid.md
-      - SI Examples Roadmap: examples/si-mirror-placeholders.md
-      - Stiffened Barrel: examples/stiffened-barrel.md
-      - Stiffened Dome: examples/stiffened-dome.md
-      - Stiffened Cone: examples/stiffened-cone.md
-      - SP-8007 Data Prep: examples/sp8007-data-prep.md
+      - Skin-Only ABD Stiffness: examples/skin-only.md
+      - Laminate Skin ABD Stiffness: examples/laminate-skin.md
+      - Orthogrid Panel ABD Stiffness: examples/orthogrid-panel.md
+      - Stiffened Barrel With Constant Stiffness: examples/stiffened-barrel.md
+      - Sampled Stiffness Atlas: examples/sampled-stiffness-atlas.md
+      - Non-Constant Homogenized Stiffness Field: examples/non-constant-stiffness-field.md
   - API Reference:
       - Core: api/core.md
       - Materials: api/materials.md

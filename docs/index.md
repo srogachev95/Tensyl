@@ -60,7 +60,7 @@ postbuckling, and final allowables.
   tangent-plane homogenization.
 - [User guide](user-guide/materials-and-laminates.md) documents the main
   analyst workflows.
-- [Examples](examples/us-customary-orthogrid.md) provides worked examples and
+- [Examples](examples/skin-only.md) provides worked examples and
   executable snippets.
 - [API reference](api/core.md) exposes the public Python interfaces.
 - [References](references.md) lists the external sources used by the
