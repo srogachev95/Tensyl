@@ -13,7 +13,9 @@ from tensyl import (
     Ply,
     StiffnessCache,
     ValidityContext,
+    blade_section,
     equilateral_isogrid_cell,
+    hat_section,
     isotropic_plate,
     laminate_plate,
     orthogrid_cell,
@@ -137,6 +139,41 @@ def test_orthogrid_panel_example() -> None:
     assert np.isclose(result.stiffness.A[0, 0], 1.4849661467100587e6)
     assert np.isclose(result.stiffness.B[0, 0], 2.4e5)
     assert "membrane_bending_coupling_exceeds_threshold" in result.validity.warnings
+
+
+def test_geometry_derived_stiffener_section_example() -> None:
+    aluminum = _material()
+    blade = blade_section(
+        material=aluminum,
+        height=0.50,
+        thickness=0.050,
+        shear_correction_y=5.0 / 6.0,
+        shear_correction_z=5.0 / 6.0,
+    )
+    hat = hat_section(
+        material=aluminum,
+        web_height=0.50,
+        web_thickness=0.050,
+        crown_width=0.40,
+        crown_thickness=0.050,
+        flange_width=0.20,
+        flange_thickness=0.050,
+    )
+    skin = isotropic_plate(aluminum, thickness=0.080)
+    cell = orthogrid_cell(
+        skin=skin,
+        stringer_section=hat.section,
+        rib_section=blade.section,
+        stringer_spacing=6.0,
+        rib_spacing=8.0,
+        stringer_eccentricity=hat.centroid_z,
+        rib_eccentricity=blade.centroid_z,
+    )
+    result = EnergyHomogenizer().compute(cell)
+
+    assert result.stiffness.C8.shape == (8, 8)
+    assert result.diagnostics["symmetric"]
+    assert hat.section.metadata["section_geometry"] == "hat"
 
 
 def test_stiffened_barrel_constant_field_example() -> None:

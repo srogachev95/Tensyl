@@ -5,6 +5,15 @@
       show_source: false
       members:
         - BeamSection
+        - ThinWallSegment
+        - SectionProperties
+        - ThinWallSection
+        - thin_wall_section
+        - blade_section
+        - tee_section
+        - zee_section
+        - channel_section
+        - hat_section
 
 ::: tensyl.cells
     options:

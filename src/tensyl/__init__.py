@@ -78,7 +78,18 @@ from tensyl.materials import (
     isotropic_plate,
     laminate_plate,
 )
-from tensyl.sections import BeamSection
+from tensyl.sections import (
+    BeamSection,
+    SectionProperties,
+    ThinWallSection,
+    ThinWallSegment,
+    blade_section,
+    channel_section,
+    hat_section,
+    tee_section,
+    thin_wall_section,
+    zee_section,
+)
 
 __version__ = tensyl_version()
 
@@ -114,10 +125,13 @@ __all__ = [
     "HomogenizedStiffnessField",
     "Sphere",
     "SphericalCap",
+    "SectionProperties",
     "StiffenerFamily",
     "StrainConvention",
     "Surface",
     "SurfacePoint",
+    "ThinWallSection",
+    "ThinWallSegment",
     "ValidityContext",
     "ValidityReport",
     "ValidityThresholds",
@@ -125,12 +139,15 @@ __all__ = [
     "StiffnessCache",
     "StiffnessField",
     "__version__",
+    "blade_section",
     "braced_orthogrid_cell",
+    "channel_section",
     "equilateral_isogrid_cell",
     "equilateral_star_cell",
     "generalized_resultant",
     "generalized_strain",
     "graph_unit_cell",
+    "hat_section",
     "hexagonal_grid_cell",
     "isotropic_plate",
     "isosceles_triangle_grid_cell",
@@ -144,6 +161,9 @@ __all__ = [
     "shift_reference_surface",
     "star_cell",
     "superpose_abd_stiffnesses",
+    "tee_section",
+    "thin_wall_section",
     "unidirectional_cell",
     "validity_report_for_stiffness",
+    "zee_section",
 ]

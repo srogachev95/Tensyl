@@ -1,6 +1,8 @@
 # Beam Sections And Cells
 
 Stiffener homogenization begins with member-local beam-section stiffnesses.
+If you already have centroidal stiffness products from a handbook, section
+solver, or CAD workflow, pass them directly:
 
 ```python
 from tensyl import BeamSection
@@ -16,8 +18,60 @@ section = BeamSection(
 ```
 
 Tensyl asks for stiffness products instead of raw dimensions because the current
-homogenizer consumes centroidal beam stiffnesses. It does not calculate section
-properties from hat, blade, tee, z, or custom cross-section geometry.
+homogenizer consumes centroidal beam stiffnesses.
+
+For common isotropic thin-wall stiffeners, Tensyl can now compute those products
+from section geometry:
+
+```python
+from tensyl import IsotropicMaterial, blade_section, hat_section
+
+aluminum = IsotropicMaterial(E=10.6e6, nu=0.33)
+
+blade = blade_section(
+    material=aluminum,
+    height=0.50,
+    thickness=0.050,
+    shear_correction_y=5.0 / 6.0,
+    shear_correction_z=5.0 / 6.0,
+)
+
+hat = hat_section(
+    material=aluminum,
+    web_height=0.50,
+    web_thickness=0.050,
+    crown_width=0.40,
+    crown_thickness=0.050,
+    flange_width=0.20,
+    flange_thickness=0.050,
+)
+```
+
+Geometry-derived sections expose both the computed `BeamSection` and the
+section centroid:
+
+```python
+from tensyl import EnergyHomogenizer, isotropic_plate, orthogrid_cell
+
+skin = isotropic_plate(aluminum, thickness=0.080)
+
+cell = orthogrid_cell(
+    skin=skin,
+    stringer_section=hat.section,
+    rib_section=blade.section,
+    stringer_spacing=6.0,
+    rib_spacing=8.0,
+    stringer_eccentricity=hat.centroid_z,
+    rib_eccentricity=blade.centroid_z,
+)
+
+result = EnergyHomogenizer().compute(cell)
+```
+
+The named helpers are convenience wrappers over `thin_wall_section`, which
+accepts custom `ThinWallSegment` layouts in member-local `(y, z)` coordinates.
+Use this for a stiffener shape that is just ordinary enough to be useful and just
+odd enough to avoid having its own constructor.
 
 For US customary examples:
 
@@ -69,6 +123,11 @@ Every eccentricity is signed along `+n` from the reference surface to the
 member centroid. For an outward-normal cylinder, an external stringer has
 positive `stringer_eccentricity`; an internal stringer has negative
 eccentricity.
+
+For a geometry-derived stiffener rooted at the wall reference surface, the
+section's `centroid_z` is usually the eccentricity you want. If your geometry
+coordinates are relative to some other datum, shift the value before passing it
+to the cell constructor. Tensyl is helpful here, but it is not a mind reader.
 
 !!! warning "A wrong eccentricity sign is silently wrong"
     The sign changes the coupling block `B`, so flipping it produces a different

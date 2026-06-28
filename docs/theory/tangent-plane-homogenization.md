@@ -113,8 +113,8 @@ homogenization sources listed in [References](../references.md).
 ## Inputs
 
 - `skin` is an `ABDStiffness` for the unstiffened skin or laminate.
-- `BeamSection` supplies centroidal beam stiffness products. Tensyl does not
-  currently compute those values from cross-section dimensions.
+- `BeamSection` supplies centroidal beam stiffness products. Those products may
+  be entered directly or produced from isotropic thin-wall section geometry.
 - `BeamMember` supplies member length, angle, eccentricity, and multiplicity
   inside a finite canonical cell.
 - `StiffenerFamily` supplies angle, spacing, eccentricity, and multiplicity for
@@ -138,10 +138,56 @@ homogenization sources listed in [References](../references.md).
 Omitted shear stiffnesses contribute zero in the current homogenizer and are
 recorded as assumptions in the result.
 
-`BeamSection` asks for stiffness products (`EA`, `EIy`, `EIz`, `GJ`, `kGAy`,
-`kGAz`) because the current homogenizer consumes centroidal beam stiffnesses.
-Section-property calculation from raw cross-section geometry is outside the
-current API.
+`BeamSection` still asks for stiffness products (`EA`, `EIy`, `EIz`, `GJ`,
+`kGAy`, `kGAz`) because the homogenizer consumes centroidal beam stiffnesses.
+The thin-wall section helpers are an upstream calculation layer; they do not
+change the member strain map.
+
+## Thin-Wall Section Geometry
+
+The geometry helpers represent an isotropic stiffener as rectangular wall
+segments in the member-local `(y, z)` section plane. The `X` axis runs along the
+stiffener, `z` follows the wall normal used for member eccentricity, and `y` is
+the in-plane transverse section axis.
+
+For each segment, Tensyl sums the rectangular area contribution and then shifts
+to the section centroid. The resulting geometric properties are:
+
+$$
+A = \int_A dA,\qquad
+I_y = \int_A (z-z_c)^2\,dA,
+$$
+
+$$
+I_z = \int_A (y-y_c)^2\,dA,\qquad
+I_{yz} = \int_A (y-y_c)(z-z_c)\,dA.
+$$
+
+For an isotropic material, the generated `BeamSection` uses:
+
+$$
+EA = E A,\qquad EI_y = E I_y,\qquad EI_z = E I_z,\qquad
+EI_{yz} = E I_{yz}.
+$$
+
+The torsion value uses the open-section St Venant thin-wall approximation:
+
+$$
+J_{\mathrm{sv}} \approx \sum_i \frac{l_i t_i^3}{3},\qquad
+GJ = G\,J_{\mathrm{sv}}.
+$$
+
+This is intentionally modest. It does not include closed-cell Bredt torsion,
+restrained warping, local flange/web stress recovery, crippling, or joint
+details. If those effects matter, compute the section properties externally and
+pass a `BeamSection` directly. There is no shame in outsourcing a problem to the
+tool that actually solves it.
+
+Transverse shear stiffnesses are optional. If `shear_correction_y` or
+`shear_correction_z` is supplied, Tensyl computes `kGAy` or `kGAz` as
+\(\kappa G A\). If a correction is omitted, the corresponding shear stiffness is
+left as `None`, and the homogenization result records the same omitted-shear
+assumption used for hand-entered `BeamSection` values.
 
 ## Diagnostics
 
