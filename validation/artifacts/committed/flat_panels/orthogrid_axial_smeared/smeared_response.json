@@ -1,0 +1,88 @@
+{
+  "case_name": "flat_panel_orthogrid_axial_smeared",
+  "explicit_fe_status": "planned",
+  "generalized_strain": [
+    0.0007111501708805878,
+    -0.0001784299389590737,
+    5.441225282535097e-22,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "local_abd_reference": "validation/cases/local_abd/orthogrid_zero_eccentricity.yml",
+  "notes": [
+    "This artifact is a smeared-panel target computed from Tensyl ABD stiffness.",
+    "It is not an explicit finite-element panel comparison."
+  ],
+  "order": {
+    "generalized_strains": [
+      "epsilon_11",
+      "epsilon_22",
+      "gamma_12",
+      "kappa_11",
+      "kappa_22",
+      "kappa_12",
+      "gamma_13",
+      "gamma_23"
+    ],
+    "resultants": [
+      "N11",
+      "N22",
+      "N12",
+      "M11",
+      "M22",
+      "M12",
+      "Q13",
+      "Q23"
+    ]
+  },
+  "panel": {
+    "area": 1536.0,
+    "length_e1": 48.0,
+    "width_e2": 32.0
+  },
+  "recovered_resultants": [
+    1000.0000000000003,
+    0.0,
+    3.944304526105059e-31,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "response": {
+    "end_shortening_e1": 0.034135208202268216,
+    "midspan_bending_deflection_k11": 0.0,
+    "midspan_bending_deflection_k22": 0.0,
+    "strain_energy_density": 0.3555750854402939,
+    "total_strain_energy": 546.1633312362915,
+    "transverse_extension_e2": -0.005709758046690359
+  },
+  "resultants": [
+    1000.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "schema_version": "tensyl.validation.flat-panel-smeared-response.v1",
+  "source": "tensyl_smeared_abd_target",
+  "status": "smeared_target_only",
+  "title": "Smeared orthogrid flat panel under axial resultant",
+  "units": {
+    "force": "lbf",
+    "length": "in",
+    "resultants": {
+      "M": "lbf",
+      "N": "lbf/in",
+      "Q": "lbf/in"
+    },
+    "stress": "psi"
+  }
+}

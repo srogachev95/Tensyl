@@ -9,6 +9,13 @@ The first scaffold contains a no-solver smoke case:
 uv run python validation/scripts/run_case.py validation/cases/smoke/skin_only.yml
 ```
 
+The first Phase 2 flat-panel case is also a no-solver target. It computes the
+smeared response oracle that a future explicit panel model must compare against:
+
+```bash
+uv run python validation/scripts/run_case.py validation/cases/flat_panels/orthogrid_axial_smeared.yml
+```
+
 Generated scratch output goes under `validation/artifacts/scratch/`, which is
 ignored by git. Commit only compact, curated artifacts such as metrics, plots,
 case summaries, and solver-version manifests.

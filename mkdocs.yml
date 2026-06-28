@@ -54,6 +54,8 @@ nav:
   - Validation:
       - FEM Validation Laboratory: validation/index.md
       - Phase 1 Local ABD Extraction: validation/local-abd.md
+      - Phase 2 Flat Panel Response: validation/flat-panels.md
+      - Phases 3-5 Recommendations: validation/phases-3-5.md
   - Examples:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md
       - Orthogrid Panel and Barrel: examples/orthogrid-panel.md

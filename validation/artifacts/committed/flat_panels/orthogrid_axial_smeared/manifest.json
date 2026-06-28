@@ -1,0 +1,47 @@
+{
+  "case_name": "flat_panel_orthogrid_axial_smeared",
+  "command": [
+    "validation/scripts/run_case.py",
+    "validation/cases/flat_panels/orthogrid_axial_smeared.yml",
+    "--artifacts",
+    "validation/artifacts/committed/flat_panels/orthogrid_axial_smeared"
+  ],
+  "created_utc": "2026-06-28T20:03:32+00:00",
+  "inputs": [
+    {
+      "path": "validation/cases/flat_panels/orthogrid_axial_smeared.yml",
+      "sha256": "fea5c4fcfe3b09bc4ad35c8a87b679f040059856d771cf8025ba4d0063437561"
+    },
+    {
+      "path": "validation/cases/local_abd/orthogrid_zero_eccentricity.yml",
+      "sha256": "3bac2354c80f69d9bdce2ed2204e19f29e4edcffd8a3199479420cf5b243e909"
+    }
+  ],
+  "metadata": {
+    "artifact_role": "tensyl_smeared_panel_target",
+    "case_type": "flat_panel_smeared_response",
+    "explicit_fe_comparison": false,
+    "explicit_fe_status": "planned",
+    "local_abd_case": "local_abd_orthogrid_zero_eccentricity",
+    "phase": "phase_2_flat_panel_response",
+    "solver_required": false
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/flat_panels/orthogrid_axial_smeared/smeared_response.json"
+    },
+    {
+      "path": "validation/artifacts/committed/flat_panels/orthogrid_axial_smeared/metrics.json"
+    },
+    {
+      "path": "validation/artifacts/committed/flat_panels/orthogrid_axial_smeared/manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "769c1bc",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "case_name": "flat_panel_orthogrid_axial_smeared",
+  "case_type": "flat_panel_smeared_response",
+  "checks": {
+    "explicit_fe_comparison_available": false,
+    "max_abs_resultant_residual": 3.410605131648481e-13,
+    "nonzero_generalized_strain_count": 2,
+    "positive_strain_energy_density": true,
+    "smeared_equilibrium_relative_residual": 3.410605131648481e-16
+  },
+  "comparison": {
+    "explicit_fe_status": "planned",
+    "promoted_solver_metrics": false
+  },
+  "expected_status": "smeared_target_only",
+  "response": {
+    "end_shortening_e1": 0.034135208202268216,
+    "midspan_bending_deflection_k11": 0.0,
+    "midspan_bending_deflection_k22": 0.0,
+    "strain_energy_density": 0.3555750854402939,
+    "total_strain_energy": 546.1633312362915,
+    "transverse_extension_e2": -0.005709758046690359
+  },
+  "schema_version": "tensyl.validation.flat-panel-smeared-metrics.v1"
+}
