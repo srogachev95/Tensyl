@@ -2,7 +2,9 @@
 
 Tangent-plane homogenization computes a local equivalent wall law for a
 repeating stiffened cell that is treated as flat in the local tangent plane.
-Curvature is not part of the first local cell stiffness assembly.
+The cell is assembled in the local `e1`-`e2` plane. Surface curvature is handled
+later by geometry embedding and validity checks, not by the first local cell
+stiffness assembly.
 
 For a cell with area $A_\text{cell}$, a beam member contributes:
 
@@ -29,10 +31,27 @@ $$
 \sum_m \Delta\mathbf C_m.
 $$
 
-The energy method is Tensyl's reference homogenizer because the assembled member
-contribution is symmetric by construction and works for graph-like canonical
-cells. Direct equilibrium-compatibility formulas are available for supported
-straight stiffener-family cases and are tested against the energy path.
+The energy method is Tensyl's reference homogenizer because the assembled
+member contribution is symmetric by construction and works for graph-like
+canonical cells. Direct equilibrium-compatibility formulas are available for
+supported straight stiffener-family cases and are tested against the energy
+path.
+
+This follows the equivalent-plate idea used by Nemeth for stiffened laminated
+plates and plate-like lattices. Tensyl treats those formulas as mechanics
+guidance and keeps the energy path as the executable reference.
+
+## Inputs
+
+- `skin` is a `LinearABDWall` for the unstiffened skin or laminate.
+- `BeamSection` supplies centroidal beam stiffness products. Tensyl does not
+  currently compute those values from cross-section dimensions.
+- `BeamMember` supplies member length, angle, eccentricity, and multiplicity
+  inside a finite canonical cell.
+- `StiffenerFamily` supplies angle, spacing, eccentricity, and multiplicity for
+  the direct equilibrium-compatibility path.
+- `CanonicalUnitCell.area` is the tangent-plane area represented by one
+  repeated cell.
 
 ## Beam Section Quantities
 
@@ -49,3 +68,29 @@ straight stiffener-family cases and are tested against the energy path.
 
 Omitted shear stiffnesses contribute zero in the current homogenizer and are
 recorded as assumptions in the result.
+
+`BeamSection` asks for stiffness products (`EA`, `EIy`, `EIz`, `GJ`, `kGAy`,
+`kGAz`) because the current homogenizer consumes centroidal beam stiffnesses.
+Section-property calculation from raw cross-section geometry is outside the
+current API.
+
+## Diagnostics
+
+The homogenizer returns `HomogenizationResult`, not just a wall law. The result
+records:
+
+- symmetry, positive-semidefinite status, rank, member count, and cell area;
+- assumptions attached to the member strain map and section inputs;
+- a `ValidityReport` with scale-separation ratios and warning codes.
+
+Energy-vs-direct agreement is useful but not sufficient proof. Both paths share
+the member strain map, so independent literature, test, or finite-element
+evidence is still needed for high-consequence use.
+
+## Limits
+
+The first homogenizer is a tangent-plane model. It does not model local joints,
+fasteners, stiffener crippling, curved stiffener geodesics, or full shell
+equilibrium. Use geometry validity ratios such as `h_over_R`, `p_over_R`, and
+`p_over_L_response` to decide whether the local flat-cell assumption is
+reasonable for the intended response mode.

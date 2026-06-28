@@ -1,16 +1,47 @@
 # SI Worked Examples
 
-This page reserves the SI worked-example set. Each US customary example should
-eventually have an SI counterpart using `m`, `N`, and `Pa`.
+These examples mirror the US customary workflows with consistent SI inputs.
+Tensyl does not convert units; the caller is responsible for using one unit
+system throughout.
 
-Planned examples:
+## Skin-Only Isotropic Wall
 
-- isotropic skin-only wall;
-- orthotropic laminate wall;
-- orthogrid homogenized wall;
-- isogrid or triangular grid wall;
-- sandwich-core wall;
-- cylindrical barrel embedding.
+```python
+from tensyl import IsotropicMaterial, isotropic_plate
 
-Tensyl will not convert the US customary examples automatically. Each SI example
-must be written with numerically consistent SI inputs and expected units.
+aluminum = IsotropicMaterial(E=73.1e9, nu=0.33, density=2780.0)
+wall = isotropic_plate(aluminum, thickness=0.0020)
+
+assert wall.A.shape == (3, 3)
+assert wall.B[0, 0] == 0.0
+```
+
+Assumed units:
+
+| Quantity | Unit |
+| --- | --- |
+| Length | `m` |
+| Force | `N` |
+| Stress | `Pa` |
+| Density | `kg/m^3` |
+| Membrane stiffness | `N/m` |
+| Bending stiffness | `N*m` |
+
+## SI Orthogrid Sketch
+
+```python
+from tensyl import BeamSection
+
+section = BeamSection(
+    EA=1.4e7,
+    EIy=43.0,
+    EIz=12.0,
+    GJ=8.0,
+    kGAy=4.8e6,
+    kGAz=3.9e6,
+)
+```
+
+This page is runnable for the skin and section snippets. Full SI mirrors for
+laminate, orthogrid, isogrid, sandwich, barrel, and dome workflows should use
+independently reviewed SI input data before being treated as analyst examples.

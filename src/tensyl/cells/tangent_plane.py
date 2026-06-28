@@ -33,7 +33,12 @@ def _finite(value: float, *, name: str) -> float:
 
 @dataclass(frozen=True, slots=True)
 class BeamMember:
-    """A canonical stiffener member in a local tangent-plane unit cell."""
+    """A straight stiffener member in a local tangent-plane unit cell.
+
+    ``angle_rad`` is measured from local ``e1`` toward ``e2``. ``eccentricity``
+    is the signed distance from the wall reference surface to the member
+    centroid along ``+n``.
+    """
 
     section: BeamSection
     length: float
@@ -80,7 +85,11 @@ class CellEdge:
 
 @dataclass(frozen=True, slots=True)
 class CanonicalUnitCell:
-    """Canonical tangent-plane cell consumed by tangent-plane homogenizers."""
+    """Canonical tangent-plane cell consumed by tangent-plane homogenizers.
+
+    ``area`` is the repeated tangent-plane area represented by ``members``.
+    The cell frame and strain convention must match the skin wall law.
+    """
 
     area: float
     skin: LinearABDWall
@@ -107,7 +116,11 @@ class CanonicalUnitCell:
 
 @dataclass(frozen=True, slots=True)
 class StiffenerFamily:
-    """Continuous straight stiffener-family input for direct EC homogenization."""
+    """Continuous straight stiffener-family input for direct EC homogenization.
+
+    ``spacing`` is the family pitch normal to the member direction.
+    ``eccentricity`` uses the same signed ``+n`` convention as ``BeamMember``.
+    """
 
     section: BeamSection
     spacing: float
@@ -183,7 +196,11 @@ def graph_unit_cell(
     convention: StrainConvention | None = None,
     metadata: dict[str, Any] | MappingProxyType[str, Any] | None = None,
 ) -> CanonicalUnitCell:
-    """Convert a local graph cell into the canonical member representation."""
+    """Convert a local graph cell into the canonical member representation.
+
+    Node coordinates are local tangent-plane coordinates in the same length
+    unit used by ``area``.
+    """
 
     node_tuple = tuple(nodes)
     if len(node_tuple) < 2:
@@ -273,7 +290,11 @@ def orthogrid_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create an orthogrid cell with one stringer and one rib family."""
+    """Create an orthogrid cell with one stringer and one rib family.
+
+    Stringers run along local ``e1`` and ribs run along local ``e2``. The two
+    eccentricity inputs are signed centroid offsets along ``+n``.
+    """
 
     ds = _positive(stringer_spacing, name="stringer_spacing")
     dr = _positive(rib_spacing, name="rib_spacing")

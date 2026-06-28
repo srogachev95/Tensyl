@@ -1,5 +1,10 @@
 # Equivalent-Wall Mechanics
 
+An equivalent wall law is the constitutive part of a plate or shell model. It
+does not solve shell equilibrium and it does not decide boundary conditions. It
+answers a local question: for generalized strains measured on a reference
+surface, what generalized resultants are produced?
+
 Tensyl uses a generalized strain vector:
 
 $$
@@ -37,6 +42,9 @@ $$
 The current public strain convention uses engineering shear strains. Tensor
 shear conventions are rejected so twist and shear factors are not silently
 mixed.
+
+The ordering is part of the public mechanics contract. User code should not
+reorder matrices without also transforming strains and resultants.
 
 ## Stored Energy Contract
 
@@ -78,3 +86,17 @@ $$
 
 The $8\times8$ tangent is the canonical payload. The `A`, `B`, `D`, and `As`
 properties are read-only views of that payload.
+
+`A`, `B`, and `D` follow the usual first-order plate/shell ABD notation used in
+laminated plate theory. `As` is the transverse-shear block retained for
+first-order shear-deformation workflows. See [References](../references.md) for
+plate, shell, laminate, and equivalent-plate sources.
+
+## What The Wall Law Does Not Prove
+
+A wall law is a constitutive approximation. It does not prove that a stiffener
+layout is manufacturable, that local crippling is acceptable, that joints are
+adequately modeled, or that a shell buckling calculation is valid. Tensyl
+reports diagnostics and scale-separation warnings so an analyst can decide
+whether the local equivalent-wall approximation is acceptable for the intended
+workflow.

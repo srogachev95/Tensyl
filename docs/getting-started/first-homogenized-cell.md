@@ -61,3 +61,9 @@ The result carries:
 Warnings do not automatically invalidate a result. They mark assumptions that an
 analyst should review before using the wall law in a sizing, buckling, or
 finite-element workflow.
+
+In this example the positive eccentricities place both stiffener centroids on
+the `+n` side of the skin reference surface, so the homogenized wall has a
+nonzero membrane-bending coupling block `B`.
+
+Next: [Result Interpretation](../user-guide/result-interpretation.md).

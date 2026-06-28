@@ -57,3 +57,13 @@ interpolated = atlas.law_at(surface, 75.0, 0.5 * math.pi)
 
 Atlas interpolation is a convenience for linear wall laws. Interpolation error
 metadata should be reviewed before relying on a coarse grid.
+
+## Choosing A Response Length
+
+`ValidityContext.response_length` should represent the structural response mode
+you intend to model, such as an expected buckle half-wavelength, analysis
+feature size, or load redistribution length. It should not default blindly to
+the global part length. A pitch that is small compared with the whole barrel can
+still be too large for a short-wavelength local response.
+
+Next: [Stiffened Surfaces](stiffened-surfaces.md).

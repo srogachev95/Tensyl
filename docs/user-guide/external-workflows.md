@@ -47,3 +47,12 @@ The canonical wall-law payload is the $8\times8$ `tangent_c8` operator. ABD and
 transverse-shear blocks are reconstructed from that canonical tangent on load.
 
 Malformed payloads raise `SchemaError`.
+
+## Traceability
+
+For analysis handoff, serialize the `HomogenizationResult` instead of only the
+wall law when possible. The result payload preserves diagnostics, assumptions,
+validity warnings, convention metadata, and unit labels alongside the wall
+tangent.
+
+Next: [SP-8007 Data Handoff](sp8007-data-handoff.md).
