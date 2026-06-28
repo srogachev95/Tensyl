@@ -43,11 +43,6 @@ This follows the equivalent-plate idea used by Nemeth for stiffened laminated
 plates and plate-like lattices. Tensyl treats those formulas as mechanics
 guidance and keeps the energy path as the executable reference.
 
-![A Tensyl notation diagram showing a canonical tangent-plane stiffener cell being homogenized into an equivalent ABD wall.](../assets/nemeth-treatise/adapted-tangent-cell-to-equivalent-wall.svg)
-
-*Adapted from Nemeth, NASA/TP-2011-216882, figures 6, 8, and 9; full citation
-in [References](../references.md).*
-
 ## How Geometry Enters The ABD Law
 
 The tangent-plane homogenizer computes a local constitutive law. At a surface
