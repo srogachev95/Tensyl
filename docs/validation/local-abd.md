@@ -174,7 +174,7 @@ Scratch solver output belongs under `validation/artifacts/scratch/local_abd/`.
 Committed Phase 1 artifacts belong under
 `validation/artifacts/committed/local_abd/<case-id>/`.
 
-A case can be promoted only when:
+A full `8 x 8` solver-backed case can be promoted only when:
 
 - the spec is committed and names the runner status honestly;
 - all eight generalized-strain extraction load cases complete;
@@ -185,3 +185,7 @@ A case can be promoted only when:
 - raw solver files stay out of git;
 - this page is updated if the executable status, thresholds, or artifact paths
   change.
+
+Partial slices, such as the current skin-only `ABD6` extraction, must name their
+supported blocks and unsupported blocks in the committed artifacts instead of
+implying full-case promotion.
