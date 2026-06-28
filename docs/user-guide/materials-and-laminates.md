@@ -1,6 +1,6 @@
 # Materials And Laminates
 
-Tensyl supports skin-only wall laws for isotropic plates and orthotropic
+Tensyl supports skin-only ABD stiffnesses for isotropic plates and orthotropic
 laminates.
 
 ## Isotropic Plate
@@ -9,7 +9,7 @@ laminates.
 from tensyl import IsotropicMaterial, isotropic_plate
 
 material = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-wall = isotropic_plate(material, thickness=0.080)
+stiffness = isotropic_plate(material, thickness=0.080)
 ```
 
 Inputs must be consistent. In the US customary examples here, `E` is in `psi`
@@ -17,7 +17,7 @@ and `thickness` is in `in` — see [Units and Consistency](units-and-consistency
 
 ## Orthotropic Laminate
 
-Laminate plies are supplied bottom-to-top through the wall thickness.
+Laminate plies are supplied bottom-to-top through the section thickness.
 
 ```python
 import math
@@ -33,7 +33,7 @@ ply_material = OrthotropicPlyMaterial(
     G23=0.55e6,
 )
 
-wall = laminate_plate(
+stiffness = laminate_plate(
     [
         Ply(ply_material, thickness=0.005, angle_rad=0.0),
         Ply(ply_material, thickness=0.005, angle_rad=math.pi / 2.0),

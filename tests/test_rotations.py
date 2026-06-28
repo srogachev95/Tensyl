@@ -22,11 +22,11 @@ def test_generalized_rotation_preserves_power_pairing() -> None:
 
 
 def test_isotropic_plate_rotation_is_invariant() -> None:
-    wall = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.3), thickness=0.01)
+    stiffness = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.3), thickness=0.01)
 
-    rotated = wall.rotate(np.pi / 5.0)
+    rotated = stiffness.rotate(np.pi / 5.0)
 
-    np.testing.assert_allclose(rotated.C8, wall.C8, rtol=1.0e-12, atol=1.0e-5)
+    np.testing.assert_allclose(rotated.C8, stiffness.C8, rtol=1.0e-12, atol=1.0e-5)
 
 
 def test_rotate_then_rotate_back_recovers_tangent() -> None:
@@ -38,12 +38,12 @@ def test_rotate_then_rotate_back_recovers_tangent() -> None:
         G13=1.5e6,
         G23=1.0e6,
     )
-    wall = laminate_plate([Ply(material=material, thickness=0.2)])
+    stiffness = laminate_plate([Ply(material=material, thickness=0.2)])
 
-    rotated = rotate_tangent(wall.C8, np.pi / 6.0)
+    rotated = rotate_tangent(stiffness.C8, np.pi / 6.0)
     recovered = rotate_tangent(rotated, -np.pi / 6.0)
 
-    np.testing.assert_allclose(recovered, wall.C8, rtol=1.0e-12, atol=1.0e-8)
+    np.testing.assert_allclose(recovered, stiffness.C8, rtol=1.0e-12, atol=1.0e-8)
 
 
 def test_ninety_degree_orthotropic_rotation_swaps_principal_membrane_terms() -> None:
@@ -55,11 +55,11 @@ def test_ninety_degree_orthotropic_rotation_swaps_principal_membrane_terms() -> 
         G13=1.7e6,
         G23=1.1e6,
     )
-    wall = laminate_plate([Ply(material=material, thickness=0.1)])
+    stiffness = laminate_plate([Ply(material=material, thickness=0.1)])
 
-    rotated = wall.rotate(np.pi / 2.0)
+    rotated = stiffness.rotate(np.pi / 2.0)
 
-    np.testing.assert_allclose(rotated.A[0, 0], wall.A[1, 1], rtol=1.0e-12)
-    np.testing.assert_allclose(rotated.A[1, 1], wall.A[0, 0], rtol=1.0e-12)
-    np.testing.assert_allclose(rotated.As[0, 0], wall.As[1, 1], rtol=1.0e-12)
-    np.testing.assert_allclose(rotated.As[1, 1], wall.As[0, 0], rtol=1.0e-12)
+    np.testing.assert_allclose(rotated.A[0, 0], stiffness.A[1, 1], rtol=1.0e-12)
+    np.testing.assert_allclose(rotated.A[1, 1], stiffness.A[0, 0], rtol=1.0e-12)
+    np.testing.assert_allclose(rotated.As[0, 0], stiffness.As[1, 1], rtol=1.0e-12)
+    np.testing.assert_allclose(rotated.As[1, 1], stiffness.As[0, 0], rtol=1.0e-12)

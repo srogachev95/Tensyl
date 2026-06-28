@@ -10,14 +10,14 @@ def test_isotropic_plate_matches_closed_form_abd_and_shear() -> None:
     h = 0.004
     kappa = 5.0 / 6.0
 
-    wall = isotropic_plate(material, h, shear_correction=kappa)
+    stiffness = isotropic_plate(material, h, shear_correction=kappa)
     Q = material.plane_stress_stiffness()
 
-    np.testing.assert_allclose(wall.A, Q * h)
-    np.testing.assert_allclose(wall.B, np.zeros((3, 3)), atol=0.0)
-    np.testing.assert_allclose(wall.D, Q * h**3 / 12.0)
-    np.testing.assert_allclose(wall.As, np.diag([kappa * material.G * h] * 2))
-    assert wall.areal_mass == 2700.0 * h
+    np.testing.assert_allclose(stiffness.A, Q * h)
+    np.testing.assert_allclose(stiffness.B, np.zeros((3, 3)), atol=0.0)
+    np.testing.assert_allclose(stiffness.D, Q * h**3 / 12.0)
+    np.testing.assert_allclose(stiffness.As, np.diag([kappa * material.G * h] * 2))
+    assert stiffness.areal_mass == 2700.0 * h
 
 
 def test_single_isotropic_laminate_equals_isotropic_plate() -> None:
@@ -49,7 +49,7 @@ def test_symmetric_laminate_has_zero_membrane_bending_coupling() -> None:
         Ply(material=material, thickness=0.001, angle_rad=0.0),
     ]
 
-    wall = laminate_plate(plies)
+    stiffness = laminate_plate(plies)
 
-    np.testing.assert_allclose(wall.B, np.zeros((3, 3)), atol=1.0e-8)
-    np.testing.assert_allclose(wall.C8, wall.C8.T, atol=1.0e-8)
+    np.testing.assert_allclose(stiffness.B, np.zeros((3, 3)), atol=1.0e-8)
+    np.testing.assert_allclose(stiffness.C8, stiffness.C8.T, atol=1.0e-8)

@@ -1,6 +1,6 @@
 # Frames And Conventions
 
-A wall law is expressed in a right-handed local frame:
+An ABD stiffness is expressed in a right-handed local frame:
 
 $$
 \{\mathbf e_1,\mathbf e_2,\mathbf n\}.
@@ -21,7 +21,7 @@ $$
 \mathbf e_2'=-\sin\psi\,\mathbf e_1+\cos\psi\,\mathbf e_2.
 $$
 
-## Rotation Of Wall Laws
+## Rotation Of ABD Stiffnesses
 
 Generalized strains and generalized resultants use separate transforms:
 
@@ -45,7 +45,7 @@ $$
 
 ## Reference Surface
 
-The default reference surface is the wall mid-surface. If a wall is shifted by
+The default reference surface is the mid-surface. If a stiffness is shifted by
 distance $d$ along the positive normal, membrane strain at the old surface is:
 
 $$
@@ -54,7 +54,7 @@ $$
 \boldsymbol\epsilon_\text{new} - d\boldsymbol\kappa.
 $$
 
-Use `shift_reference_surface` when superposing facesheets or moving a wall law
+Use `shift_reference_surface` when superposing facesheets or moving an ABD stiffness
 to a different shell reference surface.
 
 ```
@@ -70,7 +70,7 @@ to a different shell reference surface.
 
 Every eccentricity input follows the same sign rule:
 
-> Eccentricity is the signed distance from the wall reference surface to the
+> Eccentricity is the signed distance from the reference surface to the
 > stiffener or face centroid, measured along `+n`.
 
 This applies to:
@@ -87,13 +87,13 @@ eccentricity.
 
 !!! warning "The eccentricity sign is not cosmetic"
     Flip it and you change the membrane-bending coupling block `B` — which means
-    you get a *physically different wall law*, with no exception and no
+    you get a *physically different ABD stiffness*, with no exception and no
     validation error to warn you. The numbers will look perfectly reasonable and
     be quietly wrong. Decide which way `+n` points before you type a sign.
 
 Positive eccentricity adds membrane-bending coupling according to the chosen
 reference surface. Moving the reference surface also changes `B`. Equal and
-opposite faces in a symmetric sandwich can cancel coupling when the face laws
+opposite faces in a symmetric sandwich can cancel coupling when the face stiffnesses
 and offsets are symmetric.
 
 ## Member Angles

@@ -52,17 +52,17 @@ def test_single_member_family_has_expected_axis_aligned_contributions() -> None:
         eccentricity=0.0,
     )
 
-    law = EnergyHomogenizer().compute(cell).law
+    stiffness = EnergyHomogenizer().compute(cell).stiffness
     assert section.kGAy is not None
     assert section.kGAz is not None
 
-    assert law.A[0, 0] == pytest.approx(section.EA / spacing)
-    assert law.A[2, 2] == pytest.approx(0.25 * section.kGAy / spacing)
-    assert law.D[0, 0] == pytest.approx(section.EIy / spacing)
-    assert law.D[1, 1] == pytest.approx(section.EIz / spacing)
-    assert law.D[2, 2] == pytest.approx(0.25 * section.GJ / spacing)
-    assert law.As[0, 0] == pytest.approx(section.kGAz / spacing)
-    assert law.As[1, 1] == pytest.approx(0.0)
+    assert stiffness.A[0, 0] == pytest.approx(section.EA / spacing)
+    assert stiffness.A[2, 2] == pytest.approx(0.25 * section.kGAy / spacing)
+    assert stiffness.D[0, 0] == pytest.approx(section.EIy / spacing)
+    assert stiffness.D[1, 1] == pytest.approx(section.EIz / spacing)
+    assert stiffness.D[2, 2] == pytest.approx(0.25 * section.GJ / spacing)
+    assert stiffness.As[0, 0] == pytest.approx(section.kGAz / spacing)
+    assert stiffness.As[1, 1] == pytest.approx(0.0)
 
 
 def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
@@ -79,14 +79,14 @@ def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
     eta = np.array([0.003, -0.002, 0.001, 0.02, -0.01, 0.04, 0.005, -0.006])
 
     result = EnergyHomogenizer().compute(cell)
-    wall_energy = 0.5 * cell.area * float(eta @ result.law.C8 @ eta)
+    stiffness_energy = 0.5 * cell.area * float(eta @ result.stiffness.C8 @ eta)
     explicit_energy = cell.area * cell.skin.energy(eta) + sum(
         member_energy(member, eta) for member in cell.members
     )
 
     assert result.diagnostics["symmetric"] is True
     assert result.diagnostics["positive_semidefinite"] is True
-    np.testing.assert_allclose(wall_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
+    np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
 
 
 def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
@@ -115,10 +115,10 @@ def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
         ),
     )
 
-    np.testing.assert_allclose(direct.law.C8, energy.law.C8, rtol=1.0e-12, atol=1.0e-12)
+    np.testing.assert_allclose(direct.stiffness.C8, energy.stiffness.C8, rtol=1.0e-12, atol=1.0e-12)
 
 
-def test_rotating_cell_matches_rotated_homogenized_law() -> None:
+def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
     section = _section()
     angle = 0.41
     original = orthogrid_cell(
@@ -146,12 +146,12 @@ def test_rotating_cell_matches_rotated_homogenized_law() -> None:
         ),
     )
 
-    original_law = EnergyHomogenizer().compute(original).law
-    rotated_law = EnergyHomogenizer().compute(rotated).law
+    original_stiffness = EnergyHomogenizer().compute(original).stiffness
+    rotated_stiffness = EnergyHomogenizer().compute(rotated).stiffness
 
     np.testing.assert_allclose(
-        rotated_law.C8,
-        original_law.rotate(-angle).C8,
+        rotated_stiffness.C8,
+        original_stiffness.rotate(-angle).C8,
         rtol=1.0e-12,
         atol=1.0e-10,
     )
@@ -166,12 +166,12 @@ def test_equilateral_isogrid_has_expected_membrane_symmetry() -> None:
         eccentricity=0.0,
     )
 
-    law = EnergyHomogenizer().compute(cell).law
+    stiffness = EnergyHomogenizer().compute(cell).stiffness
 
-    assert law.A[0, 0] == pytest.approx(law.A[1, 1])
-    assert law.A[0, 2] == pytest.approx(0.0, abs=1.0e-12)
-    assert law.A[1, 2] == pytest.approx(0.0, abs=1.0e-12)
-    assert law.A[2, 2] == pytest.approx((law.A[0, 0] - law.A[0, 1]) / 2.0)
+    assert stiffness.A[0, 0] == pytest.approx(stiffness.A[1, 1])
+    assert stiffness.A[0, 2] == pytest.approx(0.0, abs=1.0e-12)
+    assert stiffness.A[1, 2] == pytest.approx(0.0, abs=1.0e-12)
+    assert stiffness.A[2, 2] == pytest.approx((stiffness.A[0, 0] - stiffness.A[0, 1]) / 2.0)
 
 
 def test_validity_report_warns_for_large_scale_ratios() -> None:
@@ -195,7 +195,7 @@ def test_validity_report_warns_for_large_scale_ratios() -> None:
     assert result.validity.h_over_R == pytest.approx(0.05)
     assert result.validity.p_over_R == pytest.approx(0.25)
     assert result.validity.p_over_L_response == pytest.approx(0.1)
-    assert result.law.validity == result.validity
+    assert result.stiffness.validity == result.validity
     assert "h_over_R_exceeds_threshold" in result.validity.warnings
     assert "p_over_R_exceeds_threshold" in result.validity.warnings
     assert "p_over_L_response_exceeds_threshold" in result.validity.warnings

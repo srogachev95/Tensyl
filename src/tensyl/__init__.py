@@ -23,12 +23,12 @@ from tensyl.cells import (
     unidirectional_cell,
 )
 from tensyl.core.constitutive import (
-    ConstitutiveLaw,
-    HyperelasticLaw,
-    LinearABDWall,
-    LinearLaw,
+    ABDStiffness,
+    ConstitutiveModel,
+    HyperelasticModel,
+    LinearModel,
     shift_reference_surface,
-    superpose_linear_abd_walls,
+    superpose_abd_stiffnesses,
 )
 from tensyl.core.conventions import (
     DEFAULT_FRAME,
@@ -42,7 +42,13 @@ from tensyl.core.typing import (
     generalized_resultant,
     generalized_strain,
 )
-from tensyl.fields import ConstantWallField, HomogenizedWallField, WallAtlas, WallCache, WallField
+from tensyl.fields import (
+    ABDAtlas,
+    ConstantStiffnessField,
+    HomogenizedStiffnessField,
+    StiffnessCache,
+    StiffnessField,
+)
 from tensyl.geometry import (
     ConicalFrustum,
     Cylinder,
@@ -63,7 +69,7 @@ from tensyl.homogenizers import (
     ValidityContext,
     ValidityReport,
     ValidityThresholds,
-    validity_report_for_law,
+    validity_report_for_stiffness,
 )
 from tensyl.materials import (
     IsotropicMaterial,
@@ -84,9 +90,9 @@ __all__ = [
     "CanonicalUnitCell",
     "CellEdge",
     "CellNode",
-    "ConstitutiveLaw",
+    "ConstitutiveModel",
     "ConicalFrustum",
-    "ConstantWallField",
+    "ConstantStiffnessField",
     "Cylinder",
     "DirectECHomogenizer",
     "EnergyHomogenizer",
@@ -99,13 +105,13 @@ __all__ = [
     "HomogenizationInputError",
     "HomogenizationResult",
     "Homogenizer",
-    "HyperelasticLaw",
+    "HyperelasticModel",
     "IsotropicMaterial",
-    "LinearABDWall",
-    "LinearLaw",
+    "ABDStiffness",
+    "LinearModel",
     "OrthotropicPlyMaterial",
     "Ply",
-    "HomogenizedWallField",
+    "HomogenizedStiffnessField",
     "Sphere",
     "SphericalCap",
     "StiffenerFamily",
@@ -115,9 +121,9 @@ __all__ = [
     "ValidityContext",
     "ValidityReport",
     "ValidityThresholds",
-    "WallAtlas",
-    "WallCache",
-    "WallField",
+    "ABDAtlas",
+    "StiffnessCache",
+    "StiffnessField",
     "__version__",
     "braced_orthogrid_cell",
     "equilateral_isogrid_cell",
@@ -137,7 +143,7 @@ __all__ = [
     "sandwich_star_core_cell",
     "shift_reference_surface",
     "star_cell",
-    "superpose_linear_abd_walls",
+    "superpose_abd_stiffnesses",
     "unidirectional_cell",
-    "validity_report_for_law",
+    "validity_report_for_stiffness",
 ]

@@ -1,7 +1,7 @@
 # First Homogenized Cell
 
-Tangent-plane homogenization adds beam-stiffener contributions to a skin wall
-law. The energy homogenizer is the reference path — the one Tensyl trusts by
+Tangent-plane homogenization adds beam-stiffener contributions to a skin stiffness
+stiffness. The energy homogenizer is the reference path — the one Tensyl trusts by
 default and measures the other methods against.
 
 ```python
@@ -48,23 +48,23 @@ result = EnergyHomogenizer().compute(
     ),
 )
 
-wall = result.law
+stiffness = result.stiffness
 print(result.validity.warnings)
 ```
 
 The result carries:
 
-- `law`: a `LinearABDWall`;
+- `stiffness`: an `ABDStiffness`;
 - `diagnostics`: symmetry, rank, and positive-semidefinite checks;
 - `assumptions`: modeling assumptions recorded by the homogenizer;
 - `validity`: scale-separation and coupling warnings.
 
 Warnings do not automatically invalidate a result. They mark assumptions that an
-analyst should review before using the wall law in a sizing, buckling, or
+analyst should review before using the ABD stiffness in a sizing, buckling, or
 finite-element workflow.
 
 In this example the positive eccentricities place both stiffener centroids on
-the `+n` side of the skin reference surface, so the homogenized wall has a
+the `+n` side of the skin reference surface, so the homogenized stiffness has a
 nonzero membrane-bending coupling block `B`.
 
 Next: [Result Interpretation](../user-guide/result-interpretation.md).

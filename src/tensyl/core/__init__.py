@@ -1,12 +1,12 @@
-"""Core frames, typing, constitutive laws, and rotations."""
+"""Core frames, typing, constitutive stiffnesses, and rotations."""
 
 from tensyl.core.constitutive import (
-    ConstitutiveLaw,
-    HyperelasticLaw,
-    LinearABDWall,
-    LinearLaw,
+    ABDStiffness,
+    ConstitutiveModel,
+    HyperelasticModel,
+    LinearModel,
     shift_reference_surface,
-    superpose_linear_abd_walls,
+    superpose_abd_stiffnesses,
 )
 from tensyl.core.conventions import (
     DEFAULT_FRAME,
@@ -19,7 +19,7 @@ from tensyl.core.rotations import (
     generalized_resultant_transform,
     generalized_strain_transform,
     resultant_transform,
-    rotate_linear_abd_wall,
+    rotate_abd_stiffness,
     rotate_tangent,
     transverse_shear_transform,
 )
@@ -34,14 +34,14 @@ from tensyl.core.typing import (
 __all__ = [
     "DEFAULT_FRAME",
     "DEFAULT_STRAIN_CONVENTION",
-    "ConstitutiveLaw",
+    "ConstitutiveModel",
     "FloatArray",
     "Frame2D",
     "GeneralizedResultant",
     "GeneralizedStrain",
-    "HyperelasticLaw",
-    "LinearABDWall",
-    "LinearLaw",
+    "HyperelasticModel",
+    "ABDStiffness",
+    "LinearModel",
     "StrainConvention",
     "engineering_strain_transform",
     "generalized_resultant",
@@ -49,9 +49,9 @@ __all__ = [
     "generalized_strain",
     "generalized_strain_transform",
     "resultant_transform",
-    "rotate_linear_abd_wall",
+    "rotate_abd_stiffness",
     "rotate_tangent",
     "shift_reference_surface",
-    "superpose_linear_abd_walls",
+    "superpose_abd_stiffnesses",
     "transverse_shear_transform",
 ]

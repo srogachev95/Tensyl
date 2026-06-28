@@ -15,7 +15,7 @@ into global plate and shell calculations.
 Classical plate and shell theory supplied the language — membrane resultants,
 bending resultants, transverse shear, and stiffness matrices. Reissner- and
 Mindlin-type first-order shear-deformation theories promoted transverse shear
-from an afterthought to an explicit part of the wall model. Laminated-plate
+from an afterthought to an explicit part of the stiffness model. Laminated-plate
 theory then organized anisotropic skins into the familiar `A`, `B`, and `D`
 stiffness blocks that Tensyl still speaks in today.
 
@@ -31,7 +31,7 @@ verification checks, and neutral export formats — so the assumptions stay visi
 instead of buried in a spreadsheet.
 
 NASA SP-8007 and the related shell-buckling literature are the *why* behind all
-of this: they are where equivalent wall properties earn their keep, especially
+of this: they are where equivalent stiffness properties earn their keep, especially
 for thin cylindrical shells. Tensyl does not implement those buckling criteria —
-it computes and audits the wall laws that feed them. See [References](../references.md)
+it computes and audits the ABD stiffnesses that feed them. See [References](../references.md)
 for the full lineage.

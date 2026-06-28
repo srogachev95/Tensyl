@@ -1,19 +1,19 @@
-"""Compatibility exports for constitutive wall laws."""
+"""Compatibility exports for constitutive ABD stiffnesses."""
 
 from tensyl.core.constitutive import (
-    ConstitutiveLaw,
-    HyperelasticLaw,
-    LinearABDWall,
-    LinearLaw,
+    ABDStiffness,
+    ConstitutiveModel,
+    HyperelasticModel,
+    LinearModel,
     shift_reference_surface,
-    superpose_linear_abd_walls,
+    superpose_abd_stiffnesses,
 )
 
 __all__ = [
-    "ConstitutiveLaw",
-    "HyperelasticLaw",
-    "LinearABDWall",
-    "LinearLaw",
+    "ConstitutiveModel",
+    "HyperelasticModel",
+    "ABDStiffness",
+    "LinearModel",
     "shift_reference_surface",
-    "superpose_linear_abd_walls",
+    "superpose_abd_stiffnesses",
 ]

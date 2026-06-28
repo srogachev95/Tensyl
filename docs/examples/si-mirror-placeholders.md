@@ -4,16 +4,16 @@ These examples mirror the US customary workflows with consistent SI inputs.
 Tensyl does not convert units; the caller is responsible for using one unit
 system throughout.
 
-## Skin-Only Isotropic Wall
+## Skin-Only Isotropic Stiffness
 
 ```python
 from tensyl import IsotropicMaterial, isotropic_plate
 
 aluminum = IsotropicMaterial(E=73.1e9, nu=0.33, density=2780.0)
-wall = isotropic_plate(aluminum, thickness=0.0020)
+stiffness = isotropic_plate(aluminum, thickness=0.0020)
 
-assert wall.A.shape == (3, 3)
-assert wall.B[0, 0] == 0.0
+assert stiffness.A.shape == (3, 3)
+assert stiffness.B[0, 0] == 0.0
 ```
 
 Assumed units:

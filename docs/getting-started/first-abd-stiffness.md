@@ -1,4 +1,4 @@
-# First Wall Law
+# First ABD Stiffness
 
 The simplest Tensyl workflow is a skin-only isotropic plate — no stiffeners, no
 surprises. It is the baseline you sanity-check everything else against before
@@ -13,12 +13,12 @@ aluminum_2024_like = IsotropicMaterial(
     density=0.1,  # analyst-selected consistent mass unit
 )
 
-wall = isotropic_plate(aluminum_2024_like, thickness=0.080)
+stiffness = isotropic_plate(aluminum_2024_like, thickness=0.080)
 
-print(wall.A)   # membrane stiffness, lbf/in
-print(wall.B)   # zero for a symmetric mid-surface isotropic skin
-print(wall.D)   # bending stiffness, lbf*in
-print(wall.As)  # transverse shear stiffness, lbf/in
+print(stiffness.A)   # membrane stiffness, lbf/in
+print(stiffness.B)   # zero for a symmetric mid-surface isotropic skin
+print(stiffness.D)   # bending stiffness, lbf*in
+print(stiffness.As)  # transverse shear stiffness, lbf/in
 ```
 
 For an isotropic plate of thickness $h$, Tensyl uses the plane-stress reduced
@@ -42,7 +42,7 @@ $$
 \mathbf D=\frac{\mathbf Qh^3}{12}.
 $$
 
-`LinearABDWall` is an operator, not only a matrix container. Its public
+`ABDStiffness` is an operator, not only a matrix container. Its public
 mechanics contract is stored energy:
 
 ```python
@@ -50,10 +50,10 @@ from tensyl import generalized_strain
 
 eta = generalized_strain([1.0e-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
-energy_density = wall.energy(eta)
-resultants = wall.resultants(eta)
-tangent = wall.tangent(eta)
+energy_density = stiffness.energy(eta)
+resultants = stiffness.resultants(eta)
+tangent = stiffness.tangent(eta)
 ```
 
-`tangent` is constant for `LinearABDWall`, so `wall.constant_tangent` gives the
+`tangent` is constant for `ABDStiffness`, so `stiffness.constant_tangent` gives the
 same $8\times8$ operator without a strain input.
