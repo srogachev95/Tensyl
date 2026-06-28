@@ -1,0 +1,176 @@
+{
+  "case_count": 8,
+  "cases": [
+    {
+      "artifact_dir": "validation/artifacts/committed/barrels/orthogrid_axial_smeared",
+      "artifact_role": "tensyl_smeared_barrel_target",
+      "case_name": "barrel_orthogrid_axial_smeared",
+      "case_type": "barrel_smeared_response",
+      "checks": {
+        "explicit_fe_comparison_available": false,
+        "max_abs_resultant_residual": 3.410605131648481e-13,
+        "nonzero_generalized_strain_count": 2,
+        "positive_strain_energy_density": true,
+        "smeared_equilibrium_relative_residual": 3.410605131648481e-16
+      },
+      "explicit_fe_comparison": false,
+      "explicit_fe_status": "planned",
+      "manifest": "validation/artifacts/committed/barrels/orthogrid_axial_smeared/manifest.json",
+      "phase": "phase_3_barrel_response",
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/flat_panels/orthogrid_axial_smeared",
+      "artifact_role": "tensyl_smeared_panel_target",
+      "case_name": "flat_panel_orthogrid_axial_smeared",
+      "case_type": "flat_panel_smeared_response",
+      "checks": {
+        "explicit_fe_comparison_available": false,
+        "max_abs_resultant_residual": 3.410605131648481e-13,
+        "nonzero_generalized_strain_count": 2,
+        "positive_strain_energy_density": true,
+        "smeared_equilibrium_relative_residual": 3.410605131648481e-16
+      },
+      "explicit_fe_comparison": false,
+      "explicit_fe_status": "planned",
+      "manifest": "validation/artifacts/committed/flat_panels/orthogrid_axial_smeared/manifest.json",
+      "phase": "phase_2_flat_panel_response",
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/local_abd/isogrid_equilateral",
+      "artifact_role": "tensyl_target",
+      "case_name": "local_abd_isogrid_equilateral",
+      "case_type": "local_abd",
+      "checks": {
+        "condition_number_C8": 889.00215230042,
+        "max_C8_eigenvalue": 1757544.10820876,
+        "min_C8_eigenvalue": 1976.9852116340367,
+        "rank_C8": 8,
+        "symmetric_ABD": true,
+        "symmetric_C8": true
+      },
+      "explicit_fe_comparison": null,
+      "explicit_fe_status": null,
+      "manifest": "validation/artifacts/committed/local_abd/isogrid_equilateral/manifest.json",
+      "phase": null,
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/local_abd/orthogrid_eccentric",
+      "artifact_role": "tensyl_target",
+      "case_name": "local_abd_orthogrid_eccentric",
+      "case_type": "local_abd",
+      "checks": {
+        "condition_number_C8": 161.157439580198,
+        "max_C8_eigenvalue": 1729730.736335291,
+        "min_C8_eigenvalue": 10733.173354212495,
+        "rank_C8": 8,
+        "symmetric_ABD": true,
+        "symmetric_C8": true
+      },
+      "explicit_fe_comparison": null,
+      "explicit_fe_status": null,
+      "manifest": "validation/artifacts/committed/local_abd/orthogrid_eccentric/manifest.json",
+      "phase": null,
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/local_abd/orthogrid_zero_eccentricity",
+      "artifact_role": "tensyl_target",
+      "case_name": "local_abd_orthogrid_zero_eccentricity",
+      "case_type": "local_abd",
+      "checks": {
+        "condition_number_C8": 3900.484168438118,
+        "max_C8_eigenvalue": 1703309.176713428,
+        "min_C8_eigenvalue": 436.6917293233083,
+        "rank_C8": 8,
+        "symmetric_ABD": true,
+        "symmetric_C8": true
+      },
+      "explicit_fe_comparison": null,
+      "explicit_fe_status": null,
+      "manifest": "validation/artifacts/committed/local_abd/orthogrid_zero_eccentricity/manifest.json",
+      "phase": null,
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/local_abd/skin_only",
+      "artifact_role": "calculix_extraction",
+      "case_name": "local_abd_skin_only",
+      "case_type": "local_abd",
+      "checks": {
+        "ABD6_relative_frobenius_error": 3.787943382534907e-08,
+        "A_relative_frobenius_error": 3.7879398999774646e-08,
+        "B_relative_frobenius_error": 2.6885645482622457e-10,
+        "D_relative_frobenius_error": 1.0349049566310724e-07,
+        "condition_number_C8": 7444.0298507462685,
+        "max_C8_eigenvalue": 1265671.641791045,
+        "max_abs_entry_error": 0.0324812030303292,
+        "min_C8_eigenvalue": 170.02506265664164,
+        "rank_C8": 8,
+        "symmetric_ABD": true,
+        "symmetric_C8": true,
+        "symmetric_actual_ABD6": true
+      },
+      "explicit_fe_comparison": null,
+      "explicit_fe_status": null,
+      "manifest": "validation/artifacts/committed/local_abd/skin_only/extraction_manifest.json",
+      "phase": null,
+      "promoted_solver_metrics": true,
+      "solver_required": true
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/local_abd/skin_only",
+      "artifact_role": "tensyl_target",
+      "case_name": "local_abd_skin_only",
+      "case_type": "local_abd",
+      "checks": {
+        "condition_number_C8": 7444.0298507462685,
+        "max_C8_eigenvalue": 1265671.641791045,
+        "min_C8_eigenvalue": 170.02506265664164,
+        "rank_C8": 8,
+        "symmetric_ABD": true,
+        "symmetric_C8": true
+      },
+      "explicit_fe_comparison": null,
+      "explicit_fe_status": null,
+      "manifest": "validation/artifacts/committed/local_abd/skin_only/manifest.json",
+      "phase": null,
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    },
+    {
+      "artifact_dir": "validation/artifacts/committed/local_abd/unidirectional",
+      "artifact_role": "tensyl_target",
+      "case_name": "local_abd_unidirectional",
+      "case_type": "local_abd",
+      "checks": {
+        "condition_number_C8": 4842.06817117408,
+        "max_C8_eigenvalue": 1630284.3060539498,
+        "min_C8_eigenvalue": 336.6917293233083,
+        "rank_C8": 8,
+        "symmetric_ABD": true,
+        "symmetric_C8": true
+      },
+      "explicit_fe_comparison": null,
+      "explicit_fe_status": null,
+      "manifest": "validation/artifacts/committed/local_abd/unidirectional/manifest.json",
+      "phase": null,
+      "promoted_solver_metrics": false,
+      "solver_required": false
+    }
+  ],
+  "notes": [
+    "This summary is generated from committed validation artifact manifests.",
+    "Target artifacts and solver-backed comparisons are deliberately distinguished."
+  ],
+  "promoted_solver_case_count": 1,
+  "schema_version": "tensyl.validation.gallery-summary.v1",
+  "source": "validation/artifacts/committed"
+}

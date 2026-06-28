@@ -56,6 +56,8 @@ nav:
       - Phase 1 Local ABD Extraction: validation/local-abd.md
       - Phase 2 Flat Panel Response: validation/flat-panels.md
       - Phase 3 Barrel Response: validation/barrels.md
+      - Phase 4 Limitation Atlas: validation/limitations.md
+      - Phase 5 Validation Gallery: validation/gallery.md
       - Phases 3-5 Recommendations: validation/phases-3-5.md
   - Examples:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md

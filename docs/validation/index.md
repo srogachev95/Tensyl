@@ -61,9 +61,11 @@ library.
 | Phase 1 local ABD extraction | One skin-only CalculiX `ABD6` slice is promoted; stiffened-cell extraction remains planned. | Limited to the promoted skin-only membrane/bending artifact described in [Phase 1 Local ABD Extraction](local-abd.md). |
 | Phase 2 flat panel response | One smeared orthogrid axial target is executable; explicit FE panel comparison remains planned. | No promoted flat-panel FEM evidence is claimed here. |
 | Phase 3 barrel response | One smeared orthogrid axial barrel target is executable; explicit FE barrel comparison remains planned. | No promoted barrel FEM evidence is claimed here. |
-| Phase 4 limitation atlas | Scaffolded recommendation only. | No promoted limitation-case FEM evidence is claimed here. |
-| Phase 5 public validation gallery | Scaffolded recommendation only. | No gallery-level summary evidence is claimed here. |
+| Phase 4 limitation atlas | Public backlog documented; no promoted limitation cases yet. | No promoted limitation-case FEM evidence is claimed here. |
+| Phase 5 public validation gallery | Generated summary and first solver-error plot are available. | Gallery contains one promoted solver comparison and clearly labeled target-only rows. |
 
 See [Phases 3-5 Recommendations](phases-3-5.md) for the planned evidence shape
 and promotion gates. The page is intentionally dull about missing evidence. That
 is a feature.
+
+The current generated evidence index is in [Validation Gallery](gallery.md).

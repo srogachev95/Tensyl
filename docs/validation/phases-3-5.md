@@ -21,6 +21,12 @@ Until explicit solver artifacts exist, public docs should say "planned",
 "scaffolded", or "smeared target only", not "validated". A missing result is a
 perfectly respectable result when it is labeled before it can breed.
 
+Current concrete pages:
+
+- [Phase 3 Barrel Response](barrels.md) for the first smeared barrel target;
+- [Phase 4 Limitation Atlas](limitations.md) for planned limitation cases;
+- [Validation Gallery](gallery.md) for the generated summary table and plot.
+
 ## Phase 3: Barrel Response
 
 Phase 3 should test the tangent-plane stiffness in cylindrical geometry. The
