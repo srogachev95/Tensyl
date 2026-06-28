@@ -1,0 +1,12 @@
+{
+  "case_name": "local_abd_skin_only",
+  "checks": {
+    "ABD6_relative_frobenius_error": 3.787943382534907e-08,
+    "A_relative_frobenius_error": 3.7879398999774646e-08,
+    "B_relative_frobenius_error": 2.6885645482622457e-10,
+    "D_relative_frobenius_error": 1.0349049566310724e-07,
+    "max_abs_entry_error": 0.0324812030303292,
+    "symmetric_actual_ABD6": true
+  },
+  "schema_version": "tensyl.validation.abd6-comparison-metrics.v1"
+}

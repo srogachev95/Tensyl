@@ -71,6 +71,46 @@ def abd_comparison_metrics(
     }
 
 
+def abd6_comparison_metrics(
+    actual: np.ndarray,
+    expected: np.ndarray,
+    *,
+    case_name: str,
+) -> dict[str, Any]:
+    """Compare two membrane/bending ABD stiffness matrices."""
+
+    actual_abd = np.asarray(actual, dtype=np.float64)
+    expected_abd = np.asarray(expected, dtype=np.float64)
+    if actual_abd.shape != (6, 6):
+        msg = f"actual ABD stiffness must have shape (6, 6), got {actual_abd.shape}."
+        raise ValueError(msg)
+    if expected_abd.shape != (6, 6):
+        msg = f"expected ABD stiffness must have shape (6, 6), got {expected_abd.shape}."
+        raise ValueError(msg)
+    delta = actual_abd - expected_abd
+    return {
+        "schema_version": "tensyl.validation.abd6-comparison-metrics.v1",
+        "case_name": case_name,
+        "checks": {
+            "ABD6_relative_frobenius_error": _relative_matrix_error(actual_abd, expected_abd),
+            "A_relative_frobenius_error": _relative_matrix_error(
+                actual_abd[:3, :3],
+                expected_abd[:3, :3],
+            ),
+            "B_relative_frobenius_error": _relative_matrix_error(
+                actual_abd[:3, 3:6],
+                expected_abd[:3, 3:6],
+            ),
+            "D_relative_frobenius_error": _relative_matrix_error(
+                actual_abd[3:6, 3:6],
+                expected_abd[3:6, 3:6],
+            ),
+            "max_abs_entry_error": float(np.max(np.abs(delta))),
+            "symmetric_actual_ABD6": bool(np.allclose(actual_abd, actual_abd.T)),
+        },
+    }
+
+
 def skin_only_metrics(
     stiffness: ABDStiffness,
     *,

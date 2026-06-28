@@ -174,7 +174,7 @@ def _prescribed_dofs(
 ) -> tuple[float, float, float, float, float, float]:
     u1 = load_case.e11 * x + 0.5 * load_case.g12 * y
     u2 = load_case.e22 * y + 0.5 * load_case.g12 * x
-    u3 = 0.0
+    u3 = 0.5 * load_case.k11 * x * x + 0.5 * load_case.k22 * y * y + 0.5 * load_case.k12 * x * y
     rot1 = -(load_case.k22 * y + 0.5 * load_case.k12 * x)
     rot2 = load_case.k11 * x + 0.5 * load_case.k12 * y
     rot3 = 0.0
