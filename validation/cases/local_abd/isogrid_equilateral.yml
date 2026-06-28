@@ -1,0 +1,124 @@
+schema_version: tensyl.validation.local_abd.case.v1
+case_type: local_abd_periodic_cell
+case_id: local_abd_isogrid_equilateral
+name: local_abd_isogrid_equilateral
+title: Zero-eccentric equilateral isogrid
+phase: phase_1_local_abd
+status:
+  current_runner: planned
+  solver_runner: planned
+  artifact_promotion: draft
+units:
+  length: in
+  force: lbf
+  stress: psi
+materials:
+  aluminum:
+    E: 10600000.0
+    nu: 0.33
+    density: 0.1
+skin:
+  material: aluminum
+  thickness: 0.06
+  shear_correction: 0.8333333333333334
+section_library:
+  validation_isogrid_member:
+    type: beam_section
+    EA: 2800000.0
+    EIy: 18000.0
+    EIz: 5200.0
+    GJ: 3200.0
+    kGAy: 900000.0
+    kGAz: 700000.0
+local_frame:
+  e1: zero_degree_member_axis
+  e2: in_plane_90_degree_axis
+  normal: skin_positive_z
+  handedness: e1_cross_e2_equals_normal
+reference_surface:
+  location: skin_midsurface
+  z_offset: 0.0
+cell:
+  topology: equilateral_isogrid
+  constructor: equilateral_isogrid_cell
+  arguments:
+    member_section: validation_isogrid_member
+    pitch: 6.0
+    eccentricity: 0.0
+  member_angles_rad:
+    - 0.0
+    - 1.0471975511965976
+    - -1.0471975511965976
+  representative_area: 31.176914536239792
+  boundary_condition: generalized_strain_periodic
+tensyl_reference:
+  constructor: EnergyHomogenizer.compute
+  cell_constructor: equilateral_isogrid_cell
+  comparison_frame: local_frame
+fe_model:
+  runner_status: planned
+  solver: CalculiX
+  mesh_generator: Gmsh
+  element_family: skin_shells_with_beam_or_shell_stiffeners
+  nominal_element_size: 0.25
+extraction:
+  generalized_strain_order:
+    - epsilon_11
+    - epsilon_22
+    - gamma_12
+    - kappa_11
+    - kappa_22
+    - kappa_12
+    - gamma_13
+    - gamma_23
+  load_cases:
+    - id: epsilon_11
+      component: epsilon_11
+      magnitude: 0.0001
+    - id: epsilon_22
+      component: epsilon_22
+      magnitude: 0.0001
+    - id: gamma_12
+      component: gamma_12
+      magnitude: 0.0001
+    - id: kappa_11
+      component: kappa_11
+      magnitude: 0.001
+      units: 1/in
+    - id: kappa_22
+      component: kappa_22
+      magnitude: 0.001
+      units: 1/in
+    - id: kappa_12
+      component: kappa_12
+      magnitude: 0.001
+      units: 1/in
+    - id: gamma_13
+      component: gamma_13
+      magnitude: 0.0001
+    - id: gamma_23
+      component: gamma_23
+      magnitude: 0.0001
+expected_metrics:
+  oracle: tensyl_energy_homogenizer
+  blocks:
+    A: lbf_per_in
+    B: lbf
+    D: lbf_in
+    As: lbf_per_in
+  tolerances:
+    block_relative_linf: 0.03
+    energy_relative_linf: 0.03
+    symmetry_absolute_linf: 1.0e-7
+  invariants:
+    - B block is zero within tolerance because all member centroids are on the reference surface.
+    - A11 equals A22 within tolerance for the equilateral topology.
+    - D11 equals D22 within tolerance for the equilateral topology.
+    - The three member families use angles 0, +60, and -60 degrees in the declared frame.
+promotion:
+  scratch:
+    - Solver-backed runner completes all eight extraction load cases.
+    - Metrics and manifest are written under validation/artifacts/scratch/local_abd/isogrid_equilateral/.
+  committed:
+    - Curated metrics, manifest, and mesh-convergence summary are copied under validation/artifacts/committed/local_abd/isogrid_equilateral/.
+    - The committed summary records the triangular cell area and member-angle convention.

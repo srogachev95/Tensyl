@@ -1,0 +1,108 @@
+schema_version: tensyl.validation.local_abd.case.v1
+case_type: skin_only_isotropic
+case_id: local_abd_skin_only
+name: local_abd_skin_only
+title: Skin-only isotropic ABD extraction
+phase: phase_1_local_abd
+status:
+  current_runner: executable
+  command: uv run python validation/scripts/run_case.py validation/cases/local_abd/skin_only.yml
+  solver_runner: planned
+  artifact_promotion: draft
+units:
+  length: in
+  force: lbf
+  stress: psi
+material:
+  E: 10600000.0
+  nu: 0.33
+  density: 0.1
+thickness: 0.08
+shear_correction: 0.8333333333333334
+local_frame:
+  e1: panel_x
+  e2: panel_y
+  normal: panel_positive_z
+  handedness: e1_cross_e2_equals_normal
+reference_surface:
+  location: skin_midsurface
+  z_offset: 0.0
+cell:
+  topology: skin_only
+  dimensions:
+    e1_length: 6.0
+    e2_length: 6.0
+  boundary_condition: generalized_strain_periodic
+tensyl_reference:
+  constructor: isotropic_plate
+  arguments:
+    material: material
+    thickness: 0.08
+    shear_correction: 0.8333333333333334
+fe_model:
+  runner_status: planned
+  solver: CalculiX
+  mesh_generator: Gmsh
+  element_family: first_order_shell_or_plate
+  nominal_element_size: 0.25
+extraction:
+  generalized_strain_order:
+    - epsilon_11
+    - epsilon_22
+    - gamma_12
+    - kappa_11
+    - kappa_22
+    - kappa_12
+    - gamma_13
+    - gamma_23
+  load_cases:
+    - id: epsilon_11
+      component: epsilon_11
+      magnitude: 0.0001
+    - id: epsilon_22
+      component: epsilon_22
+      magnitude: 0.0001
+    - id: gamma_12
+      component: gamma_12
+      magnitude: 0.0001
+    - id: kappa_11
+      component: kappa_11
+      magnitude: 0.001
+      units: 1/in
+    - id: kappa_22
+      component: kappa_22
+      magnitude: 0.001
+      units: 1/in
+    - id: kappa_12
+      component: kappa_12
+      magnitude: 0.001
+      units: 1/in
+    - id: gamma_13
+      component: gamma_13
+      magnitude: 0.0001
+    - id: gamma_23
+      component: gamma_23
+      magnitude: 0.0001
+expected_metrics:
+  oracle: closed_form_isotropic_plate
+  blocks:
+    A: lbf_per_in
+    B: lbf
+    D: lbf_in
+    As: lbf_per_in
+  tolerances:
+    block_relative_linf: 0.005
+    energy_relative_linf: 0.005
+    symmetry_absolute_linf: 1.0e-8
+  invariants:
+    - B block is zero within tolerance for the midsurface reference.
+    - A11 equals A22 within tolerance.
+    - D11 equals D22 within tolerance.
+    - As13 equals As23 within tolerance.
+promotion:
+  scratch:
+    - Solver-backed runner completes all eight extraction load cases.
+    - Metrics and manifest are written under validation/artifacts/scratch/local_abd/skin_only/.
+  committed:
+    - Curated metrics, manifest, and one mesh-convergence summary are copied under validation/artifacts/committed/local_abd/skin_only/.
+    - The public validation page records the promoted artifact path and solver versions.
