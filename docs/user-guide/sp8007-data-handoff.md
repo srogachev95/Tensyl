@@ -6,11 +6,13 @@ SP-8007 knockdown factors, buckling loads, margins, or allowables.
 
 An analyst commonly needs these data categories from a wall model:
 
-- extensional stiffnesses `A`;
-- bending and twisting stiffnesses `D`;
+- SP-8007 orthotropic-cylinder extensional coefficients `Ebar_x`, `Ebar_y`,
+  `Ebar_xy`, and `Gbar_xy`;
+- bending and twisting coefficients `Dbar_x`, `Dbar_y`, and `Dbar_xy`;
+- membrane-bending coupling coefficients `Cbar_x`, `Cbar_y`, `Cbar_xy`, and
+  `Kbar_xy` when coupling is not negligible;
 - transverse-shear stiffnesses `As` when relevant;
 - whether membrane-bending coupling `B` is negligible or must be retained;
-- equivalent orthotropic constants only under stated reduction assumptions;
 - cylinder radius and length from geometry;
 - pitch, stiffener height, and validity ratios such as `h_over_R`, `p_over_R`,
   and `p_over_L_response`;
@@ -50,16 +52,37 @@ artifact = to_yaml(
 Use the serialized artifact as a traceable record of the wall-property
 calculation. Unit labels are metadata; Tensyl does not convert values.
 
-## Equivalent Constants Are A Reduction
+## SP-8007 Coefficients
 
-For an uncoupled orthotropic wall with negligible `B`, a later workflow may
-derive engineering constants from stiffness blocks. That reduction is not the
-primary Tensyl output and is not currently implemented as a public helper.
+For the built-in `Cylinder`, Tensyl's local `e1` direction is axial and local
+`e2` is circumferential. Under the SP-8007 Section 4.1.2 orthotropic-cylinder
+assumption that the orthotropy axes coincide with those directions, the barred
+coefficients used in Eqs. 54-59 and 71-81 map to Tensyl's local wall law as:
 
-Do not infer scalar equivalent moduli from a coupled or misaligned wall without
-documenting the reduction assumptions. If a downstream SP-8007 workflow needs a
-specific reduction formula, add and verify that helper as a separate
-implementation task with citations.
+| SP-8007 coefficient | Tensyl source |
+| --- | --- |
+| `Ebar_x` | `A[0, 0]` |
+| `Ebar_y` | `A[1, 1]` |
+| `Ebar_xy` | `A[0, 1]` |
+| `Gbar_xy` | `A[2, 2]` |
+| `Dbar_x` | `D[0, 0]` |
+| `Dbar_y` | `D[1, 1]` |
+| `Dbar_xy` | `2*D[0, 1] + 4*D[2, 2]` |
+| `Cbar_x` | `B[0, 0]` |
+| `Cbar_y` | `B[1, 1]` |
+| `Cbar_xy` | `B[0, 1]` |
+| `Kbar_xy` | `B[2, 2]` |
+
+`Dbar_xy` is not just `D[2, 2]`; SP-8007 uses a modified twisting coefficient
+that combines anticlastic bending and engineering twist terms. Tensyl's public
+strain convention uses engineering shear/twist ordering
+`(e11, e22, gamma12, k11, k22, k12, gamma13, gamma23)`, so the coefficient is
+`2*D12 + 4*D66`.
+
+This coefficient set does not represent every possible ABD law. If `A16`,
+`A26`, `B16`, `B26`, `B61`, `B62`, `D16`, or `D26` are not negligible, rotate
+the wall into its orthotropic axes or use a more general downstream buckling
+workflow. Do not silently drop those terms.
 
 ## Source Context
 
