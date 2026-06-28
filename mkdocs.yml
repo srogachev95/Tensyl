@@ -3,6 +3,7 @@ site_description: Equivalent-wall homogenization tools for stiffened thin-wall s
 repo_url: https://github.com/srogachev95/Tensyl
 docs_dir: docs
 strict: true
+theme: readthedocs
 exclude_docs: |
   internal/**
   llm_wiki/**
