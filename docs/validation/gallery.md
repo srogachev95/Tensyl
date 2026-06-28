@@ -8,6 +8,7 @@ Regenerate the summary and plot with:
 
 ```bash
 uv run python validation/scripts/build_gallery_summary.py
+uv run python validation/scripts/build_skin_only_abd6_comparison.py
 ```
 
 The generated machine-readable summary is
@@ -21,6 +22,28 @@ Only one solver-backed comparison is promoted today: the skin-only local ABD
 `ABD6` extraction. The stiffened local ABD, flat-panel, and barrel rows below
 are target oracles or planned comparison scaffolds until explicit solver metrics
 are promoted.
+
+## Skin-Only ABD6 Matrix Comparison
+
+![Heatmap of skin-only ABD6 entrywise relative error.](../assets/validation/skin-only-abd6-relative-error.svg)
+
+The detailed comparison table is committed as
+`validation/artifacts/committed/local_abd/skin_only/abd6_comparison_table.csv`,
+with a JSON twin at
+`validation/artifacts/committed/local_abd/skin_only/abd6_comparison_table.json`.
+It lists all 36 target and extracted `ABD6` entries in Tensyl order, their
+absolute errors, and signed entrywise relative errors using
+`max(abs(target), 1.0)` as the denominator. The global promoted comparison
+metric remains the Frobenius norm, not the largest painted square in the figure.
+
+| Entry | Target | CalculiX extraction | Absolute error | Entry relative error |
+| --- | ---: | ---: | ---: | ---: |
+| `A11` | 951632.813 | 951632.800 | -1.34e-2 | -1.41e-8 |
+| `A12` | 314038.828 | 314038.800 | -2.84e-2 | -9.05e-8 |
+| `A66` | 318796.992 | 318796.960 | -3.25e-2 | -1.02e-7 |
+| `D11` | 507.537500 | 507.537444 | -5.63e-5 | -1.11e-7 |
+| `D22` | 507.537500 | 507.537444 | -5.63e-5 | -1.11e-7 |
+| `D66` | 170.025063 | 170.025054 | -8.71e-6 | -5.12e-8 |
 
 ## Summary Matrix
 

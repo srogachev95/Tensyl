@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import subprocess
 from pathlib import Path
 
@@ -83,4 +84,42 @@ def test_build_gallery_summary_writes_json_and_plot(tmp_path: Path) -> None:
     data = json.loads(summary.read_text(encoding="utf-8"))
     assert data["case_count"] >= 1
     assert data["promoted_solver_case_count"] == 1
+    assert plot.read_text(encoding="utf-8").startswith("<?xml")
+
+
+def test_build_skin_only_abd6_comparison_writes_table_and_plot(tmp_path: Path) -> None:
+    table = tmp_path / "abd6_comparison_table.json"
+    csv_table = tmp_path / "abd6_comparison_table.csv"
+    plot = tmp_path / "skin_only_abd6_relative_error.svg"
+
+    completed = subprocess.run(
+        [
+            "uv",
+            "run",
+            "python",
+            str(ROOT / "validation" / "scripts" / "build_skin_only_abd6_comparison.py"),
+            "--json-output",
+            str(table),
+            "--csv-output",
+            str(csv_table),
+            "--plot-output",
+            str(plot),
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    data = json.loads(table.read_text(encoding="utf-8"))
+    assert data["schema_version"] == "tensyl.validation.skin-only-abd6-comparison-table.v1"
+    assert data["case_name"] == "local_abd_skin_only"
+    assert len(data["rows"]) == 36
+    assert math.isclose(
+        data["checks"]["frobenius_relative_error"],
+        3.787943382534907e-08,
+        rel_tol=1.0e-12,
+    )
+    assert csv_table.read_text(encoding="utf-8").splitlines()[0].startswith("resultant,strain")
     assert plot.read_text(encoding="utf-8").startswith("<?xml")
