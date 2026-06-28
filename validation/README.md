@@ -23,6 +23,13 @@ curvature validity ratios for future explicit barrel comparisons:
 uv run python validation/scripts/run_case.py validation/cases/barrels/orthogrid_axial_smeared.yml
 ```
 
+The public gallery summary and current solver-error plot are generated from
+committed artifacts:
+
+```bash
+uv run python validation/scripts/build_gallery_summary.py
+```
+
 Generated scratch output goes under `validation/artifacts/scratch/`, which is
 ignored by git. Commit only compact, curated artifacts such as metrics, plots,
 case summaries, and solver-version manifests.
