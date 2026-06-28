@@ -1,10 +1,10 @@
 # FEM Solver Handoff
 
-Tensyl computes an equivalent wall law. A finite-element solver consumes that law
-through whatever shell-section machinery it provides. Sometimes that machinery is
-a reduced orthotropic material. Sometimes it is a preintegrated shell stiffness.
-Sometimes it is a dialect-specific card that needs a careful audit before anyone
-lets it near a margin.
+Tensyl computes an equivalent ABD stiffness. A finite-element solver consumes
+that stiffness through whatever shell-section machinery it provides. Sometimes
+that machinery is a reduced orthotropic material. Sometimes it is a
+preintegrated shell stiffness. Sometimes it is a dialect-specific card that
+needs a careful audit before anyone lets it near a margin.
 
 This page describes practical handoff routes for NASTRAN, ANSYS, and Abaqus. It
 does not make Tensyl a solver-deck writer. Use the YAML or JSON artifact from
