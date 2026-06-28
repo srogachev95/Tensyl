@@ -40,6 +40,29 @@ ASSET_DIR = Path(__file__).parents[2] / "assets" / "examples"
 CYLINDER_OUTPUT_PATH = ASSET_DIR / "cylinder-stiffness-map.png"
 ELLIPSOID_OUTPUT_PATH = ASSET_DIR / "ellipsoid-stiffness-map.png"
 
+# Shared figure palette so the two documentation images read as one consistent set.
+FIGURE_FACECOLOR = "white"
+STIFFNESS_CMAP = cm.viridis  # membrane/bending stiffness (A11, D11) in both figures
+VALIDITY_CMAP = cm.magma  # validity signal (p/R) in both figures
+CAPTION_COLOR = "#4b5563"
+
+# Faint mesh boundaries on the 3D surfaces so their curvature reads as 3D.
+SURFACE_EDGE_COLOR = (0.12, 0.14, 0.18, 0.35)
+SURFACE_EDGE_WIDTH = 0.25
+
+# Line colors tied to meaning. Red is reserved for the validity (p/R) signal so the
+# "validity = warm" association from the magma maps carries over to the line plots.
+VALIDITY_COLOR = colors.to_hex(VALIDITY_CMAP(0.55))
+LINE_COLORS = {
+    "skin_thickness": "#1b7837",  # green
+    "stringer_pitch": "#4575b4",  # blue
+    "rib_pitch": "#762a83",  # purple
+    "A11": "#1f78b4",  # blue
+    "D11": "#ff7f00",  # orange
+    "coupling": "#7f7f7f",  # gray
+    "validity": VALIDITY_COLOR,  # warm, matches the magma validity maps
+}
+
 
 def _set_plot_style() -> None:
     plt.rcParams.update(
@@ -55,6 +78,21 @@ def _set_plot_style() -> None:
             "grid.linewidth": 0.7,
         }
     )
+
+
+def _style_3d_axes(ax: Any) -> None:
+    """Blend a 3D surface into a white figure: transparent patch and panes."""
+
+    ax.patch.set_facecolor("none")
+    transparent = (1.0, 1.0, 1.0, 0.0)
+    for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+        axis.set_pane_color(transparent)
+
+
+def _style_colorbar(colorbar: Any) -> None:
+    """Apply the shared colorbar outline style."""
+
+    colorbar.outline.set_edgecolor("#d0d7de")
 
 
 def scaled_section(section: BeamSection, scale: float, *, label: str) -> BeamSection:
@@ -231,7 +269,7 @@ def render_cylinder_map(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     _set_plot_style()
 
-    fig = plt.figure(figsize=(13.4, 8.0), dpi=180, facecolor="#fbfaf7")
+    fig = plt.figure(figsize=(13.4, 8.0), dpi=180, facecolor=FIGURE_FACECOLOR)
     grid = fig.add_gridspec(
         2,
         2,
@@ -249,21 +287,25 @@ def render_cylinder_map(
         vmin=float(np.percentile(ratio, 3)),
         vmax=float(np.percentile(ratio, 97)),
     )
-    ax_surface.plot_surface(
+    surface_artist = ax_surface.plot_surface(
         data["x"],
         data["y"],
         data["z"],
-        facecolors=cm.viridis(norm(ratio)),
-        linewidth=0.0,
+        facecolors=STIFFNESS_CMAP(norm(ratio)),
         antialiased=True,
         shade=False,
     )
+    surface_artist.set_edgecolor(SURFACE_EDGE_COLOR)
+    surface_artist.set_linewidth(SURFACE_EDGE_WIDTH)
     ax_surface.view_init(elev=21.0, azim=-58.0)
-    ax_surface.set_box_aspect((240.0, 100.0, 100.0))
+    ax_surface.set_box_aspect((240.0, 100.0, 100.0), zoom=1.2)
     ax_surface.set_axis_off()
-    ax_surface.set_title("100 inch diameter cylinder colored by local $A_{11}$", pad=14)
+    _style_3d_axes(ax_surface)
+    ax_surface.set_title(
+        "100 inch diameter cylinder colored by local $A_{11}$", y=0.94, pad=0
+    )
     colorbar = fig.colorbar(
-        cm.ScalarMappable(norm=norm, cmap=cm.viridis),
+        cm.ScalarMappable(norm=norm, cmap=STIFFNESS_CMAP),
         ax=ax_surface,
         orientation="horizontal",
         fraction=0.034,
@@ -271,7 +313,7 @@ def render_cylinder_map(
         shrink=0.58,
     )
     colorbar.set_label(r"normalized membrane stiffness, $A_{11}$ / median $A_{11}$")
-    colorbar.outline.set_edgecolor("#d0d7de")
+    _style_colorbar(colorbar)
 
     station = data["station"][:, 0]
     thickness = data["skin_thickness"][:, 0]
@@ -282,56 +324,109 @@ def render_cylinder_map(
     coupling = data["coupling_B"][:, 0]
     p_over_r = data["p_over_R"][:, 0]
 
-    ax_inputs.plot(station, thickness, color="#0f766e", linewidth=2.4, label="skin thickness")
+    ax_inputs.plot(
+        station,
+        thickness,
+        color=LINE_COLORS["skin_thickness"],
+        linewidth=2.4,
+        label="skin thickness",
+    )
     ax_pitch = ax_inputs.twinx()
-    ax_pitch.plot(station, stringer_pitch, color="#7c3aed", linewidth=2.0, label="stringer pitch")
-    ax_pitch.plot(station, rib_pitch, color="#be123c", linewidth=2.0, label="rib pitch")
-    ax_inputs.set_title("What changes along the barrel")
+    ax_pitch.plot(
+        station,
+        stringer_pitch,
+        color=LINE_COLORS["stringer_pitch"],
+        linewidth=2.0,
+        label="stringer pitch",
+    )
+    ax_pitch.plot(
+        station,
+        rib_pitch,
+        color=LINE_COLORS["rib_pitch"],
+        linewidth=2.0,
+        label="rib pitch",
+    )
+    ax_inputs.set_title("Wall inputs along the barrel")
     ax_inputs.set_xlabel("axial station, in")
     ax_inputs.set_ylabel("skin thickness, in")
     ax_pitch.set_ylabel("orthogrid pitch, in")
     ax_inputs.grid(True, alpha=0.55)
     input_lines = ax_inputs.get_lines() + ax_pitch.get_lines()
-    ax_inputs.legend(input_lines, [line.get_label() for line in input_lines], loc="upper left")
+    ax_inputs.legend(
+        input_lines,
+        [line.get_label() for line in input_lines],
+        loc="upper left",
+        bbox_to_anchor=(1.2, 1.0),
+        fontsize=8.5,
+        framealpha=0.95,
+    )
 
-    ax_response.plot(station, a11_ratio, color="#2563eb", linewidth=2.4, label="$A_{11}$ ratio")
-    ax_response.plot(station, d11_ratio, color="#d97706", linewidth=2.4, label="$D_{11}$ ratio")
+    ax_response.plot(
+        station,
+        a11_ratio,
+        color=LINE_COLORS["A11"],
+        linewidth=2.4,
+        label="$A_{11}$ ratio",
+    )
+    ax_response.plot(
+        station,
+        d11_ratio,
+        color=LINE_COLORS["D11"],
+        linewidth=2.4,
+        label="$D_{11}$ ratio",
+    )
     ax_response.plot(
         station,
         coupling / np.nanmax(coupling),
-        color="#64748b",
+        color=LINE_COLORS["coupling"],
         linewidth=1.9,
-        label="coupling ratio, scaled",
+        label="coupling ratio (scaled)",
     )
     ax_validity = ax_response.twinx()
-    ax_validity.plot(station, p_over_r, color="#dc2626", linewidth=2.0, label="$p/R$")
-    ax_validity.axhline(0.05, color="#dc2626", linestyle="--", linewidth=1.2, alpha=0.65)
-    ax_response.set_title("What the equivalent wall law reports")
+    ax_validity.plot(
+        station,
+        p_over_r,
+        color=LINE_COLORS["validity"],
+        linewidth=2.0,
+        label="$p/R$",
+    )
+    ax_validity.axhline(
+        0.05,
+        color=LINE_COLORS["validity"],
+        linestyle="--",
+        linewidth=1.2,
+        alpha=0.7,
+        label="$p/R$ caution (0.05)",
+    )
+    ax_response.set_title("Equivalent stiffness response")
     ax_response.set_xlabel("axial station, in")
     ax_response.set_ylabel("normalized stiffness")
     ax_validity.set_ylabel(r"pitch / radius, $p/R$")
     ax_response.grid(True, alpha=0.55)
-    response_lines = ax_response.get_lines() + ax_validity.get_lines()[:1]
+    response_lines = ax_response.get_lines() + ax_validity.get_lines()
     ax_response.legend(
         response_lines,
         [line.get_label() for line in response_lines],
         loc="upper left",
+        bbox_to_anchor=(1.2, 1.0),
+        fontsize=8.5,
+        framealpha=0.95,
     )
 
     fig.suptitle(
-        "Variable orthogrid cylinder: pointwise stiffness and validity signals",
+        "Variable orthogrid cylinder: pointwise stiffness and validity",
         fontsize=15,
         fontweight="bold",
         y=0.965,
     )
     fig.text(
         0.50,
-        0.035,
-        "The barrel is simple; the wall definition is not. Thickness and pitch vary by station, "
-        "so Tensyl recomputes the local ABD law instead of pretending one property fits all.",
+        0.02,
+        "Skin thickness and orthogrid pitch vary by axial station, so the local ABD wall "
+        "law is recomputed at each station rather than assumed constant.",
         ha="center",
         fontsize=8.7,
-        color="#4b5563",
+        color=CAPTION_COLOR,
     )
     fig.savefig(output_path, bbox_inches="tight", facecolor=fig.get_facecolor())
     plt.close(fig)
@@ -514,8 +609,8 @@ def render_ellipsoid_map(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     _set_plot_style()
 
-    fig = plt.figure(figsize=(12.8, 7.2), dpi=180, facecolor="#fbfaf7")
-    grid = fig.add_gridspec(1, 2, width_ratios=(1.28, 1.0), wspace=0.12)
+    fig = plt.figure(figsize=(12.8, 7.2), dpi=180, facecolor=FIGURE_FACECOLOR)
+    grid = fig.add_gridspec(1, 2, width_ratios=(1.28, 1.0), wspace=0.22)
 
     ax_surface = fig.add_subplot(grid[0, 0], projection="3d")
     ax_map = fig.add_subplot(grid[0, 1])
@@ -525,30 +620,34 @@ def render_ellipsoid_map(
         vmin=float(np.percentile(ratio, 4)),
         vmax=float(np.percentile(ratio, 96)),
     )
-    ax_surface.plot_surface(
+    surface_artist = ax_surface.plot_surface(
         data["x"],
         data["y"],
         data["z"],
-        facecolors=cm.cividis(norm(ratio)),
+        facecolors=STIFFNESS_CMAP(norm(ratio)),
         rstride=1,
         cstride=1,
-        linewidth=0.0,
         antialiased=True,
         shade=False,
     )
+    surface_artist.set_edgecolor(SURFACE_EDGE_COLOR)
+    surface_artist.set_linewidth(SURFACE_EDGE_WIDTH)
     ax_surface.view_init(elev=23.0, azim=-38.0)
-    ax_surface.set_box_aspect((180.0, 125.0, 75.0))
+    ax_surface.set_box_aspect((180.0, 125.0, 75.0), zoom=1.4)
     ax_surface.set_axis_off()
-    ax_surface.set_title("Local membrane stiffness over a triaxial shell", pad=16)
+    _style_3d_axes(ax_surface)
+    ax_surface.set_title("Local membrane stiffness over a triaxial shell", y=0.86, pad=0)
 
     colorbar = fig.colorbar(
-        cm.ScalarMappable(norm=norm, cmap=cm.cividis),
+        cm.ScalarMappable(norm=norm, cmap=STIFFNESS_CMAP),
         ax=ax_surface,
+        orientation="horizontal",
         fraction=0.035,
-        pad=0.02,
+        pad=0.01,
+        shrink=0.7,
     )
-    colorbar.ax.set_title(r"$A_{11}$" + "\nratio", fontsize=8.5, pad=8)
-    colorbar.outline.set_edgecolor("#d0d7de")
+    colorbar.set_label(r"normalized membrane stiffness, $A_{11}$ / median $A_{11}$")
+    _style_colorbar(colorbar)
 
     theta_deg = np.degrees(data["theta"])
     phi_deg = np.degrees(data["phi"])
@@ -583,22 +682,22 @@ def render_ellipsoid_map(
     ax_map.set_facecolor("#22212b")
     p_colorbar = fig.colorbar(mesh, ax=ax_map, fraction=0.046, pad=0.03)
     p_colorbar.set_label(r"pitch / local radius, $p/R_\mathrm{min}$")
-    p_colorbar.outline.set_edgecolor("#d0d7de")
+    _style_colorbar(p_colorbar)
 
     fig.suptitle(
-        "Tensyl showpiece: a pointwise stiffened-wall law on a curved ellipsoid",
+        "Pointwise equivalent stiffness on a triaxial ellipsoid",
         fontsize=15,
         fontweight="bold",
         y=0.975,
     )
     fig.text(
         0.50,
-        0.035,
+        0.02,
         "Each sampled point rebuilds the local cell with its own frame, pitch, section scale, "
         "eccentricity, and curvature-based validity context.",
         ha="center",
         fontsize=8.5,
-        color="#4b5563",
+        color=CAPTION_COLOR,
     )
     fig.savefig(output_path, bbox_inches="tight", facecolor=fig.get_facecolor())
     plt.close(fig)

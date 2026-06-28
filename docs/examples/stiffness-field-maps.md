@@ -1,10 +1,11 @@
 # Stiffness Field Maps
 
-These examples show why Tensyl treats equivalent stiffness as a local wall law
-that can be evaluated over a surface, not as one heroic closed-form answer. The
-first case is practical: a cylindrical barrel with skin thickness and orthogrid
-spacing that vary along the axis. The second case is less polite: a triaxial
-ellipsoid with pointwise pitch, orientation, and section changes.
+These examples show why Tensyl treats equivalent stiffness as a local
+constitutive model that can be evaluated over a surface, not as one heroic
+closed-form answer. The first case is practical: a cylindrical barrel with skin
+thickness and orthogrid spacing that vary along the axis. The second case is
+less polite: a triaxial ellipsoid with pointwise pitch, orientation, and section
+changes.
 
 The mechanics loop is the same in both:
 
@@ -49,10 +50,10 @@ The most useful quantities to plot here are:
   earn scrutiny.
 
 The key point is not that the cylinder is exotic. It is not. The useful bit is
-that the wall law changes by station while the cylinder supplies the local frame
-and curvature scale. Tensyl recomputes the local equivalent stiffness wherever
-the design changes, then lets you plot the consequences instead of guessing
-where the property table got interesting.
+that the local equivalent stiffness changes by station while the cylinder
+supplies the local frame and curvature scale. Tensyl recomputes that stiffness
+wherever the design changes, then lets you plot the consequences instead of
+guessing where the property table got interesting.
 
 ## Ellipsoid Showpiece
 
@@ -79,8 +80,8 @@ At each ellipsoid sample point:
 - `ValidityContext` records `p_over_R`, `h_over_R`, and response-length checks.
 
 That is the useful trick. The curved surface does not magically bend the ABD
-matrix. The pointwise cell factory changes the wall law, while the surface tells
-Tensyl how to read that law locally.
+matrix. The pointwise cell factory changes the local equivalent stiffness, while
+the surface tells Tensyl how to read that stiffness locally.
 
 ## Rebuild the Figures
 
@@ -150,9 +151,10 @@ sections, pointwise design rules, Matplotlib styling, and image export.
 
 Closed-form equivalent-plate formulas are valuable, but they usually want a
 friendly geometry, repeated layout, and fixed assumptions. The cylinder begins
-with a friendly geometry but changes the wall by station. The ellipsoid changes
-the surface frame, curvature, pitch, angle, and section scale. In both cases,
-Tensyl still computes a consistent local wall law at each point.
+with a friendly geometry but changes the stiffness definition by station. The
+ellipsoid changes the surface frame, curvature, pitch, angle, and section scale.
+In both cases, Tensyl still computes a consistent local equivalent stiffness at
+each point.
 
 That does not make the result automatically valid. It does make the assumptions
 visible enough to argue with, which is a more useful starting point than a
