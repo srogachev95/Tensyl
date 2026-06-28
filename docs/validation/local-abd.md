@@ -64,6 +64,9 @@ For the skin-only slice, separate the target and extraction artifact roles:
 | Target manifest | `validation/artifacts/committed/local_abd/skin_only/manifest.json` | Provenance for the target artifact generation. Its metadata marks `artifact_role: tensyl_target` and `solver_required: false`. |
 | CalculiX extraction | `validation/artifacts/committed/local_abd/skin_only/extracted_abd.json` | Solver-extracted membrane/bending `ABD6` stiffness. `As` is intentionally unsupported in this artifact. |
 | Comparison metrics | `validation/artifacts/committed/local_abd/skin_only/comparison_metrics.json` | FE-vs-Tensyl residuals for the promoted `ABD6` extraction. |
+| Entrywise comparison table | `validation/artifacts/committed/local_abd/skin_only/abd6_comparison_table.csv` | All 36 target and extracted `ABD6` entries with signed absolute and entrywise relative errors. |
+| Entrywise comparison JSON | `validation/artifacts/committed/local_abd/skin_only/abd6_comparison_table.json` | Machine-readable form of the same comparison table and aggregate checks. |
+| Entrywise error heatmap | `docs/assets/validation/skin-only-abd6-relative-error.svg` | Documentation plot generated from the comparison table. |
 | Extraction manifest | `validation/artifacts/committed/local_abd/skin_only/extraction_manifest.json` | Solver, command, input, and raw-output provenance for the extraction run. |
 
 ## Axes and Component Order
@@ -148,7 +151,14 @@ side has agreed yet.
 The promoted skin-only CalculiX slice exercises the membrane and bending ABD
 components first. Its `ABD6_relative_frobenius_error` is `3.79e-8`, with
 `A_relative_frobenius_error = 3.79e-8`, `B_relative_frobenius_error = 2.69e-10`,
-and `D_relative_frobenius_error = 1.03e-7`. Transverse shear extraction for
+and `D_relative_frobenius_error = 1.03e-7`. The entrywise table and heatmap are
+regenerated with:
+
+```bash
+uv run python validation/scripts/build_skin_only_abd6_comparison.py
+```
+
+Transverse shear extraction for
 `As`, full `8 x 8` assembly, mesh-convergence promotion, and stiffened-cell
 solver models are still open items. The unidirectional probe decks share the
 skin and beam nodes along the stiffener centerline and use a rectangular

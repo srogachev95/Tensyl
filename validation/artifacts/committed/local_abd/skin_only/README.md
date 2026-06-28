@@ -12,10 +12,13 @@ CalculiX extraction artifacts for the Phase 1 skin-only local ABD case.
 | `manifest.json` | Provenance for the Tensyl target generation; `solver_required` is `false`. |
 | `extracted_abd.json` | CalculiX-generated membrane/bending ABD stiffness in Tensyl order. |
 | `comparison_metrics.json` | Blockwise residuals comparing `extracted_abd.json` to `target_abd.json`. |
+| `abd6_comparison_table.csv` | Entrywise target, extraction, absolute error, and relative error table. |
+| `abd6_comparison_table.json` | Machine-readable version of the entrywise comparison table and aggregate checks. |
 | `extraction_manifest.json` | Solver, command, input, and raw-output provenance for the extraction run. |
 
 The current `metrics.json` is not a comparison against CalculiX output. It is a
 target-health record. Use `comparison_metrics.json` for the solver comparison.
+Use `abd6_comparison_table.csv` when inspecting individual ABD entries.
 
 ## Current Comparison
 
