@@ -5,7 +5,7 @@ name: local_abd_skin_only
 title: Skin-only isotropic ABD extraction
 phase: phase_1_local_abd
 status:
-  current_runner: executable
+  current_runner: tensyl_target_executable
   command: uv run python validation/scripts/run_case.py validation/cases/local_abd/skin_only.yml
   solver_runner: planned
   artifact_promotion: draft

@@ -1,0 +1,33 @@
+{
+  "canonical_unit_strain_energies": [
+    742483.0733550293,
+    625816.4066883628,
+    196377.66290726815,
+    2578.7687502337935,
+    1920.43541690046,
+    218.34586466165416,
+    207832.08020050125,
+    176582.08020050125
+  ],
+  "case_name": "local_abd_orthogrid_zero_eccentricity",
+  "case_type": "local_abd",
+  "checks": {
+    "condition_number_C8": 3900.484168438118,
+    "max_C8_eigenvalue": 1703309.176713428,
+    "min_C8_eigenvalue": 436.6917293233083,
+    "rank_C8": 8,
+    "symmetric_ABD": true,
+    "symmetric_C8": true
+  },
+  "expected_status": "draft",
+  "model": "orthogrid",
+  "schema_version": "tensyl.validation.local-abd-metrics.v1",
+  "units": {
+    "force": "lbf",
+    "length": "in",
+    "stress": "psi"
+  },
+  "validity_warnings": [
+    "validity_context_missing"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "canonical_unit_strain_energies": [
+    692447.1489827421,
+    692447.148982742,
+    253061.12193055212,
+    2734.002416317679,
+    2734.0024163176786,
+    988.4926058170183,
+    200660.35725856046,
+    200660.35725856049
+  ],
+  "case_name": "local_abd_isogrid_equilateral",
+  "case_type": "local_abd",
+  "checks": {
+    "condition_number_C8": 889.00215230042,
+    "max_C8_eigenvalue": 1757544.10820876,
+    "min_C8_eigenvalue": 1976.9852116340367,
+    "rank_C8": 8,
+    "symmetric_ABD": true,
+    "symmetric_C8": true
+  },
+  "expected_status": "draft",
+  "model": "equilateral_isogrid",
+  "schema_version": "tensyl.validation.local-abd-metrics.v1",
+  "units": {
+    "force": "lbf",
+    "length": "in",
+    "stress": "psi"
+  },
+  "validity_warnings": [
+    "validity_context_missing"
+  ]
+}

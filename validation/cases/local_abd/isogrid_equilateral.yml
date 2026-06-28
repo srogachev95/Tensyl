@@ -5,7 +5,8 @@ name: local_abd_isogrid_equilateral
 title: Zero-eccentric equilateral isogrid
 phase: phase_1_local_abd
 status:
-  current_runner: planned
+  current_runner: tensyl_target_executable
+  command: uv run python validation/scripts/run_case.py validation/cases/local_abd/isogrid_equilateral.yml
   solver_runner: planned
   artifact_promotion: draft
 units:

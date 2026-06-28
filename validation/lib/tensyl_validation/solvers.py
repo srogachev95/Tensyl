@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-
 DEFAULT_SOLVER_ENV = Path("validation/.solver-env")
 
 
@@ -118,7 +117,9 @@ def _version_from_command(
         )
     except OSError as exc:
         return False, None, str(exc)
-    output = "\n".join(part.strip() for part in (completed.stdout, completed.stderr) if part.strip())
+    output = "\n".join(
+        part.strip() for part in (completed.stdout, completed.stderr) if part.strip()
+    )
     first_line = output.splitlines()[0] if output else None
     if completed.returncode not in success_returncodes:
         return False, None, output or f"exit code {completed.returncode}"
@@ -151,7 +152,14 @@ def _probe_executable(
         version_args,
         success_returncodes=success_returncodes,
     )
-    return SolverProbe(name=name, ok=ok, source=source, path=str(path), version=version, error=error)
+    return SolverProbe(
+        name=name,
+        ok=ok,
+        source=source,
+        path=str(path),
+        version=version,
+        error=error,
+    )
 
 
 def _python_gmsh_candidate(project_root: Path) -> tuple[Path, str]:

@@ -1,0 +1,38 @@
+{
+  "case_name": "local_abd_isogrid_equilateral",
+  "command": [
+    "validation/scripts/run_matrix.py",
+    "validation/cases/local_abd/isogrid_equilateral.yml"
+  ],
+  "created_utc": "2026-06-28T19:23:15+00:00",
+  "inputs": [
+    {
+      "path": "validation/cases/local_abd/isogrid_equilateral.yml",
+      "sha256": "3da02f21c338e56cfb4a6805c7c795768a23fb6da471f6940b020aa7c6634698"
+    }
+  ],
+  "metadata": {
+    "artifact_role": "tensyl_target",
+    "case_type": "local_abd",
+    "model": "equilateral_isogrid",
+    "solver_required": false
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/local_abd/isogrid_equilateral/target_abd.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/isogrid_equilateral/metrics.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/isogrid_equilateral/manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "20949a1",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

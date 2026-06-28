@@ -1,4 +1,4 @@
-"""Case loading and no-solver smoke execution."""
+"""Case loading and validation execution."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ import yaml
 
 from tensyl import IsotropicMaterial, isotropic_plate
 from tensyl_validation.artifacts import ArtifactManifest, write_json
+from tensyl_validation.local_abd import LocalABDCase, load_local_abd_case, run_local_abd_case
 from tensyl_validation.metrics import skin_only_metrics
 
 
@@ -29,11 +30,7 @@ def _load_skin_only_smoke(data: dict[str, Any]) -> SkinOnlySmokeCase:
     material = IsotropicMaterial(
         E=float(material_data["E"]),
         nu=float(material_data["nu"]),
-        density=(
-            None
-            if material_data.get("density") is None
-            else float(material_data["density"])
-        ),
+        density=(None if material_data.get("density") is None else float(material_data["density"])),
     )
     return SkinOnlySmokeCase(
         name=str(data["name"]),
@@ -44,7 +41,10 @@ def _load_skin_only_smoke(data: dict[str, Any]) -> SkinOnlySmokeCase:
     )
 
 
-def load_case(path: Path) -> SkinOnlySmokeCase:
+ValidationCase = SkinOnlySmokeCase | LocalABDCase
+
+
+def load_case(path: Path) -> ValidationCase:
     """Load a validation case spec."""
 
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -52,8 +52,15 @@ def load_case(path: Path) -> SkinOnlySmokeCase:
         msg = f"{path} must contain a mapping."
         raise ValueError(msg)
     case_type = data.get("case_type")
+    if (
+        case_type == "skin_only_isotropic"
+        and data.get("schema_version") == "tensyl.validation.local_abd.case.v1"
+    ):
+        return load_local_abd_case(data)
     if case_type == "skin_only_isotropic":
         return _load_skin_only_smoke(data)
+    if case_type in {"local_abd", "local_abd_periodic_cell"}:
+        return load_local_abd_case(data)
     msg = f"unsupported validation case_type: {case_type!r}"
     raise ValueError(msg)
 
@@ -67,6 +74,14 @@ def run_case(
     """Run a no-solver case and write metrics plus a manifest."""
 
     case = load_case(spec_path)
+    if isinstance(case, LocalABDCase):
+        return run_local_abd_case(
+            spec_path,
+            case,
+            artifact_dir=artifact_dir,
+            command=command,
+        )
+
     stiffness = isotropic_plate(
         case.material,
         thickness=case.thickness,

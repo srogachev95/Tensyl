@@ -14,21 +14,28 @@ turns into a very nicely formatted rumor.
 
 | Case spec | Status today | Reference |
 | --- | --- | --- |
-| `validation/cases/local_abd/skin_only.yml` | Executable now by the no-solver runner; solver-backed extraction planned. | Closed-form isotropic plate. |
-| `validation/cases/local_abd/unidirectional.yml` | Planned solver-backed extraction. | `unidirectional_cell` with `EnergyHomogenizer`. |
-| `validation/cases/local_abd/orthogrid_zero_eccentricity.yml` | Planned solver-backed extraction. | `orthogrid_cell` with `EnergyHomogenizer`. |
-| `validation/cases/local_abd/orthogrid_eccentric.yml` | Planned solver-backed extraction. | `orthogrid_cell` with `EnergyHomogenizer`. |
-| `validation/cases/local_abd/isogrid_equilateral.yml` | Planned solver-backed extraction. | `equilateral_isogrid_cell` with `EnergyHomogenizer`. |
+| `validation/cases/local_abd/skin_only.yml` | Tensyl target executable; solver-backed extraction planned. | Closed-form isotropic plate. |
+| `validation/cases/local_abd/unidirectional.yml` | Tensyl target executable; solver-backed extraction planned. | `unidirectional_cell` with `EnergyHomogenizer`. |
+| `validation/cases/local_abd/orthogrid_zero_eccentricity.yml` | Tensyl target executable; solver-backed extraction planned. | `orthogrid_cell` with `EnergyHomogenizer`. |
+| `validation/cases/local_abd/orthogrid_eccentric.yml` | Tensyl target executable; solver-backed extraction planned. | `orthogrid_cell` with `EnergyHomogenizer`. |
+| `validation/cases/local_abd/isogrid_equilateral.yml` | Tensyl target executable; solver-backed extraction planned. | `equilateral_isogrid_cell` with `EnergyHomogenizer`. |
 
-The executable skin-only spec can be run with:
+One case can be run with:
 
 ```bash
 uv run python validation/scripts/run_case.py validation/cases/local_abd/skin_only.yml
 ```
 
-The remaining specs use `case_type: local_abd_periodic_cell`. That type is a
-runner contract for the solver-backed phase and is intentionally marked as
-planned in each file.
+All five Tensyl target artifacts can be regenerated with:
+
+```bash
+uv run python validation/scripts/run_matrix.py validation/cases/local_abd/*.yml --artifacts validation/artifacts/committed
+```
+
+Specs that include stiffeners use `case_type: local_abd_periodic_cell`. The
+current runner computes the Tensyl target ABD for that contract. The FE
+extraction side is still marked as planned until generated CalculiX/Gmsh models
+produce extracted stiffness artifacts and comparison metrics.
 
 ## Axes and Component Order
 
@@ -103,6 +110,11 @@ Each solver-backed run should report at least:
 - a symmetry residual for the extracted tangent;
 - case-specific invariant checks from the YAML spec;
 - solver, mesh, command, and input fingerprints in a manifest.
+
+The committed artifacts currently include Tensyl-side targets and target metrics
+under `validation/artifacts/committed/local_abd/<case-id>/`. Those files are the
+comparison oracle for the solver-backed extraction, not evidence that the FE
+side has agreed yet.
 
 The initial tolerances in the YAML specs are promotion thresholds, not laws of
 nature. If the solver model exposes a better justified tolerance, update the spec
