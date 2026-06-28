@@ -84,6 +84,9 @@ This coefficient set does not represent every possible ABD law. If `A16`,
 the wall into its orthotropic axes or use a more general downstream buckling
 workflow. Do not silently drop those terms.
 
+The data-prep example includes orthogrid, equilateral-isogrid, and symmetric
+laminate variants that all use this same extraction rule.
+
 ## Source Context
 
 NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
