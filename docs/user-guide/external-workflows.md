@@ -56,4 +56,4 @@ ABD stiffness when possible. The result payload preserves diagnostics, assumptio
 validity warnings, convention metadata, and unit labels alongside the stiffness
 tangent.
 
-Next: [SP-8007 Data Handoff](sp8007-data-handoff.md).
+Next: [FEM Solver Handoff](solver-handoff.md).
