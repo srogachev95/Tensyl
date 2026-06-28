@@ -1,7 +1,7 @@
 # Result Interpretation
 
 `HomogenizationResult` is the main object to inspect after computing a
-stiffened wall law.
+stiffened ABD stiffness.
 
 ```python
 from tensyl import (
@@ -45,10 +45,10 @@ result = EnergyHomogenizer().compute(
     ),
 )
 
-print(result.law.A)
-print(result.law.B)
-print(result.law.D)
-print(result.law.As)
+print(result.stiffness.A)
+print(result.stiffness.B)
+print(result.stiffness.D)
+print(result.stiffness.As)
 print(result.diagnostics)
 print(result.assumptions)
 print(result.validity.warnings)
@@ -77,21 +77,21 @@ respectively. Tensyl preserves whichever system you fed it (see
 - `D` controls bending and twisting moment response.
 - `As` controls transverse-shear resultants.
 
-A symmetric tangent is required for an energy-based linear law. A
-positive-semidefinite tangent means the assembled law has no negative-energy
+A symmetric tangent is required for an energy-based linear stiffness. A
+positive-semidefinite tangent means the assembled stiffness has no negative-energy
 mode at the tested tolerance. A rank-deficient tangent means some generalized
 strain mode is unsupported by the modeled skin and members; Tensyl returns the
 result with warnings instead of hiding that mechanism.
 
-`wall.validity == result.validity` means the warnings stay attached when the
-wall law is passed to a geometry field, serialization workflow, or downstream
+`stiffness.validity == result.validity` means the warnings stay attached when the
+ABD stiffness is passed to a geometry field, serialization workflow, or downstream
 adapter.
 
-## Comparing Two Wall Laws
+## Comparing Two ABD Stiffnesses
 
 Compare `A`, `B`, `D`, and `As` directly after aligning frames. Compare
 coupling ratios and validity warnings. Do not reduce to a scalar equivalent
-modulus unless the wall is uncoupled enough for that reduction and the
+modulus unless the stiffness is uncoupled enough for that reduction and the
 engineering assumptions are written down.
 
 !!! note "Consistency is not correlation"
@@ -99,4 +99,4 @@ engineering assumptions are written down.
     They do not prove a shell buckling margin, local stiffener failure, or
     finite-element correlation — those still have to be earned separately.
 
-Next: [Geometry and Wall Fields](geometry-and-fields.md).
+Next: [Geometry and Stiffness Fields](geometry-and-fields.md).

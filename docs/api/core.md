@@ -4,12 +4,12 @@
     options:
       show_source: false
       members:
-        - HyperelasticLaw
-        - ConstitutiveLaw
-        - LinearLaw
-        - LinearABDWall
+        - HyperelasticModel
+        - ConstitutiveModel
+        - LinearModel
+        - ABDStiffness
         - shift_reference_surface
-        - superpose_linear_abd_walls
+        - superpose_abd_stiffnesses
 
 ::: tensyl.core.conventions
     options:

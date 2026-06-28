@@ -18,7 +18,7 @@ def _readonly_vector(values: FloatArray, *, name: str) -> FloatArray:
 
 @dataclass(frozen=True, slots=True)
 class Frame2D:
-    """Right-handed orthonormal local wall frame."""
+    """Right-handed orthonormal local frame."""
 
     e1: FloatArray
     e2: FloatArray
@@ -81,7 +81,7 @@ class Frame2D:
 
     @classmethod
     def canonical(cls, *, label: str = "local_tangent") -> Frame2D:
-        """Create the canonical Cartesian wall frame."""
+        """Create the canonical Cartesian local frame."""
 
         return cls(
             e1=np.array([1.0, 0.0, 0.0]),
@@ -109,13 +109,13 @@ class Frame2D:
 
 @dataclass(frozen=True, slots=True)
 class StrainConvention:
-    """Generalized strain/resultant ordering for the Phase 1 wall law."""
+    """Generalized strain/resultant ordering for the Phase 1 ABD stiffness."""
 
     membrane_order: tuple[str, str, str] = ("e11", "e22", "g12")
     bending_order: tuple[str, str, str] = ("k11", "k22", "k12")
     shear_order: tuple[str, str] = ("g13", "g23")
     engineering_shear: bool = True
-    reference_surface: str = "wall_mid_surface"
+    reference_surface: str = "mid_surface"
     normal_positive: str = "+n"
 
     def __post_init__(self) -> None:

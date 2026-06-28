@@ -10,7 +10,7 @@ def test_package_exposes_version() -> None:
 
 def test_legacy_module_imports_remain_available() -> None:
     from tensyl.cells import CanonicalUnitCell
-    from tensyl.constitutive import LinearABDWall
+    from tensyl.constitutive import ABDStiffness
     from tensyl.homogenizers import EnergyHomogenizer
     from tensyl.laminates import isotropic_plate
     from tensyl.materials import IsotropicMaterial
@@ -20,5 +20,5 @@ def test_legacy_module_imports_remain_available() -> None:
     assert CanonicalUnitCell
     assert EnergyHomogenizer
     assert IsotropicMaterial
-    assert LinearABDWall
+    assert ABDStiffness
     assert isotropic_plate

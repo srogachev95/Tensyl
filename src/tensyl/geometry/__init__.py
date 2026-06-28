@@ -1,4 +1,4 @@
-"""Geometry surfaces for wall-law embedding."""
+"""Geometry surfaces for stiffness embedding."""
 
 from tensyl.geometry.surfaces import (
     ConicalFrustum,

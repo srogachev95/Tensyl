@@ -1,4 +1,4 @@
-"""Constitutive wall-law operators."""
+"""Constitutive stiffness operators."""
 
 from __future__ import annotations
 
@@ -85,8 +85,8 @@ def _freeze_for_hash(value: Any) -> Any:
 
 
 @runtime_checkable
-class HyperelasticLaw(Protocol):
-    """Public mechanics contract for a generalized hyperelastic wall law."""
+class HyperelasticModel(Protocol):
+    """Public mechanics contract for a generalized hyperelastic stiffness model."""
 
     frame: Frame2D
     convention: StrainConvention
@@ -102,32 +102,32 @@ class HyperelasticLaw(Protocol):
     def tangent(self, eta: GeneralizedStrain) -> FloatArray:
         """Return the constitutive tangent at generalized strain ``eta``."""
 
-    def rotate(self, angle_rad: float) -> HyperelasticLaw:
-        """Return an equivalent law expressed in a rotated local frame."""
+    def rotate(self, angle_rad: float) -> HyperelasticModel:
+        """Return an equivalent stiffness expressed in a rotated local frame."""
 
 
 @runtime_checkable
-class LinearLaw(HyperelasticLaw, Protocol):
-    """Refinement for wall laws whose tangent is independent of strain."""
+class LinearModel(HyperelasticModel, Protocol):
+    """Refinement for stiffness models whose tangent is independent of strain."""
 
     @property
     def constant_tangent(self) -> FloatArray:
         """Return the strain-independent tangent."""
 
 
-ConstitutiveLaw = HyperelasticLaw
+ConstitutiveModel = HyperelasticModel
 
 
 @dataclass(frozen=True, slots=True)
-class LinearABDWall:
-    """Linear equivalent-wall law in ABD plus transverse-shear form.
+class ABDStiffness:
+    """Linear ABD stiffness in ABD plus transverse-shear form.
 
     Args:
         A: ``3x3`` extensional stiffness block in the active unit system.
         B: ``3x3`` membrane-bending coupling block about the reference surface.
         D: ``3x3`` bending and twisting stiffness block.
         As: ``2x2`` transverse-shear stiffness block.
-        frame: Local right-handed wall frame for the matrix components.
+        frame: Local right-handed frame for the matrix components.
         convention: Generalized strain ordering and shear convention.
         areal_mass: Optional mass per unit reference-surface area.
         metadata: Provenance metadata preserved by serialization.
@@ -152,7 +152,7 @@ class LinearABDWall:
         As = _readonly_matrix(self.As, shape=(2, 2), name="As")
         c8 = _build_tangent(A, B, D, As)
         if not np.allclose(c8, c8.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0):
-            msg = "assembled wall tangent must be symmetric."
+            msg = "assembled stiffness tangent must be symmetric."
             raise ValueError(msg)
         if self.areal_mass is not None:
             object.__setattr__(
@@ -178,8 +178,8 @@ class LinearABDWall:
         areal_mass: float | None = None,
         metadata: Mapping[str, Any] | None = None,
         validity: Any = None,
-    ) -> LinearABDWall:
-        """Build a linear wall law from the canonical ``8x8`` tangent.
+    ) -> ABDStiffness:
+        """Build a linear ABD stiffness from the canonical ``8x8`` tangent.
 
         The tangent order is ``[N11, N22, N12, M11, M22, M12, Q13, Q23]`` by
         ``[eps11, eps22, gamma12, kappa11, kappa22, kappa12, gamma13,
@@ -199,10 +199,10 @@ class LinearABDWall:
             validity=validity,
         )
 
-    def with_validity(self, validity: Any) -> LinearABDWall:
-        """Return an equivalent wall law with attached validity diagnostics."""
+    def with_validity(self, validity: Any) -> ABDStiffness:
+        """Return an equivalent stiffness with attached validity diagnostics."""
 
-        return LinearABDWall.from_tangent(
+        return ABDStiffness.from_tangent(
             self.C8,
             frame=self.frame,
             convention=self.convention,
@@ -225,18 +225,18 @@ class LinearABDWall:
 
     @property
     def C8(self) -> FloatArray:
-        """The canonical 8x8 wall tangent."""
+        """The canonical 8x8 stiffness tangent."""
 
         return self._c8
 
     @property
     def constant_tangent(self) -> FloatArray:
-        """Return the strain-independent wall tangent."""
+        """Return the strain-independent stiffness tangent."""
 
         return self.C8
 
     def tangent(self, eta: GeneralizedStrainInput) -> FloatArray:
-        """Return the constant wall tangent after validating ``eta``."""
+        """Return the constant stiffness tangent after validating ``eta``."""
 
         generalized_strain(eta)
         return self.constant_tangent
@@ -255,18 +255,18 @@ class LinearABDWall:
         vector = np.asarray(generalized_strain(eta), dtype=np.float64)
         return 0.5 * float(vector @ self.C8 @ vector)
 
-    def rotate(self, angle_rad: float) -> LinearABDWall:
-        """Return this wall law expressed in a frame rotated about ``n``."""
+    def rotate(self, angle_rad: float) -> ABDStiffness:
+        """Return this stiffness expressed in a frame rotated about ``n``."""
 
-        from tensyl.core.rotations import rotate_linear_abd_wall
+        from tensyl.core.rotations import rotate_abd_stiffness
 
-        return rotate_linear_abd_wall(self, angle_rad)
+        return rotate_abd_stiffness(self, angle_rad)
 
 
-def shift_reference_surface(wall: LinearABDWall, offset: float) -> LinearABDWall:
-    """Return ``wall`` expressed about a reference surface shifted by ``offset``.
+def shift_reference_surface(stiffness: ABDStiffness, offset: float) -> ABDStiffness:
+    """Return ``stiffness`` expressed about a reference surface shifted by ``offset``.
 
-    ``offset`` is the signed distance from the wall's current reference surface
+    ``offset`` is the signed distance from the current reference surface
     to the new reference surface along ``+n``. Curvatures and transverse-shear
     strains are unchanged.
     """
@@ -275,65 +275,74 @@ def shift_reference_surface(wall: LinearABDWall, offset: float) -> LinearABDWall
 
     transform = np.eye(8, dtype=np.float64)
     transform[0:3, 3:6] = -checked_offset * np.eye(3, dtype=np.float64)
-    shifted = transform.T @ wall.C8 @ transform
+    shifted = transform.T @ stiffness.C8 @ transform
     shifted = 0.5 * (shifted + shifted.T)
-    metadata = dict(wall.metadata)
+    metadata = dict(stiffness.metadata)
     metadata.update(
         {
             "reference_surface_shift": checked_offset,
             "source": "shift_reference_surface",
         }
     )
-    return LinearABDWall.from_tangent(
+    return ABDStiffness.from_tangent(
         shifted,
-        frame=wall.frame,
-        convention=wall.convention,
-        areal_mass=wall.areal_mass,
+        frame=stiffness.frame,
+        convention=stiffness.convention,
+        areal_mass=stiffness.areal_mass,
         metadata=metadata,
-        validity=wall.validity,
+        validity=stiffness.validity,
     )
 
 
-def superpose_linear_abd_walls(
-    *walls: LinearABDWall,
+def superpose_abd_stiffnesses(
+    *stiffnesses: ABDStiffness,
     metadata: dict[str, Any] | None = None,
-) -> LinearABDWall:
-    """Return the stiffness superposition of compatible linear wall laws."""
+) -> ABDStiffness:
+    """Return the superposition of compatible ABD stiffnesses."""
 
-    if not walls:
-        msg = "at least one wall is required."
+    if not stiffnesses:
+        msg = "at least one stiffness is required."
         raise ValueError(msg)
-    first = walls[0]
-    for wall in walls[1:]:
-        if wall.frame != first.frame:
-            msg = "all walls must use the same frame."
+    first = stiffnesses[0]
+    for stiffness in stiffnesses[1:]:
+        if stiffness.frame != first.frame:
+            msg = "all stiffnesses must use the same frame."
             raise ValueError(msg)
-        if wall.convention != first.convention:
-            msg = "all walls must use the same strain convention."
+        if stiffness.convention != first.convention:
+            msg = "all stiffnesses must use the same strain convention."
             raise ValueError(msg)
 
     areal_mass = None
-    if all(wall.areal_mass is not None for wall in walls):
-        areal_mass = sum(wall.areal_mass for wall in walls if wall.areal_mass is not None)
+    if all(stiffness.areal_mass is not None for stiffness in stiffnesses):
+        areal_mass = sum(
+            stiffness.areal_mass for stiffness in stiffnesses if stiffness.areal_mass is not None
+        )
 
-    combined_metadata = {"source": "superpose_linear_abd_walls", "wall_count": len(walls)}
+    combined_metadata = {
+        "source": "superpose_abd_stiffnesses",
+        "stiffness_count": len(stiffnesses),
+    }
     if metadata is not None:
         combined_metadata.update(metadata)
-    return LinearABDWall.from_tangent(
-        sum((wall.C8 for wall in walls), start=np.zeros((8, 8))),
+    return ABDStiffness.from_tangent(
+        sum((stiffness.C8 for stiffness in stiffnesses), start=np.zeros((8, 8))),
         frame=first.frame,
         convention=first.convention,
         areal_mass=areal_mass,
         metadata=combined_metadata,
-        validity=first.validity if all(wall.validity == first.validity for wall in walls) else None,
+        validity=(
+            first.validity
+            if all(stiffness.validity == first.validity for stiffness in stiffnesses)
+            else None
+        ),
     )
 
 
 __all__ = [
-    "ConstitutiveLaw",
-    "HyperelasticLaw",
-    "LinearABDWall",
-    "LinearLaw",
+    "ConstitutiveModel",
+    "HyperelasticModel",
+    "ABDStiffness",
+    "LinearModel",
     "shift_reference_surface",
-    "superpose_linear_abd_walls",
+    "superpose_abd_stiffnesses",
 ]

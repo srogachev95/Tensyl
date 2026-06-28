@@ -1,4 +1,4 @@
-"""Tangent-plane equivalent-wall homogenizers."""
+"""Tangent-plane equivalent-stiffness homogenizers."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
 from tensyl.core._validation import optional_positive_number, positive_number, readonly_array
-from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
 from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
@@ -54,7 +54,7 @@ def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -
 class ValidityContext:
     """Optional geometric scale data for tangent-plane validity checks.
 
-    ``characteristic_height`` is a wall or stiffener height scale, ``pitch`` is
+    ``characteristic_height`` is a stiffness or stiffener height scale, ``pitch`` is
     the repeated-cell spacing, ``min_radius`` is the smallest local curvature
     radius, and ``response_length`` is the intended structural response length
     such as a buckle wavelength or analysis feature size.
@@ -132,21 +132,21 @@ class ValidityReport:
 class HomogenizationResult:
     """A homogenization result and its verification context.
 
-    The law is returned with ``validity`` attached so warnings remain available
-    when only ``result.law`` is passed to fields, exports, or downstream tools.
+    The stiffness is returned with ``validity`` attached so warnings remain available
+    when only ``result.stiffness`` is passed to fields, exports, or downstream tools.
     """
 
-    law: LinearABDWall
+    stiffness: ABDStiffness
     validity: ValidityReport
     diagnostics: dict[str, Any] | MappingProxyType[str, Any]
     assumptions: tuple[str, ...]
     source: Literal["energy", "direct_ec", "rve", "imported"]
 
     def __post_init__(self) -> None:
-        law = self.law
-        if getattr(law, "validity", None) != self.validity:
-            law = law.with_validity(self.validity)
-        object.__setattr__(self, "law", law)
+        stiffness = self.stiffness
+        if getattr(stiffness, "validity", None) != self.validity:
+            stiffness = stiffness.with_validity(self.validity)
+        object.__setattr__(self, "stiffness", stiffness)
         object.__setattr__(self, "diagnostics", MappingProxyType(dict(self.diagnostics)))
         object.__setattr__(self, "assumptions", tuple(self.assumptions))
 
@@ -160,11 +160,11 @@ class Homogenizer(Protocol):
         *,
         validity_context: ValidityContext | None = None,
     ) -> HomogenizationResult:
-        """Compute an equivalent wall law for a canonical unit cell."""
+        """Compute an equivalent ABD stiffness for a canonical unit cell."""
 
 
 def _beam_strain_map(eccentricity: float) -> FloatArray:
-    """Map member-frame generalized wall strains into simplified beam strains."""
+    """Map member-frame generalized strains into simplified beam strains."""
 
     z = float(eccentricity)
     transform = np.zeros((6, 8), dtype=np.float64)
@@ -212,7 +212,7 @@ def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
 
 
 def member_tangent_contribution(member: BeamMember, *, cell_area: float) -> FloatArray:
-    """Return one canonical member contribution to the wall tangent."""
+    """Return one canonical member contribution to the stiffness tangent."""
 
     density = member.multiplicity * member.length / cell_area
     tangent = density * member_tangent_density(member)
@@ -238,9 +238,9 @@ def member_energy(member: BeamMember, eta: FloatArray) -> float:
 
 def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
     assumptions = [
-        "Local tangent-plane equivalent-wall homogenization.",
+        "Local tangent-plane equivalent-stiffness homogenization.",
         "Centroidal beam-section stiffnesses with member eccentricity measured along +n.",
-        "Beam members use first-approximation wall kinematics.",
+        "Beam members use first-approximation generalized strain kinematics.",
     ]
     if any(member.section.kGAy is None for member in members):
         assumptions.append(
@@ -276,17 +276,17 @@ def _diagnostics(
     }
 
 
-def _coupling_ratio(law: LinearABDWall) -> float:
-    norm_A = float(np.linalg.norm(law.A, ord="fro"))
-    norm_D = float(np.linalg.norm(law.D, ord="fro"))
-    norm_B = float(np.linalg.norm(law.B, ord="fro"))
+def _coupling_ratio(stiffness: ABDStiffness) -> float:
+    norm_A = float(np.linalg.norm(stiffness.A, ord="fro"))
+    norm_D = float(np.linalg.norm(stiffness.D, ord="fro"))
+    norm_B = float(np.linalg.norm(stiffness.B, ord="fro"))
     if norm_A == 0.0 or norm_D == 0.0:
         return 0.0
     return norm_B / float(np.sqrt(norm_A * norm_D))
 
 
 def _validity_report(
-    law: LinearABDWall,
+    stiffness: ABDStiffness,
     *,
     context: ValidityContext | None,
     thresholds: ValidityThresholds,
@@ -317,10 +317,10 @@ def _validity_report(
         else:
             warnings.append("p_over_L_response_unavailable")
 
-    coupling = _coupling_ratio(law)
+    coupling = _coupling_ratio(stiffness)
     if coupling >= thresholds.coupling_ratio:
         warnings.append("membrane_bending_coupling_exceeds_threshold")
-    matrix = law.C8
+    matrix = stiffness.C8
     if np.linalg.matrix_rank(matrix, tol=_PSD_TOLERANCE) < matrix.shape[0]:
         warnings.append("rank_deficient_tangent")
     if float(np.linalg.eigvalsh(0.5 * (matrix + matrix.T))[0]) < -_PSD_TOLERANCE:
@@ -334,29 +334,29 @@ def _validity_report(
     )
 
 
-def validity_report_for_law(
-    law: LinearABDWall,
+def validity_report_for_stiffness(
+    stiffness: ABDStiffness,
     *,
     context: ValidityContext | None = None,
     thresholds: ValidityThresholds | None = None,
 ) -> ValidityReport:
-    """Return tangent-plane validity diagnostics for an existing wall law."""
+    """Return tangent-plane validity diagnostics for an existing ABD stiffness."""
 
     return _validity_report(
-        law,
+        stiffness,
         context=context,
         thresholds=ValidityThresholds() if thresholds is None else thresholds,
     )
 
 
-def _wall_from_tangent(
+def _stiffness_from_tangent(
     tangent: FloatArray,
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     metadata: dict[str, Any],
-) -> LinearABDWall:
+) -> ABDStiffness:
     matrix = 0.5 * (np.array(tangent, dtype=np.float64, copy=True) + np.array(tangent).T)
-    return LinearABDWall.from_tangent(
+    return ABDStiffness.from_tangent(
         matrix,
         frame=skin.frame,
         convention=skin.convention,
@@ -369,7 +369,7 @@ def _wall_from_tangent(
 class EnergyHomogenizer:
     """Reference tangent-plane energy-equivalence homogenizer.
 
-    Computes a ``LinearABDWall`` by adding skin stiffness and member energy
+    Computes an ``ABDStiffness`` by adding skin stiffness and member energy
     contributions over a ``CanonicalUnitCell``.
     """
 
@@ -392,12 +392,16 @@ class EnergyHomogenizer:
             tangent += member_tangent_contribution(member, cell_area=cell.area)
         metadata = dict(cell.skin.metadata)
         metadata.update({"source": "energy_homogenizer", "cell": dict(cell.metadata)})
-        law = _wall_from_tangent(tangent, skin=cell.skin, metadata=metadata)
-        diagnostics = _diagnostics(law.C8, member_count=len(cell.members), cell_area=cell.area)
+        stiffness = _stiffness_from_tangent(tangent, skin=cell.skin, metadata=metadata)
+        diagnostics = _diagnostics(
+            stiffness.C8, member_count=len(cell.members), cell_area=cell.area
+        )
         diagnostics["energy_consistent"] = True
         return HomogenizationResult(
-            law=law,
-            validity=_validity_report(law, context=validity_context, thresholds=self.thresholds),
+            stiffness=stiffness,
+            validity=_validity_report(
+                stiffness, context=validity_context, thresholds=self.thresholds
+            ),
             diagnostics=diagnostics,
             assumptions=_assumptions_for_members(cell.members),
             source="energy",
@@ -417,7 +421,7 @@ class DirectECHomogenizer:
     def compute(
         self,
         *,
-        skin: LinearABDWall,
+        skin: ABDStiffness,
         families: tuple[StiffenerFamily, ...],
         validity_context: ValidityContext | None = None,
         convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
@@ -442,12 +446,14 @@ class DirectECHomogenizer:
                 "family_count": len(family_tuple),
             }
         )
-        law = _wall_from_tangent(tangent, skin=skin, metadata=metadata)
-        diagnostics = _diagnostics(law.C8, member_count=len(family_tuple), cell_area=None)
+        stiffness = _stiffness_from_tangent(tangent, skin=skin, metadata=metadata)
+        diagnostics = _diagnostics(stiffness.C8, member_count=len(family_tuple), cell_area=None)
         diagnostics["energy_consistent"] = True
         return HomogenizationResult(
-            law=law,
-            validity=_validity_report(law, context=validity_context, thresholds=self.thresholds),
+            stiffness=stiffness,
+            validity=_validity_report(
+                stiffness, context=validity_context, thresholds=self.thresholds
+            ),
             diagnostics=diagnostics,
             assumptions=_assumptions_for_members(family_tuple)
             + ("Direct EC families use member length density multiplicity / spacing.",),
@@ -468,5 +474,5 @@ __all__ = [
     "member_energy",
     "member_tangent_contribution",
     "member_tangent_density",
-    "validity_report_for_law",
+    "validity_report_for_stiffness",
 ]

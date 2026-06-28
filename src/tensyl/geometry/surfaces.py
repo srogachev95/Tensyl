@@ -337,7 +337,7 @@ class ConicalFrustum:
 
     @property
     def slope(self) -> float:
-        """Return ``dr/dx`` for the linear radius law."""
+        """Return ``dr/dx`` for the linear radius stiffness."""
 
         return (self.radius_end - self.radius_start) / self.length
 

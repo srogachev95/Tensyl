@@ -13,4 +13,4 @@
         - Homogenizer
         - EnergyHomogenizer
         - DirectECHomogenizer
-        - validity_report_for_law
+        - validity_report_for_stiffness

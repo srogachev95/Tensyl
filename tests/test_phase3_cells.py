@@ -25,7 +25,7 @@ from tensyl import (
     sandwich_orthogrid_core_cell,
     shift_reference_surface,
     star_cell,
-    superpose_linear_abd_walls,
+    superpose_abd_stiffnesses,
 )
 from tests._helpers import (
     assert_energy_consistent as _assert_energy_consistent,
@@ -142,8 +142,8 @@ def test_equilateral_triangle_constructor_matches_existing_isogrid() -> None:
     )
 
     np.testing.assert_allclose(
-        EnergyHomogenizer().compute(triangle).law.C8,
-        EnergyHomogenizer().compute(isogrid).law.C8,
+        EnergyHomogenizer().compute(triangle).stiffness.C8,
+        EnergyHomogenizer().compute(isogrid).stiffness.C8,
         rtol=1.0e-12,
         atol=1.0e-10,
     )
@@ -171,8 +171,8 @@ def test_kagome_matches_isosceles_triangle_energy_output() -> None:
     )
 
     np.testing.assert_allclose(
-        EnergyHomogenizer().compute(kagome).law.C8,
-        EnergyHomogenizer().compute(triangle).law.C8,
+        EnergyHomogenizer().compute(kagome).stiffness.C8,
+        EnergyHomogenizer().compute(triangle).stiffness.C8,
         rtol=1.0e-12,
         atol=1.0e-10,
     )
@@ -200,8 +200,8 @@ def test_canonical_cell_reconstruction_is_idempotent() -> None:
 
     assert reconstructed == cell
     np.testing.assert_allclose(
-        EnergyHomogenizer().compute(reconstructed).law.C8,
-        EnergyHomogenizer().compute(cell).law.C8,
+        EnergyHomogenizer().compute(reconstructed).stiffness.C8,
+        EnergyHomogenizer().compute(cell).stiffness.C8,
     )
 
 
@@ -269,9 +269,11 @@ def test_regular_hexagonal_grid_has_sixty_degree_objectivity() -> None:
         pitch=1.4,
         eccentricity=0.0,
     )
-    law = EnergyHomogenizer().compute(cell).law
+    stiffness = EnergyHomogenizer().compute(cell).stiffness
 
-    np.testing.assert_allclose(law.rotate(-np.pi / 3.0).C8, law.C8, rtol=1.0e-12, atol=1.0e-10)
+    np.testing.assert_allclose(
+        stiffness.rotate(-np.pi / 3.0).C8, stiffness.C8, rtol=1.0e-12, atol=1.0e-10
+    )
 
 
 def test_equilateral_star_cell_has_sixty_degree_objectivity() -> None:
@@ -281,30 +283,32 @@ def test_equilateral_star_cell_has_sixty_degree_objectivity() -> None:
         pitch=1.4,
         eccentricity=0.0,
     )
-    law = EnergyHomogenizer().compute(cell).law
+    stiffness = EnergyHomogenizer().compute(cell).stiffness
 
-    np.testing.assert_allclose(law.rotate(-np.pi / 3.0).C8, law.C8, rtol=1.0e-12, atol=1.0e-10)
+    np.testing.assert_allclose(
+        stiffness.rotate(-np.pi / 3.0).C8, stiffness.C8, rtol=1.0e-12, atol=1.0e-10
+    )
 
 
 @given(offset=st.floats(min_value=-2.0, max_value=2.0, allow_nan=False, allow_infinity=False))
 def test_reference_surface_shift_preserves_energy_under_strain_transform(offset: float) -> None:
-    wall = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.004)
-    shifted = shift_reference_surface(wall, offset)
+    stiffness = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.004)
+    shifted = shift_reference_surface(stiffness, offset)
     eta_new = np.array([0.003, -0.002, 0.001, 0.02, -0.01, 0.04, 0.005, -0.006])
     eta_old = eta_new.copy()
     eta_old[0:3] -= offset * eta_new[3:6]
 
-    assert shifted.energy(eta_new) == pytest.approx(wall.energy(eta_old), rel=1.0e-12)
+    assert shifted.energy(eta_new) == pytest.approx(stiffness.energy(eta_old), rel=1.0e-12)
 
 
 def test_sandwich_faces_superpose_about_reference_surface() -> None:
     face = _membrane_skin(stiffness=12.0)
     bottom = shift_reference_surface(face, 0.5)
     top = shift_reference_surface(face, -0.5)
-    wall = superpose_linear_abd_walls(bottom, top)
+    stiffness = superpose_abd_stiffnesses(bottom, top)
 
-    np.testing.assert_allclose(wall.B, np.zeros((3, 3)), atol=1.0e-12)
-    np.testing.assert_allclose(wall.D, 6.0 * np.eye(3), atol=1.0e-12)
+    np.testing.assert_allclose(stiffness.B, np.zeros((3, 3)), atol=1.0e-12)
+    np.testing.assert_allclose(stiffness.D, 6.0 * np.eye(3), atol=1.0e-12)
 
 
 def test_sandwich_orthogrid_core_cell_uses_shifted_faces() -> None:

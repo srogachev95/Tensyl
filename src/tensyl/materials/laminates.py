@@ -10,7 +10,7 @@ from typing import Any
 import numpy as np
 
 from tensyl.core._validation import positive_number
-from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.conventions import (
     DEFAULT_FRAME,
     DEFAULT_STRAIN_CONVENTION,
@@ -77,8 +77,8 @@ def isotropic_plate(
     frame: Frame2D = DEFAULT_FRAME,
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
     metadata: dict[str, Any] | None = None,
-) -> LinearABDWall:
-    """Build a skin-only isotropic plate law about its mid-surface."""
+) -> ABDStiffness:
+    """Build a skin-only isotropic plate stiffness about its mid-surface."""
 
     h = _positive(thickness, name="thickness")
     kappa = _positive(shear_correction, name="shear_correction")
@@ -88,7 +88,7 @@ def isotropic_plate(
     D = Q * h**3 / 12.0
     As = _isotropic_shear(material) * (kappa * h)
     areal_mass = None if material.density is None else material.density * h
-    return LinearABDWall(
+    return ABDStiffness(
         A=A,
         B=B,
         D=D,
@@ -107,8 +107,8 @@ def laminate_plate(
     frame: Frame2D = DEFAULT_FRAME,
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
     metadata: dict[str, Any] | None = None,
-) -> LinearABDWall:
-    """Build a laminate plate law using bottom-to-top ply order."""
+) -> ABDStiffness:
+    """Build a laminate plate stiffness using bottom-to-top ply order."""
 
     ply_tuple = tuple(plies)
     if not ply_tuple:
@@ -144,7 +144,7 @@ def laminate_plate(
     data = _metadata(metadata, source="laminate_plate")
     data.setdefault("ply_count", len(ply_tuple))
     data.setdefault("total_thickness", total_thickness)
-    return LinearABDWall(
+    return ABDStiffness(
         A=A,
         B=B,
         D=D,

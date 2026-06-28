@@ -1,12 +1,12 @@
 # Stiffened Barrel Example
 
-This example attaches a homogenized orthogrid wall law to a cylindrical
-midsurface. It prepares wall-property data; it does not perform shell analysis.
+This example attaches a homogenized orthogrid ABD stiffness to a cylindrical
+midsurface. It prepares stiffness-property data; it does not perform shell analysis.
 
 ```python
 from tensyl import (
     BeamSection,
-    ConstantWallField,
+    ConstantStiffnessField,
     Cylinder,
     EnergyHomogenizer,
     IsotropicMaterial,
@@ -38,10 +38,10 @@ result = EnergyHomogenizer().compute(
 )
 
 surface = Cylinder(radius=radius, length=300.0)
-field = ConstantWallField(result.law)
-wall_at_midbay = field.law_at(surface, 150.0, 0.0)
+field = ConstantStiffnessField(result.stiffness)
+stiffness_at_midbay = field.stiffness_at(surface, 150.0, 0.0)
 
-assert wall_at_midbay.frame.label == "cylinder"
+assert stiffness_at_midbay.frame.label == "cylinder"
 assert result.validity.p_over_R == 8.0 / radius
 ```
 

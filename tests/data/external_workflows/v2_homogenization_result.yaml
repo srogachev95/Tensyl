@@ -1,12 +1,12 @@
 schema_name: tensyl.external_workflow
-schema_version: 1
+schema_version: 2
 artifact_type: homogenization_result
 producer:
   name: tensyl
   version: 0.1.0
 units: null
 payload:
-  law:
+  stiffness:
     tangent_c8:
     - - 314219881.7753339
       - 103692065.98586018
@@ -99,7 +99,7 @@ payload:
       - g13
       - g23
       engineering_shear: true
-      reference_surface: wall_mid_surface
+      reference_surface: mid_surface
       normal_positive: +n
     areal_mass: null
     metadata:
@@ -134,7 +134,7 @@ payload:
     - Nemeth 2011 eqs. 30-39
     energy_consistent: true
   assumptions:
-  - Local tangent-plane equivalent-wall homogenization.
+  - Local tangent-plane equivalent-stiffness homogenization.
   - Centroidal beam-section stiffnesses with member eccentricity measured along +n.
-  - Beam members use first-approximation wall kinematics.
+  - Beam members use first-approximation generalized strain kinematics.
   source: energy

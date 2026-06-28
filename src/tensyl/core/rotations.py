@@ -1,11 +1,11 @@
-"""Rotation utilities for Phase 1 generalized wall laws."""
+"""Rotation utilities for Phase 1 generalized stiffness operators."""
 
 from __future__ import annotations
 
 import numpy as np
 
 from tensyl.core._validation import finite_number, readonly_array
-from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.typing import FloatArray
 
 
@@ -80,7 +80,7 @@ def generalized_resultant_transform(angle_rad: float) -> FloatArray:
 
 
 def rotate_tangent(tangent: FloatArray, angle_rad: float) -> FloatArray:
-    """Rotate an 8x8 wall tangent into a rotated local frame."""
+    """Rotate an 8x8 stiffness tangent into a rotated local frame."""
 
     matrix = readonly_array(tangent, shape=(8, 8), name="tangent")
     strain_transform = generalized_strain_transform(angle_rad)
@@ -91,19 +91,19 @@ def rotate_tangent(tangent: FloatArray, angle_rad: float) -> FloatArray:
     return rotated
 
 
-def rotate_linear_abd_wall(wall: LinearABDWall, angle_rad: float) -> LinearABDWall:
-    """Rotate a ``LinearABDWall`` into a new local frame."""
+def rotate_abd_stiffness(stiffness: ABDStiffness, angle_rad: float) -> ABDStiffness:
+    """Rotate an ``ABDStiffness`` into a new local frame."""
 
-    tangent = rotate_tangent(wall.C8, angle_rad)
-    return LinearABDWall(
+    tangent = rotate_tangent(stiffness.C8, angle_rad)
+    return ABDStiffness(
         A=tangent[0:3, 0:3],
         B=tangent[0:3, 3:6],
         D=tangent[3:6, 3:6],
         As=tangent[6:8, 6:8],
-        frame=wall.frame.rotate(angle_rad),
-        convention=wall.convention,
-        areal_mass=wall.areal_mass,
-        metadata=dict(wall.metadata),
+        frame=stiffness.frame.rotate(angle_rad),
+        convention=stiffness.convention,
+        areal_mass=stiffness.areal_mass,
+        metadata=dict(stiffness.metadata),
     )
 
 
@@ -112,7 +112,7 @@ __all__ = [
     "generalized_resultant_transform",
     "generalized_strain_transform",
     "resultant_transform",
-    "rotate_linear_abd_wall",
+    "rotate_abd_stiffness",
     "rotate_tangent",
     "transverse_shear_transform",
 ]

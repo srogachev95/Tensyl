@@ -6,12 +6,12 @@ from typing import Any
 
 import numpy as np
 
-from tensyl.core.constitutive import HyperelasticLaw
+from tensyl.core.constitutive import HyperelasticModel
 from tensyl.core.typing import FloatArray, generalized_strain
 
 
 def finite_difference_gradient(
-    law: HyperelasticLaw,
+    stiffness: HyperelasticModel,
     eta: Any,
     *,
     step: float = 1.0e-6,
@@ -24,15 +24,15 @@ def finite_difference_gradient(
         delta = np.zeros(8, dtype=np.float64)
         delta[index] = step
         gradient[index] = (
-            law.energy(generalized_strain(center + delta))
-            - law.energy(generalized_strain(center - delta))
+            stiffness.energy(generalized_strain(center + delta))
+            - stiffness.energy(generalized_strain(center - delta))
         ) / (2.0 * step)
     gradient.setflags(write=False)
     return gradient
 
 
 def finite_difference_hessian(
-    law: HyperelasticLaw,
+    stiffness: HyperelasticModel,
     eta: Any,
     *,
     step: float = 1.0e-5,
@@ -44,8 +44,8 @@ def finite_difference_hessian(
     for index in range(8):
         delta = np.zeros(8, dtype=np.float64)
         delta[index] = step
-        plus = law.resultants(generalized_strain(center + delta))
-        minus = law.resultants(generalized_strain(center - delta))
+        plus = stiffness.resultants(generalized_strain(center + delta))
+        minus = stiffness.resultants(generalized_strain(center - delta))
         hessian[:, index] = (np.asarray(plus) - np.asarray(minus)) / (2.0 * step)
     hessian = 0.5 * (hessian + hessian.T)
     hessian.setflags(write=False)
@@ -53,7 +53,7 @@ def finite_difference_hessian(
 
 
 def assert_hyperelastic_consistency(
-    law: HyperelasticLaw,
+    stiffness: HyperelasticModel,
     eta: Any,
     *,
     gradient_rtol: float = 1.0e-5,
@@ -65,14 +65,14 @@ def assert_hyperelastic_consistency(
 
     checked_eta = generalized_strain(eta)
     np.testing.assert_allclose(
-        finite_difference_gradient(law, checked_eta),
-        np.asarray(law.resultants(checked_eta)),
+        finite_difference_gradient(stiffness, checked_eta),
+        np.asarray(stiffness.resultants(checked_eta)),
         rtol=gradient_rtol,
         atol=gradient_atol,
     )
     np.testing.assert_allclose(
-        finite_difference_hessian(law, checked_eta),
-        law.tangent(checked_eta),
+        finite_difference_hessian(stiffness, checked_eta),
+        stiffness.tangent(checked_eta),
         rtol=hessian_rtol,
         atol=hessian_atol,
     )

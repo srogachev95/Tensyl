@@ -5,7 +5,7 @@ from tensyl.core.rotations import (
     generalized_resultant_transform,
     generalized_strain_transform,
     resultant_transform,
-    rotate_linear_abd_wall,
+    rotate_abd_stiffness,
     rotate_tangent,
     transverse_shear_transform,
 )
@@ -15,7 +15,7 @@ __all__ = [
     "generalized_resultant_transform",
     "generalized_strain_transform",
     "resultant_transform",
-    "rotate_linear_abd_wall",
+    "rotate_abd_stiffness",
     "rotate_tangent",
     "transverse_shear_transform",
 ]

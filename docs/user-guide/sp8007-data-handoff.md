@@ -1,10 +1,10 @@
 # SP-8007 Data Handoff
 
-Tensyl can prepare equivalent wall-property data for a separate
+Tensyl can prepare equivalent stiffness-property data for a separate
 SP-8007-style or orthotropic-cylinder calculation. Tensyl does not compute
 SP-8007 knockdown factors, buckling loads, margins, or allowables.
 
-An analyst commonly needs these data categories from a wall model:
+An analyst commonly needs these data categories from a stiffness model:
 
 - SP-8007 orthotropic-cylinder extensional coefficients `Ebar_x`, `Ebar_y`,
   `Ebar_xy`, and `Gbar_xy`;
@@ -18,7 +18,7 @@ An analyst commonly needs these data categories from a wall model:
   and `p_over_L_response`;
 - warnings, assumptions, and serialized artifacts for traceability.
 
-## Extracting Wall Data
+## Extracting Stiffness Data
 
 ```python
 from tensyl import Cylinder
@@ -27,14 +27,14 @@ from tensyl.io import to_yaml
 surface = Cylinder(radius=120.0, length=300.0)
 point = surface.point_at(150.0, 0.0)
 
-wall = result.law
+stiffness = result.stiffness
 report = {
     "radius": surface.radius,
     "length": surface.length,
-    "A": wall.A,
-    "B": wall.B,
-    "D": wall.D,
-    "As": wall.As,
+    "A": stiffness.A,
+    "B": stiffness.B,
+    "D": stiffness.D,
+    "As": stiffness.As,
     "h_over_R": result.validity.h_over_R,
     "p_over_R": result.validity.p_over_R,
     "p_over_L_response": result.validity.p_over_L_response,
@@ -49,7 +49,7 @@ artifact = to_yaml(
 )
 ```
 
-Use the serialized artifact as a traceable record of the wall-property
+Use the serialized artifact as a traceable record of the stiffness-property
 calculation. Unit labels are metadata; Tensyl does not convert values.
 
 ## SP-8007 Coefficients
@@ -57,7 +57,7 @@ calculation. Unit labels are metadata; Tensyl does not convert values.
 For the built-in `Cylinder`, Tensyl's local `e1` direction is axial and local
 `e2` is circumferential. Under the SP-8007 Section 4.1.2 orthotropic-cylinder
 assumption that the orthotropy axes coincide with those directions, the barred
-coefficients used in Eqs. 54-59 and 71-81 map to Tensyl's local wall law as:
+coefficients used in Eqs. 54-59 and 71-81 map to Tensyl's local ABD stiffness as:
 
 | SP-8007 coefficient | Tensyl source |
 | --- | --- |
@@ -80,9 +80,9 @@ strain convention uses engineering shear/twist ordering
 `2*D12 + 4*D66`.
 
 !!! warning "Do not silently drop the off-axis terms"
-    This coefficient set does not represent every possible ABD law. If `A16`,
+    This coefficient set does not represent every possible ABD stiffness. If `A16`,
     `A26`, `B16`, `B26`, `B61`, `B62`, `D16`, or `D26` are not negligible,
-    rotate the wall into its orthotropic axes or use a more general downstream
+    rotate the stiffness into its orthotropic axes or use a more general downstream
     buckling workflow. Dropping those terms to make the data fit the SP-8007
     mold throws away real anisotropy — and nothing will tell you that you did.
 
@@ -93,7 +93,7 @@ laminate variants that all use this same extraction rule.
 
 NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
 source for stiffened equivalent-plate stiffness concepts. Tensyl's role here is
-to compute and preserve local equivalent-wall stiffness data for use by another
+to compute and preserve local equivalent-ABD stiffness data for use by another
 calculation.
 
 Next: [SP-8007 Data Prep Example](../examples/sp8007-data-prep.md).

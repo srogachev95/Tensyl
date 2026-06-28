@@ -10,9 +10,9 @@ import numpy as np
 
 from tensyl.core._validation import finite_number, positive_number
 from tensyl.core.constitutive import (
-    LinearABDWall,
+    ABDStiffness,
     shift_reference_surface,
-    superpose_linear_abd_walls,
+    superpose_abd_stiffnesses,
 )
 from tensyl.core.conventions import (
     DEFAULT_FRAME,
@@ -36,7 +36,7 @@ class BeamMember:
     """A straight stiffener member in a local tangent-plane unit cell.
 
     ``angle_rad`` is measured from local ``e1`` toward ``e2``. ``eccentricity``
-    is the signed distance from the wall reference surface to the member
+    is the signed distance from the reference surface to the member
     centroid along ``+n``.
     """
 
@@ -88,11 +88,11 @@ class CanonicalUnitCell:
     """Canonical tangent-plane cell consumed by tangent-plane homogenizers.
 
     ``area`` is the repeated tangent-plane area represented by ``members``.
-    The cell frame and strain convention must match the skin wall law.
+    The cell frame and strain convention must match the skin ABD stiffness.
     """
 
     area: float
-    skin: LinearABDWall
+    skin: ABDStiffness
     members: tuple[BeamMember, ...]
     frame: Frame2D = DEFAULT_FRAME
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION
@@ -137,7 +137,7 @@ class StiffenerFamily:
 
 
 def _cell_frame_and_convention(
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     frame: Frame2D | None,
     convention: StrainConvention | None,
 ) -> tuple[Frame2D, StrainConvention]:
@@ -189,7 +189,7 @@ def _paired_oblique_members(
 def graph_unit_cell(
     *,
     area: float,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     nodes: tuple[CellNode, ...],
     edges: tuple[CellEdge, ...],
     frame: Frame2D | None = None,
@@ -248,7 +248,7 @@ def graph_unit_cell(
 
 def unidirectional_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     member_section: BeamSection,
     spacing: float,
     eccentricity: float,
@@ -280,7 +280,7 @@ def unidirectional_cell(
 
 def orthogrid_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     stringer_section: BeamSection,
     rib_section: BeamSection,
     stringer_spacing: float,
@@ -330,7 +330,7 @@ def orthogrid_cell(
 
 def equilateral_isogrid_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     member_section: BeamSection,
     pitch: float,
     eccentricity: float,
@@ -376,7 +376,7 @@ def equilateral_isogrid_cell(
 
 def braced_orthogrid_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     stringer_section: BeamSection,
     rib_section: BeamSection,
     brace_section: BeamSection,
@@ -433,7 +433,7 @@ def braced_orthogrid_cell(
 
 def isosceles_triangle_grid_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     stringer_section: BeamSection,
     diagonal_section: BeamSection,
     base: float,
@@ -476,7 +476,7 @@ def isosceles_triangle_grid_cell(
 
 def kagome_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     stringer_section: BeamSection,
     diagonal_section: BeamSection,
     base: float,
@@ -526,7 +526,7 @@ def kagome_cell(
 
 def hexagonal_grid_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     rib_section: BeamSection,
     diagonal_section: BeamSection,
     half_width: float,
@@ -577,7 +577,7 @@ def hexagonal_grid_cell(
 
 def regular_hexagonal_grid_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     member_section: BeamSection,
     pitch: float,
     eccentricity: float,
@@ -603,7 +603,7 @@ def regular_hexagonal_grid_cell(
 
 def star_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     stringer_section: BeamSection,
     diagonal_section: BeamSection,
     base: float,
@@ -666,7 +666,7 @@ def star_cell(
 
 def equilateral_star_cell(
     *,
-    skin: LinearABDWall,
+    skin: ABDStiffness,
     member_section: BeamSection,
     pitch: float,
     eccentricity: float,
@@ -691,13 +691,13 @@ def equilateral_star_cell(
 
 def _sandwich_face_skin(
     *,
-    bottom_face: LinearABDWall,
-    top_face: LinearABDWall,
+    bottom_face: ABDStiffness,
+    top_face: ABDStiffness,
     bottom_face_offset: float,
     top_face_offset: float,
     source: str,
-) -> LinearABDWall:
-    return superpose_linear_abd_walls(
+) -> ABDStiffness:
+    return superpose_abd_stiffnesses(
         shift_reference_surface(bottom_face, bottom_face_offset),
         shift_reference_surface(top_face, top_face_offset),
         metadata={
@@ -710,8 +710,8 @@ def _sandwich_face_skin(
 
 def sandwich_orthogrid_core_cell(
     *,
-    bottom_face: LinearABDWall,
-    top_face: LinearABDWall,
+    bottom_face: ABDStiffness,
+    top_face: ABDStiffness,
     bottom_face_offset: float,
     top_face_offset: float,
     stringer_section: BeamSection,
@@ -745,8 +745,8 @@ def sandwich_orthogrid_core_cell(
 
 def sandwich_hexagonal_core_cell(
     *,
-    bottom_face: LinearABDWall,
-    top_face: LinearABDWall,
+    bottom_face: ABDStiffness,
+    top_face: ABDStiffness,
     bottom_face_offset: float,
     top_face_offset: float,
     rib_section: BeamSection,
@@ -782,8 +782,8 @@ def sandwich_hexagonal_core_cell(
 
 def sandwich_star_core_cell(
     *,
-    bottom_face: LinearABDWall,
-    top_face: LinearABDWall,
+    bottom_face: ABDStiffness,
+    top_face: ABDStiffness,
     bottom_face_offset: float,
     top_face_offset: float,
     stringer_section: BeamSection,

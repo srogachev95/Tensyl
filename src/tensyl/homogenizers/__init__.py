@@ -1,4 +1,4 @@
-"""Tangent-plane equivalent-wall homogenizers."""
+"""Tangent-plane equivalent-stiffness homogenizers."""
 
 from tensyl.homogenizers.tangent_plane import (
     DirectECHomogenizer,
@@ -13,7 +13,7 @@ from tensyl.homogenizers.tangent_plane import (
     member_energy,
     member_tangent_contribution,
     member_tangent_density,
-    validity_report_for_law,
+    validity_report_for_stiffness,
 )
 
 __all__ = [
@@ -29,5 +29,5 @@ __all__ = [
     "member_energy",
     "member_tangent_contribution",
     "member_tangent_density",
-    "validity_report_for_law",
+    "validity_report_for_stiffness",
 ]

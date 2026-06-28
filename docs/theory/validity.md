@@ -1,6 +1,6 @@
 # Validity Limits
 
-Equivalent-wall homogenization is a scale-separated approximation. It is most
+Equivalent-stiffness homogenization is a scale-separated approximation. It is most
 appropriate when stiffener height and pitch are small relative to curvature and
 response length scales:
 
@@ -30,7 +30,7 @@ $$
 $$
 
 The default warning threshold is `0.10`. Read this ratio as: how much of the
-wall's behavior is membrane-bending cross-talk, relative to the membrane and
+stiffness's behavior is membrane-bending cross-talk, relative to the membrane and
 bending stiffness it sits between. A large value means strain and curvature are
 strongly coupled — usually a sign of eccentric stiffeners or an offset reference
 surface, and a hint that a scalar "equivalent modulus" would throw away
@@ -39,7 +39,7 @@ something real.
 ## Interpreting Warnings
 
 Warnings are not pass/fail certification criteria. They are prompts for
-engineering review. A warning means the wall law should not be used blindly for
+engineering review. A warning means the ABD stiffness should not be used blindly for
 the intended response without checking assumptions, comparing against a detailed
 model, or changing the model family.
 

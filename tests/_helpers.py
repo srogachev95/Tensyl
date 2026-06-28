@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import numpy as np
 
-from tensyl import BeamSection, EnergyHomogenizer, LinearABDWall
+from tensyl import ABDStiffness, BeamSection, EnergyHomogenizer
 from tensyl.homogenizers import member_energy
 
 
-def zero_skin() -> LinearABDWall:
-    return LinearABDWall(
+def zero_skin() -> ABDStiffness:
+    return ABDStiffness(
         A=np.zeros((3, 3)),
         B=np.zeros((3, 3)),
         D=np.zeros((3, 3)),
@@ -15,8 +15,8 @@ def zero_skin() -> LinearABDWall:
     )
 
 
-def membrane_skin(stiffness: float = 10.0) -> LinearABDWall:
-    return LinearABDWall(
+def membrane_skin(stiffness: float = 10.0) -> ABDStiffness:
+    return ABDStiffness(
         A=stiffness * np.eye(3),
         B=np.zeros((3, 3)),
         D=np.zeros((3, 3)),
@@ -38,10 +38,10 @@ def beam_section(*, shear: bool = True) -> BeamSection:
 def assert_energy_consistent(cell) -> None:
     eta = np.array([0.003, -0.002, 0.001, 0.02, -0.01, 0.04, 0.005, -0.006])
     result = EnergyHomogenizer().compute(cell)
-    wall_energy = 0.5 * cell.area * float(eta @ result.law.C8 @ eta)
+    stiffness_energy = 0.5 * cell.area * float(eta @ result.stiffness.C8 @ eta)
     explicit_energy = cell.area * cell.skin.energy(eta) + sum(
         member_energy(member, eta) for member in cell.members
     )
-    np.testing.assert_allclose(wall_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
+    np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
     assert result.diagnostics["symmetric"] is True
     assert result.diagnostics["positive_semidefinite"] is True

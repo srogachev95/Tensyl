@@ -1,4 +1,4 @@
-"""Wall fields, pointwise homogenization, and sampled wall atlases."""
+"""Stiffness fields, pointwise homogenization, and sampled stiffness atlases."""
 
 from __future__ import annotations
 
@@ -12,17 +12,17 @@ import numpy as np
 from tensyl._version import tensyl_version
 from tensyl.cells import CanonicalUnitCell
 from tensyl.core._validation import finite_number, readonly_mapping
-from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.typing import FloatArray
 from tensyl.geometry import Surface, SurfacePoint
 from tensyl.homogenizers import HomogenizationResult, Homogenizer, ValidityContext
 
 
-class WallField(Protocol):
-    """Protocol for objects that provide a wall law over a surface."""
+class StiffnessField(Protocol):
+    """Protocol for objects that provide an ABD stiffness over a surface."""
 
-    def law_at(self, surface: Surface, u: float, v: float) -> LinearABDWall:
-        """Return the wall law at parametric coordinates ``(u, v)``."""
+    def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
+        """Return the ABD stiffness at parametric coordinates ``(u, v)``."""
 
 
 CellFactory = Callable[[Surface, SurfacePoint], CanonicalUnitCell]
@@ -51,48 +51,52 @@ def _metadata_for_surface(metadata: Mapping[str, Any], point: SurfacePoint) -> d
             "surface": point.metadata.get("surface", "surface"),
             "u": point.u,
             "v": point.v,
-            "source": combined.get("source", "wall_field"),
+            "source": combined.get("source", "stiffness_field"),
         }
     )
     return combined
 
 
-def _validate_law_matches_point(law: LinearABDWall, point: SurfacePoint, *, context: str) -> None:
-    if law.frame != point.frame:
-        msg = f"{context} law frame must match the surface point frame."
+def _validate_stiffness_matches_point(
+    stiffness: ABDStiffness, point: SurfacePoint, *, context: str
+) -> None:
+    if stiffness.frame != point.frame:
+        msg = f"{context} local frame must match the surface point frame."
         raise ValueError(msg)
 
 
-def _bind_wall_to_point(wall: LinearABDWall, point: SurfacePoint, *, source: str) -> LinearABDWall:
-    metadata = _metadata_for_surface(wall.metadata, point)
+def _bind_stiffness_to_point(
+    stiffness: ABDStiffness, point: SurfacePoint, *, source: str
+) -> ABDStiffness:
+    metadata = _metadata_for_surface(stiffness.metadata, point)
     metadata["source"] = source
-    return LinearABDWall.from_tangent(
-        wall.C8,
+    return ABDStiffness.from_tangent(
+        stiffness.C8,
         frame=point.frame,
-        convention=wall.convention,
-        areal_mass=wall.areal_mass,
+        convention=stiffness.convention,
+        areal_mass=stiffness.areal_mass,
         metadata=metadata,
-        validity=wall.validity,
+        validity=stiffness.validity,
     )
 
 
 @dataclass(frozen=True, slots=True)
-class ConstantWallField:
-    """Uniform wall law bound pointwise to a surface frame."""
+class ConstantStiffnessField:
+    """Uniform ABD stiffness bound pointwise to a surface frame."""
 
-    law: LinearABDWall
+    stiffness: ABDStiffness
 
-    def law_at(self, surface: Surface, u: float, v: float) -> LinearABDWall:
+    def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
         point = surface.point_at(u, v)
-        return _bind_wall_to_point(self.law, point, source="constant_wall_field")
+        return _bind_stiffness_to_point(self.stiffness, point, source="constant_stiffness_field")
 
 
 @dataclass(slots=True)
-class WallCache:
-    """Mutable pointwise wall-law cache keyed by rounded parametric coordinates."""
+class StiffnessCache:
+    """Mutable pointwise stiffness cache keyed by rounded parametric coordinates."""
 
     precision: int = 12
-    _items: dict[tuple[float, float], LinearABDWall] = field(default_factory=dict)
+    _items: dict[tuple[float, float], ABDStiffness] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.precision < 0:
@@ -105,11 +109,11 @@ class WallCache:
             round(_finite(v, name="v"), self.precision),
         )
 
-    def get(self, u: float, v: float) -> LinearABDWall | None:
+    def get(self, u: float, v: float) -> ABDStiffness | None:
         return self._items.get(self.key(u, v))
 
-    def set(self, u: float, v: float, law: LinearABDWall) -> None:
-        self._items[self.key(u, v)] = law
+    def set(self, u: float, v: float, stiffness: ABDStiffness) -> None:
+        self._items[self.key(u, v)] = stiffness
 
     def clear(self) -> None:
         self._items.clear()
@@ -120,18 +124,18 @@ class WallCache:
 
 
 @dataclass(frozen=True, slots=True)
-class HomogenizedWallField:
-    """Wall field that builds and homogenizes a local cell at each surface point."""
+class HomogenizedStiffnessField:
+    """Stiffness field that builds and homogenizes a local cell at each surface point."""
 
     surface: Surface
     cell_factory: CellFactory
     homogenizer: Homogenizer
-    cache: WallCache | None = None
+    cache: StiffnessCache | None = None
     validity_context_factory: ValidityContextFactory | None = None
 
-    def law_at(self, surface: Surface, u: float, v: float) -> LinearABDWall:
+    def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
         if surface != self.surface:
-            msg = "HomogenizedWallField can only be evaluated on its configured surface."
+            msg = "HomogenizedStiffnessField can only be evaluated on its configured surface."
             raise ValueError(msg)
         cached = self.cache.get(u, v) if self.cache is not None else None
         if cached is not None:
@@ -151,11 +155,13 @@ class HomogenizedWallField:
             cell,
             validity_context=validity_context,
         )
-        _validate_law_matches_point(result.law, point, context="homogenized")
-        law = _bind_wall_to_point(result.law, point, source="homogenized_wall_field")
+        _validate_stiffness_matches_point(result.stiffness, point, context="homogenized")
+        stiffness = _bind_stiffness_to_point(
+            result.stiffness, point, source="homogenized_stiffness_field"
+        )
         if self.cache is not None:
-            self.cache.set(u, v, law)
-        return law
+            self.cache.set(u, v, stiffness)
+        return stiffness
 
 
 def _cell_index(values: tuple[float, ...], value: float, *, name: str) -> tuple[int, float]:
@@ -171,18 +177,18 @@ def _cell_index(values: tuple[float, ...], value: float, *, name: str) -> tuple[
     return index, (checked - left) / (right - left)
 
 
-def _corner_warnings(corners: tuple[LinearABDWall, ...]) -> tuple[str, ...]:
+def _corner_warnings(corners: tuple[ABDStiffness, ...]) -> tuple[str, ...]:
     warnings: set[str] = set()
-    for wall in corners:
-        validity = wall.validity
+    for stiffness in corners:
+        validity = stiffness.validity
         if validity is not None and hasattr(validity, "warnings"):
             warnings.update(str(warning) for warning in validity.warnings)
     return tuple(sorted(warnings))
 
 
-def _shared_validity(corners: tuple[LinearABDWall, ...]) -> Any:
+def _shared_validity(corners: tuple[ABDStiffness, ...]) -> Any:
     first = corners[0].validity
-    if all(wall.validity == first for wall in corners):
+    if all(stiffness.validity == first for stiffness in corners):
         return first
     return None
 
@@ -202,48 +208,48 @@ def _update_hash_with_text(digest: Any, text: str) -> None:
 def _sample_digest(
     u_values: tuple[float, ...],
     v_values: tuple[float, ...],
-    laws: tuple[tuple[LinearABDWall, ...], ...],
+    stiffnesses: tuple[tuple[ABDStiffness, ...], ...],
 ) -> str:
     digest = hashlib.sha256()
     _update_hash_with_float64(digest, u_values)
     _update_hash_with_float64(digest, v_values)
-    for row in laws:
-        for law in row:
-            digest.update(np.ascontiguousarray(law.C8, dtype=np.float64).tobytes())
-            _update_hash_with_float64(digest, law.frame.e1)
-            _update_hash_with_float64(digest, law.frame.e2)
-            _update_hash_with_float64(digest, law.frame.n)
-            _update_hash_with_text(digest, law.frame.label)
-            for name in law.convention.membrane_order:
+    for row in stiffnesses:
+        for stiffness in row:
+            digest.update(np.ascontiguousarray(stiffness.C8, dtype=np.float64).tobytes())
+            _update_hash_with_float64(digest, stiffness.frame.e1)
+            _update_hash_with_float64(digest, stiffness.frame.e2)
+            _update_hash_with_float64(digest, stiffness.frame.n)
+            _update_hash_with_text(digest, stiffness.frame.label)
+            for name in stiffness.convention.membrane_order:
                 _update_hash_with_text(digest, name)
-            for name in law.convention.bending_order:
+            for name in stiffness.convention.bending_order:
                 _update_hash_with_text(digest, name)
-            for name in law.convention.shear_order:
+            for name in stiffness.convention.shear_order:
                 _update_hash_with_text(digest, name)
-            digest.update(b"\x01" if law.convention.engineering_shear else b"\x00")
-            _update_hash_with_text(digest, law.convention.reference_surface)
-            _update_hash_with_text(digest, law.convention.normal_positive)
-            digest.update(b"\x00" if law.areal_mass is None else b"\x01")
-            if law.areal_mass is not None:
-                digest.update(np.float64(law.areal_mass).tobytes())
+            digest.update(b"\x01" if stiffness.convention.engineering_shear else b"\x00")
+            _update_hash_with_text(digest, stiffness.convention.reference_surface)
+            _update_hash_with_text(digest, stiffness.convention.normal_positive)
+            digest.update(b"\x00" if stiffness.areal_mass is None else b"\x01")
+            if stiffness.areal_mass is not None:
+                digest.update(np.float64(stiffness.areal_mass).tobytes())
     return digest.hexdigest()
 
 
 def _max_adjacent_c8_gradient(
     u_values: tuple[float, ...],
     v_values: tuple[float, ...],
-    laws: tuple[tuple[LinearABDWall, ...], ...],
+    stiffnesses: tuple[tuple[ABDStiffness, ...], ...],
 ) -> float:
     max_gradient = 0.0
     for i, (left, right) in enumerate(zip(u_values[:-1], u_values[1:], strict=True)):
         span = right - left
         for j in range(len(v_values)):
-            delta = laws[i + 1][j].C8 - laws[i][j].C8
+            delta = stiffnesses[i + 1][j].C8 - stiffnesses[i][j].C8
             max_gradient = max(max_gradient, float(np.linalg.norm(delta, ord="fro") / span))
     for j, (left, right) in enumerate(zip(v_values[:-1], v_values[1:], strict=True)):
         span = right - left
         for i in range(len(u_values)):
-            delta = laws[i][j + 1].C8 - laws[i][j].C8
+            delta = stiffnesses[i][j + 1].C8 - stiffnesses[i][j].C8
             max_gradient = max(max_gradient, float(np.linalg.norm(delta, ord="fro") / span))
     return max_gradient
 
@@ -252,39 +258,41 @@ def _validate_atlas_samples(
     surface: Surface,
     u_values: tuple[float, ...],
     v_values: tuple[float, ...],
-    laws: tuple[tuple[LinearABDWall, ...], ...],
+    stiffnesses: tuple[tuple[ABDStiffness, ...], ...],
 ) -> None:
-    convention = laws[0][0].convention
+    convention = stiffnesses[0][0].convention
     for i, u in enumerate(u_values):
         for j, v in enumerate(v_values):
-            law = laws[i][j]
-            if law.convention != convention:
+            stiffness = stiffnesses[i][j]
+            if stiffness.convention != convention:
                 msg = "all atlas samples must use the same strain convention."
                 raise ValueError(msg)
             point = surface.point_at(u, v)
-            _validate_law_matches_point(law, point, context="atlas sample")
+            _validate_stiffness_matches_point(stiffness, point, context="atlas sample")
 
 
 @dataclass(frozen=True, slots=True)
-class WallAtlas:
-    """Rectangular bilinear atlas of sampled linear wall laws."""
+class ABDAtlas:
+    """Rectangular bilinear atlas of sampled linear ABD stiffnesses."""
 
     surface: Surface
     u_values: tuple[float, ...]
     v_values: tuple[float, ...]
-    laws: tuple[tuple[LinearABDWall, ...], ...]
+    stiffnesses: tuple[tuple[ABDStiffness, ...], ...]
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         u_values = _increasing(tuple(self.u_values), name="u_values")
         v_values = _increasing(tuple(self.v_values), name="v_values")
-        law_rows = tuple(tuple(row) for row in self.laws)
-        if len(law_rows) != len(u_values) or any(len(row) != len(v_values) for row in law_rows):
-            msg = "laws must have shape (len(u_values), len(v_values))."
+        stiffness_rows = tuple(tuple(row) for row in self.stiffnesses)
+        if len(stiffness_rows) != len(u_values) or any(
+            len(row) != len(v_values) for row in stiffness_rows
+        ):
+            msg = "stiffnesses must have shape (len(u_values), len(v_values))."
             raise ValueError(msg)
-        _validate_atlas_samples(self.surface, u_values, v_values, law_rows)
+        _validate_atlas_samples(self.surface, u_values, v_values, stiffness_rows)
         metadata = dict(self.metadata)
-        metadata.setdefault("source", "wall_atlas")
+        metadata.setdefault("source", "abd_atlas")
         metadata.setdefault("interpolation", "bilinear_c8")
         metadata.update(
             {
@@ -292,49 +300,51 @@ class WallAtlas:
                 "v_values": v_values,
                 "sample_shape": (len(u_values), len(v_values)),
                 "tensyl_version": tensyl_version(),
-                "sample_digest": _sample_digest(u_values, v_values, law_rows),
+                "sample_digest": _sample_digest(u_values, v_values, stiffness_rows),
                 "sample_warning_ids": _corner_warnings(
-                    tuple(wall for row in law_rows for wall in row)
+                    tuple(stiffness for row in stiffness_rows for stiffness in row)
                 ),
                 "max_adjacent_c8_gradient_frobenius": _max_adjacent_c8_gradient(
                     u_values,
                     v_values,
-                    law_rows,
+                    stiffness_rows,
                 ),
             }
         )
         object.__setattr__(self, "u_values", u_values)
         object.__setattr__(self, "v_values", v_values)
-        object.__setattr__(self, "laws", law_rows)
+        object.__setattr__(self, "stiffnesses", stiffness_rows)
         object.__setattr__(self, "metadata", readonly_mapping(metadata))
 
     @classmethod
     def from_field(
         cls,
         surface: Surface,
-        field: WallField,
+        field: StiffnessField,
         *,
         u_values: tuple[float, ...],
         v_values: tuple[float, ...],
         metadata: Mapping[str, Any] | None = None,
-    ) -> WallAtlas:
+    ) -> ABDAtlas:
         checked_u = _increasing(tuple(u_values), name="u_values")
         checked_v = _increasing(tuple(v_values), name="v_values")
-        laws = tuple(tuple(field.law_at(surface, u, v) for v in checked_v) for u in checked_u)
-        atlas_metadata = {"source": "wall_atlas", "interpolation": "bilinear_c8"}
+        stiffnesses = tuple(
+            tuple(field.stiffness_at(surface, u, v) for v in checked_v) for u in checked_u
+        )
+        atlas_metadata = {"source": "abd_atlas", "interpolation": "bilinear_c8"}
         if metadata is not None:
             atlas_metadata.update(metadata)
         return cls(
             surface=surface,
             u_values=checked_u,
             v_values=checked_v,
-            laws=laws,
+            stiffnesses=stiffnesses,
             metadata=atlas_metadata,
         )
 
-    def law_at(self, surface: Surface, u: float, v: float) -> LinearABDWall:
+    def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
         if surface != self.surface:
-            msg = "WallAtlas can only be evaluated on its configured surface."
+            msg = "ABDAtlas can only be evaluated on its configured surface."
             raise ValueError(msg)
         i, su = _cell_index(self.u_values, u, name="u")
         j, sv = _cell_index(self.v_values, v, name="v")
@@ -343,33 +353,33 @@ class WallAtlas:
         w01 = (1.0 - su) * sv
         w11 = su * sv
         corners = (
-            self.laws[i][j],
-            self.laws[i + 1][j],
-            self.laws[i][j + 1],
-            self.laws[i + 1][j + 1],
+            self.stiffnesses[i][j],
+            self.stiffnesses[i + 1][j],
+            self.stiffnesses[i][j + 1],
+            self.stiffnesses[i + 1][j + 1],
         )
         weights = (w00, w10, w01, w11)
         tangent = sum(
-            (weight * wall.C8 for weight, wall in zip(weights, corners, strict=True)),
+            (weight * stiffness.C8 for weight, stiffness in zip(weights, corners, strict=True)),
             start=np.zeros((8, 8)),
         )
         tangent = 0.5 * (tangent + tangent.T)
 
         areal_mass = None
-        if all(wall.areal_mass is not None for wall in corners):
+        if all(stiffness.areal_mass is not None for stiffness in corners):
             areal_mass = sum(
-                weight * wall.areal_mass
-                for weight, wall in zip(weights, corners, strict=True)
-                if wall.areal_mass is not None
+                weight * stiffness.areal_mass
+                for weight, stiffness in zip(weights, corners, strict=True)
+                if stiffness.areal_mass is not None
             )
         point = self.surface.point_at(u, v)
         max_corner_delta = max(
-            float(np.linalg.norm(wall.C8 - tangent, ord="fro")) for wall in corners
+            float(np.linalg.norm(stiffness.C8 - tangent, ord="fro")) for stiffness in corners
         )
         metadata = dict(self.metadata)
         metadata.update(
             {
-                "source": "wall_atlas_bilinear",
+                "source": "abd_atlas_bilinear",
                 "grid_cell": (i, j),
                 "weights": weights,
                 "corner_warnings": _corner_warnings(corners),
@@ -378,7 +388,7 @@ class WallAtlas:
                 "v": point.v,
             }
         )
-        return LinearABDWall.from_tangent(
+        return ABDStiffness.from_tangent(
             tangent,
             frame=point.frame,
             convention=corners[0].convention,
@@ -390,10 +400,10 @@ class WallAtlas:
 
 __all__ = [
     "CellFactory",
-    "ConstantWallField",
-    "HomogenizedWallField",
+    "ConstantStiffnessField",
+    "HomogenizedStiffnessField",
     "ValidityContextFactory",
-    "WallAtlas",
-    "WallCache",
-    "WallField",
+    "ABDAtlas",
+    "StiffnessCache",
+    "StiffnessField",
 ]

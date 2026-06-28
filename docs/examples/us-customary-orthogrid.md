@@ -1,11 +1,11 @@
-# US Customary Orthogrid Wall
+# US Customary Orthogrid Stiffness
 
-This example computes a first equivalent wall law for an orthogrid panel. The
+This example computes a first equivalent ABD stiffness for an orthogrid panel. The
 numbers are illustrative and should not be used as allowables.
 
 ## Problem
 
-Build a US customary orthogrid wall law about the skin reference surface. Both
+Build a US customary orthogrid ABD stiffness about the skin reference surface. Both
 stringers and ribs are external to the `+n` side, so the eccentricity is
 positive and membrane-bending coupling is expected.
 
@@ -53,14 +53,14 @@ result = EnergyHomogenizer().compute(
     ),
 )
 
-wall = result.law
+stiffness = result.stiffness
 
-assert wall.constant_tangent.shape == (8, 8)
+assert stiffness.constant_tangent.shape == (8, 8)
 assert result.diagnostics["symmetric"]
-assert result.law.B[0, 0] > 0.0
+assert result.stiffness.B[0, 0] > 0.0
 ```
 
-Review `result.validity.warnings` before using the wall law downstream.
+Review `result.validity.warnings` before using the ABD stiffness downstream.
 
 ## Selected Output
 

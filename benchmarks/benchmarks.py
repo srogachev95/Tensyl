@@ -3,14 +3,14 @@ from __future__ import annotations
 import numpy as np
 
 from tensyl import (
+    ABDAtlas,
     BeamSection,
-    ConstantWallField,
+    ConstantStiffnessField,
     DirectECHomogenizer,
     EnergyHomogenizer,
     FlatPlate,
     IsotropicMaterial,
     StiffenerFamily,
-    WallAtlas,
     isotropic_plate,
     orthogrid_cell,
 )
@@ -76,13 +76,13 @@ class HomogenizationSuite:
         self.direct.compute(skin=self.skin, families=self.families)
 
 
-class WallFieldSuite:
+class StiffnessFieldSuite:
     def setup(self) -> None:
         self.surface = FlatPlate()
-        self.field = ConstantWallField(EnergyHomogenizer().compute(_orthogrid()).law)
+        self.field = ConstantStiffnessField(EnergyHomogenizer().compute(_orthogrid()).stiffness)
         self.u_values = tuple(np.linspace(0.0, 1.0, 8))
         self.v_values = tuple(np.linspace(0.0, 1.0, 8))
-        self.atlas = WallAtlas.from_field(
+        self.atlas = ABDAtlas.from_field(
             self.surface,
             self.field,
             u_values=self.u_values,
@@ -92,12 +92,12 @@ class WallFieldSuite:
     def time_constant_field_grid(self) -> None:
         for u in self.u_values:
             for v in self.v_values:
-                self.field.law_at(self.surface, u, v)
+                self.field.stiffness_at(self.surface, u, v)
 
-    def time_wall_atlas_grid(self) -> None:
+    def time_abd_atlas_grid(self) -> None:
         for u in self.u_values:
             for v in self.v_values:
-                self.atlas.law_at(self.surface, u, v)
+                self.atlas.stiffness_at(self.surface, u, v)
 
 
 class SerializationSuite:

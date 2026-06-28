@@ -1,8 +1,8 @@
-# Geometry And Wall Fields
+# Geometry And Stiffness Fields
 
-Tensyl separates local wall laws from shell geometry. Geometry supplies surface
+Tensyl separates local ABD stiffnesses from shell geometry. Geometry supplies surface
 points, frames, metrics, curvature, and integration measures. It does not change
-the tangent-plane wall law.
+the tangent-plane ABD stiffness.
 
 ## Built-In Surfaces
 
@@ -24,10 +24,10 @@ point = surface.point_at(u, v)
 The point contains position, tangent vectors, metric, curvature, Jacobian,
 principal curvatures, and a local `Frame2D`.
 
-The wall stiffness matrix remains local. Coordinates answer "where is this
+The ABD stiffness matrix remains local. Coordinates answer "where is this
 surface point?", the local frame answers "what are the 1/2/n directions?", and
-the ABD/shear law is interpreted in that local frame. A constant isotropic or
-laminate wall law may be bound to many surface points even when the frame or
+the ABD/shear stiffness is interpreted in that local frame. A constant isotropic or
+laminate ABD stiffness may be bound to many surface points even when the frame or
 curvature changes across the surface.
 
 Tensyl uses signed curvature from the surface normal convention. Built-in
@@ -45,40 +45,40 @@ generally orthogonal, so `e1` follows the meridional coordinate direction and
 `e2` is the right-handed orthonormal tangent completion. `ConicalFrustum` uses
 `(x, theta)` and excludes apex singularities.
 
-## Constant Wall Field
+## Constant Stiffness Field
 
 ```python
-from tensyl import ConstantWallField, Cylinder
+from tensyl import ConstantStiffnessField, Cylinder
 
 surface = Cylinder(radius=120.0, length=300.0)
-field = ConstantWallField(wall)
+field = ConstantStiffnessField(stiffness)
 
-local_wall = field.law_at(surface, 10.0, 0.25)
+local_stiffness = field.stiffness_at(surface, 10.0, 0.25)
 ```
 
-The wall tangent is unchanged. The law is rebound to the surface-point frame.
+The stiffness tangent is unchanged. The stiffness is rebound to the surface-point frame.
 
-## Wall Atlas
+## Stiffness Atlas
 
-`WallAtlas` samples a `WallField` on a rectangular parameter grid and performs
+`ABDAtlas` samples a `StiffnessField` on a rectangular parameter grid and performs
 bilinear interpolation in canonical C8 storage.
 
 ```python
 import math
 
-from tensyl import WallAtlas
+from tensyl import ABDAtlas
 
-atlas = WallAtlas.from_field(
+atlas = ABDAtlas.from_field(
     surface,
     field,
     u_values=(0.0, 150.0, 300.0),
     v_values=(0.0, math.pi, 2.0 * math.pi),
 )
 
-interpolated = atlas.law_at(surface, 75.0, 0.5 * math.pi)
+interpolated = atlas.stiffness_at(surface, 75.0, 0.5 * math.pi)
 ```
 
-Atlas interpolation is a convenience for linear wall laws. Interpolation error
+Atlas interpolation is a convenience for linear ABD stiffnesses. Interpolation error
 metadata should be reviewed before relying on a coarse grid.
 
 ## Choosing A Response Length

@@ -13,17 +13,17 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from tensyl._version import tensyl_version
-from tensyl.core.constitutive import LinearABDWall
+from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.conventions import Frame2D, StrainConvention
 from tensyl.homogenizers import HomogenizationResult, ValidityReport
 from tensyl.typing import FloatArray
 
 SCHEMA_NAME = "tensyl.external_workflow"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 type SchemaName = Literal["tensyl.external_workflow"]
-type SchemaVersion = Literal[1]
-type ArtifactType = Literal["linear_abd_wall", "homogenization_result"]
+type SchemaVersion = Literal[2]
+type ArtifactType = Literal["abd_stiffness", "homogenization_result"]
 type HomogenizationSource = Literal["energy", "direct_ec", "rve", "imported"]
 type PlainYaml = None | str | bool | int | float | list[PlainYaml] | dict[str, PlainYaml]
 
@@ -238,7 +238,7 @@ class ValidityReportSchema(_SchemaModel):
         )
 
 
-class LinearABDWallSchema(_SchemaModel):
+class ABDStiffnessSchema(_SchemaModel):
     tangent_c8: list[list[float]]
     frame: FrameSchema
     strain_convention: StrainConventionSchema
@@ -265,23 +265,27 @@ class LinearABDWallSchema(_SchemaModel):
         return {} if checked is None else checked
 
     @classmethod
-    def from_tensyl(cls, wall: LinearABDWall) -> LinearABDWallSchema:
-        if wall.validity is not None and not isinstance(wall.validity, ValidityReport):
+    def from_tensyl(cls, stiffness: ABDStiffness) -> ABDStiffnessSchema:
+        if stiffness.validity is not None and not isinstance(stiffness.validity, ValidityReport):
             msg = "validity must be None or a ValidityReport for schema export."
             raise SchemaError(msg)
         return cls(
-            tangent_c8=wall.C8.tolist(),
-            frame=FrameSchema.from_tensyl(wall.frame),
-            strain_convention=StrainConventionSchema.from_tensyl(wall.convention),
-            areal_mass=wall.areal_mass,
-            metadata=cast(dict[str, PlainYaml], _plain_yaml_value(wall.metadata, path="metadata")),
+            tangent_c8=stiffness.C8.tolist(),
+            frame=FrameSchema.from_tensyl(stiffness.frame),
+            strain_convention=StrainConventionSchema.from_tensyl(stiffness.convention),
+            areal_mass=stiffness.areal_mass,
+            metadata=cast(
+                dict[str, PlainYaml], _plain_yaml_value(stiffness.metadata, path="metadata")
+            ),
             validity=(
-                None if wall.validity is None else ValidityReportSchema.from_tensyl(wall.validity)
+                None
+                if stiffness.validity is None
+                else ValidityReportSchema.from_tensyl(stiffness.validity)
             ),
         )
 
-    def to_tensyl(self) -> LinearABDWall:
-        return LinearABDWall.from_tangent(
+    def to_tensyl(self) -> ABDStiffness:
+        return ABDStiffness.from_tangent(
             _as_array(self.tangent_c8),
             frame=self.frame.to_tensyl(),
             convention=self.strain_convention.to_tensyl(),
@@ -292,7 +296,7 @@ class LinearABDWallSchema(_SchemaModel):
 
 
 class HomogenizationResultSchema(_SchemaModel):
-    law: LinearABDWallSchema
+    stiffness: ABDStiffnessSchema
     validity: ValidityReportSchema
     diagnostics: dict[str, PlainYaml]
     assumptions: tuple[str, ...]
@@ -305,16 +309,16 @@ class HomogenizationResultSchema(_SchemaModel):
         return {} if checked is None else checked
 
     @model_validator(mode="after")
-    def _validate_law_validity(self) -> HomogenizationResultSchema:
-        if self.law.validity is not None and self.law.validity != self.validity:
-            msg = "homogenization_result law validity does not match result validity."
+    def _validate_stiffness_validity(self) -> HomogenizationResultSchema:
+        if self.stiffness.validity is not None and self.stiffness.validity != self.validity:
+            msg = "homogenization_result stiffness validity does not match result validity."
             raise ValueError(msg)
         return self
 
     @classmethod
     def from_tensyl(cls, result: HomogenizationResult) -> HomogenizationResultSchema:
         return cls(
-            law=LinearABDWallSchema.from_tensyl(result.law),
+            stiffness=ABDStiffnessSchema.from_tensyl(result.stiffness),
             validity=ValidityReportSchema.from_tensyl(result.validity),
             diagnostics=cast(
                 dict[str, PlainYaml],
@@ -326,9 +330,9 @@ class HomogenizationResultSchema(_SchemaModel):
 
     def to_tensyl(self) -> HomogenizationResult:
         validity = self.validity.to_tensyl()
-        law = self.law.to_tensyl()
+        stiffness = self.stiffness.to_tensyl()
         return HomogenizationResult(
-            law=law.with_validity(validity),
+            stiffness=stiffness.with_validity(validity),
             validity=validity,
             diagnostics=self.diagnostics,
             assumptions=self.assumptions,
@@ -342,7 +346,7 @@ class ExternalWorkflowEnvelope(_SchemaModel):
     artifact_type: ArtifactType
     producer: ProducerSchema
     units: dict[str, PlainYaml] | None = None
-    payload: LinearABDWallSchema | HomogenizationResultSchema
+    payload: ABDStiffnessSchema | HomogenizationResultSchema
 
     @field_validator("units", mode="before")
     @classmethod
@@ -351,10 +355,10 @@ class ExternalWorkflowEnvelope(_SchemaModel):
 
     @model_validator(mode="after")
     def _validate_artifact_payload(self) -> ExternalWorkflowEnvelope:
-        if self.artifact_type == "linear_abd_wall" and not isinstance(
-            self.payload, LinearABDWallSchema
+        if self.artifact_type == "abd_stiffness" and not isinstance(
+            self.payload, ABDStiffnessSchema
         ):
-            msg = "linear_abd_wall artifact requires a LinearABDWall payload."
+            msg = "abd_stiffness artifact requires an ABDStiffness payload."
             raise ValueError(msg)
         if self.artifact_type == "homogenization_result" and not isinstance(
             self.payload, HomogenizationResultSchema
@@ -366,18 +370,18 @@ class ExternalWorkflowEnvelope(_SchemaModel):
     @classmethod
     def from_tensyl(
         cls,
-        obj: LinearABDWall | HomogenizationResult,
+        obj: ABDStiffness | HomogenizationResult,
         *,
         units: Mapping[str, Any] | None = None,
     ) -> ExternalWorkflowEnvelope:
         if isinstance(obj, HomogenizationResult):
             artifact_type: ArtifactType = "homogenization_result"
-            payload: LinearABDWallSchema | HomogenizationResultSchema = (
+            payload: ABDStiffnessSchema | HomogenizationResultSchema = (
                 HomogenizationResultSchema.from_tensyl(obj)
             )
-        elif isinstance(obj, LinearABDWall):
-            artifact_type = "linear_abd_wall"
-            payload = LinearABDWallSchema.from_tensyl(obj)
+        elif isinstance(obj, ABDStiffness):
+            artifact_type = "abd_stiffness"
+            payload = ABDStiffnessSchema.from_tensyl(obj)
         else:
             msg = f"unsupported schema object type {type(obj).__name__!r}."
             raise SchemaError(msg)
@@ -391,10 +395,8 @@ class ExternalWorkflowEnvelope(_SchemaModel):
             payload=payload,
         )
 
-    def to_tensyl(self) -> LinearABDWall | HomogenizationResult:
-        if self.artifact_type == "linear_abd_wall" and isinstance(
-            self.payload, LinearABDWallSchema
-        ):
+    def to_tensyl(self) -> ABDStiffness | HomogenizationResult:
+        if self.artifact_type == "abd_stiffness" and isinstance(self.payload, ABDStiffnessSchema):
             return self.payload.to_tensyl()
         if self.artifact_type == "homogenization_result" and isinstance(
             self.payload, HomogenizationResultSchema
@@ -409,7 +411,7 @@ def _model_dump(model: BaseModel) -> dict[str, Any]:
 
 
 def to_schema(
-    obj: LinearABDWall | HomogenizationResult,
+    obj: ABDStiffness | HomogenizationResult,
     *,
     units: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -423,7 +425,7 @@ def to_schema(
         raise SchemaError(str(exc)) from exc
 
 
-def from_schema(payload: Mapping[str, Any]) -> LinearABDWall | HomogenizationResult:
+def from_schema(payload: Mapping[str, Any]) -> ABDStiffness | HomogenizationResult:
     """Reconstruct a Tensyl object from a versioned solver-neutral schema payload."""
 
     try:
@@ -435,7 +437,7 @@ def from_schema(payload: Mapping[str, Any]) -> LinearABDWall | HomogenizationRes
 
 
 def to_yaml(
-    obj: LinearABDWall | HomogenizationResult,
+    obj: ABDStiffness | HomogenizationResult,
     *,
     units: Mapping[str, Any] | None = None,
 ) -> str:
@@ -445,7 +447,7 @@ def to_yaml(
 
 
 def to_json(
-    obj: LinearABDWall | HomogenizationResult,
+    obj: ABDStiffness | HomogenizationResult,
     *,
     units: Mapping[str, Any] | None = None,
 ) -> str:
@@ -457,7 +459,7 @@ def to_json(
         raise SchemaError(str(exc)) from exc
 
 
-def from_yaml(text: str) -> LinearABDWall | HomogenizationResult:
+def from_yaml(text: str) -> ABDStiffness | HomogenizationResult:
     """Load a Tensyl object from a safe YAML string."""
 
     try:
@@ -476,7 +478,7 @@ def _reject_json_constant(value: str) -> None:
     raise ValueError(msg)
 
 
-def from_json(text: str) -> LinearABDWall | HomogenizationResult:
+def from_json(text: str) -> ABDStiffness | HomogenizationResult:
     """Load a Tensyl object from a JSON string."""
 
     try:
@@ -491,7 +493,7 @@ def from_json(text: str) -> LinearABDWall | HomogenizationResult:
 
 
 def write_yaml(
-    obj: LinearABDWall | HomogenizationResult,
+    obj: ABDStiffness | HomogenizationResult,
     path: str | PathLike[str],
     *,
     units: Mapping[str, Any] | None = None,
@@ -502,7 +504,7 @@ def write_yaml(
 
 
 def write_json(
-    obj: LinearABDWall | HomogenizationResult,
+    obj: ABDStiffness | HomogenizationResult,
     path: str | PathLike[str],
     *,
     units: Mapping[str, Any] | None = None,
@@ -512,13 +514,13 @@ def write_json(
     Path(path).write_text(to_json(obj, units=units), encoding="utf-8")
 
 
-def read_yaml(path: str | PathLike[str]) -> LinearABDWall | HomogenizationResult:
+def read_yaml(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
     """Read a Tensyl object from a safe YAML file."""
 
     return from_yaml(Path(path).read_text(encoding="utf-8"))
 
 
-def read_json(path: str | PathLike[str]) -> LinearABDWall | HomogenizationResult:
+def read_json(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
     """Read a Tensyl object from a JSON file."""
 
     return from_json(Path(path).read_text(encoding="utf-8"))

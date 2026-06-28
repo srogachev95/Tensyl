@@ -1,4 +1,4 @@
-"""Material value objects for Phase 1 plate laws."""
+"""Material value objects for Phase 1 plate stiffnesses."""
 
 from __future__ import annotations
 

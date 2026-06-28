@@ -1,23 +1,23 @@
 # Homogenization
 
 The reference homogenizer is `EnergyHomogenizer`. It computes a local
-equivalent wall law for a canonical tangent-plane unit cell.
+equivalent ABD stiffness for a canonical tangent-plane unit cell.
 
 ```python
 from tensyl import EnergyHomogenizer
 
 result = EnergyHomogenizer().compute(cell)
-wall = result.law
+stiffness = result.stiffness
 ```
 
-`result.law` is a `LinearABDWall`. The same validity report is also attached to
-`wall.validity`, so warnings travel with the wall law when it is passed to later
+`result.stiffness` is an `ABDStiffness`. The same validity report is also attached to
+`stiffness.validity`, so warnings travel with the ABD stiffness when it is passed to later
 workflow steps.
 
-Use the result object first. It contains the wall law and the context needed to
+Use the result object first. It contains the ABD stiffness and the context needed to
 judge the calculation:
 
-- `result.law.A`, `B`, `D`, and `As` are the stiffness blocks;
+- `result.stiffness.A`, `B`, `D`, and `As` are the stiffness blocks;
 - `result.diagnostics` reports numerical checks such as symmetry, rank, and
   positive-semidefinite status;
 - `result.assumptions` records modeling assumptions;
@@ -57,13 +57,13 @@ caller can decide whether the mechanism is acceptable.
     shell buckling margins, or manufacturing detail. Passing here is table
     stakes, not a verdict.
 
-## Comparing Wall Laws
+## Comparing ABD Stiffnesses
 
-Compare wall laws block by block:
+Compare ABD stiffnesses block by block:
 
 - compare `A`, `B`, `D`, and `As`;
 - compare coupling ratios and warnings;
-- rotate laws into a common frame before comparing anisotropic blocks;
+- rotate stiffnesses into a common frame before comparing anisotropic blocks;
 - avoid comparing scalar equivalent moduli unless the reduction assumptions are
   stated.
 

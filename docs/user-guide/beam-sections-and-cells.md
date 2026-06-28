@@ -45,18 +45,18 @@ crippling.
 
 ## Angles And Eccentricity
 
-Angles are measured in the local wall frame. `0` points along `e1`, `pi/2`
+Angles are measured in the local local frame. `0` points along `e1`, `pi/2`
 points along `e2`, and positive angles follow the positive rotation convention
 about `n`.
 
-Every eccentricity is signed along `+n` from the wall reference surface to the
+Every eccentricity is signed along `+n` from the reference surface to the
 member centroid. For an outward-normal cylinder, an external stringer has
 positive `stringer_eccentricity`; an internal stringer has negative
 eccentricity.
 
 !!! warning "A wrong eccentricity sign is silently wrong"
     The sign changes the coupling block `B`, so flipping it produces a different
-    physical wall law — with no validation error to catch it. See
+    physical ABD stiffness — with no validation error to catch it. See
     [Frames and Conventions](../theory/conventions.md) for the full sign rule.
 
 ## Graph Cells

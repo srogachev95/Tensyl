@@ -1,21 +1,21 @@
-"""Wall fields and atlases."""
+"""Stiffness fields and atlases."""
 
-from tensyl.fields.wall_field import (
+from tensyl.fields.stiffness_field import (
+    ABDAtlas,
     CellFactory,
-    ConstantWallField,
-    HomogenizedWallField,
+    ConstantStiffnessField,
+    HomogenizedStiffnessField,
+    StiffnessCache,
+    StiffnessField,
     ValidityContextFactory,
-    WallAtlas,
-    WallCache,
-    WallField,
 )
 
 __all__ = [
     "CellFactory",
-    "ConstantWallField",
-    "HomogenizedWallField",
+    "ConstantStiffnessField",
+    "HomogenizedStiffnessField",
     "ValidityContextFactory",
-    "WallAtlas",
-    "WallCache",
-    "WallField",
+    "ABDAtlas",
+    "StiffnessCache",
+    "StiffnessField",
 ]

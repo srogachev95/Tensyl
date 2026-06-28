@@ -1,6 +1,6 @@
 # SP-8007 Data Prep Example
 
-This example prepares equivalent wall data that an analyst could hand to a
+This example prepares equivalent stiffness data that an analyst could hand to a
 separate SP-8007-style cylinder workflow. Tensyl does not compute SP-8007
 knockdown factors or margins.
 
@@ -21,18 +21,18 @@ from tensyl import (
 from tensyl.io import from_yaml, to_yaml
 
 
-def sp8007_orthotropic_coefficients(wall, *, tolerance=1.0e-9):
-    """Extract the SP-8007 orthotropic-cylinder coefficients from a local wall law."""
+def sp8007_orthotropic_coefficients(stiffness, *, tolerance=1.0e-9):
+    """Extract the SP-8007 orthotropic-cylinder coefficients from a local ABD stiffness."""
 
     unsupported = {
-        "A16": wall.A[0, 2],
-        "A26": wall.A[1, 2],
-        "B16": wall.B[0, 2],
-        "B26": wall.B[1, 2],
-        "B61": wall.B[2, 0],
-        "B62": wall.B[2, 1],
-        "D16": wall.D[0, 2],
-        "D26": wall.D[1, 2],
+        "A16": stiffness.A[0, 2],
+        "A26": stiffness.A[1, 2],
+        "B16": stiffness.B[0, 2],
+        "B26": stiffness.B[1, 2],
+        "B61": stiffness.B[2, 0],
+        "B62": stiffness.B[2, 1],
+        "D16": stiffness.D[0, 2],
+        "D26": stiffness.D[1, 2],
     }
     nonzero = {
         name: value
@@ -47,17 +47,17 @@ def sp8007_orthotropic_coefficients(wall, *, tolerance=1.0e-9):
         raise ValueError(msg)
 
     return {
-        "Ebar_x": wall.A[0, 0],
-        "Ebar_y": wall.A[1, 1],
-        "Ebar_xy": wall.A[0, 1],
-        "Gbar_xy": wall.A[2, 2],
-        "Dbar_x": wall.D[0, 0],
-        "Dbar_y": wall.D[1, 1],
-        "Dbar_xy": 2.0 * wall.D[0, 1] + 4.0 * wall.D[2, 2],
-        "Cbar_x": wall.B[0, 0],
-        "Cbar_y": wall.B[1, 1],
-        "Cbar_xy": wall.B[0, 1],
-        "Kbar_xy": wall.B[2, 2],
+        "Ebar_x": stiffness.A[0, 0],
+        "Ebar_y": stiffness.A[1, 1],
+        "Ebar_xy": stiffness.A[0, 1],
+        "Gbar_xy": stiffness.A[2, 2],
+        "Dbar_x": stiffness.D[0, 0],
+        "Dbar_y": stiffness.D[1, 1],
+        "Dbar_xy": 2.0 * stiffness.D[0, 1] + 4.0 * stiffness.D[2, 2],
+        "Cbar_x": stiffness.B[0, 0],
+        "Cbar_y": stiffness.B[1, 1],
+        "Cbar_xy": stiffness.B[0, 1],
+        "Kbar_xy": stiffness.B[2, 2],
     }
 
 skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickness=0.080)
@@ -81,15 +81,15 @@ result = EnergyHomogenizer().compute(
     ),
 )
 surface = Cylinder(radius=120.0, length=300.0)
-sp8007 = sp8007_orthotropic_coefficients(result.law)
+sp8007 = sp8007_orthotropic_coefficients(result.stiffness)
 
 report = {
     "radius": surface.radius,
     "length": surface.length,
     "sp8007": sp8007,
     "transverse_shear": {
-        "Abar_xz": result.law.As[0, 0],
-        "Abar_yz": result.law.As[1, 1],
+        "Abar_xz": result.stiffness.As[0, 0],
+        "Abar_yz": result.stiffness.As[1, 1],
     },
     "h_over_R": result.validity.h_over_R,
     "p_over_R": result.validity.p_over_R,
@@ -103,16 +103,16 @@ artifact = to_yaml(
 )
 loaded = from_yaml(artifact)
 
-assert loaded.law.C8.shape == (8, 8)
-assert report["sp8007"]["Ebar_x"] == result.law.A[0, 0]
-assert report["sp8007"]["Dbar_xy"] == 2.0 * result.law.D[0, 1] + 4.0 * result.law.D[2, 2]
+assert loaded.stiffness.C8.shape == (8, 8)
+assert report["sp8007"]["Ebar_x"] == result.stiffness.A[0, 0]
+assert report["sp8007"]["Dbar_xy"] == 2.0 * result.stiffness.D[0, 1] + 4.0 * result.stiffness.D[2, 2]
 assert report["p_over_R"] == 8.0 / 120.0
 ```
 
 ## Isogrid Variant
 
 For an equilateral isogrid whose local `0` degree member family is axial,
-extract the same SP-8007 coefficient set from the homogenized wall law:
+extract the same SP-8007 coefficient set from the homogenized ABD stiffness:
 
 ```python
 isogrid_skin = isotropic_plate(
@@ -142,7 +142,7 @@ isogrid_result = EnergyHomogenizer().compute(
         response_length=80.0,
     ),
 )
-isogrid_sp8007 = sp8007_orthotropic_coefficients(isogrid_result.law)
+isogrid_sp8007 = sp8007_orthotropic_coefficients(isogrid_result.stiffness)
 
 assert abs(isogrid_sp8007["Ebar_x"] - isogrid_sp8007["Ebar_y"]) < 1.0e-6
 assert abs(isogrid_sp8007["Cbar_x"] - isogrid_sp8007["Cbar_y"]) < 1.0e-6
@@ -154,7 +154,7 @@ balanced in the local axial and circumferential directions.
 
 ## Symmetric Laminate Variant
 
-For a skin-only laminate cylinder, build the laminate wall law directly and
+For a skin-only laminate cylinder, build the laminate ABD stiffness directly and
 extract the same barred coefficients. This example uses a symmetric cross-ply
 stack so the membrane-bending coupling block is negligible.
 
@@ -168,7 +168,7 @@ carbon_epoxy = OrthotropicPlyMaterial(
     G23=0.50e6,
     density=0.058,
 )
-laminate_wall = laminate_plate(
+laminate_stiffness = laminate_plate(
     (
         Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
         Ply(material=carbon_epoxy, thickness=0.005, angle_rad=1.5707963267948966),
@@ -176,14 +176,14 @@ laminate_wall = laminate_plate(
         Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
     )
 )
-laminate_sp8007 = sp8007_orthotropic_coefficients(laminate_wall)
+laminate_sp8007 = sp8007_orthotropic_coefficients(laminate_stiffness)
 laminate_report = {
     "radius": surface.radius,
     "length": surface.length,
     "sp8007": laminate_sp8007,
     "transverse_shear": {
-        "Abar_xz": laminate_wall.As[0, 0],
-        "Abar_yz": laminate_wall.As[1, 1],
+        "Abar_xz": laminate_stiffness.As[0, 0],
+        "Abar_yz": laminate_stiffness.As[1, 1],
     },
 }
 
@@ -193,7 +193,7 @@ assert abs(laminate_report["sp8007"]["Cbar_y"]) < 1.0e-9
 
 For `Cylinder`, Tensyl's local `e1` direction is axial and local `e2` is
 circumferential, matching the SP-8007 `x/y` convention used in Section 4.1.2.
-The extraction above maps Tensyl's local wall law to the barred coefficients
+The extraction above maps Tensyl's local ABD stiffness to the barred coefficients
 used in the SP-8007 orthotropic-cylinder equations:
 
 | SP-8007 coefficient | Tensyl source |
@@ -210,7 +210,7 @@ used in the SP-8007 orthotropic-cylinder equations:
 | `Cbar_xy` | `B[0, 1]` |
 | `Kbar_xy` | `B[2, 2]` |
 
-This reduction assumes the wall is orthotropic in the axial/circumferential
+This reduction assumes the stiffness is orthotropic in the axial/circumferential
 frame used by SP-8007. If `A16`, `A26`, `B16`, `B26`, `B61`, `B62`, `D16`, or
-`D26` are not negligible, the wall is not represented by this coefficient set
+`D26` are not negligible, the stiffness is not represented by this coefficient set
 without an additional rotation or a more general shell-buckling workflow.

@@ -1,6 +1,6 @@
 # Tangent-Plane Homogenization
 
-Tangent-plane homogenization computes a local equivalent wall law for a
+Tangent-plane homogenization computes a local equivalent ABD stiffness for a
 repeating stiffened cell that is treated as flat in the local tangent plane.
 The cell is assembled in the local `e1`-`e2` plane. Surface curvature is handled
 later by geometry embedding and validity checks, not by the first local cell
@@ -19,14 +19,14 @@ Here:
 - $\mu_m$ is multiplicity;
 - $L_m$ is member length;
 - $\mathbf K_m$ is the member stiffness matrix;
-- $\mathbf T_m$ is the *member strain map*: it projects the wall's generalized
+- $\mathbf T_m$ is the *member strain map*: it projects the stiffness's generalized
   strain onto each member's beam strain. This map is the hinge of the whole
   method, and it is referenced by name in the diagnostics below.
 
 The equivalent tangent is:
 
 $$
-\mathbf C_\text{wall}
+\mathbf C_\text{stiffness}
 =
 \mathbf C_\text{skin}
 +
@@ -45,7 +45,7 @@ guidance and keeps the energy path as the executable reference.
 
 ## Inputs
 
-- `skin` is a `LinearABDWall` for the unstiffened skin or laminate.
+- `skin` is an `ABDStiffness` for the unstiffened skin or laminate.
 - `BeamSection` supplies centroidal beam stiffness products. Tensyl does not
   currently compute those values from cross-section dimensions.
 - `BeamMember` supplies member length, angle, eccentricity, and multiplicity
@@ -78,7 +78,7 @@ current API.
 
 ## Diagnostics
 
-The homogenizer returns `HomogenizationResult`, not just a wall law. The result
+The homogenizer returns `HomogenizationResult`, not just an ABD stiffness. The result
 records:
 
 - symmetry, positive-semidefinite status, rank, member count, and cell area;

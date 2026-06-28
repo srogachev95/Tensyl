@@ -1,7 +1,7 @@
 {
   "schema_name": "tensyl.external_workflow",
-  "schema_version": 1,
-  "artifact_type": "linear_abd_wall",
+  "schema_version": 2,
+  "artifact_type": "abd_stiffness",
   "producer": {
     "name": "tensyl",
     "version": "0.1.0"
@@ -128,7 +128,7 @@
         "g23"
       ],
       "engineering_shear": true,
-      "reference_surface": "wall_mid_surface",
+      "reference_surface": "mid_surface",
       "normal_positive": "+n"
     },
     "areal_mass": 2.7,
