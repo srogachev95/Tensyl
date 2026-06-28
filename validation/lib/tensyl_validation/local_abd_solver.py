@@ -381,3 +381,125 @@ def prepare_unidirectional_stiffened_probe_decks(
     )
     write_json(manifest_path, manifest.as_dict())
     return {"summary": summary_path, "manifest": manifest_path, "decks": case_work_dir}
+
+
+def _stress_block_summary(table: CalculixStressTable, element_set: str) -> dict[str, Any]:
+    filtered = table.table_for_set(element_set)
+    means = filtered.component_means()
+    return {
+        "element_set": element_set.upper(),
+        "row_count": len(filtered.rows),
+        "component_means": means,
+    }
+
+
+def run_unidirectional_stiffened_probe(
+    spec_path: Path,
+    *,
+    artifact_dir: Path,
+    work_dir: Path,
+    command: list[str] | None = None,
+    project_root: Path | None = None,
+) -> dict[str, Path]:
+    """Run non-promoted CalculiX probe decks for a unidirectional stiffener."""
+
+    root = Path.cwd() if project_root is None else project_root
+    inventory = check_solver_inventory(root)
+    if not inventory.ccx.ok or inventory.ccx.path is None:
+        msg = "CalculiX/CCX is required for unidirectional stiffener probe runs."
+        raise RuntimeError(msg)
+
+    loaded = load_validation_case(spec_path)
+    if not isinstance(loaded, LocalABDCase) or loaded.model != "unidirectional":
+        msg = "run_unidirectional_stiffened_probe requires a unidirectional case."
+        raise ValueError(msg)
+    data = _load_spec(spec_path)
+    load_cases = _extraction_load_cases(data)
+    prepared = prepare_unidirectional_stiffened_probe_decks(
+        spec_path,
+        artifact_dir=artifact_dir,
+        work_dir=work_dir,
+        command=command,
+    )
+    case_work_dir = prepared["decks"]
+
+    run_summaries: list[dict[str, Any]] = []
+    raw_outputs: list[Path] = []
+    for extraction_case in load_cases:
+        subprocess.run(
+            [inventory.ccx.path, extraction_case.case_id],
+            cwd=case_work_dir,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        dat_path = case_work_dir / f"{extraction_case.case_id}.dat"
+        raw_outputs.append(dat_path)
+        table = parse_calculix_stress_dat(dat_path.read_text(encoding="utf-8"))
+        skin = _stress_block_summary(table, "SKIN")
+        stiffener = _stress_block_summary(table, "STIFFENER")
+        run_summaries.append(
+            {
+                "case_id": extraction_case.case_id,
+                "component": extraction_case.component,
+                "magnitude": extraction_case.magnitude,
+                "dat_path": str(dat_path),
+                "stress_blocks": {
+                    "SKIN": skin,
+                    "STIFFENER": stiffener,
+                },
+                "checks": {
+                    "skin_stress_rows_present": skin["row_count"] > 0,
+                    "stiffener_stress_rows_present": stiffener["row_count"] > 0,
+                },
+            }
+        )
+
+    run_summary_path = artifact_dir / "probe_run_summary.json"
+    run_manifest_path = artifact_dir / "probe_run_manifest.json"
+    write_json(
+        run_summary_path,
+        {
+            "schema_version": "tensyl.validation.local-abd-probe-run.v1",
+            "case_name": loaded.name,
+            "model": loaded.model,
+            "status": "solver_probe_completed_not_promoted",
+            "solver_extraction_promoted": False,
+            "load_case_count": len(run_summaries),
+            "load_cases": run_summaries,
+            "notes": [
+                "This run verifies executable CalculiX probe decks and stress block presence.",
+                "It is not an FE-vs-Tensyl stiffness comparison.",
+            ],
+        },
+    )
+    manifest = ArtifactManifest(
+        case_name=loaded.name,
+        command=[] if command is None else command,
+        inputs=[spec_path],
+        outputs=[run_summary_path, run_manifest_path],
+        metadata={
+            "case_type": "local_abd",
+            "model": loaded.model,
+            "artifact_role": "calculix_probe_run",
+            "solver_required": True,
+            "solver_extraction_promoted": False,
+            "ccx": inventory.ccx.as_dict(),
+            "raw_work_dir": str(case_work_dir),
+            "raw_outputs": [str(path) for path in raw_outputs],
+            "unsupported_blocks": ["A", "B", "D", "As"],
+            "reason_not_promoted": (
+                "Probe runs verify deck execution and stress block availability only; "
+                "stiffness extraction still requires an audited beam-section mapping."
+            ),
+        },
+    )
+    write_json(run_manifest_path, manifest.as_dict())
+    return {
+        "probe_summary": prepared["summary"],
+        "probe_manifest": prepared["manifest"],
+        "run_summary": run_summary_path,
+        "run_manifest": run_manifest_path,
+        "decks": case_work_dir,
+    }

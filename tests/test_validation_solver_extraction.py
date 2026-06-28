@@ -2,11 +2,14 @@ from __future__ import annotations
 
 # ruff: noqa: E402,I001
 
+import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import json
 import numpy as np
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "validation" / "lib"))
@@ -15,6 +18,7 @@ from tensyl_validation.calculix.parsers import CalculixStressRow, CalculixStress
 from tensyl_validation.local_abd_solver import (  # noqa: E402
     prepare_unidirectional_stiffened_probe_decks,
     extract_skin_only_abd6_from_stress_tables,
+    run_unidirectional_stiffened_probe,
 )
 
 
@@ -82,3 +86,64 @@ def test_unidirectional_stiffened_probe_writes_non_promoted_manifest(tmp_path: P
     assert manifest["metadata"]["solver_required"] is False
     assert manifest["metadata"]["unsupported_blocks"] == ["A", "B", "D", "As"]
     assert (outputs["decks"] / "epsilon_11.inp").exists()
+
+
+def test_unidirectional_stiffened_probe_run_summarizes_stress_blocks(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import tensyl_validation.local_abd_solver as solver
+
+    spec = ROOT / "validation" / "cases" / "local_abd" / "unidirectional.yml"
+    ccx = SimpleNamespace(
+        ok=True,
+        path="/fake/ccx",
+        as_dict=lambda: {"ok": True, "path": "/fake/ccx"},
+    )
+    monkeypatch.setattr(
+        solver,
+        "check_solver_inventory",
+        lambda _root: SimpleNamespace(ccx=ccx),
+    )
+
+    def fake_run(
+        cmd: list[str],
+        *,
+        cwd: Path,
+        check: bool,
+        capture_output: bool,
+        text: bool,
+        timeout: int,
+    ) -> subprocess.CompletedProcess[str]:
+        del check, capture_output, text, timeout
+        case_id = cmd[1]
+        (cwd / f"{case_id}.dat").write_text(
+            """
+            stresses (elem, integ.pnt.,sxx,syy,szz,sxy,sxz,syz) for set SKIN and time 1.0
+              1 1 10.0 2.0 0.0 3.0 0.0 0.0
+            stresses (elem, integ.pnt.,sxx,syy,szz,sxy,sxz,syz) for set STIFFENER and time 1.0
+            101 1 20.0 0.0 0.0 0.0 0.0 0.0
+            """,
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(cmd, 0, "", "")
+
+    monkeypatch.setattr(solver, "subprocess", SimpleNamespace(run=fake_run))
+
+    outputs = run_unidirectional_stiffened_probe(
+        spec,
+        artifact_dir=tmp_path / "artifacts",
+        work_dir=tmp_path / "raw",
+        command=["run_local_abd_solver.py", str(spec), "--run-probe-decks"],
+        project_root=ROOT,
+    )
+
+    summary = json.loads(outputs["run_summary"].read_text(encoding="utf-8"))
+    manifest = json.loads(outputs["run_manifest"].read_text(encoding="utf-8"))
+
+    assert summary["status"] == "solver_probe_completed_not_promoted"
+    assert summary["load_case_count"] == 6
+    assert summary["load_cases"][0]["stress_blocks"]["SKIN"]["row_count"] == 1
+    assert summary["load_cases"][0]["stress_blocks"]["STIFFENER"]["row_count"] == 1
+    assert manifest["metadata"]["artifact_role"] == "calculix_probe_run"
+    assert manifest["metadata"]["solver_extraction_promoted"] is False
