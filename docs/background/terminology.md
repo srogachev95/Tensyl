@@ -2,18 +2,22 @@
 
 ## ABD Stiffness
 
-An ABD stiffness is a local constitutive relation between generalized strains
-and generalized stress resultants on a plate or shell reference surface. It is
-always expressed in an explicit local frame
-$\{\mathbf e_1,\mathbf e_2,\mathbf n\}$.
+An ABD stiffness is the local rule that turns plate or shell deformation into
+force and moment resultants. Given membrane strain, curvature, and transverse
+shear measured on a reference surface, it answers: what membrane forces, bending
+moments, and shear resultants does this wall produce?
 
-Tensyl says "stiffness" instead of only "plate," "shell," or "laminate" because the
-same local constitutive stiffness can be embedded in a flat panel, a cylindrical
-barrel, a dome, or another shell midsurface. The ABD stiffness is local mechanics;
-the shell surface supplies geometry and kinematics.
+That rule only has meaning in a stated local frame
+$\{\mathbf e_1,\mathbf e_2,\mathbf n\}$. The same numeric stiffness can describe
+a flat panel, a cylindrical barrel, a dome, or another shell midsurface, but only
+after the local directions and reference surface are clear. The ABD stiffness
+owns the local mechanics; the surface owns the geometry and shell kinematics.
 
-The first concrete stiffness class is `ABDStiffness`. It stores an $8 \times 8$
-linear tangent whose block views are `A`, `B`, `D`, and `As`.
+Tensyl uses the word "stiffness" deliberately. This object is not the whole
+plate, shell, laminate, or solver model. It is the constitutive law those models
+can consume. The first concrete class is `ABDStiffness`, which stores one
+canonical $8 \times 8$ linear tangent with read-only block views `A`, `B`, `D`,
+and `As`.   
 
 ## Concept Model
 
