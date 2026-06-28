@@ -12,6 +12,10 @@ _CASE = re.compile(r"^\s*(?:case|load(?:[-_ ]case)?)\s*(?:=|:|\s)\s*([A-Za-z][A-
 _COMPONENT = re.compile(r"\b(?:RF|RM)[1-6]\b", re.IGNORECASE)
 _FORCE_HEADER = re.compile(r"\bforces?\s*\(([^)]*)\)", re.IGNORECASE)
 _MOMENT_HEADER = re.compile(r"\bmoments?\s*\(([^)]*)\)", re.IGNORECASE)
+_STRESS_HEADER = re.compile(
+    r"\bstresses?\s*\([^)]*\)\s+for\s+set\s+([A-Za-z][A-Za-z0-9_-]*)\b",
+    re.IGNORECASE,
+)
 _NUMERIC_TOKEN = re.compile(rf"^{_NUMBER}$")
 
 
@@ -74,6 +78,7 @@ class CalculixStressRow:
     sxy: float
     sxz: float
     syz: float
+    element_set: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -85,6 +90,7 @@ class CalculixStressRow:
             "sxy": self.sxy,
             "sxz": self.sxz,
             "syz": self.syz,
+            "element_set": self.element_set,
         }
 
 
@@ -94,6 +100,20 @@ class CalculixStressTable:
 
     load_case: str | None
     rows: tuple[CalculixStressRow, ...]
+
+    def rows_for_set(self, element_set: str) -> tuple[CalculixStressRow, ...]:
+        """Return rows from one CalculiX element set."""
+
+        key = element_set.upper()
+        return tuple(row for row in self.rows if (row.element_set or "").upper() == key)
+
+    def table_for_set(self, element_set: str) -> CalculixStressTable:
+        """Return a stress table filtered to one CalculiX element set."""
+
+        return CalculixStressTable(
+            load_case=self.load_case,
+            rows=self.rows_for_set(element_set),
+        )
 
     def component_means(self) -> dict[str, float]:
         """Return mean stress components over all parsed rows."""
@@ -177,6 +197,7 @@ def parse_calculix_stress_dat(text: str) -> CalculixStressTable:
     load_case: str | None = None
     rows: list[CalculixStressRow] = []
     in_stress_block = False
+    active_element_set: str | None = None
 
     for raw_line in text.splitlines():
         line = raw_line.strip()
@@ -189,17 +210,24 @@ def parse_calculix_stress_dat(text: str) -> CalculixStressTable:
             continue
         if line.startswith("#") or line.startswith("**"):
             continue
+        stress_header = _STRESS_HEADER.search(line)
+        if stress_header:
+            in_stress_block = True
+            active_element_set = stress_header.group(1).upper()
+            continue
         if line.lower().startswith("stresses "):
             in_stress_block = True
+            active_element_set = None
             continue
         if not in_stress_block:
             continue
-        row = _parse_stress_row(line)
+        row = _parse_stress_row(line, element_set=active_element_set)
         if row is not None:
             rows.append(row)
             continue
         if rows and re.search(r"[A-Za-z]", line):
             in_stress_block = False
+            active_element_set = None
 
     return CalculixStressTable(load_case=load_case, rows=tuple(rows))
 
@@ -368,7 +396,7 @@ def _numeric_values(parts: list[str]) -> list[float]:
     return values
 
 
-def _parse_stress_row(line: str) -> CalculixStressRow | None:
+def _parse_stress_row(line: str, *, element_set: str | None) -> CalculixStressRow | None:
     parts = _split_dat_row(line)
     if len(parts) < 8 or not parts[0].isdigit() or not parts[1].isdigit():
         return None
@@ -384,4 +412,5 @@ def _parse_stress_row(line: str) -> CalculixStressRow | None:
         sxy=values[3],
         sxz=values[4],
         syz=values[5],
+        element_set=element_set,
     )
