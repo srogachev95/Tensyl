@@ -4,6 +4,13 @@ Tensyl separates local ABD stiffnesses from shell geometry. Geometry supplies su
 points, frames, metrics, curvature, and integration measures. It does not change
 the tangent-plane ABD stiffness.
 
+That last sentence is important enough to say plainly. A barrel, cone, sphere,
+or ellipsoid changes where the tangent plane lives, how its local axes are
+oriented, and which curvature radius should be used in validity checks. It does
+not automatically add shell-curvature terms to a constant ABD matrix. The matrix
+changes only when the stiffness field supplies different local stiffness data at
+different surface points.
+
 ## Built-In Surfaces
 
 Available surfaces include:
@@ -45,6 +52,30 @@ generally orthogonal, so `e1` follows the meridional coordinate direction and
 `e2` is the right-handed orthonormal tangent completion. `ConicalFrustum` uses
 `(x, theta)` and excludes apex singularities.
 
+## What Changes When You Choose A Surface
+
+Choosing a surface changes the geometric context around the ABD law:
+
+- `frame`: the local directions for membrane strain, curvature, transverse
+  shear, resultants, stiffener angle, and eccentricity sign;
+- `metric` and `jacobian`: the coordinate-to-physical distance and area
+  information a later surface workflow needs;
+- `curvature`, `principal_curvatures`, and `min_radius`: the curvature data used
+  to judge whether the tangent-plane approximation is credible for the chosen
+  response.
+
+For a `Cylinder`, `e1` is axial, `e2` is circumferential, and `n` points outward.
+The positive minimum radius is the cylinder radius. Attaching a constant
+orthogrid ABD stiffness to the cylinder therefore changes the frame label and
+validity context, not the numeric `C8` matrix.
+
+For an `Ellipsoid`, the local frame and curvature change from point to point.
+That does not make an isotropic constant-field `C8` vary. It does mean a
+pointwise stiffened-cell model must define each local cell in the current surface
+frame. If the physical stiffener pitch, angle, section, or eccentricity changes
+over the ellipsoid, encode that through `HomogenizedStiffnessField` or sampled
+`ABDAtlas` values.
+
 ## Constant Stiffness Field
 
 ```python
@@ -80,6 +111,10 @@ interpolated = atlas.stiffness_at(surface, 75.0, 0.5 * math.pi)
 
 Atlas interpolation is a convenience for linear ABD stiffnesses. Interpolation error
 metadata should be reviewed before relying on a coarse grid.
+
+The atlas interpolates matrix samples; it does not derive a stiffener layout from
+the surface. On a curved or nonuniform surface, choose sample points that match
+the physical variation you intend to represent.
 
 ## Choosing A Response Length
 

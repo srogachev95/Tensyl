@@ -43,6 +43,73 @@ This follows the equivalent-plate idea used by Nemeth for stiffened laminated
 plates and plate-like lattices. Tensyl treats those formulas as mechanics
 guidance and keeps the energy path as the executable reference.
 
+## How Geometry Enters The ABD Law
+
+The tangent-plane homogenizer computes a local constitutive law. At a surface
+point, the shell or plate generalized strains and resultants are interpreted in
+the point's local right-handed frame:
+
+$$
+\{\mathbf e_1,\mathbf e_2,\mathbf n\}.
+$$
+
+The local law remains the same kind of object everywhere:
+
+$$
+\mathbf r = \mathbf C_\text{stiffness}\boldsymbol\eta.
+$$
+
+Defining a barrel, dome, cone, or ellipsoid does not by itself bend the
+stiffener cell or insert curvature terms into the matrix above. Geometry enters
+through three separate mechanisms:
+
+- the surface supplies the local frame, metric, curvature, Jacobian, and
+  positive minimum radius used to interpret and audit the law;
+- a stiffness field decides which ABD stiffness is present at each surface
+  point;
+- a later shell, buckling, or sizing workflow uses the surface geometry to
+  form equilibrium, loads, boundary conditions, and failure checks.
+
+That separation is deliberate. The homogenizer answers a local constitutive
+question: "what resultants follow from these generalized strains in this tangent
+plane?" The surface answers a geometric question: "where is that tangent plane,
+which directions are local 1/2/n, and how curved is the midsurface?" A solver
+answers the global equilibrium question. Mixing those jobs would make the
+numbers harder to trust, and not in an interesting way.
+
+The public stiffness-field helpers implement this separation directly:
+
+- `ConstantStiffnessField` returns the same canonical `C8` tangent at each
+  point and rebinds it to `surface.point_at(u, v).frame`. The numeric matrix is
+  unchanged; the metadata and local frame describe where and how to read it.
+- `HomogenizedStiffnessField` calls a user-supplied cell factory at each surface
+  point. The ABD stiffness can change pointwise if the factory changes pitch,
+  member angle, eccentricity, section, material, or laminate with the local
+  geometry.
+- `ABDAtlas` stores sampled linear ABD stiffnesses and interpolates the
+  canonical `C8` payload. The interpolated tangent is then bound to the target
+  surface-point frame.
+
+For a cylinder, `e1` is axial, `e2` is circumferential, and `n` is outward. A
+longitudinal stringer therefore has angle `0`, and a ring rib has angle
+`pi/2`. The cylinder radius does not change the constant-field tangent, but it
+does set the curvature scale used by validity ratios such as
+$p/R_\text{min}$ and $h_s/R_\text{min}$.
+
+For an ellipsoid, the same rule holds, but the frame and curvature vary over the
+surface. Uniform parameter spacing is not uniform physical pitch on a triaxial
+ellipsoid. If stiffener pitch or orientation is meant to follow physical
+distance, the pointwise cell factory or atlas samples must encode that choice.
+Tensyl will not infer a geodesic stiffener layout from the word "ellipsoid".
+
+This is why the method is generalizable under its stated assumptions. Any smooth
+surface that can provide a local tangent frame and curvature scale can host the
+same local ABD law. The approximation is appropriate when the modeled response
+is scale separated from stiffener height, stiffener pitch, and local curvature,
+as discussed in [Validity Limits](validity.md). The mechanics basis follows the
+equivalent-plate, first-order plate/shell, differential-geometry, and
+homogenization sources listed in [References](../references.md).
+
 ## Inputs
 
 - `skin` is an `ABDStiffness` for the unstiffened skin or laminate.
