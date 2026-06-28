@@ -117,6 +117,11 @@ class ThinWallSection:
         properties = _section_properties(segments)
         metadata = {"source": "thin_wall_section"}
         metadata.update(self.metadata)
+        # Convert geometry to centroidal stiffness products because the
+        # homogenizer consumes BeamSection values, not raw wall coordinates.
+        # Optional shear corrections are deliberately opt-in. Missing
+        # corrections become None and later appear as homogenizer assumptions
+        # instead of guessed stiffness.
         section = BeamSection(
             EA=self.material.E * properties.area,
             EIy=self.material.E * properties.Iy,
@@ -156,6 +161,7 @@ class ThinWallSection:
 
 
 def _section_properties(segments: tuple[ThinWallSegment, ...]) -> SectionProperties:
+    # First pass finds the centroid from thin rectangular segment midline areas.
     area = 0.0
     first_y = 0.0
     first_z = 0.0
@@ -183,6 +189,8 @@ def _section_properties(segments: tuple[ThinWallSegment, ...]) -> SectionPropert
         unit_z = (segment.end_z - segment.start_z) / length
         normal_y = -unit_z
         normal_z = unit_y
+        # Segment inertia is computed in its local along/across axes and then
+        # rotated into the member-local y/z axes.
         along = length**3 * thickness / 12.0
         across = length * thickness**3 / 12.0
         m_yy = along * unit_y**2 + across * normal_y**2
@@ -190,9 +198,12 @@ def _section_properties(segments: tuple[ThinWallSegment, ...]) -> SectionPropert
         m_yz = along * unit_y * unit_z + across * normal_y * normal_z
         dy = mid_y - centroid_y
         dz = mid_z - centroid_z
+        # Shift every segment from its own centroid to the section centroid.
         iz += m_yy + segment_area * dy**2
         iy += m_zz + segment_area * dz**2
         iyz += m_yz + segment_area * dy * dz
+        # Open-section St Venant torsion approximation. Closed-cell torsion and
+        # restrained warping belong in an external section solver for now.
         torsion += length * thickness**3 / 3.0
 
     return SectionProperties(
@@ -218,7 +229,8 @@ def thin_wall_section(
 
     Segment coordinates use the member-local ``(y, z)`` section plane. The
     returned ``centroid_z`` is measured from the same ``z = 0`` construction
-    datum used by the supplied segments.
+    datum used by the supplied segments; shift it before using it as a member
+    eccentricity when the wall reference surface is somewhere else.
     """
 
     return ThinWallSection(
@@ -482,6 +494,8 @@ def hat_section(
 
 
 def _metadata(kind: str, metadata: Mapping[str, Any] | None) -> dict[str, Any]:
+    # Keep the human-facing named constructor in metadata while allowing callers
+    # to add project-specific provenance.
     values = {"section_geometry": kind}
     if metadata is not None:
         values.update(metadata)
