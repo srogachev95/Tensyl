@@ -1,8 +1,8 @@
-# SP-8007 Data Prep Example
+# SP-8007 Data Prep
 
-This example prepares equivalent stiffness data that an analyst could hand to a
-separate SP-8007-style cylinder workflow. Tensyl does not compute SP-8007
-knockdown factors or margins.
+This worked handoff prepares equivalent stiffness data that an analyst could
+give to a separate SP-8007-style cylinder workflow. Tensyl does not compute
+SP-8007 knockdown factors or margins.
 
 ```python
 from tensyl import (

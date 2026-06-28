@@ -96,4 +96,4 @@ source for stiffened equivalent-plate stiffness concepts. Tensyl's role here is
 to compute and preserve local equivalent-ABD stiffness data for use by another
 calculation.
 
-Next: [SP-8007 Data Prep Example](../examples/sp8007-data-prep.md).
+Next: [SP-8007 Data Prep](sp8007-data-prep.md).
