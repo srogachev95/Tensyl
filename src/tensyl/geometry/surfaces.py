@@ -42,6 +42,8 @@ def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -
 
 
 def _principal_curvatures(metric: FloatArray, curvature: FloatArray) -> tuple[float, float]:
+    # Principal curvatures are eigenvalues of the shape operator I^-1 II. The
+    # metric solve avoids explicitly forming a fragile inverse.
     values = np.linalg.eigvals(np.linalg.solve(metric, curvature))
     real_values = np.real_if_close(values, tol=1000)
     if np.iscomplexobj(real_values):
@@ -52,6 +54,8 @@ def _principal_curvatures(metric: FloatArray, curvature: FloatArray) -> tuple[fl
 
 
 def _min_radius(principal_curvatures: tuple[float, float]) -> float:
+    # Flat directions have infinite radius; they should not dominate the
+    # minimum-radius validity check for cylinders, cones, or plates.
     radii = [
         np.inf if abs(curvature) <= _TOLERANCE else 1.0 / abs(curvature)
         for curvature in principal_curvatures
@@ -137,6 +141,9 @@ class FlatPlate:
             msg = "e1 and e2 must not be parallel."
             raise ValueError(msg)
         normal /= norm
+        # Frame2D re-orthonormalizes e2 against e1 and n, so downstream code
+        # sees a right-handed local basis even when the input axes are only
+        # approximately orthogonal.
         frame = Frame2D(e1=e1, e2=e2, n=normal, label=self.label)
         object.__setattr__(self, "origin", _readonly_vector(self.origin, name="origin"))
         object.__setattr__(self, "e1", frame.e1)
@@ -185,6 +192,8 @@ class Cylinder:
         radius = self.radius
         c = float(np.cos(theta))
         s = float(np.sin(theta))
+        # e2 is chosen opposite the raw theta tangent so e1, e2, n form the
+        # same right-handed convention used by the shell stiffness frame.
         e1 = np.array([1.0, 0.0, 0.0])
         e2 = np.array([0.0, s, -c])
         normal = np.array([0.0, c, s])
@@ -223,6 +232,7 @@ class Sphere:
         phi = _finite(u, name="u")
         theta = _finite(v, name="v")
         if phi <= _TOLERANCE or phi >= np.pi - _TOLERANCE:
+            # The polar chart has no unique azimuth direction at either pole.
             msg = "spherical coordinates are singular at the poles."
             raise ValueError(msg)
         radius = self.radius
@@ -279,6 +289,8 @@ class SphericalCap:
         phi = _finite(u, name="u")
         theta = _finite(v, name="v")
         if phi <= _TOLERANCE or phi >= self.half_angle_rad - _TOLERANCE:
+            # Rejecting the cap boundary keeps the single chart smooth and
+            # avoids pretending boundary conditions are part of geometry data.
             msg = "spherical coordinates are singular at the cap pole or boundary."
             raise ValueError(msg)
         radius = self.radius
@@ -347,6 +359,8 @@ class ConicalFrustum:
         x = _finite(u, name="u")
         radius = self.radius_start + self.slope * x
         if radius <= _TOLERANCE:
+            # A cone apex is not a smooth shell midsurface point for the local
+            # tangent-plane constitutive embedding used here.
             msg = "conical frustum radius is singular or nonpositive at this point."
             raise ValueError(msg)
         return float(radius)
@@ -420,6 +434,8 @@ class Ellipsoid:
         e1 = tangent_phi / float(np.linalg.norm(tangent_phi))
         e2 = np.cross(normal, e1)
 
+        # Unlike the sphere, the ellipsoid curvature is not constant. Compute
+        # the first and second fundamental forms at the sample point.
         r_phiphi = np.array([-self.a * sp * ct, -self.b * sp * st, -self.c * cp])
         r_phitheta = np.array([-self.a * cp * st, self.b * cp * ct, 0.0])
         r_thetatheta = np.array([-self.a * sp * ct, -self.b * sp * st, 0.0])

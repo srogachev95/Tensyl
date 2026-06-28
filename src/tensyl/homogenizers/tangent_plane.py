@@ -167,6 +167,9 @@ def _beam_strain_map(eccentricity: float) -> FloatArray:
     """Map member-frame generalized strains into simplified beam strains."""
 
     z = float(eccentricity)
+    # This is the shared first-approximation member kinematics used by both the
+    # energy and direct EC paths. Agreement between those paths checks assembly,
+    # not the truth of this strain map.
     transform = np.zeros((6, 8), dtype=np.float64)
     transform[0, 0] = 1.0
     transform[0, 3] = z
@@ -181,6 +184,9 @@ def _beam_strain_map(eccentricity: float) -> FloatArray:
 
 
 def _beam_stiffness(section: BeamSection) -> FloatArray:
+    # Optional shear stiffnesses are intentionally zeroed when omitted. The
+    # result assumptions report that modeling choice instead of silently
+    # inventing a shear correction.
     stiffness = np.zeros((6, 6), dtype=np.float64)
     stiffness[0, 0] = section.EA
     if section.kGAy is not None:
@@ -205,6 +211,8 @@ def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
 
     transform = _member_transform(member)
     stiffness = _beam_stiffness(member.section)
+    # The transform maps wall generalized strain to member generalized strain,
+    # so the equivalent wall tangent contribution is T.T K T.
     tangent = transform.T @ stiffness @ transform
     tangent = 0.5 * (tangent + tangent.T)
     tangent.setflags(write=False)
@@ -214,6 +222,9 @@ def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
 def member_tangent_contribution(member: BeamMember, *, cell_area: float) -> FloatArray:
     """Return one canonical member contribution to the stiffness tangent."""
 
+    # Energy is accumulated over member length, then normalized by repeated cell
+    # area so the result has wall-stiffness units rather than beam-stiffness
+    # units.
     density = member.multiplicity * member.length / cell_area
     tangent = density * member_tangent_density(member)
     tangent.setflags(write=False)
@@ -259,6 +270,9 @@ def _diagnostics(
     member_count: int,
     cell_area: float | None,
 ) -> dict[str, Any]:
+    # Rank deficiency is not automatically a hard failure: some idealized cells
+    # have finite but incomplete stiffness. Surface the condition as validity
+    # context so callers can decide whether it is acceptable.
     matrix = _readonly_matrix(tangent, shape=(8, 8), name="tangent")
     symmetric = bool(np.allclose(matrix, matrix.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0))
     eigenvalues = np.linalg.eigvalsh(0.5 * (matrix + matrix.T))
@@ -277,6 +291,8 @@ def _diagnostics(
 
 
 def _coupling_ratio(stiffness: ABDStiffness) -> float:
+    # Normalize B by the geometric mean of A and D norms to produce a
+    # scale-free warning metric for membrane-bending coupling.
     norm_A = float(np.linalg.norm(stiffness.A, ord="fro"))
     norm_D = float(np.linalg.norm(stiffness.D, ord="fro"))
     norm_B = float(np.linalg.norm(stiffness.B, ord="fro"))
@@ -298,6 +314,8 @@ def _validity_report(
     if context is None:
         warnings.append("validity_context_missing")
     else:
+        # These ratios are scale-separation checks for using a flat tangent
+        # cell inside a curved or spatially varying shell model.
         if context.characteristic_height is not None and context.min_radius is not None:
             h_over_R = context.characteristic_height / context.min_radius
             if h_over_R >= thresholds.h_over_R:
@@ -355,6 +373,8 @@ def _stiffness_from_tangent(
     skin: ABDStiffness,
     metadata: dict[str, Any],
 ) -> ABDStiffness:
+    # Homogenizer assembly should already be symmetric, but symmetrizing the
+    # numerical copy keeps roundoff from becoming a false mechanics failure.
     matrix = 0.5 * (np.array(tangent, dtype=np.float64, copy=True) + np.array(tangent).T)
     return ABDStiffness.from_tangent(
         matrix,
@@ -388,6 +408,8 @@ class EnergyHomogenizer:
             )
             raise HomogenizationInputError(msg)
         tangent = np.array(cell.skin.C8, dtype=np.float64, copy=True)
+        # The skin is the baseline wall law; members add energy-equivalent
+        # stiffness over the repeated tangent-plane cell.
         for member in cell.members:
             tangent += member_tangent_contribution(member, cell_area=cell.area)
         metadata = dict(cell.skin.metadata)
@@ -437,6 +459,8 @@ class DirectECHomogenizer:
             )
             raise HomogenizationInputError(msg)
         tangent = np.array(skin.C8, dtype=np.float64, copy=True)
+        # The direct family path uses length density multiplicity / spacing in
+        # place of finite member length divided by finite cell area.
         for family in family_tuple:
             tangent += (family.multiplicity / family.spacing) * member_tangent_density(family)
         metadata = dict(skin.metadata)

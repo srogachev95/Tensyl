@@ -141,6 +141,8 @@ def _cell_frame_and_convention(
     frame: Frame2D | None,
     convention: StrainConvention | None,
 ) -> tuple[Frame2D, StrainConvention]:
+    # Cell helpers default to the skin's frame and convention because the
+    # homogenizer assumes skin and stiffeners are assembled in one local basis.
     cell_frame = skin.frame if frame is None else frame
     cell_convention = skin.convention if convention is None else convention
     return cell_frame, cell_convention
@@ -166,6 +168,8 @@ def _paired_oblique_members(
     positive_label: str,
     negative_label: str,
 ) -> tuple[BeamMember, BeamMember]:
+    # Several Nemeth-style cells use mirrored oblique members. Keep the pairing
+    # in one helper so opposite material/eccentricity overrides stay symmetric.
     return (
         BeamMember(
             section,
@@ -221,6 +225,8 @@ def graph_unit_cell(
         end = node_tuple[edge.end]
         dx = end.x - start.x
         dy = end.y - start.y
+        # Graph input is only a convenience layer. The canonical homogenizer
+        # consumes length and angle, so all graph geometry is collapsed here.
         length = float(np.hypot(dx, dy))
         members.append(
             BeamMember(
@@ -261,6 +267,8 @@ def unidirectional_cell(
 
     d = _positive(spacing, name="spacing")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    # A unit-length strip gives length / area = 1 / spacing, matching the
+    # continuous family density used by the direct EC path.
     member = BeamMember(
         section=member_section,
         length=1.0,
@@ -299,6 +307,8 @@ def orthogrid_cell(
     ds = _positive(stringer_spacing, name="stringer_spacing")
     dr = _positive(rib_spacing, name="rib_spacing")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    # Each member spans the opposite cell pitch, so length / area reduces to
+    # the expected 1 / family spacing for stringers and ribs.
     return CanonicalUnitCell(
         area=ds * dr,
         skin=skin,
@@ -342,6 +352,9 @@ def equilateral_isogrid_cell(
     p = _positive(pitch, name="pitch")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     height = np.sqrt(3.0) * p / 2.0
+    # The three directions share one parallelogram cell area. Multiplicity is
+    # left at one because the cell already contains one representative member
+    # from each family.
     return CanonicalUnitCell(
         area=p * height,
         skin=skin,
@@ -399,6 +412,8 @@ def braced_orthogrid_cell(
         msg = "brace_pattern must be 'double' or 'single'."
         raise ValueError(msg)
     brace_multiplier = 1.0 if brace_pattern == "double" else 0.5
+    # A single alternating diagonal contributes half of a crossed-brace pair in
+    # an averaged repeated cell.
     diagonal_length = float(np.hypot(ds, dr))
     diagonal_angle = float(np.arctan2(dr, ds))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -452,6 +467,8 @@ def isosceles_triangle_grid_cell(
     diagonal_length = float(np.hypot(0.5 * b, h))
     diagonal_angle = float(np.arctan2(h, 0.5 * b))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    # The base member plus mirrored diagonals represent one triangular repeat
+    # area in the local tangent plane.
     return CanonicalUnitCell(
         area=b * h,
         skin=skin,
@@ -495,6 +512,8 @@ def kagome_cell(
     diagonal_length = 2.0 * float(np.hypot(0.5 * b, h))
     diagonal_angle = float(np.arctan2(2.0 * h, b))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    # The doubled stringer multiplicity reflects two horizontal members in the
+    # Kagome repeat area without duplicating identical BeamMember objects.
     return CanonicalUnitCell(
         area=2.0 * b * h,
         skin=skin,
@@ -547,6 +566,8 @@ def hexagonal_grid_cell(
     diagonal_length = 0.5 * float(np.hypot(a, b))
     diagonal_angle = float(np.arctan2(b, a))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    # The half-width/rise/rib-length parameters follow the legacy Nemeth cell
+    # sketch; the metadata preserves those construction dimensions.
     return CanonicalUnitCell(
         area=2.0 * a * (b + c),
         skin=skin,

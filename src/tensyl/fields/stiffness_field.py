@@ -45,6 +45,8 @@ def _increasing(values: tuple[float, ...], *, name: str) -> tuple[float, ...]:
 
 
 def _metadata_for_surface(metadata: Mapping[str, Any], point: SurfacePoint) -> dict[str, Any]:
+    # Field evaluation binds an otherwise reusable wall law to a concrete
+    # surface point. Preserve caller metadata, then stamp the local coordinates.
     combined = dict(metadata)
     combined.update(
         {
@@ -70,6 +72,8 @@ def _bind_stiffness_to_point(
 ) -> ABDStiffness:
     metadata = _metadata_for_surface(stiffness.metadata, point)
     metadata["source"] = source
+    # The numeric C8 is unchanged here. The new object says "read this same
+    # local law in the frame supplied by surface.point_at(u, v)."
     return ABDStiffness.from_tangent(
         stiffness.C8,
         frame=point.frame,
@@ -143,6 +147,8 @@ class HomogenizedStiffnessField:
 
         point = self.surface.point_at(u, v)
         cell = self.cell_factory(self.surface, point)
+        # Pointwise factories are allowed to vary pitch, section, or material,
+        # but they must still return a cell expressed in the surface point frame.
         if cell.frame != point.frame:
             msg = "cell frame must match the surface point frame."
             raise ValueError(msg)
@@ -170,6 +176,8 @@ def _cell_index(values: tuple[float, ...], value: float, *, name: str) -> tuple[
         msg = f"{name} is outside the atlas grid."
         raise ValueError(msg)
     if checked == values[-1]:
+        # The right boundary belongs to the final cell with unit local
+        # coordinate; otherwise searchsorted would create an out-of-range cell.
         return len(values) - 2, 1.0
     index = int(np.searchsorted(values, checked, side="right") - 1)
     left = values[index]
@@ -178,6 +186,8 @@ def _cell_index(values: tuple[float, ...], value: float, *, name: str) -> tuple[
 
 
 def _corner_warnings(corners: tuple[ABDStiffness, ...]) -> tuple[str, ...]:
+    # Interpolation can blend stiffness values but not the meaning of warning
+    # codes. Carry the union forward for provenance.
     warnings: set[str] = set()
     for stiffness in corners:
         validity = stiffness.validity
@@ -187,6 +197,8 @@ def _corner_warnings(corners: tuple[ABDStiffness, ...]) -> tuple[str, ...]:
 
 
 def _shared_validity(corners: tuple[ABDStiffness, ...]) -> Any:
+    # A single validity object is meaningful only when every corner agrees.
+    # Mixed validity remains visible through metadata corner_warnings.
     first = corners[0].validity
     if all(stiffness.validity == first for stiffness in corners):
         return first
@@ -210,6 +222,9 @@ def _sample_digest(
     v_values: tuple[float, ...],
     stiffnesses: tuple[tuple[ABDStiffness, ...], ...],
 ) -> str:
+    # The digest fingerprints the numeric samples and interpretation metadata,
+    # so downstream artifacts can detect stale atlases without storing the whole
+    # source field.
     digest = hashlib.sha256()
     _update_hash_with_float64(digest, u_values)
     _update_hash_with_float64(digest, v_values)
@@ -240,6 +255,8 @@ def _max_adjacent_c8_gradient(
     v_values: tuple[float, ...],
     stiffnesses: tuple[tuple[ABDStiffness, ...], ...],
 ) -> float:
+    # This is a coarse smoothness indicator for sampled fields. It is not an
+    # interpolation error bound, but it helps flag abrupt atlas transitions.
     max_gradient = 0.0
     for i, (left, right) in enumerate(zip(u_values[:-1], u_values[1:], strict=True)):
         span = right - left
@@ -264,6 +281,8 @@ def _validate_atlas_samples(
     for i, u in enumerate(u_values):
         for j, v in enumerate(v_values):
             stiffness = stiffnesses[i][j]
+            # Bilinear interpolation is only well-defined when every sample
+            # shares the same strain convention and local surface frame.
             if stiffness.convention != convention:
                 msg = "all atlas samples must use the same strain convention."
                 raise ValueError(msg)
@@ -348,6 +367,9 @@ class ABDAtlas:
             raise ValueError(msg)
         i, su = _cell_index(self.u_values, u, name="u")
         j, sv = _cell_index(self.v_values, v, name="v")
+        # Interpolate the canonical C8 payload directly. ABD block interpolation
+        # would be equivalent, but C8 keeps the provenance and symmetry story
+        # in one place.
         w00 = (1.0 - su) * (1.0 - sv)
         w10 = su * (1.0 - sv)
         w01 = (1.0 - su) * sv
@@ -367,6 +389,7 @@ class ABDAtlas:
 
         areal_mass = None
         if all(stiffness.areal_mass is not None for stiffness in corners):
+            # Mass is interpolated only when all corners actually know it.
             areal_mass = sum(
                 weight * stiffness.areal_mass
                 for weight, stiffness in zip(weights, corners, strict=True)

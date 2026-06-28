@@ -40,6 +40,8 @@ def _isotropic_shear(material: IsotropicMaterial) -> FloatArray:
 
 
 def _transformed_q(material: PlyMaterial, angle_rad: float) -> FloatArray:
+    # Isotropic plies are already invariant under in-plane rotation; avoiding a
+    # transform here also avoids accumulating roundoff in symmetric layups.
     if isinstance(material, IsotropicMaterial):
         return material.plane_stress_stiffness()
     return material.transformed_reduced_stiffness(angle_rad)
@@ -118,6 +120,8 @@ def laminate_plate(
     total_thickness = sum(ply.thickness for ply in ply_tuple)
     z_bottom = -0.5 * total_thickness
 
+    # Plies are integrated about the laminate mid-surface. Unsymmetric stacks
+    # therefore produce B coupling naturally through the z and z^2 moments.
     A = np.zeros((3, 3), dtype=np.float64)
     B = np.zeros((3, 3), dtype=np.float64)
     D = np.zeros((3, 3), dtype=np.float64)
@@ -130,6 +134,8 @@ def laminate_plate(
         z1 = z0 + ply.thickness
         Qbar = _transformed_q(ply.material, ply.angle_rad)
         shear = _transformed_shear(ply.material, ply.angle_rad)
+        # Classical laminate ABD integration: A, B, and D are the zeroth,
+        # first, and second through-thickness moments of transformed Q.
         A += Qbar * (z1 - z0)
         B += 0.5 * Qbar * (z1**2 - z0**2)
         D += (1.0 / 3.0) * Qbar * (z1**3 - z0**3)
@@ -137,6 +143,7 @@ def laminate_plate(
         if ply.material.density is None:
             has_complete_density = False
         else:
+            # Areal mass is only meaningful when every ply supplied density.
             mass += ply.material.density * ply.thickness
         z0 = z1
 

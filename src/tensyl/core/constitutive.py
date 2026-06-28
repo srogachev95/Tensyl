@@ -43,6 +43,8 @@ def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -
 
 
 def _build_tangent(A: FloatArray, B: FloatArray, D: FloatArray, As: FloatArray) -> FloatArray:
+    # C8 is the canonical payload because it keeps membrane, bending, and
+    # transverse shear in one operator. The ABD blocks remain public views.
     tangent = np.zeros((8, 8), dtype=np.float64)
     tangent[0:3, 0:3] = A
     tangent[0:3, 3:6] = B
@@ -69,6 +71,8 @@ def _hash_array(values: FloatArray) -> int:
 
 
 def _freeze_for_hash(value: Any) -> Any:
+    # Metadata can contain nested NumPy arrays from verification or import
+    # paths. Hash the semantic payload instead of falling back to object ids.
     if isinstance(value, Mapping):
         return tuple(sorted((key, _freeze_for_hash(item)) for key, item in value.items()))
     if isinstance(value, np.ndarray):
@@ -146,6 +150,9 @@ class ABDStiffness:
     _c8: FloatArray = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
+        # Validate the user-facing blocks first, then rebuild all block
+        # attributes as readonly views of one symmetric C8 matrix. That avoids
+        # the familiar bug where A/B/D/As and C8 drift apart after construction.
         A = _readonly_matrix(self.A, shape=(3, 3), name="A")
         B = _readonly_matrix(self.B, shape=(3, 3), name="B")
         D = _readonly_matrix(self.D, shape=(3, 3), name="D")
@@ -187,6 +194,9 @@ class ABDStiffness:
         """
 
         c8 = _readonly_tangent(tangent, name="tangent")
+        # Route through the block constructor so all stiffnesses, whether they
+        # start as blocks or as C8, receive identical symmetry and readonly
+        # treatment.
         return cls(
             A=c8[0:3, 0:3],
             B=c8[0:3, 3:6],
@@ -212,6 +222,8 @@ class ABDStiffness:
         )
 
     def __hash__(self) -> int:
+        # Frozen dataclasses do not make arrays hashable. Hash the numeric
+        # payload explicitly so ABDStiffness can be used in caches and atlases.
         return hash(
             (
                 _hash_array(self.C8),

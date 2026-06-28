@@ -17,6 +17,9 @@ def engineering_strain_transform(angle_rad: float) -> FloatArray:
     """Transform ``[e11, e22, g12]`` into a frame rotated by ``angle_rad``."""
 
     angle = _finite_angle(angle_rad)
+    # This matrix is for engineering shear gamma12, not tensor shear e12.
+    # The factors of two are the convention choice that every rotated ABD block
+    # depends on.
     c = float(np.cos(angle))
     s = float(np.sin(angle))
     c2 = c * c
@@ -37,6 +40,8 @@ def engineering_strain_transform(angle_rad: float) -> FloatArray:
 def resultant_transform(angle_rad: float) -> FloatArray:
     """Transform ``[N11, N22, N12]`` into a frame rotated by ``angle_rad``."""
 
+    # Resultants use the energy-conjugate dual of the strain transform so that
+    # r.dot(eta) is invariant under a change of local in-plane frame.
     transform = np.linalg.inv(engineering_strain_transform(angle_rad)).T
     transform.setflags(write=False)
     return transform
@@ -85,6 +90,8 @@ def rotate_tangent(tangent: FloatArray, angle_rad: float) -> FloatArray:
     matrix = readonly_array(tangent, shape=(8, 8), name="tangent")
     strain_transform = generalized_strain_transform(angle_rad)
     resultant = generalized_resultant_transform(angle_rad)
+    # C maps strain to resultants. Rotate the input strain into the source
+    # frame, apply C, then express the resultants in the target frame.
     rotated = resultant @ matrix @ np.linalg.inv(strain_transform)
     rotated = 0.5 * (rotated + rotated.T)
     rotated.setflags(write=False)

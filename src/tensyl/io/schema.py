@@ -33,10 +33,14 @@ class SchemaError(ValueError):
 
 
 class _SchemaModel(BaseModel):
+    # External artifacts should fail loudly when they carry unexpected keys.
+    # That keeps schema drift visible instead of quietly dropping data.
     model_config = ConfigDict(extra="forbid")
 
 
 def _validation_error(exc: ValidationError) -> SchemaError:
+    # Pydantic's nested error objects are precise but noisy for callers. Flatten
+    # them into one stable SchemaError message with field paths intact.
     message = "; ".join(
         f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}" for error in exc.errors()
     )
@@ -46,6 +50,9 @@ def _validation_error(exc: ValidationError) -> SchemaError:
 
 
 def _plain_yaml_value(value: Any, *, path: str) -> PlainYaml:
+    # Only plain JSON/YAML scalars, lists, and string-keyed mappings are allowed
+    # in metadata-like fields. This keeps artifacts safe-YAML compatible and
+    # solver-neutral.
     if value is None or isinstance(value, (str, bool)):
         return value
     if isinstance(value, int) and not isinstance(value, bool):
@@ -88,6 +95,8 @@ def _plain_yaml_mapping(
 
 
 def _finite_float(value: Any, *, path: str) -> float:
+    # bool is an int subclass in Python, but accepting True as 1.0 in mechanics
+    # data would be a very unhelpful kind of permissive.
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         msg = f"{path} must be a finite number."
         raise ValueError(msg)
@@ -135,6 +144,8 @@ class ProducerSchema(_SchemaModel):
 
 
 class FrameSchema(_SchemaModel):
+    """Serialized local right-handed frame."""
+
     e1: list[float]
     e2: list[float]
     n: list[float]
@@ -164,6 +175,8 @@ class FrameSchema(_SchemaModel):
 
 
 class StrainConventionSchema(_SchemaModel):
+    """Serialized generalized strain/resultant ordering and sign convention."""
+
     membrane_order: tuple[str, str, str]
     bending_order: tuple[str, str, str]
     shear_order: tuple[str, str]
@@ -194,6 +207,8 @@ class StrainConventionSchema(_SchemaModel):
 
 
 class ValidityReportSchema(_SchemaModel):
+    """Serialized tangent-plane validity ratios and warning codes."""
+
     h_over_R: float | None = Field(default=None, allow_inf_nan=False)
     p_over_R: float | None = Field(default=None, allow_inf_nan=False)
     p_over_L_response: float | None = Field(default=None, allow_inf_nan=False)
@@ -239,6 +254,8 @@ class ValidityReportSchema(_SchemaModel):
 
 
 class ABDStiffnessSchema(_SchemaModel):
+    """Serialized linear ABD stiffness using Tensyl's canonical C8 tangent."""
+
     tangent_c8: list[list[float]]
     frame: FrameSchema
     strain_convention: StrainConventionSchema
@@ -267,6 +284,8 @@ class ABDStiffnessSchema(_SchemaModel):
     @classmethod
     def from_tensyl(cls, stiffness: ABDStiffness) -> ABDStiffnessSchema:
         if stiffness.validity is not None and not isinstance(stiffness.validity, ValidityReport):
+            # The public ABD object can technically carry arbitrary validity,
+            # but the external schema only promises the Tensyl report shape.
             msg = "validity must be None or a ValidityReport for schema export."
             raise SchemaError(msg)
         return cls(
@@ -296,6 +315,8 @@ class ABDStiffnessSchema(_SchemaModel):
 
 
 class HomogenizationResultSchema(_SchemaModel):
+    """Serialized homogenization result plus attached validity and diagnostics."""
+
     stiffness: ABDStiffnessSchema
     validity: ValidityReportSchema
     diagnostics: dict[str, PlainYaml]
@@ -311,6 +332,9 @@ class HomogenizationResultSchema(_SchemaModel):
     @model_validator(mode="after")
     def _validate_stiffness_validity(self) -> HomogenizationResultSchema:
         if self.stiffness.validity is not None and self.stiffness.validity != self.validity:
+            # Result validity is duplicated intentionally so downstream tools
+            # can read either the result envelope or the stiffness payload. They
+            # must agree when both are present.
             msg = "homogenization_result stiffness validity does not match result validity."
             raise ValueError(msg)
         return self
@@ -341,6 +365,8 @@ class HomogenizationResultSchema(_SchemaModel):
 
 
 class ExternalWorkflowEnvelope(_SchemaModel):
+    """Versioned top-level envelope for solver-neutral workflow artifacts."""
+
     schema_name: SchemaName
     schema_version: SchemaVersion
     artifact_type: ArtifactType
@@ -355,6 +381,8 @@ class ExternalWorkflowEnvelope(_SchemaModel):
 
     @model_validator(mode="after")
     def _validate_artifact_payload(self) -> ExternalWorkflowEnvelope:
+        # Pydantic can parse the union either way; this guard makes the explicit
+        # artifact_type field the source of truth for the payload contract.
         if self.artifact_type == "abd_stiffness" and not isinstance(
             self.payload, ABDStiffnessSchema
         ):
@@ -375,6 +403,8 @@ class ExternalWorkflowEnvelope(_SchemaModel):
         units: Mapping[str, Any] | None = None,
     ) -> ExternalWorkflowEnvelope:
         if isinstance(obj, HomogenizationResult):
+            # Preserve the result envelope when it exists; exporting only the
+            # stiffness would orphan diagnostics and validity context.
             artifact_type: ArtifactType = "homogenization_result"
             payload: ABDStiffnessSchema | HomogenizationResultSchema = (
                 HomogenizationResultSchema.from_tensyl(obj)
@@ -407,6 +437,8 @@ class ExternalWorkflowEnvelope(_SchemaModel):
 
 
 def _model_dump(model: BaseModel) -> dict[str, Any]:
+    # JSON mode normalizes tuples and constrained values into plain containers
+    # before YAML or JSON serialization sees them.
     return model.model_dump(mode="json")
 
 
@@ -463,6 +495,8 @@ def from_yaml(text: str) -> ABDStiffness | HomogenizationResult:
     """Load a Tensyl object from a safe YAML string."""
 
     try:
+        # safe_load rejects executable YAML tags; schema validation then checks
+        # the resulting plain data structure.
         payload = yaml.safe_load(text)
     except yaml.YAMLError as exc:
         msg = "invalid YAML payload."
@@ -474,6 +508,7 @@ def from_yaml(text: str) -> ABDStiffness | HomogenizationResult:
 
 
 def _reject_json_constant(value: str) -> None:
+    # json.loads accepts NaN/Infinity by default. External artifacts should not.
     msg = f"invalid JSON constant {value!r}."
     raise ValueError(msg)
 
