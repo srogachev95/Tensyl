@@ -1,3 +1,6 @@
+import importlib.util
+from pathlib import Path
+
 import numpy as np
 
 from tensyl import (
@@ -21,6 +24,18 @@ from tensyl import (
     orthogrid_cell,
 )
 from tensyl.io import from_yaml, to_yaml
+
+
+def _ellipsoid_showpiece_module():
+    path = (
+        Path(__file__).parents[2] / "docs" / "examples" / "scripts" / "ellipsoid_stiffness_map.py"
+    )
+    spec = importlib.util.spec_from_file_location("ellipsoid_stiffness_map", path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def _material() -> IsotropicMaterial:
@@ -268,6 +283,30 @@ def test_non_constant_homogenized_stiffness_field_example() -> None:
     assert station_150.validity is not None
     assert station_0.A[0, 0] > station_150.A[0, 0]
     assert station_150.validity.p_over_R == 8.0 / 120.0
+
+
+def test_ellipsoid_stiffness_map_numerics() -> None:
+    module = _ellipsoid_showpiece_module()
+    data = module.sample_showpiece(phi_count=6, theta_count=9)
+
+    assert data["A11"].shape == (6, 9)
+    assert np.all(np.isfinite(data["A11"]))
+    assert np.all(np.isfinite(data["D11"]))
+    assert np.all(np.isfinite(data["p_over_R"]))
+    assert np.min(data["phi"]) > 0.0
+    assert np.max(data["phi"]) < np.pi
+    assert np.ptp(data["A11_ratio"]) > 0.10
+    assert np.ptp(data["p_over_R"]) > 0.05
+    assert np.max(data["warning_count"]) > 0
+
+
+def test_ellipsoid_stiffness_map_render_smoke(tmp_path: Path) -> None:
+    module = _ellipsoid_showpiece_module()
+    data = module.sample_showpiece(phi_count=5, theta_count=7)
+    output = module.render_showpiece(tmp_path / "ellipsoid-stiffness-map.png", data=data)
+
+    assert output.exists()
+    assert output.stat().st_size > 10_000
 
 
 def test_sp8007_data_prep_and_serialization_handoff() -> None:
