@@ -52,13 +52,7 @@ nav:
       - FEM Solver Handoff: user-guide/solver-handoff.md
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
   - Validation:
-      - FEM Validation Laboratory: validation/index.md
-      - Phase 1 Local ABD Extraction: validation/local-abd.md
-      - Phase 2 Flat Panel Response: validation/flat-panels.md
-      - Phase 3 Barrel Response: validation/barrels.md
-      - Phase 4 Limitation Atlas: validation/limitations.md
-      - Phase 5 Validation Gallery: validation/gallery.md
-      - Phases 3-5 Recommendations: validation/phases-3-5.md
+      - Validation Roadmap: validation/index.md
   - Examples:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md
       - Orthogrid Panel and Barrel: examples/orthogrid-panel.md
