@@ -10,6 +10,11 @@ import yaml
 
 from tensyl import IsotropicMaterial, isotropic_plate
 from tensyl_validation.artifacts import ArtifactManifest, write_json
+from tensyl_validation.flat_panels import (
+    FlatPanelSmearedResponseCase,
+    load_flat_panel_case,
+    run_flat_panel_case,
+)
 from tensyl_validation.local_abd import LocalABDCase, load_local_abd_case, run_local_abd_case
 from tensyl_validation.metrics import skin_only_metrics
 
@@ -41,7 +46,7 @@ def _load_skin_only_smoke(data: dict[str, Any]) -> SkinOnlySmokeCase:
     )
 
 
-ValidationCase = SkinOnlySmokeCase | LocalABDCase
+ValidationCase = SkinOnlySmokeCase | LocalABDCase | FlatPanelSmearedResponseCase
 
 
 def load_case(path: Path) -> ValidationCase:
@@ -61,6 +66,8 @@ def load_case(path: Path) -> ValidationCase:
         return _load_skin_only_smoke(data)
     if case_type in {"local_abd", "local_abd_periodic_cell"}:
         return load_local_abd_case(data)
+    if case_type == "flat_panel_smeared_response":
+        return load_flat_panel_case(data, base_dir=path.parent)
     msg = f"unsupported validation case_type: {case_type!r}"
     raise ValueError(msg)
 
@@ -76,6 +83,13 @@ def run_case(
     case = load_case(spec_path)
     if isinstance(case, LocalABDCase):
         return run_local_abd_case(
+            spec_path,
+            case,
+            artifact_dir=artifact_dir,
+            command=command,
+        )
+    if isinstance(case, FlatPanelSmearedResponseCase):
+        return run_flat_panel_case(
             spec_path,
             case,
             artifact_dir=artifact_dir,

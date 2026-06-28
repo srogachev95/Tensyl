@@ -1,0 +1,63 @@
+schema_version: tensyl.validation.flat_panel.case.v1
+case_type: flat_panel_smeared_response
+case_id: flat_panel_orthogrid_axial_smeared
+name: flat_panel_orthogrid_axial_smeared
+title: Smeared orthogrid flat panel under axial resultant
+phase: phase_2_flat_panel_response
+status:
+  current_runner: tensyl_smeared_target_executable
+  command: uv run python validation/scripts/run_case.py validation/cases/flat_panels/orthogrid_axial_smeared.yml
+  explicit_fe_runner: planned
+  artifact_promotion: smeared_target_only
+  explicit_fe_agreement_claim: false
+units:
+  length: in
+  force: lbf
+  stress: psi
+  resultants:
+    N: lbf/in
+    M: lbf
+    Q: lbf/in
+local_abd_reference: ../local_abd/orthogrid_zero_eccentricity.yml
+source_stiffness:
+  kind: local_abd_case
+  spec: validation/cases/local_abd/orthogrid_zero_eccentricity.yml
+  required_artifact_role: tensyl_target
+panel:
+  length_e1: 48.0
+  width_e2: 32.0
+  boundary_condition: uniform_smeared_resultant_target
+load:
+  description: Unit-width axial membrane resultant in local e1.
+  resultants:
+    N11: 1000.0
+    N22: 0.0
+    N12: 0.0
+    M11: 0.0
+    M22: 0.0
+    M12: 0.0
+    Q13: 0.0
+    Q23: 0.0
+tensyl_reference:
+  stiffness_source: validation/cases/local_abd/orthogrid_zero_eccentricity.yml
+  response_model: uniform_resultant_linear_smeared_panel
+explicit_fe_model:
+  runner_status: planned
+  solver: CalculiX
+  model_family: explicit_skin_shells_with_stringer_and_rib_members
+  intended_comparison:
+    - load_displacement_slope
+    - total_strain_energy
+    - low_order_displacement_field
+expected_metrics:
+  oracle: tensyl_smeared_abd_target
+  checks:
+    - Smeared equilibrium residual is near machine precision.
+    - Axial end shortening is positive for positive N11.
+    - No explicit FE comparison is claimed by this artifact.
+promotion:
+  scratch:
+    - Future explicit FE panel runs belong under validation/artifacts/scratch/flat_panels/.
+  committed:
+    - Smeared target artifacts may be committed as the comparison oracle.
+    - Solver comparison metrics require a future explicit panel model and manifest.

@@ -47,3 +47,23 @@ Default tests skip or avoid solver-backed behavior when those tools are absent.
 The explicit check command above is the one that fails loudly, as a setup check
 should. Quiet failure is useful in tests; quiet setup is just a future afternoon
 lost to a path typo.
+
+## Public Phase Status
+
+The validation pages separate product capability from solver evidence. Tensyl may
+have implementation support for a cell, geometry, or export workflow before the
+FEM validation laboratory has promoted a corresponding solver-backed case. The
+table below is the public validation status, not a feature checklist for the
+library.
+
+| Validation phase | Public status | Solver evidence claim |
+| --- | --- | --- |
+| Phase 1 local ABD extraction | One skin-only CalculiX `ABD6` slice is promoted; stiffened-cell extraction remains planned. | Limited to the promoted skin-only membrane/bending artifact described in [Phase 1 Local ABD Extraction](local-abd.md). |
+| Phase 2 flat panel response | One smeared orthogrid axial target is executable; explicit FE panel comparison remains planned. | No promoted flat-panel FEM evidence is claimed here. |
+| Phase 3 barrel response | Scaffolded recommendation only. | No promoted barrel FEM evidence is claimed here. |
+| Phase 4 limitation atlas | Scaffolded recommendation only. | No promoted limitation-case FEM evidence is claimed here. |
+| Phase 5 public validation gallery | Scaffolded recommendation only. | No gallery-level summary evidence is claimed here. |
+
+See [Phases 3-5 Recommendations](phases-3-5.md) for the planned evidence shape
+and promotion gates. The page is intentionally dull about missing evidence. That
+is a feature.
