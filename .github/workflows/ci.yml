@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: python -m pip install --upgrade uv
+
+      - name: Install dependencies
+        run: uv sync --dev --locked
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Type check
+        run: uv run ty check
+
+      - name: Test
+        run: uv run pytest
+
+      - name: Build docs
+        run: uv run mkdocs build --strict
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: python -m pip install --upgrade uv
+
+      - name: Install dependencies
+        run: uv sync --dev --locked
+
+      - name: Build distributions
+        run: uv build --out-dir dist
+
+      - name: Check package metadata
+        run: uvx twine check dist/*
+
+      - name: Install wheel smoke test
+        run: |
+          uv venv /tmp/tensyl-wheel-smoke
+          uv pip install --python /tmp/tensyl-wheel-smoke/bin/python dist/tensyl-*.whl
+          /tmp/tensyl-wheel-smoke/bin/python - <<'PY'
+          import tensyl
+          from tensyl import IsotropicMaterial, isotropic_plate
+
+          stiffness = isotropic_plate(
+              IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
+              thickness=0.080,
+          )
+
+          assert tensyl.__version__
+          assert stiffness.A.shape == (3, 3)
+          PY
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: tensyl-distributions
+          path: dist/*
+          if-no-files-found: error

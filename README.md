@@ -30,6 +30,18 @@ derived interpretations, not the product.
 
 ## Quick Start
 
+Install Tensyl from PyPI:
+
+```bash
+uv add tensyl
+```
+
+or with pip:
+
+```bash
+pip install tensyl
+```
+
 For local development from this repository:
 
 ```bash
@@ -158,6 +170,9 @@ uv run ty check
 uv run pytest
 uv run mkdocs build --strict
 ```
+
+Release notes are tracked in [CHANGELOG.md](CHANGELOG.md), and contribution
+workflow details are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Documentation Authoring
 

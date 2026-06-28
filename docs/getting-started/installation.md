@@ -2,8 +2,16 @@
 
 Tensyl is developed for Python 3.12 and later.
 
+With `uv`:
+
 ```bash
 uv add tensyl
+```
+
+With pip:
+
+```bash
+pip install tensyl
 ```
 
 For local development from the repository:
