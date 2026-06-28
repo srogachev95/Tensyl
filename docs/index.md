@@ -1,8 +1,8 @@
 # Tensyl
 
 Tensyl is a Python library for equivalent-stiffness homogenization of stiffened
-stiffened plates and shells. It helps structural analysts build, check, transform, and
-export local ABD stiffnesses for skins, laminates, and stiffened repeating cells.
+plates and shells. It helps engineering teams build, check, transform, and export
+local ABD stiffnesses for skins, laminates, and stiffened repeating cells.
 
 In one line: Tensyl replaces a panel full of stiffeners with a single equivalent
 stiffness — a small, auditable stiffness matrix that behaves like the real thing under
@@ -18,7 +18,7 @@ The public package name is `tensyl`.
 
 ## What Tensyl Computes
 
-Tensyl computes a local stiffness constitutive stiffness in laminated-plate notation:
+Tensyl computes a local constitutive stiffness in laminated-plate notation:
 
 $$
 \begin{bmatrix}
@@ -59,7 +59,7 @@ postbuckling, and final allowables.
 - [Theory](theory/equivalent-stiffness.md) explains conventions, ABD stiffnesses, and
   tangent-plane homogenization.
 - [User guide](user-guide/materials-and-laminates.md) documents the main
-  analyst workflows.
+  engineering workflows.
 - [Examples](examples/skin-only.md) provides worked examples and
   executable snippets.
 - [API reference](api/core.md) exposes the public Python interfaces.
@@ -80,5 +80,5 @@ print(stiffness.D)
 
 This example uses a consistent US customary unit system: force in `lbf`, length
 in `in`, stress in `psi`, and mass density in units compatible with the
-analyst's workflow. Tensyl records unit labels in exported artifacts but does
+downstream workflow. Tensyl records unit labels in exported artifacts but does
 not convert units.

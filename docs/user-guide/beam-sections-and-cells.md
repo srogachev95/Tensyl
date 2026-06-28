@@ -1,4 +1,4 @@
-# Beam Sections And Cells
+# Beam Sections and Cells
 
 Stiffener homogenization begins with member-local beam-section stiffnesses.
 If you already have centroidal stiffness products from a handbook, section
@@ -235,7 +235,7 @@ case in the original report.
 *Source for topology figures: Nemeth, NASA/TP-2011-216882, figures 14, 17, 18,
 21, and 23; full citation in [References](../references.md).*
 
-## Angles And Eccentricity
+## Angles and Eccentricity
 
 Angles are measured in the local frame. `0` points along `e1`, `pi/2`
 points along `e2`, and positive angles follow the positive rotation convention

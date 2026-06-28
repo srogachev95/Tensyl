@@ -1,4 +1,4 @@
-# Cells And Sections API
+# Cells and Sections API
 
 ::: tensyl.sections
     options:

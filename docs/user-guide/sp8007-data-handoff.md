@@ -11,7 +11,8 @@ NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
 source for stiffened equivalent-plate stiffness concepts. Tensyl sits between
 those worlds: it produces local stiffness data, then gets out of the way.
 
-An analyst commonly needs these data categories from a stiffness model:
+A downstream SP-8007-style workflow commonly needs these data categories from a
+stiffness model:
 
 - SP-8007 orthotropic-cylinder extensional coefficients `Ebar_x`, `Ebar_y`,
   `Ebar_xy`, and `Gbar_xy`;

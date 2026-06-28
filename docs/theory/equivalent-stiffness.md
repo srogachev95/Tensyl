@@ -99,14 +99,14 @@ laminated plate theory. `As` is the transverse-shear block retained for
 first-order shear-deformation workflows. See [References](../references.md) for
 plate, shell, laminate, and equivalent-plate sources.
 
-## What The ABD Stiffness Does Not Prove
+## What the ABD Stiffness Does Not Prove
 
 An ABD stiffness is a constitutive approximation. It does not prove that a stiffener
 layout is manufacturable, that local crippling is acceptable, that joints are
 adequately modeled, or that a shell buckling calculation is valid. Tensyl
-reports diagnostics and scale-separation warnings so an analyst can decide
-whether the local equivalent-stiffness approximation is acceptable for the intended
-workflow.
+reports diagnostics and scale-separation warnings so the downstream workflow can
+decide whether the local equivalent-stiffness approximation is acceptable for the
+intended use.
 
 For how these ABD stiffnesses are actually computed and inspected in practice, see
 [Homogenization](../user-guide/homogenization.md) in the User Guide.

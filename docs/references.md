@@ -4,7 +4,7 @@ This page lists external sources used to ground the mechanics narrative and
 terminology. Local report extracts and project planning notes are not part of
 the formal public documentation.
 
-## Equivalent-Plate And Stiffened-Wall Theory
+## Equivalent-Plate and Stiffened-Wall Theory
 
 - Michael P. Nemeth, *A Treatise on Equivalent-Plate Stiffnesses for Stiffened
   Laminated-Composite Plates and Plate-Like Lattices*, NASA/TP-2011-216882,
@@ -14,7 +14,7 @@ the formal public documentation.
   Elastic Anisotropic Materials*, NASA/TM-2011-217314, 2011. External record:
   <https://ntrs.nasa.gov/citations/20110023650>.
 
-## Plates, Shells, And Laminates
+## Plates, Shells, and Laminates
 
 - Manfredo P. do Carmo, *Differential Geometry of Curves and Surfaces*,
   Prentice-Hall, 1976.
