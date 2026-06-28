@@ -43,7 +43,7 @@ This follows the equivalent-plate idea used by Nemeth for stiffened laminated
 plates and plate-like lattices. Tensyl treats those formulas as mechanics
 guidance and keeps the energy path as the executable reference.
 
-## How Geometry Enters The ABD Law
+## How Geometry Enters the ABD Law
 
 The tangent-plane homogenizer computes a local constitutive law. At a surface
 point, the shell or plate generalized strains and resultants are interpreted in

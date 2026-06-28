@@ -70,7 +70,7 @@ the full ABD and transverse-shear operator as the primary result. Use scalar
 engineering constants only when the reduction assumptions are stated and the
 stiffness is sufficiently close to the reduced model.
 
-## Stiffener Pitch And Cell Area
+## Stiffener Pitch and Cell Area
 
 Pitch is the spacing between repeated stiffeners or repeated cells. A cell area
 is the tangent-plane area represented by one canonical repeating unit.

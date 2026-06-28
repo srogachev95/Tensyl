@@ -1,4 +1,4 @@
-# Materials And Laminates
+# Materials and Laminates
 
 Tensyl supports skin-only ABD stiffnesses for isotropic plates and orthotropic
 laminates.

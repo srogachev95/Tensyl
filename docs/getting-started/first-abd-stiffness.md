@@ -10,7 +10,7 @@ from tensyl import IsotropicMaterial, isotropic_plate
 aluminum_2024_like = IsotropicMaterial(
     E=10.6e6,      # psi
     nu=0.33,
-    density=0.1,  # analyst-selected consistent mass unit
+    density=0.1,  # workflow-selected consistent mass unit
 )
 
 stiffness = isotropic_plate(aluminum_2024_like, thickness=0.080)

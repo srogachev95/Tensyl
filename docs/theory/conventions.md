@@ -1,4 +1,4 @@
-# Frames And Conventions
+# Frames and Conventions
 
 An ABD stiffness is expressed in a right-handed local frame:
 
@@ -21,7 +21,7 @@ $$
 \mathbf e_2'=-\sin\psi\,\mathbf e_1+\cos\psi\,\mathbf e_2.
 $$
 
-## Rotation Of ABD Stiffnesses
+## Rotation of ABD Stiffnesses
 
 Generalized strains and generalized resultants use separate transforms:
 

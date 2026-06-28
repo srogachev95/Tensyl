@@ -56,7 +56,7 @@ None of these is optional busywork — they are how you find out whether the
 approximation is writing checks the geometry cannot cash. This is exactly the
 boundary drawn in ["What Tensyl Is Not"](../index.md).
 
-## Out Of Scope For The First Model Family
+## Out of Scope for the First Model Family
 
 The current tangent-plane family does not model:
 

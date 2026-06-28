@@ -1,4 +1,4 @@
-# Geometry And Fields API
+# Geometry and Fields API
 
 ::: tensyl.geometry
     options:

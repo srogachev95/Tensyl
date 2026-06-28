@@ -1,9 +1,10 @@
-# Orthogrid Panel ABD Stiffness
+# Orthogrid Panel and Barrel
 
-This example adds stiffeners to the skin and computes the first homogenized ABD
-stiffness. The numbers are illustrative, not allowables.
+This example adds stiffeners to the skin, computes a homogenized ABD stiffness,
+and attaches the result to a cylindrical midsurface. The numbers are
+illustrative, not allowables.
 
-## Problem
+## Orthogrid Panel
 
 Build an orthogrid panel about the skin reference surface. Stringers run along
 local `e1`; ribs run along local `e2`. Both stiffener families are external to
@@ -82,3 +83,35 @@ comes from eccentric stiffeners relative to the reference surface. Diagnostics
 confirm the assembled tangent is symmetric and positive semidefinite for this
 model; they do not prove local stiffener strength, crippling resistance, or a
 shell buckling margin.
+
+## Constant-Stiffness Barrel
+
+Attach the same orthogrid stiffness to a cylindrical midsurface. This binds the
+constant `C8` tangent to the cylinder frame at the requested point; it does not
+recompute the local stiffened cell.
+
+```python
+from tensyl import ConstantStiffnessField, Cylinder
+
+radius = 120.0
+surface = Cylinder(radius=radius, length=300.0)
+field = ConstantStiffnessField(result.stiffness)
+stiffness_at_midbay = field.stiffness_at(surface, 150.0, 0.0)
+
+assert stiffness_at_midbay.frame.label == "cylinder"
+assert stiffness_at_midbay.C8.shape == (8, 8)
+assert result.validity.p_over_R == 8.0 / radius
+```
+
+For `Cylinder`, `e1` is axial, `e2` is circumferential, and `n` points outward.
+The orthogrid constructor maps stringers to `e1` and ribs to `e2`.
+
+The barrel radius enters the validity ratio `p_over_R`; it does not recalculate
+the local orthogrid stiffness. This is still stiffness-property preparation.
+Loads, boundary conditions, knockdown factors, and buckling margins belong to a
+separate workflow.
+
+!!! tip "Check the frame before the solver sees it"
+    A constant field keeps the matrix fixed, but the solver still consumes
+    stiffness in local directions. Confirm axial and circumferential axes before
+    exporting the property. Axis swaps have excellent handwriting.

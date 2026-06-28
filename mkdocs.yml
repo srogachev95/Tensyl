@@ -35,8 +35,7 @@ nav:
       - First ABD Stiffness: getting-started/first-abd-stiffness.md
       - First Homogenized Cell: getting-started/first-homogenized-cell.md
   - Background:
-      - Motivation: background/motivation.md
-      - Brief History: background/history.md
+      - Motivation and History: background/motivation.md
       - Terminology: background/terminology.md
   - Theory:
       - Equivalent-Stiffness Mechanics: theory/equivalent-stiffness.md
@@ -47,20 +46,15 @@ nav:
       - Units and Consistency: user-guide/units-and-consistency.md
       - Materials and Laminates: user-guide/materials-and-laminates.md
       - Beam Sections and Cells: user-guide/beam-sections-and-cells.md
-      - Homogenization: user-guide/homogenization.md
-      - Result Interpretation: user-guide/result-interpretation.md
+      - Homogenization and Results: user-guide/homogenization.md
       - Geometry and Stiffness Fields: user-guide/geometry-and-fields.md
-      - Stiffened Surfaces: user-guide/stiffened-surfaces.md
       - External Workflows: user-guide/external-workflows.md
       - FEM Solver Handoff: user-guide/solver-handoff.md
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
   - Examples:
-      - Skin-Only ABD Stiffness: examples/skin-only.md
-      - Laminate Skin ABD Stiffness: examples/laminate-skin.md
-      - Orthogrid Panel ABD Stiffness: examples/orthogrid-panel.md
-      - Stiffened Barrel With Constant Stiffness: examples/stiffened-barrel.md
-      - Sampled Stiffness Atlas: examples/sampled-stiffness-atlas.md
-      - Non-Constant Homogenized Stiffness Field: examples/non-constant-stiffness-field.md
+      - Skin and Laminate ABD Stiffness: examples/skin-only.md
+      - Orthogrid Panel and Barrel: examples/orthogrid-panel.md
+      - Variable Stiffness Fields: examples/sampled-stiffness-atlas.md
   - API Reference:
       - Core: api/core.md
       - Materials: api/materials.md

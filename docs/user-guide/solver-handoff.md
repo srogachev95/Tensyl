@@ -14,37 +14,9 @@ needs.
 
 ## Before Solver Input
 
-Tensyl's local generalized strain order is:
-
-$$
-\boldsymbol\eta =
-\begin{bmatrix}
-\epsilon_{11}^0 &
-\epsilon_{22}^0 &
-\gamma_{12}^0 &
-\kappa_{11} &
-\kappa_{22} &
-\kappa_{12} &
-\gamma_{13}^0 &
-\gamma_{23}^0
-\end{bmatrix}^T.
-$$
-
-The matching resultants are:
-
-$$
-\mathbf r =
-\begin{bmatrix}
-N_{11} &
-N_{22} &
-N_{12} &
-M_{11} &
-M_{22} &
-M_{12} &
-Q_{13} &
-Q_{23}
-\end{bmatrix}^T.
-$$
+Tensyl's canonical generalized strain and resultant order is defined in
+[Equivalent-Stiffness Mechanics](../theory/equivalent-stiffness.md). Treat that
+ordering as part of the data contract, not as a formatting preference.
 
 For solvers that take a six-by-six shell section stiffness, the part to hand off
 is:
@@ -83,7 +55,7 @@ Keep these checks explicit:
   the ABD stiffness changes `B`.
 - Preserve the engineering shear and engineering twist convention.
 - Review `result.validity.warnings` before export. The solver sees stiffness
-  numbers; the validity context travels with the analyst.
+  numbers; the validity context has to travel with the model.
 
 ## Reduced Orthotropic Properties
 
@@ -158,7 +130,7 @@ properties and materials. The examples below use NX Nastran-style `MAT8`,
 Quick Reference Guide for the exact field definitions used by your solver
 release.
 
-### Simple Route: `MAT8` And `PSHELL`
+### Simple Route: `MAT8` and `PSHELL`
 
 For an uncoupled equivalent orthotropic stiffness:
 
