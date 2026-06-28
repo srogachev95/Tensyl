@@ -4,6 +4,11 @@ Tensyl keeps local stiffness computation separate from shell geometry. Compute a
 ABD stiffness in the local tangent plane, then attach it to a surface through a stiffness
 field.
 
+The surface does not silently alter the ABD matrix. It supplies the local
+surface frame, curvature, metric, and validity radius. The ABD stiffness changes
+only when the field supplies a different tangent at a point, for example through
+a pointwise cell factory or a sampled atlas.
+
 ## Flat Panel
 
 ```python
@@ -44,6 +49,12 @@ For `Cylinder`, local `e1` is axial and local `e2` is circumferential. Axial
 stringers map to angle `0`. Ring ribs map to angle `pi/2`. With the built-in
 outward normal, an external stiffener uses positive eccentricity.
 
+The barrel radius enters the validity review through `min_radius`; it does not
+modify a constant-field `C8` tangent. If the barrel has station-dependent pitch,
+section, material, or stiffener angle, represent that variation with
+`HomogenizedStiffnessField` or `ABDAtlas` instead of expecting the cylinder
+geometry to infer it.
+
 Use a constant stiffness field when the same local ABD stiffness is acceptable
 everywhere. Use `ABDAtlas` or `HomogenizedStiffnessField` when stiffness properties vary
 with station, angle, pitch, or local stiffener definition.
@@ -76,6 +87,11 @@ For a sphere, the chart coordinates are `(phi, theta)`: `e1` is meridional and
 `e2` is circumferential away from the poles. For an ellipsoid, Tensyl uses the
 same latitude-longitude style chart, but a triaxial ellipsoid does not provide
 uniform physical pitch from uniform coordinate spacing.
+
+An ellipsoid is therefore a good place to be explicit. A constant isotropic ABD
+field remains constant as a matrix even though the frame and curvature change
+over the surface. A stiffened ellipsoid has pointwise stiffness variation only
+if the modeled local cells or atlas samples vary pointwise.
 
 ## Conical Frustum
 

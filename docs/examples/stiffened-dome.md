@@ -38,4 +38,7 @@ assert sample.C8.shape == (8, 8)
 For a real dome with varying pitch or stiffener direction, build or sample
 local ABD stiffnesses that are consistent with each surface-point frame. The
 tangent-plane homogenizer remains local and flat; shell curvature enters
-through the surface geometry and validity review.
+through the surface geometry and validity review. The ellipsoid in this example
+changes the point frame and curvature metadata. It changes the numeric ABD
+tangent only if the field supplies different stiffness samples or a pointwise
+cell factory.

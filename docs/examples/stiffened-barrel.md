@@ -46,7 +46,10 @@ assert result.validity.p_over_R == 8.0 / radius
 ```
 
 For `Cylinder`, `e1` is axial and `e2` is circumferential. The orthogrid
-constructor maps stringers to `e1` and ribs to `e2`.
+constructor maps stringers to `e1` and ribs to `e2`. In this example,
+`ConstantStiffnessField` binds the same homogenized `C8` tangent to the cylinder
+frame at each point. The barrel radius enters the validity ratio
+`p_over_R`; it does not recalculate the local orthogrid stiffness.
 
 This does not choose loads, boundary conditions, knockdown factors, or buckling
 margins.
