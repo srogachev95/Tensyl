@@ -52,6 +52,40 @@ def _orthogrid_result():
     )
 
 
+def _sp8007_orthotropic_coefficients(wall, *, tolerance=1.0e-9):
+    unsupported = {
+        "A16": wall.A[0, 2],
+        "A26": wall.A[1, 2],
+        "B16": wall.B[0, 2],
+        "B26": wall.B[1, 2],
+        "B61": wall.B[2, 0],
+        "B62": wall.B[2, 1],
+        "D16": wall.D[0, 2],
+        "D26": wall.D[1, 2],
+    }
+    nonzero = {name: value for name, value in unsupported.items() if abs(value) > tolerance}
+    if nonzero:
+        msg = (
+            "SP-8007 orthotropic-cylinder coefficients assume axial/circumferential "
+            f"orthotropy; unsupported coupling terms are nonzero: {nonzero}"
+        )
+        raise ValueError(msg)
+
+    return {
+        "Ebar_x": wall.A[0, 0],
+        "Ebar_y": wall.A[1, 1],
+        "Ebar_xy": wall.A[0, 1],
+        "Gbar_xy": wall.A[2, 2],
+        "Dbar_x": wall.D[0, 0],
+        "Dbar_y": wall.D[1, 1],
+        "Dbar_xy": 2.0 * wall.D[0, 1] + 4.0 * wall.D[2, 2],
+        "Cbar_x": wall.B[0, 0],
+        "Cbar_y": wall.B[1, 1],
+        "Cbar_xy": wall.B[0, 1],
+        "Kbar_xy": wall.B[2, 2],
+    }
+
+
 def test_first_wall_law_example() -> None:
     wall = isotropic_plate(
         IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
@@ -136,14 +170,16 @@ def test_sphere_ellipsoid_and_cone_surface_examples() -> None:
 def test_sp8007_data_prep_and_serialization_example() -> None:
     result = _orthogrid_result()
     surface = Cylinder(radius=120.0, length=300.0)
+    sp8007 = _sp8007_orthotropic_coefficients(result.law)
 
     report = {
         "radius": surface.radius,
         "length": surface.length,
-        "A11": result.law.A[0, 0],
-        "B11": result.law.B[0, 0],
-        "D11": result.law.D[0, 0],
-        "As11": result.law.As[0, 0],
+        "sp8007": sp8007,
+        "transverse_shear": {
+            "Abar_xz": result.law.As[0, 0],
+            "Abar_yz": result.law.As[1, 1],
+        },
         "h_over_R": result.validity.h_over_R,
         "p_over_R": result.validity.p_over_R,
         "p_over_L_response": result.validity.p_over_L_response,
@@ -158,4 +194,6 @@ def test_sp8007_data_prep_and_serialization_example() -> None:
 
     assert isinstance(loaded, HomogenizationResult)
     assert loaded.law.C8.shape == (8, 8)
+    assert report["sp8007"]["Ebar_x"] == result.law.A[0, 0]
+    assert report["sp8007"]["Dbar_xy"] == 2.0 * result.law.D[0, 1] + 4.0 * result.law.D[2, 2]
     assert report["p_over_R"] == 8.0 / 120.0
