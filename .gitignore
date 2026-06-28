@@ -186,6 +186,12 @@ validation/lib/**/*.py[codz]
 # Obsidian local vault state
 docs/.obsidian/
 
+# Local AI agent workspace
+AGENTS.md
+.claude/
+docs/llm_wiki/
+docs/internal/
+
 # mypy
 .mypy_cache/
 .dmypy.json
