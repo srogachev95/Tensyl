@@ -60,3 +60,15 @@ def test_io_does_not_depend_on_solver_or_optimization_layers() -> None:
                 violations.append(f"{path.relative_to(ROOT)} imports {module}")
 
     assert violations == []
+
+
+def test_public_package_does_not_depend_on_validation_tooling() -> None:
+    tensyl_files = sorted((ROOT / "src" / "tensyl").rglob("*.py"))
+
+    violations: list[str] = []
+    for path in tensyl_files:
+        for module in _imports_for(path):
+            if module.startswith("tensyl_validation") or module.startswith("validation"):
+                violations.append(f"{path.relative_to(ROOT)} imports {module}")
+
+    assert violations == []

@@ -51,6 +51,8 @@ nav:
       - External Workflows: user-guide/external-workflows.md
       - FEM Solver Handoff: user-guide/solver-handoff.md
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
+  - Validation:
+      - FEM Validation Laboratory: validation/index.md
   - Examples:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md
       - Orthogrid Panel and Barrel: examples/orthogrid-panel.md
