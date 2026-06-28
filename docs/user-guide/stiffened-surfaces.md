@@ -50,12 +50,13 @@ with station, angle, pitch, or local stiffener definition.
 
 ## Stiffened Dome
 
-`SphericalCap` and `Ellipsoid` provide curved midsurfaces with local frames that
-change over the surface.
+`Sphere`, `SphericalCap`, and `Ellipsoid` provide curved midsurfaces with local
+frames that change over the surface.
 
 ```python
-from tensyl import SphericalCap, WallAtlas
+from tensyl import Sphere, SphericalCap, WallAtlas
 
+complete_dome = Sphere(radius=96.0)
 dome = SphericalCap(radius=96.0, half_angle_rad=1.0)
 atlas = WallAtlas.from_field(
     dome,
@@ -70,6 +71,35 @@ build geodesic stiffener layouts over a dome. For varying stiffener orientation
 or pitch, provide a pointwise cell factory through `HomogenizedWallField` or
 sample already-computed local laws into a `WallAtlas`. The local cell must be
 consistent with each surface-point frame.
+
+For a sphere, the chart coordinates are `(phi, theta)`: `e1` is meridional and
+`e2` is circumferential away from the poles. For an ellipsoid, Tensyl uses the
+same latitude-longitude style chart, but a triaxial ellipsoid does not provide
+uniform physical pitch from uniform coordinate spacing.
+
+## Conical Frustum
+
+`ConicalFrustum` covers practical cone-like shell sections without including an
+apex singularity.
+
+```python
+from tensyl import ConicalFrustum, ValidityContext
+
+surface = ConicalFrustum(radius_start=80.0, radius_end=96.0, length=120.0)
+point = surface.point_at(60.0, 0.0)
+
+context = ValidityContext(
+    characteristic_height=0.50,
+    pitch=8.0,
+    min_radius=point.min_radius,
+    response_length=80.0,
+)
+```
+
+The cone frame uses `e1` along increasing axial station/generator direction,
+`e2` opposite the positive `theta` tangent to keep the same outward-normal
+orientation as `Cylinder`, and `n` outward. When `radius_start == radius_end`,
+the conical-frustum geometry reduces to the cylinder formulas.
 
 This is still wall-property preparation, not shell analysis. A separate shell,
 buckling, or sizing workflow must apply loads, boundary conditions, and failure

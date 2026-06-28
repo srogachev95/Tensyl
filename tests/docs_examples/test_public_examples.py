@@ -2,11 +2,14 @@ import numpy as np
 
 from tensyl import (
     BeamSection,
+    ConicalFrustum,
     ConstantWallField,
     Cylinder,
+    Ellipsoid,
     EnergyHomogenizer,
     HomogenizationResult,
     IsotropicMaterial,
+    Sphere,
     SphericalCap,
     ValidityContext,
     WallAtlas,
@@ -99,6 +102,35 @@ def test_stiffened_dome_concept_example() -> None:
 
     sample = atlas.law_at(dome, 0.60, np.pi)
     assert sample.C8.shape == (8, 8)
+
+
+def test_sphere_ellipsoid_and_cone_surface_examples() -> None:
+    wall = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33), thickness=0.080)
+    field = ConstantWallField(wall)
+
+    sphere = Sphere(radius=96.0)
+    sphere_wall = field.law_at(sphere, 0.60, np.pi)
+    assert sphere_wall.frame.label == "sphere"
+
+    ellipsoid = Ellipsoid(a=84.0, b=96.0, c=72.0)
+    atlas = WallAtlas.from_field(
+        ellipsoid,
+        field,
+        u_values=(0.30, 0.70),
+        v_values=(0.0, np.pi),
+    )
+    ellipsoid_wall = atlas.law_at(ellipsoid, 0.50, 0.50 * np.pi)
+    assert ellipsoid_wall.C8.shape == (8, 8)
+
+    frustum = ConicalFrustum(radius_start=80.0, radius_end=96.0, length=120.0)
+    point = frustum.point_at(60.0, 0.0)
+    context = ValidityContext(
+        characteristic_height=0.50,
+        pitch=8.0,
+        min_radius=point.min_radius,
+        response_length=80.0,
+    )
+    assert context.min_radius == point.min_radius
 
 
 def test_sp8007_data_prep_and_serialization_example() -> None:

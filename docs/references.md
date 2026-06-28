@@ -16,6 +16,8 @@ the formal public documentation.
 
 ## Plates, Shells, And Laminates
 
+- Manfredo P. do Carmo, *Differential Geometry of Curves and Surfaces*,
+  Prentice-Hall, 1976.
 - Eric Reissner, "The Effect of Transverse Shear Deformation on the Bending of
   Elastic Plates", *Journal of Applied Mechanics*, 1945.
 - R. D. Mindlin, "Influence of Rotatory Inertia and Shear on Flexural Motions
