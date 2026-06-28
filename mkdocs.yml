@@ -53,7 +53,6 @@ nav:
       - Stiffened Surfaces: user-guide/stiffened-surfaces.md
       - External Workflows: user-guide/external-workflows.md
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
-      - SP-8007 Data Prep: user-guide/sp8007-data-prep.md
   - Examples:
       - Skin-Only ABD Stiffness: examples/skin-only.md
       - Laminate Skin ABD Stiffness: examples/laminate-skin.md
