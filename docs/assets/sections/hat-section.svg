@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 430" role="img" aria-labelledby="title desc">
+<title id="title">hat_section geometry</title>
+<desc id="desc">An open hat section rises in positive z with lower mounting flanges at z = 0.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="430" fill="#ffffff"/>
+<text x="28" y="34" class="title" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">hat_section geometry</text>
+<rect x="28.00" y="293.08" width="624.00" height="27.14" fill="#e2e8f0"/>
+<line x1="28.00" y1="293.08" x2="652.00" y2="293.08" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="5 4"/>
+<line x1="28.00" y1="306.65" x2="652.00" y2="306.65" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 5"/>
+<text x="444.00" y="285.08" font-family="Inter, Arial, sans-serif" font-size="12" fill="#334155">section datum z = 0 / skin face</text>
+<text x="444.00" y="298.65" font-family="Inter, Arial, sans-serif" font-size="12" fill="#64748b">skin reference surface</text>
+<line x1="213.35" y1="293.08" x2="265.05" y2="293.08" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="213.35" y1="293.08" x2="213.35" y2="244.62" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="273.05" y="297.08" font-family="Inter, Arial, sans-serif" font-size="12" fill="#334155">+y</text>
+<text x="220.35" y="239.62" font-family="Inter, Arial, sans-serif" font-size="12" fill="#334155">+z / +n</text>
+<polygon points="236.62,276.28 291.54,276.28 291.54,293.08 236.62,293.08" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.8"/>
+<line x1="236.62" y1="284.68" x2="291.54" y2="284.68" stroke="#1e3a8a" stroke-width="1" stroke-dasharray="4 3"/>
+<polygon points="284.43,276.28 284.43,128.31 298.65,128.31 298.65,276.28" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.8"/>
+<line x1="291.54" y1="276.28" x2="291.54" y2="128.31" stroke="#1e3a8a" stroke-width="1" stroke-dasharray="4 3"/>
+<polygon points="291.54,108.92 388.46,108.92 388.46,128.31 291.54,128.31" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.8"/>
+<line x1="291.54" y1="118.62" x2="388.46" y2="118.62" stroke="#1e3a8a" stroke-width="1" stroke-dasharray="4 3"/>
+<polygon points="381.35,276.28 381.35,128.31 395.57,128.31 395.57,276.28" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.8"/>
+<line x1="388.46" y1="276.28" x2="388.46" y2="128.31" stroke="#1e3a8a" stroke-width="1" stroke-dasharray="4 3"/>
+<polygon points="388.46,276.28 443.38,276.28 443.38,293.08 388.46,293.08" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.8"/>
+<line x1="388.46" y1="284.68" x2="443.38" y2="284.68" stroke="#1e3a8a" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="291.54" y1="87.60" x2="388.46" y2="87.60" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="340.00" y="79.60" font-family="Inter, Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">crown_width</text>
+<line x1="236.62" y1="313.75" x2="291.54" y2="313.75" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="264.08" y="305.75" font-family="Inter, Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">flange_width</text>
+<line x1="259.23" y1="276.28" x2="259.23" y2="128.31" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="272.23" y="194.29" font-family="Inter, Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">web_height</text>
+<line x1="400.09" y1="128.31" x2="400.09" y2="108.92" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="413.09" y="110.62" font-family="Inter, Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">crown_thickness</text>
+<line x1="455.66" y1="293.08" x2="455.66" y2="276.28" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="468.66" y="276.68" font-family="Inter, Arial, sans-serif" font-size="12" text-anchor="middle" fill="#334155">flange_thickness</text>
+<circle cx="340.00" cy="212.95" r="4.5" fill="#dc2626"/>
+<line x1="331.00" y1="212.95" x2="349.00" y2="212.95" stroke="#dc2626" stroke-width="1.2"/>
+<line x1="340.00" y1="203.95" x2="340.00" y2="221.95" stroke="#dc2626" stroke-width="1.2"/>
+<text x="352.00" y="202.95" font-family="Inter, Arial, sans-serif" font-size="12" fill="#991b1b">centroid zc</text>
+<text x="264.08" y="302.68" font-family="Inter, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e3a8a">left flange</text>
+<text x="291.54" y="220.29" font-family="Inter, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e3a8a">left web</text>
+<text x="340.00" y="136.62" font-family="Inter, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e3a8a">crown</text>
+<text x="388.46" y="220.29" font-family="Inter, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e3a8a">right web</text>
+<text x="415.92" y="302.68" font-family="Inter, Arial, sans-serif" font-size="11" text-anchor="middle" fill="#1e3a8a">right flange</text>
+<rect x="28" y="374" width="624" height="34" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="42" y="396" font-family="Inter, Arial, sans-serif" font-size="13" fill="#334155">The hat is not flipped downward; mounting flanges sit on the skin-face datum.</text>
+</svg>

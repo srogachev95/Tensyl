@@ -148,7 +148,10 @@ change the member strain map.
 The geometry helpers represent an isotropic stiffener as rectangular wall
 segments in the member-local `(y, z)` section plane. The `X` axis runs along the
 stiffener, `z` follows the wall normal used for member eccentricity, and `y` is
-the in-plane transverse section axis.
+the in-plane transverse section axis. Section constructors measure `centroid_z`
+from their own `z = 0` construction datum; member eccentricity is still measured
+from the wall reference surface. If those datums differ, shift the centroid
+coordinate before building the cell.
 
 For each segment, Tensyl sums the rectangular area contribution and then shifts
 to the section centroid. The resulting geometric properties are:

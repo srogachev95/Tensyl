@@ -36,7 +36,8 @@ class ThinWallSegment:
 
     ``start_*`` and ``end_*`` are the segment midline endpoints in member-local
     ``(y, z)`` coordinates. ``thickness`` is measured normal to that midline in
-    the same coordinate plane.
+    the same coordinate plane. For section constructors, ``z = 0`` is a
+    construction datum, not automatically the skin mid-surface.
     """
 
     start_y: float
@@ -213,7 +214,12 @@ def thin_wall_section(
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
 ) -> ThinWallSection:
-    """Build an isotropic thin-wall section from rectangular wall segments."""
+    """Build an isotropic thin-wall section from rectangular wall segments.
+
+    Segment coordinates use the member-local ``(y, z)`` section plane. The
+    returned ``centroid_z`` is measured from the same ``z = 0`` construction
+    datum used by the supplied segments.
+    """
 
     return ThinWallSection(
         material=material,
@@ -233,7 +239,12 @@ def blade_section(
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
 ) -> ThinWallSection:
-    """Build a vertical blade stiffener rooted at ``z = 0``."""
+    """Build a vertical blade stiffener rooted at ``z = 0``.
+
+    The blade web rises in ``+z`` from the construction datum. If that datum is
+    the skin outer face and the wall reference surface is the skin mid-surface,
+    use ``0.5 * skin_thickness + section.centroid_z`` as member eccentricity.
+    """
 
     return thin_wall_section(
         material=material,
@@ -255,7 +266,10 @@ def tee_section(
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
 ) -> ThinWallSection:
-    """Build a tee stiffener with a vertical web and top flange."""
+    """Build a tee stiffener with a vertical web and top flange.
+
+    The web root is at ``z = 0`` and the flange sits above the web in ``+z``.
+    """
 
     web_height = _positive(web_height, name="web_height")
     flange_width = _positive(flange_width, name="flange_width")
@@ -291,7 +305,12 @@ def zee_section(
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
 ) -> ThinWallSection:
-    """Build a zee stiffener with opposite top and bottom flanges."""
+    """Build a zee stiffener with opposite top and bottom flanges.
+
+    The lower flange sits at the ``z = 0`` datum and extends toward negative
+    ``y``. The upper flange sits above the web and extends toward positive
+    ``y``.
+    """
 
     web_height = _positive(web_height, name="web_height")
     top_flange_width = _positive(top_flange_width, name="top_flange_width")
@@ -342,7 +361,11 @@ def channel_section(
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
 ) -> ThinWallSection:
-    """Build a channel stiffener with same-side top and bottom flanges."""
+    """Build a channel stiffener with same-side top and bottom flanges.
+
+    Both flanges extend toward positive ``y``. The lower flange sits at the
+    ``z = 0`` construction datum.
+    """
 
     web_height = _positive(web_height, name="web_height")
     flange_width = _positive(flange_width, name="flange_width")
@@ -394,7 +417,12 @@ def hat_section(
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
 ) -> ThinWallSection:
-    """Build an open hat stiffener with two webs, crown, and mounting flanges."""
+    """Build an open hat stiffener with two webs, crown, and mounting flanges.
+
+    The open hat rises in ``+z``. The mounting flanges sit on the ``z = 0``
+    construction datum, so this is the usual external hat orientation rather
+    than a hat flipped down into the skin.
+    """
 
     web_height = _positive(web_height, name="web_height")
     crown_width = _positive(crown_width, name="crown_width")

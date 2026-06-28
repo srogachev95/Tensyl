@@ -110,7 +110,8 @@ def test_named_sections_record_geometry_kind_and_positive_properties() -> None:
 
 def test_geometry_derived_section_can_drive_homogenizer() -> None:
     material = IsotropicMaterial(E=10.6e6, nu=0.33)
-    skin = isotropic_plate(material, thickness=0.080)
+    skin_thickness = 0.080
+    skin = isotropic_plate(material, thickness=skin_thickness)
     stringer = hat_section(
         material=material,
         web_height=0.50,
@@ -135,8 +136,8 @@ def test_geometry_derived_section_can_drive_homogenizer() -> None:
         rib_section=rib.section,
         stringer_spacing=6.0,
         rib_spacing=8.0,
-        stringer_eccentricity=stringer.centroid_z,
-        rib_eccentricity=rib.centroid_z,
+        stringer_eccentricity=0.5 * skin_thickness + stringer.centroid_z,
+        rib_eccentricity=0.5 * skin_thickness + rib.centroid_z,
     )
     result = EnergyHomogenizer().compute(cell)
 
