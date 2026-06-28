@@ -55,6 +55,7 @@ nav:
       - SI Examples Roadmap: examples/si-mirror-placeholders.md
       - Stiffened Barrel: examples/stiffened-barrel.md
       - Stiffened Dome: examples/stiffened-dome.md
+      - Stiffened Cone: examples/stiffened-cone.md
       - SP-8007 Data Prep: examples/sp8007-data-prep.md
   - API Reference:
       - Core: api/core.md

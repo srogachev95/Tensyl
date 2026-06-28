@@ -206,6 +206,56 @@ class Cylinder:
 
 
 @dataclass(frozen=True, slots=True)
+class Sphere:
+    """Spherical surface parameterized by polar angle and azimuth ``(phi, theta)``.
+
+    The single chart excludes both poles. Use ``SphericalCap`` when a partial
+    spherical domain is a better model for the physical shell.
+    """
+
+    radius: float
+    label: str = "sphere"
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "radius", _positive(self.radius, name="radius"))
+
+    def point_at(self, u: float, v: float) -> SurfacePoint:
+        phi = _finite(u, name="u")
+        theta = _finite(v, name="v")
+        if phi <= _TOLERANCE or phi >= np.pi - _TOLERANCE:
+            msg = "spherical coordinates are singular at the poles."
+            raise ValueError(msg)
+        radius = self.radius
+        sp = float(np.sin(phi))
+        cp = float(np.cos(phi))
+        st = float(np.sin(theta))
+        ct = float(np.cos(theta))
+        normal = np.array([sp * ct, sp * st, cp])
+        tangent_phi = radius * np.array([cp * ct, cp * st, -sp])
+        tangent_theta = radius * np.array([-sp * st, sp * ct, 0.0])
+        e1 = tangent_phi / float(np.linalg.norm(tangent_phi))
+        e2 = tangent_theta / float(np.linalg.norm(tangent_theta))
+        return SurfacePoint(
+            u=phi,
+            v=theta,
+            position=radius * normal,
+            tangent_u=tangent_phi,
+            tangent_v=tangent_theta,
+            metric=np.array([[radius * radius, 0.0], [0.0, radius * radius * sp * sp]]),
+            curvature=np.array([[-radius, 0.0], [0.0, -radius * sp * sp]]),
+            frame=Frame2D(e1=e1, e2=e2, n=normal, label=self.label),
+            jacobian=radius * radius * sp,
+            principal_curvatures=(-1.0 / radius, -1.0 / radius),
+            min_radius=radius,
+            metadata={
+                "surface": self.label,
+                "coordinate_u": "phi_rad",
+                "coordinate_v": "theta_rad",
+            },
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class SphericalCap:
     """Spherical surface parameterized by polar angle and azimuth ``(phi, theta)``.
 
@@ -256,6 +306,78 @@ class SphericalCap:
             metadata={
                 "surface": self.label,
                 "coordinate_u": "phi_rad",
+                "coordinate_v": "theta_rad",
+            },
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class ConicalFrustum:
+    """Circular conical frustum parameterized by axial coordinate and angle.
+
+    Coordinates are ``(x, theta)``. The local frame uses ``e1`` along increasing
+    axial station/generator direction, ``e2`` opposite the positive ``theta``
+    tangent, and ``n`` outward. The apex is not part of the supported smooth
+    midsurface domain.
+    """
+
+    radius_start: float
+    radius_end: float
+    length: float
+    label: str = "conical_frustum"
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "radius_start",
+            _positive(self.radius_start, name="radius_start"),
+        )
+        object.__setattr__(self, "radius_end", _positive(self.radius_end, name="radius_end"))
+        object.__setattr__(self, "length", _positive(self.length, name="length"))
+
+    @property
+    def slope(self) -> float:
+        """Return ``dr/dx`` for the linear radius law."""
+
+        return (self.radius_end - self.radius_start) / self.length
+
+    def radius_at(self, u: float) -> float:
+        """Return the local radius at axial coordinate ``u``."""
+
+        x = _finite(u, name="u")
+        radius = self.radius_start + self.slope * x
+        if radius <= _TOLERANCE:
+            msg = "conical frustum radius is singular or nonpositive at this point."
+            raise ValueError(msg)
+        return float(radius)
+
+    def point_at(self, u: float, v: float) -> SurfacePoint:
+        x = _finite(u, name="u")
+        theta = _finite(v, name="v")
+        radius = self.radius_at(x)
+        slope = self.slope
+        q = float(np.sqrt(1.0 + slope * slope))
+        c = float(np.cos(theta))
+        s = float(np.sin(theta))
+        e1 = np.array([1.0, slope * c, slope * s]) / q
+        e2 = np.array([0.0, s, -c])
+        normal = np.array([-slope, c, s]) / q
+        tangent_u = np.array([1.0, slope * c, slope * s])
+        tangent_v = np.array([0.0, -radius * s, radius * c])
+        return SurfacePoint(
+            u=x,
+            v=theta,
+            position=np.array([x, radius * c, radius * s]),
+            tangent_u=tangent_u,
+            tangent_v=tangent_v,
+            metric=np.array([[q * q, 0.0], [0.0, radius * radius]]),
+            curvature=np.array([[0.0, 0.0], [0.0, -radius / q]]),
+            frame=Frame2D(e1=e1, e2=e2, n=normal, label=self.label),
+            jacobian=radius * q,
+            principal_curvatures=(-1.0 / (radius * q), 0.0),
+            min_radius=radius * q,
+            metadata={
+                "surface": self.label,
                 "coordinate_v": "theta_rad",
             },
         )
@@ -335,9 +457,11 @@ class Ellipsoid:
 
 
 __all__ = [
+    "ConicalFrustum",
     "Cylinder",
     "Ellipsoid",
     "FlatPlate",
+    "Sphere",
     "SphericalCap",
     "Surface",
     "SurfacePoint",

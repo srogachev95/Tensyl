@@ -43,7 +43,16 @@ from tensyl.core.typing import (
     generalized_strain,
 )
 from tensyl.fields import ConstantWallField, HomogenizedWallField, WallAtlas, WallCache, WallField
-from tensyl.geometry import Cylinder, Ellipsoid, FlatPlate, SphericalCap, Surface, SurfacePoint
+from tensyl.geometry import (
+    ConicalFrustum,
+    Cylinder,
+    Ellipsoid,
+    FlatPlate,
+    Sphere,
+    SphericalCap,
+    Surface,
+    SurfacePoint,
+)
 from tensyl.homogenizers import (
     DirectECHomogenizer,
     EnergyHomogenizer,
@@ -76,6 +85,7 @@ __all__ = [
     "CellEdge",
     "CellNode",
     "ConstitutiveLaw",
+    "ConicalFrustum",
     "ConstantWallField",
     "Cylinder",
     "DirectECHomogenizer",
@@ -96,6 +106,7 @@ __all__ = [
     "OrthotropicPlyMaterial",
     "Ply",
     "HomogenizedWallField",
+    "Sphere",
     "SphericalCap",
     "StiffenerFamily",
     "StrainConvention",

@@ -8,7 +8,9 @@
         - Surface
         - FlatPlate
         - Cylinder
+        - Sphere
         - SphericalCap
+        - ConicalFrustum
         - Ellipsoid
 
 ::: tensyl.fields

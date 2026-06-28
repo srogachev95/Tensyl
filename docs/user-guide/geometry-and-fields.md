@@ -10,7 +10,9 @@ Available surfaces include:
 
 - `FlatPlate`;
 - `Cylinder`;
+- `Sphere`;
 - `SphericalCap`;
+- `ConicalFrustum`;
 - `Ellipsoid`.
 
 Each surface exposes:
@@ -21,6 +23,27 @@ point = surface.point_at(u, v)
 
 The point contains position, tangent vectors, metric, curvature, Jacobian,
 principal curvatures, and a local `Frame2D`.
+
+The wall stiffness matrix remains local. Coordinates answer "where is this
+surface point?", the local frame answers "what are the 1/2/n directions?", and
+the ABD/shear law is interpreted in that local frame. A constant isotropic or
+laminate wall law may be bound to many surface points even when the frame or
+curvature changes across the surface.
+
+Tensyl uses signed curvature from the surface normal convention. Built-in
+convex surfaces use outward normals, so their nonzero principal curvatures are
+negative. `SurfacePoint.min_radius` is the positive radius magnitude to use in
+scale-separation validity checks. These conventions follow the standard first
+and second fundamental form treatment of parametric surfaces listed in
+[References](../references.md).
+
+`Sphere` and `SphericalCap` use spherical coordinates `(phi, theta)`, with
+`e1` in the meridional direction and `e2` in the circumferential direction.
+Their single chart excludes poles. `Ellipsoid` uses the same latitude-longitude
+style chart; for a triaxial ellipsoid the coordinate tangent directions are not
+generally orthogonal, so `e1` follows the meridional coordinate direction and
+`e2` is the right-handed orthonormal tangent completion. `ConicalFrustum` uses
+`(x, theta)` and excludes apex singularities.
 
 ## Constant Wall Field
 

@@ -9,11 +9,15 @@ from tensyl import (
     BeamMember,
     BeamSection,
     CanonicalUnitCell,
+    ConicalFrustum,
     ConstantWallField,
     Cylinder,
+    Ellipsoid,
     EnergyHomogenizer,
     FlatPlate,
+    HomogenizedWallField,
     LinearABDWall,
+    Sphere,
     StrainConvention,
     ValidityContext,
     ValidityReport,
@@ -55,6 +59,28 @@ def test_constant_wall_field_rebinds_law_to_surface_frame() -> None:
     assert law.metadata["source"] == "constant_wall_field"
 
 
+@pytest.mark.parametrize(
+    ("surface", "u", "v"),
+    (
+        (Sphere(radius=3.0), 0.7, 0.25),
+        (Ellipsoid(a=2.0, b=3.0, c=4.0), 0.7, 0.25),
+        (ConicalFrustum(radius_start=2.0, radius_end=3.0, length=5.0), 1.0, 0.25),
+    ),
+)
+def test_constant_wall_field_rebinds_law_to_supported_curved_surfaces(
+    surface: Surface,
+    u: float,
+    v: float,
+) -> None:
+    base = _wall(scale=2.0)
+    law = ConstantWallField(base).law_at(surface, u, v)
+    point = surface.point_at(u, v)
+
+    np.testing.assert_allclose(law.C8, base.C8)
+    assert law.frame == point.frame
+    assert law.metadata["surface"] == point.metadata["surface"]
+
+
 def test_validity_report_for_law_accepts_flat_infinite_radius() -> None:
     report = validity_report_for_law(
         _wall(),
@@ -73,8 +99,6 @@ def test_validity_report_for_law_accepts_flat_infinite_radius() -> None:
 
 
 def test_homogenized_wall_field_uses_cache_and_surface_point() -> None:
-    from tensyl import HomogenizedWallField
-
     plate = FlatPlate()
     calls: list[SurfacePoint] = []
 
@@ -102,8 +126,6 @@ def test_homogenized_wall_field_uses_cache_and_surface_point() -> None:
 
 
 def test_homogenized_wall_field_rejects_frame_mismatch() -> None:
-    from tensyl import HomogenizedWallField
-
     cylinder = Cylinder(radius=2.0)
     calls = 0
 
@@ -133,6 +155,39 @@ def test_homogenized_wall_field_rejects_frame_mismatch() -> None:
         field.law_at(cylinder, 0.1, 0.2)
 
     assert calls == 0
+
+
+def test_homogenized_wall_field_can_use_surface_min_radius_for_validity() -> None:
+    surface = ConicalFrustum(radius_start=2.0, radius_end=3.0, length=5.0)
+
+    def factory(_surface: Surface, point: SurfacePoint) -> CanonicalUnitCell:
+        return CanonicalUnitCell(
+            area=1.0,
+            skin=_wall(scale=1.0, frame=point.frame),
+            members=(BeamMember(_section(), length=1.0, angle_rad=0.0, eccentricity=0.0),),
+            frame=point.frame,
+        )
+
+    def validity_context(point: SurfacePoint, _cell: CanonicalUnitCell) -> ValidityContext:
+        return ValidityContext(
+            characteristic_height=0.1,
+            pitch=0.2,
+            min_radius=point.min_radius,
+            response_length=10.0,
+        )
+
+    field = HomogenizedWallField(
+        surface,
+        factory,
+        EnergyHomogenizer(),
+        validity_context_factory=validity_context,
+    )
+
+    law = field.law_at(surface, 1.0, 0.25)
+
+    assert law.validity is not None
+    assert law.validity.h_over_R == pytest.approx(0.1 / surface.point_at(1.0, 0.25).min_radius)
+    assert law.validity.p_over_R == pytest.approx(0.2 / surface.point_at(1.0, 0.25).min_radius)
 
 
 class _LinearField:
@@ -190,6 +245,30 @@ def test_wall_atlas_bilinearly_interpolates_linear_walls() -> None:
     assert law.metadata["grid_cell"] == (0, 0)
     assert law.metadata["corner_warnings"] == ("sample_warning",)
     assert law.metadata["max_corner_delta_frobenius"] > 0.0
+
+
+def test_wall_atlas_interpolates_on_conical_frustum() -> None:
+    surface = ConicalFrustum(radius_start=2.0, radius_end=3.0, length=5.0)
+    validity = ValidityReport(
+        h_over_R=0.0,
+        p_over_R=0.0,
+        p_over_L_response=0.0,
+        coupling_ratios={"B_fro": 0.0},
+        warnings=(),
+    )
+
+    atlas = WallAtlas.from_field(
+        surface,
+        _LinearField(validity),
+        u_values=(0.5, 1.5),
+        v_values=(0.0, 1.0),
+    )
+
+    law = atlas.law_at(surface, 1.0, 0.25)
+
+    np.testing.assert_allclose(law.C8, 2.5 * np.eye(8))
+    assert law.frame == surface.point_at(1.0, 0.25).frame
+    assert law.metadata["source"] == "wall_atlas_bilinear"
 
 
 def test_wall_atlas_rejects_invalid_grid_and_out_of_bounds_lookup() -> None:
