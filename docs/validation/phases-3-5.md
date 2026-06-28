@@ -13,13 +13,13 @@ project documentation.
 
 | Phase | Intended validation question | Status today | Evidence required before promotion |
 | --- | --- | --- | --- |
-| Phase 3 barrel response | Does a tangent-plane wall law remain credible when embedded in cylindrical geometry? | Planned; no promoted public solver cases. | Reproducible explicit and smeared barrel cases with solver provenance, mesh rationale, field metrics, and trends against validity ratios. |
+| Phase 3 barrel response | Does a tangent-plane wall law remain credible when embedded in cylindrical geometry? | One smeared axial barrel target is executable; no promoted public solver cases. | Reproducible explicit barrel cases with solver provenance, mesh rationale, field metrics, and trends against validity ratios. |
 | Phase 4 limitation atlas | Where is the homogenized wall model the wrong tool? | Planned; no promoted public solver cases. | Deliberate disagreement cases tied to documented validity warnings or out-of-scope behavior. |
 | Phase 5 public validation gallery | Can stable cases be summarized as public evidence without hiding limitations? | Planned; no gallery page or summary matrix is promoted. | Generated tables, plots, regeneration commands, artifact manifests, and clear classification of confirmation, transition, and limitation cases. |
 
-Until those artifacts exist, public docs should say "planned" or "scaffolded",
-not "validated". A missing result is a perfectly respectable result when it is
-labeled before it can breed.
+Until explicit solver artifacts exist, public docs should say "planned",
+"scaffolded", or "smeared target only", not "validated". A missing result is a
+perfectly respectable result when it is labeled before it can breed.
 
 ## Phase 3: Barrel Response
 
