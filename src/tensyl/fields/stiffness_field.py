@@ -45,7 +45,7 @@ def _increasing(values: tuple[float, ...], *, name: str) -> tuple[float, ...]:
 
 
 def _metadata_for_surface(metadata: Mapping[str, Any], point: SurfacePoint) -> dict[str, Any]:
-    # Field evaluation binds an otherwise reusable wall law to a concrete
+    # Field evaluation binds an otherwise reusable ABD stiffness to a concrete
     # surface point. Preserve caller metadata, then stamp the local coordinates.
     combined = dict(metadata)
     combined.update(

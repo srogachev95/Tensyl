@@ -11,6 +11,7 @@ import numpy as np
 from tensyl.core._validation import (
     finite_number,
     nonnegative_number,
+    positive_number,
     readonly_array,
     readonly_mapping,
 )
@@ -30,6 +31,10 @@ from tensyl.core.typing import (
 
 _SYMMETRY_TOLERANCE = 1.0e-10
 GeneralizedStrainInput = GeneralizedStrain | FloatArray
+_REDUCTION_WARNING_B = "membrane_bending_coupling_discarded"
+_REDUCTION_WARNING_A16_A26 = "off_axis_membrane_coupling_discarded"
+_REDUCTION_WARNING_D16_D26 = "off_axis_bending_coupling_discarded"
+_REDUCTION_WARNING_VALIDITY_B = "validity_membrane_bending_coupling_exceeds_threshold"
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
@@ -120,6 +125,41 @@ class LinearModel(HyperelasticModel, Protocol):
 
 
 ConstitutiveModel = HyperelasticModel
+
+
+@dataclass(frozen=True, slots=True)
+class ReducedOrthotropicProperties:
+    """Membrane-equivalent orthotropic plane-stress constants.
+
+    Args:
+        t_eff: Effective shell thickness used for the membrane reduction.
+        E1: Young's modulus in local direction 1.
+        E2: Young's modulus in local direction 2.
+        G12: In-plane shear modulus.
+        nu12: Major Poisson ratio.
+        nu21: Minor Poisson ratio.
+        warnings: Machine-readable notices for stiffness terms not represented
+            by the reduction.
+        metadata: Provenance metadata for the reduced values.
+    """
+
+    t_eff: float
+    E1: float
+    E2: float
+    G12: float
+    nu12: float
+    nu21: float
+    warnings: tuple[str, ...] = ()
+    metadata: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "t_eff", positive_number(self.t_eff, name="t_eff"))
+        for name in ("E1", "E2", "G12"):
+            object.__setattr__(self, name, positive_number(getattr(self, name), name=name))
+        for name in ("nu12", "nu21"):
+            object.__setattr__(self, name, finite_number(getattr(self, name), name=name))
+        object.__setattr__(self, "warnings", tuple(self.warnings))
+        object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True)
@@ -274,6 +314,71 @@ class ABDStiffness:
 
         return rotate_abd_stiffness(self, angle_rad)
 
+    def reduced_orthotropic_properties(
+        self,
+        t_eff: float,
+        *,
+        tolerance: float = 1.0e-9,
+    ) -> ReducedOrthotropicProperties:
+        """Return membrane-equivalent orthotropic plane-stress properties.
+
+        ``t_eff`` is the shell thickness used by a downstream model to turn
+        membrane stiffness per unit width into material stiffness. The reduction
+        is based on ``A / t_eff`` and does not preserve the bending, coupling, or
+        transverse-shear blocks.
+        """
+
+        checked_t_eff = positive_number(t_eff, name="t_eff")
+        checked_tolerance = nonnegative_number(tolerance, name="tolerance")
+        q_eff = self.A / checked_t_eff
+        try:
+            s_eff = np.linalg.inv(q_eff)
+        except np.linalg.LinAlgError as exc:
+            msg = "A block must be invertible for reduced orthotropic properties."
+            raise ValueError(msg) from exc
+        values = {
+            "E1": 1.0 / s_eff[0, 0],
+            "E2": 1.0 / s_eff[1, 1],
+            "G12": 1.0 / s_eff[2, 2],
+            "nu12": -s_eff[0, 1] / s_eff[0, 0],
+            "nu21": -s_eff[0, 1] / s_eff[1, 1],
+        }
+        warnings = _reduced_orthotropic_warnings(self, tolerance=checked_tolerance)
+        metadata = {
+            "source": "reduced_orthotropic_properties",
+            "reduction": "membrane_compliance_from_A",
+            "t_eff": checked_t_eff,
+            "tolerance": checked_tolerance,
+        }
+        return ReducedOrthotropicProperties(
+            t_eff=checked_t_eff,
+            warnings=warnings,
+            metadata=metadata,
+            **values,
+        )
+
+
+def _has_nonzero(values: FloatArray, *, tolerance: float) -> bool:
+    return bool(np.any(np.abs(values) > tolerance))
+
+
+def _reduced_orthotropic_warnings(
+    stiffness: ABDStiffness,
+    *,
+    tolerance: float,
+) -> tuple[str, ...]:
+    warnings: list[str] = []
+    if _has_nonzero(stiffness.B, tolerance=tolerance):
+        warnings.append(_REDUCTION_WARNING_B)
+    if _has_nonzero(stiffness.A[[0, 1], 2], tolerance=tolerance):
+        warnings.append(_REDUCTION_WARNING_A16_A26)
+    if _has_nonzero(stiffness.D[[0, 1], 2], tolerance=tolerance):
+        warnings.append(_REDUCTION_WARNING_D16_D26)
+    validity_warnings = tuple(getattr(stiffness.validity, "warnings", ()))
+    if "membrane_bending_coupling_exceeds_threshold" in validity_warnings:
+        warnings.append(_REDUCTION_WARNING_VALIDITY_B)
+    return tuple(dict.fromkeys(warnings))
+
 
 def shift_reference_surface(stiffness: ABDStiffness, offset: float) -> ABDStiffness:
     """Return ``stiffness`` expressed about a reference surface shifted by ``offset``.
@@ -355,6 +460,7 @@ __all__ = [
     "HyperelasticModel",
     "ABDStiffness",
     "LinearModel",
+    "ReducedOrthotropicProperties",
     "shift_reference_surface",
     "superpose_abd_stiffnesses",
 ]

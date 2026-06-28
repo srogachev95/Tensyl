@@ -5,6 +5,7 @@ from tensyl.core.constitutive import (
     ConstitutiveModel,
     HyperelasticModel,
     LinearModel,
+    ReducedOrthotropicProperties,
     shift_reference_surface,
     superpose_abd_stiffnesses,
 )
@@ -14,6 +15,7 @@ __all__ = [
     "HyperelasticModel",
     "ABDStiffness",
     "LinearModel",
+    "ReducedOrthotropicProperties",
     "shift_reference_surface",
     "superpose_abd_stiffnesses",
 ]
