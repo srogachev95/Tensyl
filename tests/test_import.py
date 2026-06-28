@@ -14,9 +14,11 @@ def test_legacy_module_imports_remain_available() -> None:
     from tensyl.homogenizers import EnergyHomogenizer
     from tensyl.laminates import isotropic_plate
     from tensyl.materials import IsotropicMaterial
-    from tensyl.sections import BeamSection
+    from tensyl.sections import BeamSection, ThinWallSegment, blade_section
 
     assert BeamSection
+    assert ThinWallSegment
+    assert blade_section
     assert CanonicalUnitCell
     assert EnergyHomogenizer
     assert IsotropicMaterial
