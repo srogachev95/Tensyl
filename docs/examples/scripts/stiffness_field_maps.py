@@ -301,9 +301,7 @@ def render_cylinder_map(
     ax_surface.set_box_aspect((240.0, 100.0, 100.0), zoom=1.2)
     ax_surface.set_axis_off()
     _style_3d_axes(ax_surface)
-    ax_surface.set_title(
-        "100 inch diameter cylinder colored by local $A_{11}$", y=0.94, pad=0
-    )
+    ax_surface.set_title("100 inch diameter cylinder colored by local $A_{11}$", y=0.94, pad=0)
     colorbar = fig.colorbar(
         cm.ScalarMappable(norm=norm, cmap=STIFFNESS_CMAP),
         ax=ax_surface,

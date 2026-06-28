@@ -175,6 +175,14 @@ venv.bak/
 # ASV benchmark environments and results
 .asv/
 
+# FEM validation local solver environments and scratch artifacts
+validation/.solver-env/
+validation/artifacts/scratch/
+!validation/lib/
+!validation/lib/**
+validation/lib/**/__pycache__/
+validation/lib/**/*.py[codz]
+
 # Obsidian local vault state
 docs/.obsidian/
 
