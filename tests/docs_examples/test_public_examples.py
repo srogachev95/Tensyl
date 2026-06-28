@@ -26,11 +26,9 @@ from tensyl import (
 from tensyl.io import from_yaml, to_yaml
 
 
-def _ellipsoid_showpiece_module():
-    path = (
-        Path(__file__).parents[2] / "docs" / "examples" / "scripts" / "ellipsoid_stiffness_map.py"
-    )
-    spec = importlib.util.spec_from_file_location("ellipsoid_stiffness_map", path)
+def _stiffness_maps_module():
+    path = Path(__file__).parents[2] / "docs" / "examples" / "scripts" / "stiffness_field_maps.py"
+    spec = importlib.util.spec_from_file_location("stiffness_field_maps", path)
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)
@@ -285,9 +283,27 @@ def test_non_constant_homogenized_stiffness_field_example() -> None:
     assert station_150.validity.p_over_R == 8.0 / 120.0
 
 
+def test_cylinder_stiffness_map_numerics() -> None:
+    module = _stiffness_maps_module()
+    data = module.sample_cylinder(x_count=8, theta_count=10)
+
+    assert data["A11"].shape == (8, 10)
+    assert np.all(np.isfinite(data["A11"]))
+    assert np.all(np.isfinite(data["D11"]))
+    assert np.all(np.isfinite(data["p_over_R"]))
+    assert np.isclose(data["radius"], 50.0)
+    assert np.isclose(data["stiffener_height"], 1.0)
+    assert np.ptp(data["skin_thickness"][:, 0]) > 0.02
+    assert np.ptp(data["stringer_spacing"][:, 0]) > 1.5
+    assert np.ptp(data["rib_spacing"][:, 0]) > 1.0
+    assert np.ptp(data["A11_ratio"][:, 0]) > 0.20
+    assert np.ptp(data["D11_ratio"][:, 0]) > 0.25
+    assert np.max(data["warning_count"]) > 0
+
+
 def test_ellipsoid_stiffness_map_numerics() -> None:
-    module = _ellipsoid_showpiece_module()
-    data = module.sample_showpiece(phi_count=6, theta_count=9)
+    module = _stiffness_maps_module()
+    data = module.sample_ellipsoid(phi_count=6, theta_count=9)
 
     assert data["A11"].shape == (6, 9)
     assert np.all(np.isfinite(data["A11"]))
@@ -300,13 +316,21 @@ def test_ellipsoid_stiffness_map_numerics() -> None:
     assert np.max(data["warning_count"]) > 0
 
 
-def test_ellipsoid_stiffness_map_render_smoke(tmp_path: Path) -> None:
-    module = _ellipsoid_showpiece_module()
-    data = module.sample_showpiece(phi_count=5, theta_count=7)
-    output = module.render_showpiece(tmp_path / "ellipsoid-stiffness-map.png", data=data)
+def test_stiffness_field_map_render_smoke(tmp_path: Path) -> None:
+    module = _stiffness_maps_module()
+    cylinder = module.render_cylinder_map(
+        tmp_path / "cylinder-stiffness-map.png",
+        data=module.sample_cylinder(x_count=6, theta_count=7),
+    )
+    ellipsoid = module.render_ellipsoid_map(
+        tmp_path / "ellipsoid-stiffness-map.png",
+        data=module.sample_ellipsoid(phi_count=5, theta_count=7),
+    )
 
-    assert output.exists()
-    assert output.stat().st_size > 10_000
+    assert cylinder.exists()
+    assert cylinder.stat().st_size > 10_000
+    assert ellipsoid.exists()
+    assert ellipsoid.stat().st_size > 10_000
 
 
 def test_sp8007_data_prep_and_serialization_handoff() -> None:
