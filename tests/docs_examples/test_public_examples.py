@@ -159,15 +159,17 @@ def test_geometry_derived_stiffener_section_example() -> None:
         flange_width=0.20,
         flange_thickness=0.050,
     )
-    skin = isotropic_plate(aluminum, thickness=0.080)
+    skin_thickness = 0.080
+    skin = isotropic_plate(aluminum, thickness=skin_thickness)
+    skin_face_offset = 0.5 * skin_thickness
     cell = orthogrid_cell(
         skin=skin,
         stringer_section=hat.section,
         rib_section=blade.section,
         stringer_spacing=6.0,
         rib_spacing=8.0,
-        stringer_eccentricity=hat.centroid_z,
-        rib_eccentricity=blade.centroid_z,
+        stringer_eccentricity=skin_face_offset + hat.centroid_z,
+        rib_eccentricity=skin_face_offset + blade.centroid_z,
     )
     result = EnergyHomogenizer().compute(cell)
 
