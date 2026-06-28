@@ -26,7 +26,7 @@ def test_section_diagram_assets_exist_and_parse_as_svg() -> None:
     for filename in expected:
         root = ET.parse(DEFAULT_OUTPUT_DIR / filename).getroot()
         assert root.tag == "{http://www.w3.org/2000/svg}svg"
-        assert root.attrib["viewBox"] == "0 0 680 430"
+        assert root.attrib["viewBox"] == "0 0 760 470"
 
 
 def test_section_diagram_assets_match_generator(tmp_path: Path) -> None:
