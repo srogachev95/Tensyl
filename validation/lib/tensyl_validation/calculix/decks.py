@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass
-from math import isfinite
+from math import isfinite, sqrt
 
 
 def _positive(value: float, *, name: str) -> float:
@@ -92,6 +92,100 @@ class CalculixSkinPatch:
 
 
 @dataclass(frozen=True, slots=True)
+class CalculixBeamStiffness:
+    """Target beam stiffnesses carried into a CalculiX probe deck."""
+
+    EA: float
+    EIy: float
+    EIz: float
+    GJ: float
+    kGAy: float | None = None
+    kGAz: float | None = None
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "EA", _positive(self.EA, name="EA"))
+        object.__setattr__(self, "EIy", _positive(self.EIy, name="EIy"))
+        object.__setattr__(self, "EIz", _positive(self.EIz, name="EIz"))
+        object.__setattr__(self, "GJ", _positive(self.GJ, name="GJ"))
+        if self.kGAy is not None:
+            object.__setattr__(self, "kGAy", _positive(self.kGAy, name="kGAy"))
+        if self.kGAz is not None:
+            object.__setattr__(self, "kGAz", _positive(self.kGAz, name="kGAz"))
+
+    def as_comments(self) -> list[str]:
+        """Return deterministic comments recording the intended section law."""
+
+        values = [
+            f"EA={_fmt(self.EA)}",
+            f"EIy={_fmt(self.EIy)}",
+            f"EIz={_fmt(self.EIz)}",
+            f"GJ={_fmt(self.GJ)}",
+        ]
+        if self.kGAy is not None:
+            values.append(f"kGAy={_fmt(self.kGAy)}")
+        if self.kGAz is not None:
+            values.append(f"kGAz={_fmt(self.kGAz)}")
+        return ["** target_beam_stiffness: " + ", ".join(values)]
+
+
+@dataclass(frozen=True, slots=True)
+class CalculixUnidirectionalStiffenedPatch:
+    """Structured skin patch with one shared-node beam stiffener line."""
+
+    skin: CalculixSkinPatch
+    beam: CalculixBeamStiffness
+    stiffener_y: float = 0.0
+    stiffener_elset: str = "STIFFENER"
+    stiffener_material_name: str = "stiffener_material"
+
+    def __post_init__(self) -> None:
+        if self.skin.divisions_y % 2 != 0:
+            msg = "unidirectional stiffener probe requires an even divisions_y for a y=0 line."
+            raise ValueError(msg)
+        if abs(float(self.stiffener_y)) > 0.5 * self.skin.width:
+            msg = "stiffener_y must lie inside the skin patch."
+            raise ValueError(msg)
+        object.__setattr__(
+            self,
+            "stiffener_elset",
+            _name(self.stiffener_elset, name="stiffener_elset").upper(),
+        )
+        object.__setattr__(
+            self,
+            "stiffener_material_name",
+            _name(self.stiffener_material_name, name="stiffener_material_name").upper(),
+        )
+
+    @property
+    def stiffener_node_row(self) -> int:
+        """Structured grid row used by the zero-eccentric stiffener."""
+
+        dy = self.skin.width / self.skin.divisions_y
+        row = round((float(self.stiffener_y) + 0.5 * self.skin.width) / dy)
+        y = -0.5 * self.skin.width + row * dy
+        if abs(y - float(self.stiffener_y)) > 1.0e-10:
+            msg = "stiffener_y must fall on the structured skin grid."
+            raise ValueError(msg)
+        return row
+
+    @property
+    def beam_area(self) -> float:
+        """Equivalent beam area implied by the target axial stiffness."""
+
+        return self.beam.EA / self.skin.youngs_modulus
+
+    @property
+    def beam_rect_dimensions(self) -> tuple[float, float]:
+        """Return a rectangular proxy preserving EA and EIy for review runs."""
+
+        area = self.beam_area
+        inertia_y = self.beam.EIy / self.skin.youngs_modulus
+        thickness_1 = sqrt(12.0 * inertia_y / area)
+        thickness_2 = area / thickness_1
+        return thickness_1, thickness_2
+
+
+@dataclass(frozen=True, slots=True)
 class GeneralizedStrainLoadCase:
     """One canonical membrane/bending generalized strain load case."""
 
@@ -165,6 +259,18 @@ def _elements(patch: CalculixSkinPatch) -> Iterator[tuple[int, int, int, int, in
             n4 = _node_id(i, j + 1, patch.divisions_x)
             yield element_id, n1, n2, n3, n4
             element_id += 1
+
+
+def _beam_elements(
+    patch: CalculixUnidirectionalStiffenedPatch,
+) -> Iterator[tuple[int, int, int]]:
+    element_id = patch.skin.divisions_x * patch.skin.divisions_y + 1
+    row = patch.stiffener_node_row
+    for i in range(patch.skin.divisions_x):
+        n1 = _node_id(i, row, patch.skin.divisions_x)
+        n2 = _node_id(i + 1, row, patch.skin.divisions_x)
+        yield element_id, n1, n2
+        element_id += 1
 
 
 def _prescribed_dofs(
@@ -245,6 +351,83 @@ def render_skin_patch_inp(
     return "\n".join(lines)
 
 
+def render_unidirectional_stiffened_probe_inp(
+    patch: CalculixUnidirectionalStiffenedPatch,
+    load_case: GeneralizedStrainLoadCase,
+) -> str:
+    """Return a CalculiX probe deck for a shared-node unidirectional stiffener.
+
+    The beam section is a rectangular CalculiX proxy that preserves the target
+    beam ``EA`` and ``EIy``. It is intentionally not an extracted-stiffness
+    validation model until the remaining section stiffness mapping is audited.
+    """
+
+    thickness_1, thickness_2 = patch.beam_rect_dimensions
+    lines = [
+        "*HEADING",
+        f"Tensyl validation unidirectional stiffener probe: {patch.skin.name}",
+        f"** load_case: {load_case.name}",
+        "** probe_status: review_deck_only_not_promoted_validation",
+        "** stiffener_coupling: shared shell/beam nodes on the skin reference surface",
+        "** beam_proxy: CalculiX RECT section preserves target EA and EIy only",
+        *patch.beam.as_comments(),
+        "** generalized_strain_order: e11, e22, g12, k11, k22, k12",
+        "*NODE",
+    ]
+    for node_id, x, y, z in _nodes(patch.skin):
+        lines.append(f"{node_id}, {_fmt(x)}, {_fmt(y)}, {_fmt(z)}")
+
+    lines.append("*ELEMENT, TYPE=S4, ELSET=SKIN")
+    for element_id, n1, n2, n3, n4 in _elements(patch.skin):
+        lines.append(f"{element_id}, {n1}, {n2}, {n3}, {n4}")
+
+    lines.append(f"*ELEMENT, TYPE=B31, ELSET={patch.stiffener_elset}")
+    for element_id, n1, n2 in _beam_elements(patch):
+        lines.append(f"{element_id}, {n1}, {n2}")
+
+    lines.extend(
+        [
+            "*NSET, NSET=ALLNODES",
+            *_node_list(patch.skin.divisions_x, patch.skin.divisions_y),
+            f"*MATERIAL, NAME={patch.skin.material_name}",
+            "*ELASTIC",
+            f"{_fmt(patch.skin.youngs_modulus)}, {_fmt(patch.skin.poissons_ratio)}",
+            f"*MATERIAL, NAME={patch.stiffener_material_name}",
+            "*ELASTIC",
+            f"{_fmt(patch.skin.youngs_modulus)}, {_fmt(patch.skin.poissons_ratio)}",
+            f"*SHELL SECTION, ELSET=SKIN, MATERIAL={patch.skin.material_name}",
+            _fmt(patch.skin.thickness),
+            (
+                f"*BEAM SECTION, ELSET={patch.stiffener_elset}, "
+                f"MATERIAL={patch.stiffener_material_name}, SECTION=RECT"
+            ),
+            f"{_fmt(thickness_1)}, {_fmt(thickness_2)}",
+            "0., 0., 1.",
+            "*BOUNDARY",
+        ]
+    )
+
+    for node_id, x, y, _z in _nodes(patch.skin):
+        for dof, value in enumerate(_prescribed_dofs(x, y, load_case), start=1):
+            lines.append(f"{node_id}, {dof}, {dof}, {_fmt(value)}")
+
+    lines.extend(
+        [
+            "*STEP",
+            "*STATIC",
+            "*NODE PRINT, NSET=ALLNODES, TOTALS=YES",
+            "RF",
+            "*EL PRINT, ELSET=SKIN",
+            "S",
+            f"*EL PRINT, ELSET={patch.stiffener_elset}",
+            "S",
+            "*END STEP",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def render_skin_patch_decks(
     patch: CalculixSkinPatch,
     load_cases: tuple[GeneralizedStrainLoadCase, ...] = STANDARD_ABD_LOAD_CASES,
@@ -252,3 +435,15 @@ def render_skin_patch_decks(
     """Return one deterministic CalculiX deck per supplied load case."""
 
     return {load_case.name: render_skin_patch_inp(patch, load_case) for load_case in load_cases}
+
+
+def render_unidirectional_stiffened_probe_decks(
+    patch: CalculixUnidirectionalStiffenedPatch,
+    load_cases: tuple[GeneralizedStrainLoadCase, ...] = STANDARD_ABD_LOAD_CASES,
+) -> dict[str, str]:
+    """Return one unidirectional stiffener probe deck per supplied load case."""
+
+    return {
+        load_case.name: render_unidirectional_stiffened_probe_inp(patch, load_case)
+        for load_case in load_cases
+    }

@@ -5,13 +5,17 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import json
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "validation" / "lib"))
 
 from tensyl_validation.calculix.parsers import CalculixStressRow, CalculixStressTable  # noqa: E402
-from tensyl_validation.local_abd_solver import extract_skin_only_abd6_from_stress_tables  # noqa: E402
+from tensyl_validation.local_abd_solver import (  # noqa: E402
+    prepare_unidirectional_stiffened_probe_decks,
+    extract_skin_only_abd6_from_stress_tables,
+)
 
 
 def _table(
@@ -56,3 +60,25 @@ def test_skin_only_extraction_assembles_abd6_from_stress_tables() -> None:
     assert abd6[3, 3] == np.float64((24.0 * 0.2**2 * np.sqrt(3.0) / 12.0) / 0.5)
     assert abd6[4, 4] == np.float64((16.0 * 0.2**2 * np.sqrt(3.0) / 12.0) / 0.5)
     assert abd6[5, 5] == np.float64((12.0 * 0.2**2 * np.sqrt(3.0) / 12.0) / 0.5)
+
+
+def test_unidirectional_stiffened_probe_writes_non_promoted_manifest(tmp_path: Path) -> None:
+    spec = ROOT / "validation" / "cases" / "local_abd" / "unidirectional.yml"
+
+    outputs = prepare_unidirectional_stiffened_probe_decks(
+        spec,
+        artifact_dir=tmp_path / "artifacts",
+        work_dir=tmp_path / "raw",
+        command=["run_local_abd_solver.py", str(spec), "--prepare-probe-decks"],
+    )
+
+    summary = json.loads(outputs["summary"].read_text(encoding="utf-8"))
+    manifest = json.loads(outputs["manifest"].read_text(encoding="utf-8"))
+
+    assert summary["status"] == "review_deck_only"
+    assert summary["solver_extraction_promoted"] is False
+    assert summary["deck_count"] == 6
+    assert manifest["metadata"]["artifact_role"] == "calculix_probe_deck"
+    assert manifest["metadata"]["solver_required"] is False
+    assert manifest["metadata"]["unsupported_blocks"] == ["A", "B", "D", "As"]
+    assert (outputs["decks"] / "epsilon_11.inp").exists()
