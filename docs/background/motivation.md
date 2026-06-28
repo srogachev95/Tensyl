@@ -4,10 +4,11 @@ Stiffened thin-wall structures appear throughout aerospace engineering:
 integrally stiffened panels, launch-vehicle barrels, ring-and-stringer shells,
 isogrids, orthogrids, sandwich walls, and lattice-like facesheets.
 
-Detailed stiffener-by-stiffener models are valuable, but they can be expensive
-and awkward during early sizing and trade studies. Equivalent-wall modeling
-replaces a repeating stiffened construction with a continuum wall law that has
-similar global membrane, bending, twisting, and shear response.
+Detailed stiffener-by-stiffener models are the gold standard — and a slog.
+Rebuilding every rib for a trade study you will throw away next week is a poor
+use of a Tuesday. Equivalent-wall modeling smears the stiffeners into a single
+continuum wall law: you trade local detail for a small, auditable matrix that
+still gets the global membrane, bending, twisting, and shear story right.
 
 Tensyl's core rule is:
 
@@ -33,3 +34,7 @@ Tensyl is intended for:
 Tensyl is not intended to hide the assumptions behind equivalent-wall modeling.
 Every homogenized result carries diagnostics and validity information because a
 wall law is useful only when its assumptions match the structural question.
+
+New to the vocabulary — "wall law," "tangent plane," "scale separation,"
+"pitch"? The [Terminology](terminology.md) page defines each precisely and is
+worth a read before the Theory section.

@@ -39,12 +39,19 @@ Q_{23}
 \end{bmatrix}^T.
 $$
 
+Those eight numbers are really three familiar things stacked together: three
+membrane strains, three curvatures, and two transverse shears. Feed them in, get
+the eight matching resultants out — that is the whole job of a wall law.
+
 The current public strain convention uses engineering shear strains. Tensor
 shear conventions are rejected so twist and shear factors are not silently
 mixed.
 
-The ordering is part of the public mechanics contract. User code should not
-reorder matrices without also transforming strains and resultants.
+!!! note "Ordering is part of the public API contract"
+    The component order above is not arbitrary house style — it is a contract.
+    User code should not reorder the matrices without also transforming the
+    strains and resultants to match, or the energy and resultants will quietly
+    stop meaning what they say.
 
 ## Stored Energy Contract
 
@@ -100,3 +107,6 @@ adequately modeled, or that a shell buckling calculation is valid. Tensyl
 reports diagnostics and scale-separation warnings so an analyst can decide
 whether the local equivalent-wall approximation is acceptable for the intended
 workflow.
+
+For how these wall laws are actually computed and inspected in practice, see
+[Homogenization](../user-guide/homogenization.md) in the User Guide.

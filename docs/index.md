@@ -4,7 +4,17 @@ Tensyl is a Python library for equivalent-wall homogenization of stiffened
 thin-wall structures. It helps structural analysts build, check, transform, and
 export local wall laws for skins, laminates, and stiffened repeating cells.
 
+In one line: Tensyl replaces a panel full of stiffeners with a single equivalent
+wall — a small, auditable stiffness matrix that behaves like the real thing under
+global loads, without the cost of modeling every rib.
+
 The public package name is `tensyl`.
+
+!!! tip "New here? Read in this order"
+    Start with [Background](background/motivation.md) for the why, then
+    [Terminology](background/terminology.md) for the vocabulary — it is the
+    glossary the rest of the manual leans on. Theory and the User Guide make a
+    lot more sense once those two are in hand.
 
 ## What Tensyl Computes
 

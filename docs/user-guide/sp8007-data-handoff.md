@@ -79,10 +79,12 @@ strain convention uses engineering shear/twist ordering
 `(e11, e22, gamma12, k11, k22, k12, gamma13, gamma23)`, so the coefficient is
 `2*D12 + 4*D66`.
 
-This coefficient set does not represent every possible ABD law. If `A16`,
-`A26`, `B16`, `B26`, `B61`, `B62`, `D16`, or `D26` are not negligible, rotate
-the wall into its orthotropic axes or use a more general downstream buckling
-workflow. Do not silently drop those terms.
+!!! warning "Do not silently drop the off-axis terms"
+    This coefficient set does not represent every possible ABD law. If `A16`,
+    `A26`, `B16`, `B26`, `B61`, `B62`, `D16`, or `D26` are not negligible,
+    rotate the wall into its orthotropic axes or use a more general downstream
+    buckling workflow. Dropping those terms to make the data fit the SP-8007
+    mold throws away real anisotropy — and nothing will tell you that you did.
 
 The data-prep example includes orthogrid, equilateral-isogrid, and symmetric
 laminate variants that all use this same extraction rule.

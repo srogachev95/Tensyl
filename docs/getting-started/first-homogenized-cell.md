@@ -1,7 +1,8 @@
 # First Homogenized Cell
 
 Tangent-plane homogenization adds beam-stiffener contributions to a skin wall
-law. The energy homogenizer is the reference path.
+law. The energy homogenizer is the reference path — the one Tensyl trusts by
+default and measures the other methods against.
 
 ```python
 from tensyl import (

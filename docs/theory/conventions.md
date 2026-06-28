@@ -83,9 +83,13 @@ This applies to:
 
 For a cylinder whose local normal points outward, an external stringer has
 positive `stringer_eccentricity`. An internal stringer has negative
-eccentricity. The sign is not cosmetic: changing it changes the
-membrane-bending coupling block `B` and can produce a physically different wall
-law without raising an exception.
+eccentricity.
+
+!!! warning "The eccentricity sign is not cosmetic"
+    Flip it and you change the membrane-bending coupling block `B` — which means
+    you get a *physically different wall law*, with no exception and no
+    validation error to warn you. The numbers will look perfectly reasonable and
+    be quietly wrong. Decide which way `+n` points before you type a sign.
 
 Positive eccentricity adds membrane-bending coupling according to the chosen
 reference surface. Moving the reference surface also changes `B`. Equal and

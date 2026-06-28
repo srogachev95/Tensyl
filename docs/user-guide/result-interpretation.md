@@ -66,8 +66,8 @@ Selected output, rounded:
 | warnings | `p_over_R_exceeds_threshold`, `p_over_L_response_exceeds_threshold`, `membrane_bending_coupling_exceeds_threshold` |
 
 For SI inputs the same blocks have units `N/m`, `N`, `N*m`, and `N/m`,
-respectively. Tensyl does not convert units; it preserves the unit system used
-in the inputs.
+respectively. Tensyl preserves whichever system you fed it (see
+[Units and Consistency](units-and-consistency.md)); it never converts.
 
 ## Reading The Blocks
 
@@ -94,6 +94,9 @@ coupling ratios and validity warnings. Do not reduce to a scalar equivalent
 modulus unless the wall is uncoupled enough for that reduction and the
 engineering assumptions are written down.
 
-Numerical diagnostics prove consistency of the assembled operator. They do not
-prove a shell buckling margin, local stiffener failure, or finite-element
-correlation.
+!!! note "Consistency is not correlation"
+    Numerical diagnostics prove the assembled operator is *self-consistent*.
+    They do not prove a shell buckling margin, local stiffener failure, or
+    finite-element correlation — those still have to be earned separately.
+
+Next: [Geometry and Wall Fields](geometry-and-fields.md).

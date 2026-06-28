@@ -21,22 +21,10 @@ import tensyl
 
 ## Unit Policy
 
-Tensyl does not own a unit system. All numeric inputs must already be in one
-consistent unit system.
-
-For US customary examples in this manual, use:
-
-| Quantity | Unit |
-| --- | --- |
-| Length | `in` |
-| Force | `lbf` |
-| Stress | `psi` |
-| Moment | `lbf*in` |
-| Membrane stiffness | `lbf/in` |
-| Bending stiffness | `lbf*in` |
-
-For SI examples, use `m`, `N`, and `Pa`. Do not mix unit systems inside one
-wall law or one cell.
+Tensyl does not own a unit system: every input must already be in one consistent
+set of units, and Tensyl will not catch you if it isn't. This matters enough to
+get its own page — see [Units and Consistency](../user-guide/units-and-consistency.md)
+for the rule, the reference tables, and the failure mode to watch for.
 
 ## Verification Commands
 

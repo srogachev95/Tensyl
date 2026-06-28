@@ -1,7 +1,8 @@
 # First Wall Law
 
-The simplest Tensyl workflow is a skin-only isotropic plate. It is useful as a
-baseline before stiffener homogenization.
+The simplest Tensyl workflow is a skin-only isotropic plate — no stiffeners, no
+surprises. It is the baseline you sanity-check everything else against before
+stiffener homogenization gets interesting.
 
 ```python
 from tensyl import IsotropicMaterial, isotropic_plate

@@ -9,6 +9,8 @@ exclude_docs: |
   llm_wiki/**
 markdown_extensions:
   - tables
+  - admonition
+  - pymdownx.details
   - pymdownx.arithmatex:
       generic: true
 extra_javascript:
@@ -42,6 +44,7 @@ nav:
       - Tangent-Plane Homogenization: theory/tangent-plane-homogenization.md
       - Validity Limits: theory/validity.md
   - User Guide:
+      - Units and Consistency: user-guide/units-and-consistency.md
       - Materials and Laminates: user-guide/materials-and-laminates.md
       - Beam Sections and Cells: user-guide/beam-sections-and-cells.md
       - Homogenization: user-guide/homogenization.md

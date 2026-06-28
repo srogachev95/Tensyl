@@ -19,7 +19,9 @@ Here:
 - $\mu_m$ is multiplicity;
 - $L_m$ is member length;
 - $\mathbf K_m$ is the member stiffness matrix;
-- $\mathbf T_m$ maps wall generalized strain into member beam strain.
+- $\mathbf T_m$ is the *member strain map*: it projects the wall's generalized
+  strain onto each member's beam strain. This map is the hinge of the whole
+  method, and it is referenced by name in the diagnostics below.
 
 The equivalent tangent is:
 
@@ -83,9 +85,11 @@ records:
 - assumptions attached to the member strain map and section inputs;
 - a `ValidityReport` with scale-separation ratios and warning codes.
 
-Energy-vs-direct agreement is useful but not sufficient proof. Both paths share
-the member strain map, so independent literature, test, or finite-element
-evidence is still needed for high-consequence use.
+!!! note "Two methods agreeing is necessary, not sufficient"
+    Energy-vs-direct agreement is a good sign, but it is not proof. Both paths
+    share the same member strain map, so they can agree and still be wrong
+    together. For high-consequence use, you still need independent literature,
+    test, or finite-element evidence.
 
 ## Limits
 

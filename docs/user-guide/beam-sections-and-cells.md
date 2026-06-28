@@ -52,8 +52,12 @@ about `n`.
 Every eccentricity is signed along `+n` from the wall reference surface to the
 member centroid. For an outward-normal cylinder, an external stringer has
 positive `stringer_eccentricity`; an internal stringer has negative
-eccentricity. The sign changes `B`, so a wrong sign can produce a different
-physical wall law without triggering a validation error.
+eccentricity.
+
+!!! warning "A wrong eccentricity sign is silently wrong"
+    The sign changes the coupling block `B`, so flipping it produces a different
+    physical wall law — with no validation error to catch it. See
+    [Frames and Conventions](../theory/conventions.md) for the full sign rule.
 
 ## Graph Cells
 

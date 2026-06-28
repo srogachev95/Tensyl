@@ -50,9 +50,12 @@ Malformed or unsupported inputs raise typed homogenization exceptions. Finite
 rank-deficient assemblies are returned with diagnostics and warnings so the
 caller can decide whether the mechanism is acceptable.
 
-Diagnostics do not prove a design is valid. Symmetry and positive energy are
-minimum consistency checks. They do not verify local failure, joints, finite
-element correlation, shell buckling margins, or manufacturing detail.
+!!! note "Diagnostics check the math, not the design"
+    A clean diagnostics report does not mean the design is valid. Symmetry and
+    positive energy are minimum consistency checks on the assembled operator —
+    they say nothing about local failure, joints, finite-element correlation,
+    shell buckling margins, or manufacturing detail. Passing here is table
+    stakes, not a verdict.
 
 ## Comparing Wall Laws
 

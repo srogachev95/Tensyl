@@ -12,8 +12,8 @@ material = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
 wall = isotropic_plate(material, thickness=0.080)
 ```
 
-Inputs must be consistent. In US customary examples, `E` is in `psi` and
-`thickness` is in `in`.
+Inputs must be consistent. In the US customary examples here, `E` is in `psi`
+and `thickness` is in `in` — see [Units and Consistency](units-and-consistency.md).
 
 ## Orthotropic Laminate
 

@@ -24,8 +24,9 @@ write_yaml(
 same_result = read_yaml(Path("wall-law.yaml"))
 ```
 
-Tensyl records unit labels but does not infer or convert units. All inputs and
-outputs must already be in a consistent unit system.
+Tensyl records unit labels but does not infer or convert units; inputs and
+outputs alike must already share one consistent system (see
+[Units and Consistency](units-and-consistency.md)).
 
 ## Schema
 
