@@ -14,7 +14,7 @@ turns into a very nicely formatted rumor.
 
 | Case spec | Status today | Reference |
 | --- | --- | --- |
-| `validation/cases/local_abd/skin_only.yml` | Tensyl target executable; solver-backed extraction planned. | Closed-form isotropic plate. |
+| `validation/cases/local_abd/skin_only.yml` | Tensyl target executable; CalculiX membrane/bending `ABD6` extraction promoted. | Closed-form isotropic plate. |
 | `validation/cases/local_abd/unidirectional.yml` | Tensyl target executable; solver-backed extraction planned. | `unidirectional_cell` with `EnergyHomogenizer`. |
 | `validation/cases/local_abd/orthogrid_zero_eccentricity.yml` | Tensyl target executable; solver-backed extraction planned. | `orthogrid_cell` with `EnergyHomogenizer`. |
 | `validation/cases/local_abd/orthogrid_eccentric.yml` | Tensyl target executable; solver-backed extraction planned. | `orthogrid_cell` with `EnergyHomogenizer`. |
@@ -34,8 +34,20 @@ uv run python validation/scripts/run_matrix.py validation/cases/local_abd/*.yml 
 
 Specs that include stiffeners use `case_type: local_abd_periodic_cell`. The
 current runner computes the Tensyl target ABD for that contract. The FE
-extraction side is still marked as planned until generated CalculiX/Gmsh models
-produce extracted stiffness artifacts and comparison metrics.
+extraction side is being introduced skin-only first. Stiffened extraction cases
+remain planned until generated CalculiX/Gmsh models produce extracted stiffness
+artifacts and comparison metrics for those geometries.
+
+For the skin-only slice, separate the target and extraction artifact roles:
+
+| Role | Current path | Meaning |
+| --- | --- | --- |
+| Tensyl target | `validation/artifacts/committed/local_abd/skin_only/target_abd.json` | Closed-form Tensyl stiffness in the documented component order. This is the comparison target. |
+| Target-side checks | `validation/artifacts/committed/local_abd/skin_only/metrics.json` | Conditioning, symmetry, and canonical strain-energy checks computed from the Tensyl target only. This is not a solver comparison. |
+| Target manifest | `validation/artifacts/committed/local_abd/skin_only/manifest.json` | Provenance for the target artifact generation. Its metadata marks `artifact_role: tensyl_target` and `solver_required: false`. |
+| CalculiX extraction | `validation/artifacts/committed/local_abd/skin_only/extracted_abd.json` | Solver-extracted membrane/bending `ABD6` stiffness. `As` is intentionally unsupported in this artifact. |
+| Comparison metrics | `validation/artifacts/committed/local_abd/skin_only/comparison_metrics.json` | FE-vs-Tensyl residuals for the promoted `ABD6` extraction. |
+| Extraction manifest | `validation/artifacts/committed/local_abd/skin_only/extraction_manifest.json` | Solver, command, input, and raw-output provenance for the extraction run. |
 
 ## Axes and Component Order
 
@@ -115,6 +127,15 @@ The committed artifacts currently include Tensyl-side targets and target metrics
 under `validation/artifacts/committed/local_abd/<case-id>/`. Those files are the
 comparison oracle for the solver-backed extraction, not evidence that the FE
 side has agreed yet.
+
+The promoted skin-only CalculiX slice exercises the membrane and bending ABD
+components first. Its `ABD6_relative_frobenius_error` is `3.79e-8`, with
+`A_relative_frobenius_error = 3.79e-8`, `B_relative_frobenius_error = 2.69e-10`,
+and `D_relative_frobenius_error = 1.03e-7`. Transverse shear extraction for
+`As`, full `8 x 8` assembly, mesh-convergence promotion, and stiffened-cell
+solver models are still open items. This staged approach is intentional; plates
+are easier to interrogate before ribs and stringers start rearranging the
+furniture.
 
 The initial tolerances in the YAML specs are promotion thresholds, not laws of
 nature. If the solver model exposes a better justified tolerance, update the spec

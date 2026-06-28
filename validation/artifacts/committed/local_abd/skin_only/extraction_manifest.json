@@ -1,0 +1,62 @@
+{
+  "case_name": "local_abd_skin_only",
+  "command": [
+    "validation/scripts/run_local_abd_solver.py",
+    "validation/cases/local_abd/skin_only.yml",
+    "--artifacts",
+    "validation/artifacts/committed/local_abd/skin_only",
+    "--work-dir",
+    "validation/artifacts/scratch/local_abd-solver-raw"
+  ],
+  "created_utc": "2026-06-28T19:40:07+00:00",
+  "inputs": [
+    {
+      "path": "validation/cases/local_abd/skin_only.yml",
+      "sha256": "b08917c57ae34a2919160217aafde3fa0875d41699ac3033043c2cc7489eae36"
+    }
+  ],
+  "metadata": {
+    "artifact_role": "calculix_extraction",
+    "case_type": "local_abd",
+    "ccx": {
+      "error": null,
+      "name": "CalculiX/CCX",
+      "ok": true,
+      "path": "/Users/srogachev/Projects/Tensyl/validation/.solver-env/bin/ccx",
+      "source": "validation/.solver-env",
+      "version": "This is Version 2.23"
+    },
+    "model": "skin_only",
+    "raw_outputs": [
+      "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only/epsilon_11.dat",
+      "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only/epsilon_22.dat",
+      "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only/gamma_12.dat",
+      "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only/kappa_11.dat",
+      "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only/kappa_22.dat",
+      "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only/kappa_12.dat"
+    ],
+    "raw_work_dir": "validation/artifacts/scratch/local_abd-solver-raw/local_abd_skin_only",
+    "solver_required": true,
+    "unsupported_blocks": [
+      "As"
+    ]
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/local_abd/skin_only/extracted_abd.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/skin_only/comparison_metrics.json"
+    },
+    {
+      "path": "validation/artifacts/committed/local_abd/skin_only/extraction_manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "0e45047",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

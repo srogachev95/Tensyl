@@ -19,7 +19,7 @@
     "symmetric_ABD": true,
     "symmetric_C8": true
   },
-  "expected_status": "draft",
+  "expected_status": "abd6_promoted",
   "model": "skin_only",
   "schema_version": "tensyl.validation.local-abd-metrics.v1",
   "units": {

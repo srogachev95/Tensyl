@@ -7,8 +7,10 @@ phase: phase_1_local_abd
 status:
   current_runner: tensyl_target_executable
   command: uv run python validation/scripts/run_case.py validation/cases/local_abd/skin_only.yml
-  solver_runner: planned
-  artifact_promotion: draft
+  solver_runner: skin_only_abd6_extraction_promoted
+  solver_command: uv run python validation/scripts/run_local_abd_solver.py validation/cases/local_abd/skin_only.yml --artifacts validation/artifacts/committed/local_abd/skin_only --work-dir validation/artifacts/scratch/local_abd-solver-raw
+  comparison_runner: promoted_abd6_comparison
+  artifact_promotion: abd6_promoted
 units:
   length: in
   force: lbf
@@ -40,11 +42,15 @@ tensyl_reference:
     thickness: 0.08
     shear_correction: 0.8333333333333334
 fe_model:
-  runner_status: planned
+  runner_status: skin_only_first
   solver: CalculiX
   mesh_generator: Gmsh
   element_family: first_order_shell_or_plate
   nominal_element_size: 0.25
+  current_scope:
+    - Deterministic CalculiX skin-patch decks are the first solver-backed slice.
+    - The committed workspace contains a promoted CalculiX membrane/bending ABD6 extracted tangent.
+    - Stiffened local ABD extraction cases remain planned after the skin-only path is promoted.
 extraction:
   generalized_strain_order:
     - epsilon_11
@@ -85,6 +91,7 @@ extraction:
       magnitude: 0.0001
 expected_metrics:
   oracle: closed_form_isotropic_plate
+  current_committed_metrics_role: tensyl_target_side_checks
   blocks:
     A: lbf_per_in
     B: lbf
@@ -99,10 +106,35 @@ expected_metrics:
     - A11 equals A22 within tolerance.
     - D11 equals D22 within tolerance.
     - As13 equals As23 within tolerance.
+artifact_contract:
+  tensyl_target_artifacts:
+    directory: validation/artifacts/committed/local_abd/skin_only/
+    role: comparison_oracle
+    files:
+      target_abd.json: Tensyl closed-form skin-only stiffness in local ABD order.
+      metrics.json: Target-side conditioning, symmetry, and canonical strain-energy checks.
+      manifest.json: Target generation provenance; solver_required is false.
+  calculix_extraction_artifacts:
+    current_status: abd6_committed
+    scratch_directory: validation/artifacts/scratch/local_abd/skin_only/
+    promoted_directory: validation/artifacts/committed/local_abd/skin_only/
+    expected_files:
+      extracted_abd.json: CalculiX-generated extracted stiffness in Tensyl order.
+      comparison_metrics.json: FE-vs-Tensyl block, energy, and symmetry residuals.
+      extraction_manifest.json: Solver, mesh, command, input, and output fingerprints.
+      mesh_convergence.md: Short curated convergence summary for promotion review.
+  agreement_claim:
+    current_workspace: abd6_agreement_promoted
+    reason: The committed comparison metrics show tight CalculiX-vs-Tensyl agreement for membrane and bending ABD terms.
+known_limitations:
+  - Skin-only extraction is promoted before stiffened-cell extraction.
+  - The current CalculiX skin-patch deck slice covers ABD membrane and bending load cases.
+  - Full transverse-shear As extraction and full 8x8 solver assembly still need promoted artifacts.
+  - Stiffened unidirectional, orthogrid, eccentric orthogrid, and isogrid solver-backed cases are still planned.
 promotion:
   scratch:
     - Solver-backed runner completes all eight extraction load cases.
-    - Metrics and manifest are written under validation/artifacts/scratch/local_abd/skin_only/.
+    - Extracted stiffness, comparison metrics, and extraction manifest are written under validation/artifacts/scratch/local_abd/skin_only/.
   committed:
-    - Curated metrics, manifest, and one mesh-convergence summary are copied under validation/artifacts/committed/local_abd/skin_only/.
+    - Curated extracted stiffness, comparison metrics, extraction manifest, and one mesh-convergence summary are copied under validation/artifacts/committed/local_abd/skin_only/.
     - The public validation page records the promoted artifact path and solver versions.
