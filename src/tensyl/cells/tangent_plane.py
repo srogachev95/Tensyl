@@ -23,14 +23,6 @@ from tensyl.core.conventions import (
 from tensyl.sections.beam import BeamSection
 
 
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name)
-
-
-def _finite(value: float, *, name: str) -> float:
-    return finite_number(value, name=name)
-
-
 @dataclass(frozen=True, slots=True)
 class BeamMember:
     """A straight stiffener member in a local tangent-plane unit cell.
@@ -48,10 +40,14 @@ class BeamMember:
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "length", _positive(self.length, name="length"))
-        object.__setattr__(self, "angle_rad", _finite(self.angle_rad, name="angle_rad"))
-        object.__setattr__(self, "eccentricity", _finite(self.eccentricity, name="eccentricity"))
-        object.__setattr__(self, "multiplicity", _positive(self.multiplicity, name="multiplicity"))
+        object.__setattr__(self, "length", positive_number(self.length, name="length"))
+        object.__setattr__(self, "angle_rad", finite_number(self.angle_rad, name="angle_rad"))
+        object.__setattr__(
+            self, "eccentricity", finite_number(self.eccentricity, name="eccentricity")
+        )
+        object.__setattr__(
+            self, "multiplicity", positive_number(self.multiplicity, name="multiplicity")
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,8 +59,8 @@ class CellNode:
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "x", _finite(self.x, name="x"))
-        object.__setattr__(self, "y", _finite(self.y, name="y"))
+        object.__setattr__(self, "x", finite_number(self.x, name="x"))
+        object.__setattr__(self, "y", finite_number(self.y, name="y"))
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,8 +75,12 @@ class CellEdge:
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "eccentricity", _finite(self.eccentricity, name="eccentricity"))
-        object.__setattr__(self, "multiplicity", _positive(self.multiplicity, name="multiplicity"))
+        object.__setattr__(
+            self, "eccentricity", finite_number(self.eccentricity, name="eccentricity")
+        )
+        object.__setattr__(
+            self, "multiplicity", positive_number(self.multiplicity, name="multiplicity")
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -99,7 +99,7 @@ class CanonicalUnitCell:
     metadata: dict[str, Any] | MappingProxyType[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "area", _positive(self.area, name="area"))
+        object.__setattr__(self, "area", positive_number(self.area, name="area"))
         members = tuple(self.members)
         if not members:
             msg = "CanonicalUnitCell requires at least one beam member."
@@ -130,10 +130,14 @@ class StiffenerFamily:
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "spacing", _positive(self.spacing, name="spacing"))
-        object.__setattr__(self, "angle_rad", _finite(self.angle_rad, name="angle_rad"))
-        object.__setattr__(self, "eccentricity", _finite(self.eccentricity, name="eccentricity"))
-        object.__setattr__(self, "multiplicity", _positive(self.multiplicity, name="multiplicity"))
+        object.__setattr__(self, "spacing", positive_number(self.spacing, name="spacing"))
+        object.__setattr__(self, "angle_rad", finite_number(self.angle_rad, name="angle_rad"))
+        object.__setattr__(
+            self, "eccentricity", finite_number(self.eccentricity, name="eccentricity")
+        )
+        object.__setattr__(
+            self, "multiplicity", positive_number(self.multiplicity, name="multiplicity")
+        )
 
 
 def _cell_frame_and_convention(
@@ -265,7 +269,7 @@ def unidirectional_cell(
 ) -> CanonicalUnitCell:
     """Create a one-family canonical strip cell."""
 
-    d = _positive(spacing, name="spacing")
+    d = positive_number(spacing, name="spacing")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     # A unit-length strip gives length / area = 1 / spacing, matching the
     # continuous family density used by the direct EC path.
@@ -304,8 +308,8 @@ def orthogrid_cell(
     eccentricity inputs are signed centroid offsets along ``+n``.
     """
 
-    ds = _positive(stringer_spacing, name="stringer_spacing")
-    dr = _positive(rib_spacing, name="rib_spacing")
+    ds = positive_number(stringer_spacing, name="stringer_spacing")
+    dr = positive_number(rib_spacing, name="rib_spacing")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     # Each member spans the opposite cell pitch, so length / area reduces to
     # the expected 1 / family spacing for stringers and ribs.
@@ -349,7 +353,7 @@ def equilateral_isogrid_cell(
 ) -> CanonicalUnitCell:
     """Create an equilateral isogrid cell with three identical member families."""
 
-    p = _positive(pitch, name="pitch")
+    p = positive_number(pitch, name="pitch")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     height = np.sqrt(3.0) * p / 2.0
     # The three directions share one parallelogram cell area. Multiplicity is
@@ -406,8 +410,8 @@ def braced_orthogrid_cell(
 ) -> CanonicalUnitCell:
     """Create a braced orthogrid with alternating or crossed diagonal braces."""
 
-    ds = _positive(stringer_spacing, name="stringer_spacing")
-    dr = _positive(rib_spacing, name="rib_spacing")
+    ds = positive_number(stringer_spacing, name="stringer_spacing")
+    dr = positive_number(rib_spacing, name="rib_spacing")
     if brace_pattern not in {"double", "single"}:
         msg = "brace_pattern must be 'double' or 'single'."
         raise ValueError(msg)
@@ -462,8 +466,8 @@ def isosceles_triangle_grid_cell(
 ) -> CanonicalUnitCell:
     """Create Nemeth's isosceles-triangle grid cell."""
 
-    b = _positive(base, name="base")
-    h = _positive(height, name="height")
+    b = positive_number(base, name="base")
+    h = positive_number(height, name="height")
     diagonal_length = float(np.hypot(0.5 * b, h))
     diagonal_angle = float(np.arctan2(h, 0.5 * b))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -507,8 +511,8 @@ def kagome_cell(
 ) -> CanonicalUnitCell:
     """Create Nemeth's Kagome grid cell."""
 
-    b = _positive(base, name="base")
-    h = _positive(height, name="height")
+    b = positive_number(base, name="base")
+    h = positive_number(height, name="height")
     diagonal_length = 2.0 * float(np.hypot(0.5 * b, h))
     diagonal_angle = float(np.arctan2(2.0 * h, b))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -560,9 +564,9 @@ def hexagonal_grid_cell(
 ) -> CanonicalUnitCell:
     """Create Nemeth's hexagon-shaped grid cell."""
 
-    a = _positive(half_width, name="half_width")
-    b = _positive(diagonal_rise, name="diagonal_rise")
-    c = _positive(rib_length, name="rib_length")
+    a = positive_number(half_width, name="half_width")
+    b = positive_number(diagonal_rise, name="diagonal_rise")
+    c = positive_number(rib_length, name="rib_length")
     diagonal_length = 0.5 * float(np.hypot(a, b))
     diagonal_angle = float(np.arctan2(b, a))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -607,7 +611,7 @@ def regular_hexagonal_grid_cell(
 ) -> CanonicalUnitCell:
     """Create the identical-member regular hexagonal-grid special case."""
 
-    p = _positive(pitch, name="pitch")
+    p = positive_number(pitch, name="pitch")
     return hexagonal_grid_cell(
         skin=skin,
         rib_section=member_section,
@@ -638,8 +642,8 @@ def star_cell(
 ) -> CanonicalUnitCell:
     """Create Nemeth's isosceles-star-cell grid."""
 
-    b = _positive(base, name="base")
-    h = _positive(height, name="height")
+    b = positive_number(base, name="base")
+    h = positive_number(height, name="height")
     nodes = (
         CellNode(b / 3.0, 0.0),
         CellNode(b / 2.0, h / 3.0),
@@ -696,7 +700,7 @@ def equilateral_star_cell(
 ) -> CanonicalUnitCell:
     """Create the identical-member equilateral star-cell special case."""
 
-    p = _positive(pitch, name="pitch")
+    p = positive_number(pitch, name="pitch")
     return star_cell(
         skin=skin,
         stringer_section=member_section,

@@ -18,18 +18,6 @@ from tensyl.materials import IsotropicMaterial
 from tensyl.sections.beam import BeamSection
 
 
-def _finite(value: float, *, name: str) -> float:
-    return finite_number(value, name=name)
-
-
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name)
-
-
-def _optional_positive(value: float | None, *, name: str) -> float | None:
-    return optional_positive_number(value, name=name)
-
-
 @dataclass(frozen=True, slots=True)
 class ThinWallSegment:
     """A rectangular wall segment in member-local section coordinates.
@@ -48,11 +36,11 @@ class ThinWallSegment:
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "start_y", _finite(self.start_y, name="start_y"))
-        object.__setattr__(self, "start_z", _finite(self.start_z, name="start_z"))
-        object.__setattr__(self, "end_y", _finite(self.end_y, name="end_y"))
-        object.__setattr__(self, "end_z", _finite(self.end_z, name="end_z"))
-        object.__setattr__(self, "thickness", _positive(self.thickness, name="thickness"))
+        object.__setattr__(self, "start_y", finite_number(self.start_y, name="start_y"))
+        object.__setattr__(self, "start_z", finite_number(self.start_z, name="start_z"))
+        object.__setattr__(self, "end_y", finite_number(self.end_y, name="end_y"))
+        object.__setattr__(self, "end_z", finite_number(self.end_z, name="end_z"))
+        object.__setattr__(self, "thickness", positive_number(self.thickness, name="thickness"))
         if self.length <= 0.0:
             msg = "segment length must be finite and positive."
             raise ValueError(msg)
@@ -77,13 +65,13 @@ class SectionProperties:
     J: float
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "area", _positive(self.area, name="area"))
-        object.__setattr__(self, "centroid_y", _finite(self.centroid_y, name="centroid_y"))
-        object.__setattr__(self, "centroid_z", _finite(self.centroid_z, name="centroid_z"))
-        object.__setattr__(self, "Iy", _positive(self.Iy, name="Iy"))
-        object.__setattr__(self, "Iz", _positive(self.Iz, name="Iz"))
-        object.__setattr__(self, "Iyz", _finite(self.Iyz, name="Iyz"))
-        object.__setattr__(self, "J", _positive(self.J, name="J"))
+        object.__setattr__(self, "area", positive_number(self.area, name="area"))
+        object.__setattr__(self, "centroid_y", finite_number(self.centroid_y, name="centroid_y"))
+        object.__setattr__(self, "centroid_z", finite_number(self.centroid_z, name="centroid_z"))
+        object.__setattr__(self, "Iy", positive_number(self.Iy, name="Iy"))
+        object.__setattr__(self, "Iz", positive_number(self.Iz, name="Iz"))
+        object.__setattr__(self, "Iyz", finite_number(self.Iyz, name="Iyz"))
+        object.__setattr__(self, "J", positive_number(self.J, name="J"))
         if self.Iy * self.Iz - self.Iyz**2 <= 0.0:
             msg = "section inertia block must be positive definite."
             raise ValueError(msg)
@@ -106,11 +94,11 @@ class ThinWallSection:
         if not segments:
             msg = "ThinWallSection requires at least one segment."
             raise ValueError(msg)
-        shear_correction_y = _optional_positive(
+        shear_correction_y = optional_positive_number(
             self.shear_correction_y,
             name="shear_correction_y",
         )
-        shear_correction_z = _optional_positive(
+        shear_correction_z = optional_positive_number(
             self.shear_correction_z,
             name="shear_correction_z",
         )
@@ -260,7 +248,9 @@ def blade_section(
 
     return thin_wall_section(
         material=material,
-        segments=(ThinWallSegment(0.0, 0.0, 0.0, _positive(height, name="height"), thickness),),
+        segments=(
+            ThinWallSegment(0.0, 0.0, 0.0, positive_number(height, name="height"), thickness),
+        ),
         shear_correction_y=shear_correction_y,
         shear_correction_z=shear_correction_z,
         metadata=_metadata("blade", metadata),
@@ -283,9 +273,9 @@ def tee_section(
     The web root is at ``z = 0`` and the flange sits above the web in ``+z``.
     """
 
-    web_height = _positive(web_height, name="web_height")
-    flange_width = _positive(flange_width, name="flange_width")
-    flange_thickness = _positive(flange_thickness, name="flange_thickness")
+    web_height = positive_number(web_height, name="web_height")
+    flange_width = positive_number(flange_width, name="flange_width")
+    flange_thickness = positive_number(flange_thickness, name="flange_thickness")
     return thin_wall_section(
         material=material,
         segments=(
@@ -324,10 +314,10 @@ def zee_section(
     ``y``.
     """
 
-    web_height = _positive(web_height, name="web_height")
-    top_flange_width = _positive(top_flange_width, name="top_flange_width")
-    bottom_flange_width = _positive(bottom_flange_width, name="bottom_flange_width")
-    flange_thickness = _positive(flange_thickness, name="flange_thickness")
+    web_height = positive_number(web_height, name="web_height")
+    top_flange_width = positive_number(top_flange_width, name="top_flange_width")
+    bottom_flange_width = positive_number(bottom_flange_width, name="bottom_flange_width")
+    flange_thickness = positive_number(flange_thickness, name="flange_thickness")
     return thin_wall_section(
         material=material,
         segments=(
@@ -379,9 +369,9 @@ def channel_section(
     ``z = 0`` construction datum.
     """
 
-    web_height = _positive(web_height, name="web_height")
-    flange_width = _positive(flange_width, name="flange_width")
-    flange_thickness = _positive(flange_thickness, name="flange_thickness")
+    web_height = positive_number(web_height, name="web_height")
+    flange_width = positive_number(flange_width, name="flange_width")
+    flange_thickness = positive_number(flange_thickness, name="flange_thickness")
     return thin_wall_section(
         material=material,
         segments=(
@@ -436,11 +426,11 @@ def hat_section(
     than a hat flipped down into the skin.
     """
 
-    web_height = _positive(web_height, name="web_height")
-    crown_width = _positive(crown_width, name="crown_width")
-    crown_thickness = _positive(crown_thickness, name="crown_thickness")
-    flange_width = _positive(flange_width, name="flange_width")
-    flange_thickness = _positive(flange_thickness, name="flange_thickness")
+    web_height = positive_number(web_height, name="web_height")
+    crown_width = positive_number(crown_width, name="crown_width")
+    crown_thickness = positive_number(crown_thickness, name="crown_thickness")
+    flange_width = positive_number(flange_width, name="flange_width")
+    flange_thickness = positive_number(flange_thickness, name="flange_thickness")
     half_crown = 0.5 * crown_width
     top_z = flange_thickness + web_height
     return thin_wall_section(
