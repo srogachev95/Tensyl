@@ -1,3 +1,5 @@
+![Tensyl logo](https://raw.githubusercontent.com/srogachev95/Tensyl/main/docs/assets/brand/tensyl-logo.jpeg)
+
 # Tensyl
 
 Tensyl is a Python scientific-computing library for equivalent-stiffness
