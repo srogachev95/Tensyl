@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/theory/conventions/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Frames and Conventions - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Frames and Conventions";
+        var mkdocs_page_input_path = "theory/conventions.md";
+        var mkdocs_page_url = "/Tensyl/theory/conventions/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Frames and Conventions</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#rotation-of-abd-stiffnesses">Rotation of ABD Stiffnesses</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reference-surface">Reference Surface</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#eccentricity-inputs">Eccentricity Inputs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#member-angles">Member Angles</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#engineering-shear">Engineering Shear</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Theory</li>
+      <li class="breadcrumb-item active">Frames and Conventions</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/theory/conventions.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="frames-and-conventions">Frames and Conventions</h1>
+<p>An ABD stiffness is expressed in a right-handed local frame:</p>
+<div class="arithmatex">\[
+\{\mathbf e_1,\mathbf e_2,\mathbf n\}.
+\]</div>
+<p><code>e1</code> and <code>e2</code> are tangent directions. <code>n</code> is the positive normal. Tensyl
+validates:</p>
+<div class="arithmatex">\[
+\mathbf e_1 \times \mathbf e_2 = \mathbf n.
+\]</div>
+<p>Positive in-plane rotation is counterclockwise about <code>n</code>:</p>
+<div class="arithmatex">\[
+\mathbf e_1'=\cos\psi\,\mathbf e_1+\sin\psi\,\mathbf e_2,
+\qquad
+\mathbf e_2'=-\sin\psi\,\mathbf e_1+\cos\psi\,\mathbf e_2.
+\]</div>
+<h2 id="rotation-of-abd-stiffnesses">Rotation of ABD Stiffnesses</h2>
+<p>Generalized strains and generalized resultants use separate transforms:</p>
+<div class="arithmatex">\[
+\boldsymbol\eta'=\mathbf T_\eta\boldsymbol\eta,
+\qquad
+\mathbf r'=\mathbf T_r\mathbf r.
+\]</div>
+<p>The rotated tangent is:</p>
+<div class="arithmatex">\[
+\mathbf C'=\mathbf T_r\mathbf C\mathbf T_\eta^{-1}.
+\]</div>
+<p>This preserves power:</p>
+<div class="arithmatex">\[
+\mathbf r'^T\boldsymbol\eta'=\mathbf r^T\boldsymbol\eta.
+\]</div>
+<h2 id="reference-surface">Reference Surface</h2>
+<p>The default reference surface is the mid-surface. If a stiffness is shifted by
+distance <span class="arithmatex">\(d\)</span> along the positive normal, membrane strain at the old surface is:</p>
+<div class="arithmatex">\[
+\boldsymbol\epsilon_\text{old}
+=
+\boldsymbol\epsilon_\text{new} - d\boldsymbol\kappa.
+\]</div>
+<p>Use <code>shift_reference_surface</code> when superposing facesheets or moving an ABD stiffness
+to a different shell reference surface.</p>
+<pre><code>        +n
+        ^
+        |  positive eccentricity
+        |      o stiffener centroid
+--------+-------------------------- reference surface
+       e1 -&gt;       e2 completes the right-handed tangent frame
+</code></pre>
+<h2 id="eccentricity-inputs">Eccentricity Inputs</h2>
+<p>Every eccentricity input follows the same sign rule:</p>
+<blockquote>
+<p>Eccentricity is the signed distance from the reference surface to the
+stiffener or face centroid, measured along <code>+n</code>.</p>
+</blockquote>
+<p>This applies to:</p>
+<ul>
+<li><code>BeamMember.eccentricity</code>;</li>
+<li><code>StiffenerFamily.eccentricity</code>;</li>
+<li><code>stringer_eccentricity</code>;</li>
+<li><code>rib_eccentricity</code>;</li>
+<li>sandwich <code>bottom_face_offset</code> and <code>top_face_offset</code>.</li>
+</ul>
+<p>For a cylinder whose local normal points outward, an external stringer has
+positive <code>stringer_eccentricity</code>. An internal stringer has negative
+eccentricity.</p>
+<div class="admonition warning">
+<p class="admonition-title">The eccentricity sign is not cosmetic</p>
+<p>Flip it and you change the membrane-bending coupling block <code>B</code> — which means
+you get a <em>physically different ABD stiffness</em>, with no exception and no
+validation error to warn you. The numbers will look perfectly reasonable and
+be quietly wrong. Decide which way <code>+n</code> points before you type a sign.</p>
+</div>
+<p>Positive eccentricity adds membrane-bending coupling according to the chosen
+reference surface. Moving the reference surface also changes <code>B</code>. Equal and
+opposite faces in a symmetric sandwich can cancel coupling when the face stiffnesses
+and offsets are symmetric.</p>
+<h2 id="member-angles">Member Angles</h2>
+<p>Member angles are measured in the local tangent frame:</p>
+<ul>
+<li><code>0</code> is along local <code>e1</code>;</li>
+<li><code>pi/2</code> is along local <code>e2</code>;</li>
+<li>positive angles follow Tensyl's positive in-plane rotation convention about
+  <code>n</code>.</li>
+</ul>
+<p>For the built-in <code>Cylinder</code>, <code>e1</code> is axial and <code>e2</code> is circumferential. A
+longitudinal stringer uses angle <code>0</code>; a ring rib uses angle <code>pi/2</code>.</p>
+<h2 id="engineering-shear">Engineering Shear</h2>
+<p>Tensyl's public strain convention uses engineering shear components
+<code>gamma12</code>, <code>gamma13</code>, and <code>gamma23</code>. Tensor shear is rejected because a silent
+factor-of-two convention mix can produce plausible but wrong stiffnesses,
+energies, and resultants.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../equivalent-stiffness/" class="btn btn-neutral float-left" title="Equivalent-Stiffness Mechanics"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../tangent-plane-homogenization/" class="btn btn-neutral float-right" title="Tangent-Plane Homogenization">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../equivalent-stiffness/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../tangent-plane-homogenization/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

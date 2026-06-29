@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/api/geometry-and-fields/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Geometry and Fields - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Geometry and Fields";
+        var mkdocs_page_input_path = "api/geometry-and-fields.md";
+        var mkdocs_page_url = "/Tensyl/api/geometry-and-fields/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Geometry and Fields</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry">geometry</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.curvature">curvature</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.frame">frame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.jacobian">jacobian</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.metric">metric</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.min_radius">min_radius</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.position">position</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.principal_curvatures">principal_curvatures</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.tangent_u">tangent_u</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.tangent_v">tangent_v</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.u">u</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.v">v</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Surface">Surface</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Surface.point_at">point_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.FlatPlate">FlatPlate</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.e1">e1</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.e2">e2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.origin">origin</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.point_at">point_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Cylinder">Cylinder</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.length">length</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.radius">radius</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.point_at">point_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Sphere">Sphere</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.radius">radius</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.point_at">point_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.SphericalCap">SphericalCap</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.half_angle_rad">half_angle_rad</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.radius">radius</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.point_at">point_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum">ConicalFrustum</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.length">length</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_end">radius_end</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_start">radius_start</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.slope">slope</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.point_at">point_at</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_at">radius_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Ellipsoid">Ellipsoid</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.a">a</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.b">b</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.c">c</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.point_at">point_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields">fields</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.StiffnessField">StiffnessField</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessField.stiffness_at">stiffness_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField">ConstantStiffnessField</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.stiffness">stiffness</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.stiffness_at">stiffness_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField">HomogenizedStiffnessField</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.cache">cache</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.cell_factory">cell_factory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.homogenizer">homogenizer</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.surface">surface</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.validity_context_factory">validity_context_factory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.stiffness_at">stiffness_at</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.StiffnessCache">StiffnessCache</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.precision">precision</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.size">size</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.clear">clear</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.get">get</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.key">key</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.set">set</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.ABDAtlas">ABDAtlas</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.stiffnesses">stiffnesses</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.surface">surface</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.u_values">u_values</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.v_values">v_values</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.from_field">from_field</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.stiffness_at">stiffness_at</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">API Reference</li>
+      <li class="breadcrumb-item active">Geometry and Fields</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/geometry-and-fields.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="geometry-and-fields-api">Geometry and Fields API</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.geometry"></a>
+    <div class="doc doc-contents first">
+
+        <p>Geometry surfaces for stiffness embedding.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.SurfacePoint" class="doc doc-heading">
+            <code>SurfacePoint</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Differential geometry data at a parametric surface point.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.curvature" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">curvature</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.frame" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">frame</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.jacobian" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">jacobian</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.metric" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metric</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.min_radius" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">min_radius</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.position" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">position</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.principal_curvatures" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">principal_curvatures</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.tangent_u" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tangent_u</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.tangent_v" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tangent_v</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.u" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">u</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SurfacePoint.v" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">v</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.SurfacePoint.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">tangent_u</span><span class="p">,</span> <span class="n">tangent_v</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">principal_curvatures</span><span class="p">,</span> <span class="n">min_radius</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.SurfacePoint.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.Surface" class="doc doc-heading">
+            <code>Surface</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+
+        <p>Protocol for parametric shell midsurfaces.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Surface.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return differential geometry data at parametric coordinates <code>(u, v)</code>.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.FlatPlate" class="doc doc-heading">
+            <code>FlatPlate</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Flat plate parameterized by Cartesian coordinates <code>(u, v)</code>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.FlatPlate.e1" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">e1</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])))</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.FlatPlate.e2" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">e2</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])))</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.FlatPlate.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;flat_plate&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.FlatPlate.origin" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">origin</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])))</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.FlatPlate.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))(),</span> <span class="n">e1</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))(),</span> <span class="n">e2</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;flat_plate&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.FlatPlate.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.FlatPlate.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.Cylinder" class="doc doc-heading">
+            <code>Cylinder</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Circular cylinder parameterized by axial coordinate and angle <code>(x, theta)</code>.</p>
+<p>The local frame has <code>e1</code> in the axial direction, <code>e2</code> in the
+circumferential direction, and <code>n</code> outward.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Cylinder.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;cylinder&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Cylinder.length" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">length</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Cylinder.radius" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radius</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Cylinder.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;cylinder&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Cylinder.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Cylinder.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.Sphere" class="doc doc-heading">
+            <code>Sphere</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Spherical surface parameterized by polar angle and azimuth <code>(phi, theta)</code>.</p>
+<p>The single chart excludes both poles. Use <code>SphericalCap</code> when a partial
+spherical domain is a better model for the physical shell.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Sphere.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;sphere&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Sphere.radius" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radius</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Sphere.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;sphere&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Sphere.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Sphere.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.SphericalCap" class="doc doc-heading">
+            <code>SphericalCap</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Spherical surface parameterized by polar angle and azimuth <code>(phi, theta)</code>.</p>
+<p>The pole and cap boundary are singular for the current coordinate chart and
+are rejected by <code>point_at</code>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SphericalCap.half_angle_rad" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">half_angle_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SphericalCap.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;spherical_cap&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.SphericalCap.radius" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radius</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.SphericalCap.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">half_angle_rad</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;spherical_cap&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.SphericalCap.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.SphericalCap.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.ConicalFrustum" class="doc doc-heading">
+            <code>ConicalFrustum</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Circular conical frustum parameterized by axial coordinate and angle.</p>
+<p>Coordinates are <code>(x, theta)</code>. The local frame uses <code>e1</code> along increasing
+axial station/generator direction, <code>e2</code> opposite the positive <code>theta</code>
+tangent, and <code>n</code> outward. The apex is not part of the supported smooth
+midsurface domain.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;conical_frustum&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.length" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">length</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.radius_end" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radius_end</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.radius_start" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radius_start</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.slope" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">slope</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return <code>dr/dx</code> for the linear radius stiffness.</p>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">radius_start</span><span class="p">,</span> <span class="n">radius_end</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;conical_frustum&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.ConicalFrustum.radius_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">radius_at</span><span class="p">(</span><span class="n">u</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the local radius at axial coordinate <code>u</code>.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.geometry.Ellipsoid" class="doc doc-heading">
+            <code>Ellipsoid</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Triaxial ellipsoid parameterized by polar angle and azimuth <code>(phi, theta)</code>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Ellipsoid.a" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">a</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Ellipsoid.b" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">b</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Ellipsoid.c" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">c</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.geometry.Ellipsoid.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;ellipsoid&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Ellipsoid.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ellipsoid&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Ellipsoid.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.Ellipsoid.point_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">point_at</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.fields"></a>
+    <div class="doc doc-contents first">
+
+        <p>Stiffness fields and atlases.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.fields.StiffnessField" class="doc doc-heading">
+            <code>StiffnessField</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+
+        <p>Protocol for objects that provide an ABD stiffness over a surface.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessField.stiffness_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffness_at</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the ABD stiffness at parametric coordinates <code>(u, v)</code>.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.fields.ConstantStiffnessField" class="doc doc-heading">
+            <code>ConstantStiffnessField</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Uniform ABD stiffness bound pointwise to a surface frame.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.ConstantStiffnessField.stiffness" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffness</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ConstantStiffnessField.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">stiffness</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ConstantStiffnessField.stiffness_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffness_at</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.fields.HomogenizedStiffnessField" class="doc doc-heading">
+            <code>HomogenizedStiffnessField</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Stiffness field that builds and homogenizes a local cell at each surface point.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.cache" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.cell_factory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">cell_factory</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.homogenizer" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">homogenizer</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.surface" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">surface</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.validity_context_factory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">validity_context_factory</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">cell_factory</span><span class="p">,</span> <span class="n">homogenizer</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validity_context_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.HomogenizedStiffnessField.stiffness_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffness_at</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.fields.StiffnessCache" class="doc doc-heading">
+            <code>StiffnessCache</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Mutable pointwise stiffness cache keyed by rounded parametric coordinates.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.StiffnessCache.precision" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">precision</span> <span class="o">=</span> <span class="mi">12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.StiffnessCache.size" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">size</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessCache.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">_items</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessCache.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessCache.clear" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">clear</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessCache.get" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessCache.key" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">key</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.StiffnessCache.set" class="doc doc-heading">
+            <code class="highlight language-python"><span class="nb">set</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">stiffness</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.fields.ABDAtlas" class="doc doc-heading">
+            <code>ABDAtlas</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Rectangular bilinear atlas of sampled linear ABD stiffnesses.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.ABDAtlas.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.ABDAtlas.stiffnesses" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffnesses</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.ABDAtlas.surface" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">surface</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.ABDAtlas.u_values" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">u_values</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.fields.ABDAtlas.v_values" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">v_values</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ABDAtlas.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">u_values</span><span class="p">,</span> <span class="n">v_values</span><span class="p">,</span> <span class="n">stiffnesses</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ABDAtlas.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ABDAtlas.from_field" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_field</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">u_values</span><span class="p">,</span> <span class="n">v_values</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ABDAtlas.stiffness_at" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffness_at</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../homogenizers/" class="btn btn-neutral float-left" title="Homogenizers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../io/" class="btn btn-neutral float-right" title="External Workflow I/O">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../homogenizers/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../io/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

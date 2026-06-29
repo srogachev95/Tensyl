@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/homogenization/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Homogenization and Results - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Homogenization and Results";
+        var mkdocs_page_input_path = "user-guide/homogenization.md";
+        var mkdocs_page_url = "/Tensyl/user-guide/homogenization/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Homogenization and Results</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#direct-equilibrium-compatibility">Direct Equilibrium-Compatibility</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-the-result">Reading the Result</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-the-blocks">Reading the Blocks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#diagnostics">Diagnostics</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#comparing-abd-stiffnesses">Comparing ABD Stiffnesses</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">Homogenization and Results</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/homogenization.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="homogenization-and-results">Homogenization and Results</h1>
+<p>The reference homogenizer is <code>EnergyHomogenizer</code>. It computes a local
+equivalent ABD stiffness for a canonical tangent-plane unit cell.</p>
+<pre><code class="language-python">from tensyl import EnergyHomogenizer
+
+result = EnergyHomogenizer().compute(cell)
+stiffness = result.stiffness
+</code></pre>
+<p><code>result.stiffness</code> is an <code>ABDStiffness</code>. The same validity report is attached to
+<code>stiffness.validity</code>, so warnings travel with the ABD stiffness when it is passed
+to later workflow steps.</p>
+<p>Use the result object first. It contains the ABD stiffness and the context needed to
+judge the calculation:</p>
+<ul>
+<li><code>result.stiffness.A</code>, <code>B</code>, <code>D</code>, and <code>As</code> are the stiffness blocks;</li>
+<li><code>result.diagnostics</code> reports numerical checks such as symmetry, rank, and
+  positive-semidefinite status;</li>
+<li><code>result.assumptions</code> records modeling assumptions;</li>
+<li><code>result.validity.warnings</code> reports scale-separation and coupling warnings.</li>
+</ul>
+<h2 id="direct-equilibrium-compatibility">Direct Equilibrium-Compatibility</h2>
+<p><code>DirectECHomogenizer</code> supports straight stiffener-family inputs where the direct
+method is applicable.</p>
+<pre><code class="language-python">from tensyl import DirectECHomogenizer
+
+result = DirectECHomogenizer().compute(cell)
+</code></pre>
+<p>Use the direct method as a supported comparison or accelerator, not as a more
+general replacement for the energy method.</p>
+<h2 id="reading-the-result">Reading the Result</h2>
+<p><code>HomogenizationResult</code> is the main object to inspect after computing a stiffened
+ABD stiffness.</p>
+<pre><code class="language-python">from tensyl import (
+    BeamSection,
+    EnergyHomogenizer,
+    IsotropicMaterial,
+    ValidityContext,
+    isotropic_plate,
+    orthogrid_cell,
+)
+
+skin = isotropic_plate(
+    IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
+    thickness=0.080,
+)
+section = BeamSection(
+    EA=3.2e6,
+    EIy=2.4e4,
+    EIz=6.5e3,
+    GJ=4.0e3,
+    kGAy=1.1e6,
+    kGAz=0.9e6,
+)
+cell = orthogrid_cell(
+    skin=skin,
+    stringer_section=section,
+    rib_section=section,
+    stringer_spacing=6.0,
+    rib_spacing=8.0,
+    stringer_eccentricity=0.45,
+    rib_eccentricity=0.45,
+)
+
+result = EnergyHomogenizer().compute(
+    cell,
+    validity_context=ValidityContext(
+        characteristic_height=0.50,
+        pitch=8.0,
+        min_radius=120.0,
+        response_length=80.0,
+    ),
+)
+
+print(result.stiffness.A)
+print(result.stiffness.B)
+print(result.stiffness.D)
+print(result.stiffness.As)
+print(result.diagnostics)
+print(result.assumptions)
+print(result.validity.warnings)
+</code></pre>
+<p>Selected output, rounded:</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A11</code>, <code>A22</code>, <code>A66</code></td>
+<td><code>1.485e6</code>, <code>1.352e6</code>, <code>3.990e5</code> <code>lbf/in</code></td>
+</tr>
+<tr>
+<td><code>B11</code>, <code>B22</code>, <code>B66</code></td>
+<td><code>2.400e5</code>, <code>1.800e5</code>, <code>-3.609e4</code> <code>lbf</code></td>
+</tr>
+<tr>
+<td><code>D11</code>, <code>D22</code>, <code>D66</code></td>
+<td><code>1.133e5</code>, <code>8.559e4</code>, <code>1.670e4</code> <code>lbf*in</code></td>
+</tr>
+<tr>
+<td><code>As11</code>, <code>As22</code></td>
+<td><code>4.157e5</code>, <code>3.782e5</code> <code>lbf/in</code></td>
+</tr>
+<tr>
+<td>diagnostics</td>
+<td>symmetric, positive-semidefinite, rank <code>8</code></td>
+</tr>
+<tr>
+<td>warnings</td>
+<td><code>p_over_R_exceeds_threshold</code>, <code>p_over_L_response_exceeds_threshold</code>, <code>membrane_bending_coupling_exceeds_threshold</code></td>
+</tr>
+</tbody>
+</table>
+<p>For SI inputs the same blocks have units <code>N/m</code>, <code>N</code>, <code>N*m</code>, and <code>N/m</code>,
+respectively. Tensyl preserves whichever system you feed it (see
+<a href="../units-and-consistency/">Units and Consistency</a>); it never converts.</p>
+<h2 id="reading-the-blocks">Reading the Blocks</h2>
+<ul>
+<li><code>A</code> controls membrane force response.</li>
+<li><code>B</code> couples membrane strain to bending resultants and curvature to membrane
+  resultants.</li>
+<li><code>D</code> controls bending and twisting moment response.</li>
+<li><code>As</code> controls transverse-shear resultants.</li>
+</ul>
+<p>A symmetric tangent is required for an energy-based linear stiffness. A
+positive-semidefinite tangent means the assembled stiffness has no negative-energy
+mode at the tested tolerance. A rank-deficient tangent means some generalized
+strain mode is unsupported by the modeled skin and members; Tensyl returns the
+result with warnings instead of hiding that mechanism.</p>
+<p><code>stiffness.validity == result.validity</code> means the warnings stay attached when the
+ABD stiffness is passed to a geometry field, serialization workflow, or
+downstream adapter.</p>
+<div class="admonition note">
+<p class="admonition-title">Consistency is not correlation</p>
+<p>Numerical diagnostics prove the assembled operator is self-consistent. They
+do not prove a shell buckling margin, local stiffener failure, finite-element
+correlation, or manufacturing suitability. Those still have to be earned
+separately; the matrix is not doing unpaid certification work.</p>
+</div>
+<h2 id="diagnostics">Diagnostics</h2>
+<p>Homogenization results include:</p>
+<ul>
+<li><code>diagnostics["symmetric"]</code>;</li>
+<li><code>diagnostics["positive_semidefinite"]</code>;</li>
+<li><code>diagnostics["rank"]</code>;</li>
+<li>member and cell metadata where available.</li>
+</ul>
+<p>Malformed or unsupported inputs raise typed homogenization exceptions. Finite
+rank-deficient assemblies are returned with diagnostics and warnings so the
+caller can decide whether the mechanism is acceptable.</p>
+<div class="admonition note">
+<p class="admonition-title">Diagnostics check the math, not the design</p>
+<p>A clean diagnostics report does not mean the design is valid. Symmetry and
+positive energy are minimum consistency checks on the assembled operator —
+they say nothing about local failure, joints, finite-element correlation,
+shell buckling margins, or manufacturing detail. Passing here is table
+stakes, not a verdict.</p>
+</div>
+<h2 id="comparing-abd-stiffnesses">Comparing ABD Stiffnesses</h2>
+<p>Compare ABD stiffnesses block by block:</p>
+<ul>
+<li>compare <code>A</code>, <code>B</code>, <code>D</code>, and <code>As</code>;</li>
+<li>compare coupling ratios and warnings;</li>
+<li>rotate stiffnesses into a common frame before comparing anisotropic blocks;</li>
+<li>avoid comparing scalar equivalent moduli unless the reduction assumptions are
+  stated.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../beam-sections-and-cells/" class="btn btn-neutral float-left" title="Beam Sections and Cells"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../geometry-and-fields/" class="btn btn-neutral float-right" title="Geometry and Stiffness Fields">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../beam-sections-and-cells/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../geometry-and-fields/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

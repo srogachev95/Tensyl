@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" role="img" aria-labelledby="title desc">
+<title id="title">hat_section geometry</title>
+<desc id="desc">An open hat section rises in positive z with lower mounting flanges at z = 0.</desc>
+<defs>
+<linearGradient id="wall-fill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#dbeafe"/>
+<stop offset="100%" stop-color="#bfdbfe"/>
+</linearGradient>
+<filter id="wall-shadow" x="-20%" y="-20%" width="140%" height="150%">
+<feDropShadow dx="0" dy="1.2" stdDeviation="1.4" flood-color="#0f172a" flood-opacity="0.18"/>
+</filter>
+<pattern id="skin-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+<rect width="8" height="8" fill="#f8fafc"/>
+<line x1="0" y1="0" x2="0" y2="8" stroke="#cbd5e1" stroke-width="2"/>
+</pattern>
+<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="760" height="470" fill="#ffffff"/>
+<text x="28" y="32" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="20" font-weight="760" letter-spacing="0" fill="#0f172a">hat_section geometry</text>
+<text x="28" y="54" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12.5" fill="#475569">An open hat section rises in positive z with lower mounting flanges at z = 0.</text>
+<rect x="28.00" y="305.54" width="704.00" height="25.62" fill="url(#skin-hatch)" stroke="#cbd5e1" stroke-width="0.8"/>
+<line x1="28.00" y1="305.54" x2="732.00" y2="305.54" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="6 5"/>
+<line x1="28.00" y1="318.35" x2="732.00" y2="318.35" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3 5"/>
+<text x="542.00" y="283.54" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" fill="#334155">section datum z = 0 / skin face</text>
+<text x="542.00" y="348.16" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" fill="#64748b">skin reference surface</text>
+<line x1="52.00" y1="340.00" x2="110.00" y2="340.00" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="52.00" y1="340.00" x2="52.00" y2="286.00" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="119.00" y="344.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" fill="#334155">+y</text>
+<text x="60.00" y="281.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" fill="#334155">+z / +n</text>
+<polygon points="211.79,289.68 263.64,289.68 263.64,305.54 211.79,305.54" fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round" filter="url(#wall-shadow)"/>
+<line x1="211.79" y1="297.61" x2="263.64" y2="297.61" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+<polygon points="256.93,289.68 256.93,149.98 270.35,149.98 270.35,289.68" fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round" filter="url(#wall-shadow)"/>
+<line x1="263.64" y1="289.68" x2="263.64" y2="149.98" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+<polygon points="263.64,131.68 355.14,131.68 355.14,149.98 263.64,149.98" fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round" filter="url(#wall-shadow)"/>
+<line x1="263.64" y1="140.83" x2="355.14" y2="140.83" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+<polygon points="348.43,289.68 348.43,149.98 361.85,149.98 361.85,289.68" fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round" filter="url(#wall-shadow)"/>
+<line x1="355.14" y1="289.68" x2="355.14" y2="149.98" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+<polygon points="355.14,289.68 406.99,289.68 406.99,305.54 355.14,305.54" fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round" filter="url(#wall-shadow)"/>
+<line x1="355.14" y1="297.61" x2="406.99" y2="297.61" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.55"/>
+<line x1="263.64" y1="140.83" x2="263.64" y2="107.28" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="355.14" y1="140.83" x2="355.14" y2="107.28" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="263.64" y1="107.28" x2="355.14" y2="107.28" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="309.39" y="99.28" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" text-anchor="middle" fill="#334155">crown_width</text>
+<line x1="211.79" y1="297.61" x2="211.79" y2="328.11" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="263.64" y1="297.61" x2="263.64" y2="328.11" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="211.79" y1="328.11" x2="263.64" y2="328.11" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="237.71" y="345.11" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" text-anchor="middle" fill="#334155">flange_width</text>
+<line x1="263.64" y1="289.68" x2="228.26" y2="289.68" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="263.64" y1="149.98" x2="228.26" y2="149.98" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="228.26" y1="289.68" x2="228.26" y2="149.98" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="210.26" y="223.83" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" text-anchor="end" fill="#334155">web_height</text>
+<line x1="355.14" y1="149.98" x2="375.88" y2="149.98" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="355.14" y1="131.68" x2="375.88" y2="131.68" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="375.88" y1="149.98" x2="375.88" y2="131.68" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="389.88" y="144.83" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" text-anchor="start" fill="#334155">crown_thickness</text>
+<line x1="406.99" y1="305.54" x2="424.07" y2="305.54" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="406.99" y1="289.68" x2="424.07" y2="289.68" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="424.07" y1="305.54" x2="424.07" y2="289.68" stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="438.07" y="286.61" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" text-anchor="start" fill="#334155">flange_thickness</text>
+<circle cx="309.39" cy="219.21" r="7.2" fill="#ffffff" stroke="#dc2626" stroke-width="1.2"/>
+<circle cx="309.39" cy="219.21" r="4.3" fill="#dc2626"/>
+<line x1="299.39" y1="219.21" x2="319.39" y2="219.21" stroke="#dc2626" stroke-width="1.2"/>
+<line x1="309.39" y1="209.21" x2="309.39" y2="229.21" stroke="#dc2626" stroke-width="1.2"/>
+<text x="237.71" y="278.09" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" text-anchor="middle" dominant-baseline="middle" fill="#1e3a8a">left flange</text>
+<text x="283.16" y="219.83" transform="rotate(-90.0 283.16 219.83)" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" text-anchor="middle" dominant-baseline="middle" fill="#1e3a8a">left web</text>
+<text x="309.39" y="161.57" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" text-anchor="middle" dominant-baseline="middle" fill="#1e3a8a">crown</text>
+<text x="335.62" y="219.83" transform="rotate(-90.0 335.62 219.83)" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" text-anchor="middle" dominant-baseline="middle" fill="#1e3a8a">right web</text>
+<text x="381.07" y="278.09" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" text-anchor="middle" dominant-baseline="middle" fill="#1e3a8a">right flange</text>
+<rect x="566.00" y="78.00" width="166" height="104" rx="5" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="580.00" y="100.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12" font-weight="700" fill="#0f172a">Legend</text>
+<rect x="580.00" y="112.00" width="22" height="10" fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1"/>
+<text x="610.00" y="122.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" fill="#334155">section wall</text>
+<line x1="580.00" y1="136.00" x2="602.00" y2="136.00" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.7"/>
+<text x="610.00" y="140.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" fill="#334155">segment midline</text>
+<circle cx="591.00" cy="154.00" r="4" fill="#dc2626"/>
+<text x="610.00" y="158.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" fill="#334155">computed centroid</text>
+<line x1="580.00" y1="172.00" x2="602.00" y2="172.00" stroke="#0f172a" stroke-width="1.3" stroke-dasharray="6 5"/>
+<text x="610.00" y="176.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="11.5" fill="#334155">z = 0 datum</text>
+<rect x="28" y="422.00" width="704" height="32" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<rect x="28" y="422.00" width="4" height="32" rx="2" fill="#2563eb"/>
+<text x="44" y="443.00" font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" font-size="12.5" fill="#334155">The hat is not flipped downward; mounting flanges sit on the skin-face datum.</text>
+</svg>

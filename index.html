@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Equivalent-stiffness homogenization tools for stiffened plates and shells." /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Tensyl</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/Tensyl/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".">
+          <img src="assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#what-tensyl-computes">What Tensyl Computes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-tensyl-is-not">What Tensyl Is Not</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#documentation-map">Documentation Map</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#first-workflow">First Workflow</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tensyl">Tensyl</h1>
+<p>Tensyl is a Python library for equivalent-stiffness homogenization of stiffened
+plates and shells. It helps engineering teams build, check, transform, and export
+local ABD stiffnesses for skins, laminates, and stiffened repeating cells.</p>
+<p>In one line: Tensyl replaces a panel full of stiffeners with a single equivalent
+stiffness — a small, auditable stiffness matrix that behaves like the real thing under
+global loads, without the cost of modeling every rib.</p>
+<p>The public package name is <code>tensyl</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">New here? Read in this order</p>
+<p>Start with <a href="background/motivation/">Background</a> for the why, then
+<a href="background/terminology/">Terminology</a> for the vocabulary — it is the
+glossary the rest of the manual leans on. Theory and the User Guide make a
+lot more sense once those two are in hand.</p>
+</div>
+<h2 id="what-tensyl-computes">What Tensyl Computes</h2>
+<p>Tensyl computes a local constitutive stiffness in laminated-plate notation:</p>
+<div class="arithmatex">\[
+\begin{bmatrix}
+\mathbf N \\
+\mathbf M \\
+\mathbf Q
+\end{bmatrix}
+=
+\mathbf C_\text{stiffness}
+\begin{bmatrix}
+\boldsymbol\epsilon^0 \\
+\boldsymbol\kappa \\
+\boldsymbol\gamma_s^0
+\end{bmatrix}.
+\]</div>
+<p>The first public ABD stiffness is <code>ABDStiffness</code>. It stores the membrane stiffness
+<code>A</code>, membrane-bending coupling <code>B</code>, bending/twisting stiffness <code>D</code>, and
+transverse-shear stiffness <code>As</code> as one canonical <span class="arithmatex">\(8\times8\)</span> tangent operator.</p>
+<h2 id="what-tensyl-is-not">What Tensyl Is Not</h2>
+<p>Tensyl is not a certification buckling solver, local stress recovery tool, or
+replacement for detailed finite-element analysis. The tangent-plane
+homogenization tools assume scale separation between stiffener pitch, stiffener
+height, local curvature radius, and the structural response length of interest.</p>
+<p>Use Tensyl to form and audit equivalent ABD stiffnesses. Use detailed analysis for
+local buckling, crippling, joints, cutouts, load introduction, nonlinear
+postbuckling, and final allowables.</p>
+<h2 id="documentation-map">Documentation Map</h2>
+<ul>
+<li><a href="getting-started/installation/">Getting started</a> covers installation and the
+  shortest path to an ABD stiffness.</li>
+<li><a href="background/motivation/">Background</a> introduces the engineering motivation,
+  history, and terminology.</li>
+<li><a href="theory/equivalent-stiffness/">Theory</a> explains conventions, ABD stiffnesses, and
+  tangent-plane homogenization.</li>
+<li><a href="user-guide/materials-and-laminates/">User guide</a> documents the main
+  engineering workflows.</li>
+<li><a href="examples/skin-only/">Examples</a> provides worked examples and
+  executable snippets.</li>
+<li><a href="api/core/">API reference</a> exposes the public Python interfaces.</li>
+<li><a href="references/">References</a> lists the external sources used by the
+  documentation.</li>
+</ul>
+<h2 id="first-workflow">First Workflow</h2>
+<pre><code class="language-python">from tensyl import IsotropicMaterial, isotropic_plate
+
+aluminum = IsotropicMaterial(E=10.0e6, nu=0.33, density=0.1)
+stiffness = isotropic_plate(aluminum, thickness=0.080)
+
+print(stiffness.A)
+print(stiffness.D)
+</code></pre>
+<p>This example uses a consistent US customary unit system: force in <code>lbf</code>, length
+in <code>in</code>, stress in <code>psi</code>, and mass density in units compatible with the
+downstream workflow. Tensyl records unit labels in exported artifacts but does
+not convert units.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="getting-started/installation/" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="getting-started/installation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-06-29 03:14:02.625352+00:00
+-->

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/geometry-and-fields/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Geometry and Stiffness Fields - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Geometry and Stiffness Fields";
+        var mkdocs_page_input_path = "user-guide/geometry-and-fields.md";
+        var mkdocs_page_url = "/Tensyl/user-guide/geometry-and-fields/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Geometry and Stiffness Fields</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#built-in-surfaces">Built-In Surfaces</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-changes-when-you-choose-a-surface">What Changes When You Choose a Surface</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#constant-stiffness-field">Constant Stiffness Field</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#surface-recipes">Surface Recipes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stiffness-atlas">Stiffness Atlas</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#choosing-a-response-length">Choosing a Response Length</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">Geometry and Stiffness Fields</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/geometry-and-fields.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="geometry-and-stiffness-fields">Geometry and Stiffness Fields</h1>
+<p>Tensyl separates local ABD stiffnesses from shell geometry. Geometry supplies surface
+points, frames, metrics, curvature, and integration measures. It does not change
+the tangent-plane ABD stiffness.</p>
+<p>That last sentence is important enough to say plainly. A barrel, cone, sphere,
+or ellipsoid changes where the tangent plane lives, how its local axes are
+oriented, and which curvature radius should be used in validity checks. It does
+not automatically add shell-curvature terms to a constant ABD matrix. The matrix
+changes only when the stiffness field supplies different local stiffness data at
+different surface points.</p>
+<h2 id="built-in-surfaces">Built-In Surfaces</h2>
+<p>Available surfaces include:</p>
+<ul>
+<li><code>FlatPlate</code>;</li>
+<li><code>Cylinder</code>;</li>
+<li><code>Sphere</code>;</li>
+<li><code>SphericalCap</code>;</li>
+<li><code>ConicalFrustum</code>;</li>
+<li><code>Ellipsoid</code>.</li>
+</ul>
+<p>Each surface exposes:</p>
+<pre><code class="language-python">point = surface.point_at(u, v)
+</code></pre>
+<p>The point contains position, tangent vectors, metric, curvature, Jacobian,
+principal curvatures, and a local <code>Frame2D</code>.</p>
+<p>The ABD stiffness matrix remains local. Coordinates answer "where is this
+surface point?", the local frame answers "what are the 1/2/n directions?", and
+the ABD/shear stiffness is interpreted in that local frame. A constant isotropic or
+laminate ABD stiffness may be bound to many surface points even when the frame or
+curvature changes across the surface.</p>
+<p>Tensyl uses signed curvature from the surface normal convention. Built-in
+convex surfaces use outward normals, so their nonzero principal curvatures are
+negative. <code>SurfacePoint.min_radius</code> is the positive radius magnitude to use in
+scale-separation validity checks. These conventions follow the standard first
+and second fundamental form treatment of parametric surfaces listed in
+<a href="../../references/">References</a>.</p>
+<p><code>Sphere</code> and <code>SphericalCap</code> use spherical coordinates <code>(phi, theta)</code>, with
+<code>e1</code> in the meridional direction and <code>e2</code> in the circumferential direction.
+Their single chart excludes poles. <code>Ellipsoid</code> uses the same latitude-longitude
+style chart; for a triaxial ellipsoid the coordinate tangent directions are not
+generally orthogonal, so <code>e1</code> follows the meridional coordinate direction and
+<code>e2</code> is the right-handed orthonormal tangent completion. <code>ConicalFrustum</code> uses
+<code>(x, theta)</code> and excludes apex singularities.</p>
+<h2 id="what-changes-when-you-choose-a-surface">What Changes When You Choose a Surface</h2>
+<p>Choosing a surface changes the geometric context around the ABD law:</p>
+<ul>
+<li><code>frame</code>: the local directions for membrane strain, curvature, transverse
+  shear, resultants, stiffener angle, and eccentricity sign;</li>
+<li><code>metric</code> and <code>jacobian</code>: the coordinate-to-physical distance and area
+  information a later surface workflow needs;</li>
+<li><code>curvature</code>, <code>principal_curvatures</code>, and <code>min_radius</code>: the curvature data used
+  to judge whether the tangent-plane approximation is credible for the chosen
+  response.</li>
+</ul>
+<p>For a <code>Cylinder</code>, <code>e1</code> is axial, <code>e2</code> is circumferential, and <code>n</code> points outward.
+The positive minimum radius is the cylinder radius. Attaching a constant
+orthogrid ABD stiffness to the cylinder therefore changes the frame label and
+validity context, not the numeric <code>C8</code> matrix.</p>
+<p>For an <code>Ellipsoid</code>, the local frame and curvature change from point to point.
+That does not make an isotropic constant-field <code>C8</code> vary. It does mean a
+pointwise stiffened-cell model must define each local cell in the current surface
+frame. If the physical stiffener pitch, angle, section, or eccentricity changes
+over the ellipsoid, encode that through <code>HomogenizedStiffnessField</code> or sampled
+<code>ABDAtlas</code> values.</p>
+<h2 id="constant-stiffness-field">Constant Stiffness Field</h2>
+<pre><code class="language-python">from tensyl import ConstantStiffnessField, Cylinder
+
+surface = Cylinder(radius=120.0, length=300.0)
+field = ConstantStiffnessField(stiffness)
+
+local_stiffness = field.stiffness_at(surface, 10.0, 0.25)
+</code></pre>
+<p>The stiffness tangent is unchanged. The stiffness is rebound to the surface-point frame.</p>
+<div class="admonition note">
+<p class="admonition-title">Constant means constant matrix, not constant meaning</p>
+<p>A constant field reuses the same numeric <code>C8</code> tangent, but each surface point
+still supplies its own frame and curvature context. Same numbers, different
+place to read them. That distinction is small until it saves an axis swap.</p>
+</div>
+<h2 id="surface-recipes">Surface Recipes</h2>
+<p>The flat panel recipe is:</p>
+<ol>
+<li>build a skin or laminate ABD stiffness;</li>
+<li>build stiffener <code>BeamSection</code> values;</li>
+<li>build a <code>CanonicalUnitCell</code>;</li>
+<li>homogenize with <code>EnergyHomogenizer</code>;</li>
+<li>attach <code>result.stiffness</code> through <code>ConstantStiffnessField</code>.</li>
+</ol>
+<p>For a stiffened barrel, <code>Cylinder</code> uses local <code>e1</code> in the axial direction,
+local <code>e2</code> in the circumferential direction, and <code>n</code> outward. Axial stringers
+map to angle <code>0</code>. Ring ribs map to angle <code>pi/2</code>. With the built-in outward
+normal, an external stiffener uses positive eccentricity.</p>
+<pre><code class="language-python">from tensyl import ConstantStiffnessField, Cylinder, ValidityContext
+
+radius = 120.0
+surface = Cylinder(radius=radius, length=300.0)
+field = ConstantStiffnessField(result.stiffness)
+stiffness_at_midbay = field.stiffness_at(surface, 150.0, 0.0)
+
+context = ValidityContext(
+    characteristic_height=0.50,
+    pitch=8.0,
+    min_radius=radius,
+    response_length=80.0,
+)
+</code></pre>
+<p>The barrel radius enters validity review through <code>min_radius</code>; it does not
+modify a constant-field <code>C8</code> tangent. If the barrel has station-dependent pitch,
+section, material, or stiffener angle, represent that variation with
+<code>HomogenizedStiffnessField</code> or <code>ABDAtlas</code>.</p>
+<p><code>Sphere</code>, <code>SphericalCap</code>, and <code>Ellipsoid</code> provide curved midsurfaces with local
+frames that change over the surface.</p>
+<pre><code class="language-python">from tensyl import ABDAtlas, Sphere, SphericalCap
+
+complete_dome = Sphere(radius=96.0)
+dome = SphericalCap(radius=96.0, half_angle_rad=1.0)
+atlas = ABDAtlas.from_field(
+    dome,
+    field,
+    u_values=(0.20, 0.60, 0.95),
+    v_values=(0.0, 3.141592653589793, 6.283185307179586),
+)
+</code></pre>
+<p>The first homogenizer is tangent-plane only. Tensyl does not automatically build
+geodesic stiffener layouts over a dome. For varying stiffener orientation or
+pitch, provide a pointwise cell factory through <code>HomogenizedStiffnessField</code> or
+sample already-computed local stiffnesses into an <code>ABDAtlas</code>.</p>
+<p>For a sphere, the chart coordinates are <code>(phi, theta)</code>: <code>e1</code> is meridional and
+<code>e2</code> is circumferential away from the poles. For an ellipsoid, Tensyl uses the
+same latitude-longitude style chart, but a triaxial ellipsoid does not provide
+uniform physical pitch from uniform coordinate spacing. Say what physical layout
+you mean; the parameter chart is not a tape measure.</p>
+<p><code>ConicalFrustum</code> covers cone-like shell sections without including an apex
+singularity.</p>
+<pre><code class="language-python">from tensyl import ConicalFrustum
+
+surface = ConicalFrustum(radius_start=80.0, radius_end=96.0, length=120.0)
+point = surface.point_at(60.0, 0.0)
+</code></pre>
+<p>The cone frame uses <code>e1</code> along increasing axial station/generator direction,
+<code>e2</code> opposite the positive <code>theta</code> tangent to keep the same outward-normal
+orientation as <code>Cylinder</code>, and <code>n</code> outward. When <code>radius_start == radius_end</code>,
+the conical-frustum geometry reduces to the cylinder formulas.</p>
+<h2 id="stiffness-atlas">Stiffness Atlas</h2>
+<p><code>ABDAtlas</code> samples a <code>StiffnessField</code> on a rectangular parameter grid and performs
+bilinear interpolation in canonical C8 storage.</p>
+<pre><code class="language-python">import math
+
+from tensyl import ABDAtlas
+
+atlas = ABDAtlas.from_field(
+    surface,
+    field,
+    u_values=(0.0, 150.0, 300.0),
+    v_values=(0.0, math.pi, 2.0 * math.pi),
+)
+
+interpolated = atlas.stiffness_at(surface, 75.0, 0.5 * math.pi)
+</code></pre>
+<p>Atlas interpolation is a convenience for linear ABD stiffnesses. Interpolation error
+metadata should be reviewed before relying on a coarse grid.</p>
+<p>The atlas interpolates matrix samples; it does not derive a stiffener layout from
+the surface. On a curved or nonuniform surface, choose sample points that match
+the physical variation you intend to represent.</p>
+<h2 id="choosing-a-response-length">Choosing a Response Length</h2>
+<p><code>ValidityContext.response_length</code> should represent the structural response mode
+you intend to model, such as an expected buckle half-wavelength, analysis
+feature size, or load redistribution length. It should not default blindly to
+the global part length. A pitch that is small compared with the whole barrel can
+still be too large for a short-wavelength local response.</p>
+<p>This is still stiffness-property preparation, not shell analysis. A separate
+shell, buckling, or sizing workflow must apply loads, boundary conditions, and
+failure criteria.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../homogenization/" class="btn btn-neutral float-left" title="Homogenization and Results"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../external-workflows/" class="btn btn-neutral float-right" title="External Workflows">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../homogenization/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../external-workflows/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

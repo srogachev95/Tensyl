@@ -1,0 +1,2453 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/api/core/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Core - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Core";
+        var mkdocs_page_input_path = "api/core.md";
+        var mkdocs_page_url = "/Tensyl/api/core/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Core</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive">constitutive</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.ConstitutiveModel">ConstitutiveModel</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel">HyperelasticModel</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.convention">convention</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.frame">frame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.validity">validity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.energy">energy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.resultants">resultants</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.rotate">rotate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel.tangent">tangent</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel">LinearModel</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.constant_tangent">constant_tangent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.convention">convention</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.frame">frame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.validity">validity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.energy">energy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.resultants">resultants</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.rotate">rotate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.LinearModel.tangent">tangent</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.A">A</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.As">As</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.B">B</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.C8">C8</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.D">D</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.areal_mass">areal_mass</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.constant_tangent">constant_tangent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.convention">convention</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.frame">frame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.validity">validity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.__hash__">__hash__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.energy">energy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.from_tangent">from_tangent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.reduced_orthotropic_properties">reduced_orthotropic_properties</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.resultants">resultants</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.rotate">rotate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.tangent">tangent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.with_validity">with_validity</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties">ReducedOrthotropicProperties</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.E1">E1</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.E2">E2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.G12">G12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.nu12">nu12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.nu21">nu21</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.t_eff">t_eff</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.warnings">warnings</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ReducedOrthotropicProperties.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.shift_reference_surface">shift_reference_surface</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.superpose_abd_stiffnesses">superpose_abd_stiffnesses</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.conventions">conventions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.conventions.DEFAULT_FRAME">DEFAULT_FRAME</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.conventions.Frame2D">Frame2D</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.e1">e1</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.e2">e2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.n">n</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.__eq__">__eq__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.__hash__">__hash__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.canonical">canonical</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.Frame2D.rotate">rotate</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention">StrainConvention</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.bending_order">bending_order</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.engineering_shear">engineering_shear</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.membrane_order">membrane_order</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.normal_positive">normal_positive</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.reference_surface">reference_surface</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.shear_order">shear_order</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.conventions.StrainConvention.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.typing">typing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.typing.GeneralizedResultant">GeneralizedResultant</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.typing.generalized_strain">generalized_strain</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.typing.generalized_resultant">generalized_resultant</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">API Reference</li>
+      <li class="breadcrumb-item active">Core</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/core.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="core-api">Core API</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.core.constitutive"></a>
+    <div class="doc doc-contents first">
+
+        <p>Constitutive stiffness operators.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tensyl.core.constitutive.ConstitutiveModel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">ConstitutiveModel</span> <span class="o">=</span> <span class="n">HyperelasticModel</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.constitutive.HyperelasticModel" class="doc doc-heading">
+            <code>HyperelasticModel</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+
+        <p>Public mechanics contract for a generalized hyperelastic stiffness model.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.convention" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">convention</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.frame" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">frame</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.validity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">validity</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.energy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">energy</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return strain energy density for generalized strain <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.resultants" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">resultants</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return generalized resultants for generalized strain <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.rotate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rotate</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return an equivalent stiffness expressed in a rotated local frame.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.HyperelasticModel.tangent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tangent</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the constitutive tangent at generalized strain <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.constitutive.LinearModel" class="doc doc-heading">
+            <code>LinearModel</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="HyperelasticModel (tensyl.core.constitutive.HyperelasticModel)" href="#tensyl.core.constitutive.HyperelasticModel">HyperelasticModel</a></code>, <code><span title="typing.Protocol">Protocol</span></code></p>
+
+
+
+        <p>Refinement for stiffness models whose tangent is independent of strain.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.constant_tangent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">constant_tangent</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the strain-independent tangent.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.convention" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">convention</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.frame" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">frame</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.validity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">validity</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.energy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">energy</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return strain energy density for generalized strain <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.resultants" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">resultants</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return generalized resultants for generalized strain <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.rotate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rotate</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return an equivalent stiffness expressed in a rotated local frame.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.LinearModel.tangent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tangent</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the constitutive tangent at generalized strain <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.constitutive.ABDStiffness" class="doc doc-heading">
+            <code>ABDStiffness</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Linear ABD stiffness in ABD plus transverse-shear form.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>A</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>3x3</code> extensional stiffness block in the active unit system.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>3x3</code> membrane-bending coupling block about the reference surface.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>3x3</code> bending and twisting stiffness block.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>As</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>2x2</code> transverse-shear stiffness block.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_FRAME = Frame2D.canonical()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_FRAME)" href="#tensyl.core.conventions.DEFAULT_FRAME">DEFAULT_FRAME</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Local right-handed frame for the matrix components.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain ordering and shear convention.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>areal_mass</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional mass per unit reference-surface area.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>, default:
+                      <code><span title="dict">dict</span>()</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Provenance metadata preserved by serialization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional validity report attached by homogenization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.A" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.As" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">As</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.B" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.C8" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">C8</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>The canonical 8x8 stiffness tangent.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.D" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.areal_mass" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">areal_mass</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.constant_tangent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">constant_tangent</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the strain-independent stiffness tangent.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.convention" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">convention</span> <span class="o">=</span> <span class="n">DEFAULT_STRAIN_CONVENTION</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.frame" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">frame</span> <span class="o">=</span> <span class="n">DEFAULT_FRAME</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.validity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">validity</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.__hash__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">As</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">DEFAULT_FRAME</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="n">DEFAULT_STRAIN_CONVENTION</span><span class="p">,</span> <span class="n">areal_mass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">validity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.energy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">energy</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return <code>0.5 * eta @ C8 @ eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.from_tangent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_tangent</span><span class="p">(</span><span class="n">tangent</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">DEFAULT_FRAME</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="n">DEFAULT_STRAIN_CONVENTION</span><span class="p">,</span> <span class="n">areal_mass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a linear ABD stiffness from the canonical <code>8x8</code> tangent.</p>
+<p>The tangent order is <code>[N11, N22, N12, M11, M22, M12, Q13, Q23]</code> by
+<code>[eps11, eps22, gamma12, kappa11, kappa22, kappa12, gamma13,
+gamma23]</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.reduced_orthotropic_properties" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">reduced_orthotropic_properties</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return membrane-equivalent orthotropic plane-stress properties.</p>
+<p><code>t_eff</code> is the shell thickness used by a downstream model to turn
+membrane stiffness per unit width into material stiffness. The reduction
+is based on <code>A / t_eff</code> and does not preserve the bending, coupling, or
+transverse-shear blocks.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.resultants" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">resultants</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return generalized resultants <code>[N11, N22, N12, M11, M22, M12, Q13, Q23]</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.rotate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rotate</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return this stiffness expressed in a frame rotated about <code>n</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.tangent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tangent</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the constant stiffness tangent after validating <code>eta</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffness.with_validity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">with_validity</span><span class="p">(</span><span class="n">validity</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return an equivalent stiffness with attached validity diagnostics.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.constitutive.ReducedOrthotropicProperties" class="doc doc-heading">
+            <code>ReducedOrthotropicProperties</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Membrane-equivalent orthotropic plane-stress constants.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>t_eff</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective shell thickness used for the membrane reduction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>E1</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Young's modulus in local direction 1.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>E2</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Young's modulus in local direction 2.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>G12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>In-plane shear modulus.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>nu12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Major Poisson ratio.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>nu21</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Minor Poisson ratio.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>warnings</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>, default:
+                      <code>()</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Machine-readable notices for stiffness terms not represented
+by the reduction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>, default:
+                      <code><span title="dict">dict</span>()</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Provenance metadata for the reduced values.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.E1" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">E1</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.E2" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">E2</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.G12" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">G12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.nu12" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">nu12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.nu21" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">nu21</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.t_eff" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">t_eff</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.warnings" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">warnings</span> <span class="o">=</span> <span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="n">E1</span><span class="p">,</span> <span class="n">E2</span><span class="p">,</span> <span class="n">G12</span><span class="p">,</span> <span class="n">nu12</span><span class="p">,</span> <span class="n">nu21</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="p">(),</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ReducedOrthotropicProperties.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.core.constitutive.shift_reference_surface" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">shift_reference_surface</span><span class="p">(</span><span class="n">stiffness</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return <code>stiffness</code> expressed about a reference surface shifted by <code>offset</code>.</p>
+<p><code>offset</code> is the signed distance from the current reference surface
+to the new reference surface along <code>+n</code>. Curvatures and transverse-shear
+strains are unchanged.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.core.constitutive.superpose_abd_stiffnesses" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">superpose_abd_stiffnesses</span><span class="p">(</span><span class="o">*</span><span class="n">stiffnesses</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the superposition of compatible ABD stiffnesses.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.core.conventions"></a>
+    <div class="doc doc-contents first">
+
+        <p>Coordinate frames and generalized strain conventions.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tensyl.core.conventions.DEFAULT_FRAME" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">DEFAULT_FRAME</span> <span class="o">=</span> <span class="n">Frame2D</span><span class="o">.</span><span class="n">canonical</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">DEFAULT_STRAIN_CONVENTION</span> <span class="o">=</span> <span class="n">StrainConvention</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.conventions.Frame2D" class="doc doc-heading">
+            <code>Frame2D</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Right-handed orthonormal local frame.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.Frame2D.e1" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">e1</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.Frame2D.e2" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">e2</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.Frame2D.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;local_tangent&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.Frame2D.n" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">n</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.Frame2D.__eq__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.Frame2D.__hash__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.Frame2D.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;local_tangent&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.Frame2D.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.Frame2D.canonical" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">canonical</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;local_tangent&#39;</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create the canonical Cartesian local frame.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.Frame2D.rotate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rotate</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return a frame rotated counterclockwise about <code>n</code> by <code>angle_rad</code>.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.conventions.StrainConvention" class="doc doc-heading">
+            <code>StrainConvention</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Generalized strain/resultant ordering for the Phase 1 ABD stiffness.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.bending_order" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bending_order</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;k11&#39;</span><span class="p">,</span> <span class="s1">&#39;k22&#39;</span><span class="p">,</span> <span class="s1">&#39;k12&#39;</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.engineering_shear" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">engineering_shear</span> <span class="o">=</span> <span class="kc">True</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.membrane_order" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">membrane_order</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;e11&#39;</span><span class="p">,</span> <span class="s1">&#39;e22&#39;</span><span class="p">,</span> <span class="s1">&#39;g12&#39;</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.normal_positive" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">normal_positive</span> <span class="o">=</span> <span class="s1">&#39;+n&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.reference_surface" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">reference_surface</span> <span class="o">=</span> <span class="s1">&#39;mid_surface&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.shear_order" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">shear_order</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;g13&#39;</span><span class="p">,</span> <span class="s1">&#39;g23&#39;</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">membrane_order</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;e11&#39;</span><span class="p">,</span> <span class="s1">&#39;e22&#39;</span><span class="p">,</span> <span class="s1">&#39;g12&#39;</span><span class="p">),</span> <span class="n">bending_order</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;k11&#39;</span><span class="p">,</span> <span class="s1">&#39;k22&#39;</span><span class="p">,</span> <span class="s1">&#39;k12&#39;</span><span class="p">),</span> <span class="n">shear_order</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;g13&#39;</span><span class="p">,</span> <span class="s1">&#39;g23&#39;</span><span class="p">),</span> <span class="n">engineering_shear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reference_surface</span><span class="o">=</span><span class="s1">&#39;mid_surface&#39;</span><span class="p">,</span> <span class="n">normal_positive</span><span class="o">=</span><span class="s1">&#39;+n&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.conventions.StrainConvention.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.core.typing"></a>
+    <div class="doc doc-contents first">
+
+        <p>Shared typing aliases and public generalized-vector wrappers.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tensyl.core.typing.GeneralizedStrain" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">GeneralizedStrain</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s1">&#39;GeneralizedStrain&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]])</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="tensyl.core.typing.GeneralizedResultant" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">GeneralizedResultant</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s1">&#39;GeneralizedResultant&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]])</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.core.typing.generalized_strain" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">generalized_strain</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return a read-only generalized strain vector.</p>
+<p>The runtime value is still a NumPy array, but the public type is distinct
+from resultants for static checkers.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.core.typing.generalized_resultant" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">generalized_resultant</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return a read-only generalized resultant vector.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../examples/stiffness-field-maps/" class="btn btn-neutral float-left" title="Stiffness Field Maps"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../materials/" class="btn btn-neutral float-right" title="Materials">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../examples/stiffness-field-maps/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../materials/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

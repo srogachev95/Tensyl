@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/solver-handoff/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>FEM Solver Handoff - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "FEM Solver Handoff";
+        var mkdocs_page_input_path = "user-guide/solver-handoff.md";
+        var mkdocs_page_url = "/Tensyl/user-guide/solver-handoff/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">FEM Solver Handoff</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#before-solver-input">Before Solver Input</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reduced-orthotropic-properties">Reduced Orthotropic Properties</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#nx-nastran">NX Nastran</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#simple-route-mat8-and-pshell">Simple Route: MAT8 and PSHELL</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#higher-fidelity-pshell-material-references">Higher Fidelity: PSHELL Material References</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ansys">ANSYS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#abaqus">Abaqus</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#patch-check">Patch Check</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#references">References</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">FEM Solver Handoff</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/solver-handoff.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="fem-solver-handoff">FEM Solver Handoff</h1>
+<p>Tensyl computes an equivalent ABD stiffness. A finite-element solver consumes
+that stiffness through whatever shell-section machinery it provides. Sometimes
+that machinery is a reduced orthotropic material. Sometimes it is a
+preintegrated shell stiffness. Sometimes it is a solver-specific section option
+that benefits from a quick patch check before it joins the serious model.</p>
+<p>This page describes practical handoff routes for NX Nastran, ANSYS, and Abaqus.
+A YAML or JSON artifact from <a href="../external-workflows/">External Workflows</a> is still
+a useful traceability record: it keeps the stiffness, units, validity warnings,
+and assumptions together while the solver input gets the particular syntax it
+needs.</p>
+<h2 id="before-solver-input">Before Solver Input</h2>
+<p>Tensyl's canonical generalized strain and resultant order is defined in
+<a href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>. Treat that
+ordering as part of the data contract, not as a formatting preference.</p>
+<p>For solvers that take a six-by-six shell section stiffness, the part to hand off
+is:</p>
+<div class="arithmatex">\[
+\mathbf K_{ABD} =
+\begin{bmatrix}
+\mathbf A &amp; \mathbf B \\
+\mathbf B &amp; \mathbf D
+\end{bmatrix}
+\]</div>
+<p>with row and column order:</p>
+<div class="arithmatex">\[
+(11,\ 22,\ 12,\ k11,\ k22,\ k12).
+\]</div>
+<p>The transverse-shear block is separate:</p>
+<div class="arithmatex">\[
+\mathbf A_s =
+\begin{bmatrix}
+A_{s11} &amp; A_{s12} \\
+A_{s12} &amp; A_{s22}
+\end{bmatrix}.
+\]</div>
+<p>Keep these checks explicit:</p>
+<ul>
+<li>Use one unit system. <code>A</code> and <code>As</code> have force/length units, <code>B</code> has force units,
+  and <code>D</code> has force-length units.</li>
+<li>Align local solver material axes with Tensyl's <code>e1</code> and <code>e2</code>. For the built-in
+  <code>Cylinder</code>, <code>e1</code> is axial and <code>e2</code> is circumferential.</li>
+<li>Match the reference surface. Moving the solver section offset without shifting
+  the ABD stiffness changes <code>B</code>.</li>
+<li>Preserve the engineering shear and engineering twist convention.</li>
+<li>Review <code>result.validity.warnings</code> before export. The solver sees stiffness
+  numbers; the validity context has to travel with the model.</li>
+</ul>
+<h2 id="reduced-orthotropic-properties">Reduced Orthotropic Properties</h2>
+<p>The simplest route is to convert the membrane block to equivalent orthotropic
+plane-stress constants and let the solver build a conventional shell section.
+This is useful for preliminary modal, static, or sizing models when the ABD
+stiffness is nearly uncoupled.</p>
+<p>Choose an effective shell thickness <code>t_eff</code>. In this context, <code>t_eff</code> is the
+thickness that the downstream shell property will use with the reduced material
+constants. It is the bookkeeping thickness for the solver handoff, not something
+Tensyl can discover from the ABD matrix alone.</p>
+<p>The reduction forms:</p>
+<div class="arithmatex">\[
+\mathbf Q_\mathrm{eff} = \frac{\mathbf A}{t_\mathrm{eff}},
+\qquad
+\mathbf S_\mathrm{eff} = \mathbf Q_\mathrm{eff}^{-1}.
+\]</div>
+<p>For local axes aligned with the orthotropic axes:</p>
+<div class="arithmatex">\[
+E_1 = \frac{1}{S_{11}},
+\quad
+E_2 = \frac{1}{S_{22}},
+\quad
+G_{12} = \frac{1}{S_{66}},
+\quad
+\nu_{12} = -\frac{S_{12}}{S_{11}},
+\quad
+\nu_{21} = -\frac{S_{12}}{S_{22}}.
+\]</div>
+<div class="admonition note">
+<p class="admonition-title">What the reduced route keeps</p>
+<p>This preserves the chosen membrane compliance. It does not generally
+preserve the bending block, eccentric stiffener coupling, or transverse-shear
+stiffness. If those are carrying the physics, use a richer workflow.</p>
+</div>
+<p>Use the reduced route when the terms it discards are intentionally negligible:</p>
+<ul>
+<li>membrane-bending coupling <code>B</code>;</li>
+<li>off-axis membrane coupling <code>A16</code> and <code>A26</code>;</li>
+<li>off-axis bending coupling <code>D16</code> and <code>D26</code>;</li>
+<li>transverse shear details if the chosen shell element computes them from the
+  material and thickness.</li>
+</ul>
+<pre><code class="language-python">props = result.reduced_orthotropic_properties(t_eff=0.080)
+
+print(props.E1, props.E2, props.G12, props.nu12)
+print(props.warnings)
+</code></pre>
+<p>Common <code>t_eff</code> choices are:</p>
+<ul>
+<li>the physical skin or laminate thickness when the model is skin-dominated;</li>
+<li>the total smeared structural depth for a coarse stiffened-shell study;</li>
+<li>a project-defined shell property thickness chosen to match mass, stress-output,
+  or legacy model conventions.</li>
+</ul>
+<p>Changing <code>t_eff</code> changes the reported <code>E1</code>, <code>E2</code>, and <code>G12</code>, but the membrane
+reduction remains consistent because <code>A = Q_eff * t_eff</code>. The trick is not to
+forget which thickness went into the trick.</p>
+<h2 id="nx-nastran">NX Nastran</h2>
+<p>For NX Nastran, the most common handoff is through ordinary Bulk Data shell
+properties and materials. The examples below use NX Nastran-style <code>MAT8</code>,
+<code>PSHELL</code>, and laminate-property workflows. Check the installed Siemens NX Nastran
+Quick Reference Guide for the exact field definitions used by your solver
+release.</p>
+<h3 id="simple-route-mat8-and-pshell">Simple Route: <code>MAT8</code> and <code>PSHELL</code></h3>
+<p>For an uncoupled equivalent orthotropic stiffness:</p>
+<ol>
+<li>Use <code>result.reduced_orthotropic_properties(t_eff=...)</code> to obtain <code>E1</code>, <code>E2</code>,
+   <code>G12</code>, and <code>nu12</code>.</li>
+<li>Define a <code>MAT8</code> with those in-plane constants.</li>
+<li>Define a <code>PSHELL</code> with thickness <code>t_eff</code>, using the <code>MAT8</code> as the membrane and
+   bending material.</li>
+<li>Use element material-angle fields or coordinate systems so material direction
+   1 matches Tensyl <code>e1</code>.</li>
+</ol>
+<p>This route is easy to inspect and works well when the equivalent stiffness is
+close to a conventional orthotropic shell.</p>
+<pre><code class="language-text">$ Illustrative NX Nastran-style Bulk Data fragment.
+MAT8, 101, E1, E2, NU12, G12, G1Z, G2Z, RHO
+PSHELL, 201, 101, T_EFF, 101
+</code></pre>
+<p>Use <code>PCOMP</code> or <code>PCOMPG</code> instead when the equivalent stiffness is better
+represented as a laminate stack and you want the solver to integrate ply
+stiffnesses. An unsymmetric laminate can produce membrane-bending coupling, but
+it is still a laminate model, not an arbitrary ABD matrix fit.</p>
+<div class="admonition note">
+<p class="admonition-title">Good first model</p>
+<p><code>MAT8</code> plus <code>PSHELL</code> is a useful first model when membrane behavior is the
+main target. It is not meant to preserve every term of a general stiffened
+ABD matrix.</p>
+</div>
+<h3 id="higher-fidelity-pshell-material-references">Higher Fidelity: <code>PSHELL</code> Material References</h3>
+<p>The <code>PSHELL</code> card has separate material references for membrane, bending,
+transverse shear, and membrane-bending coupling through <code>MID1</code>, <code>MID2</code>, <code>MID3</code>,
+and <code>MID4</code>. That lines up nicely with the way Tensyl reports <code>A</code>, <code>D</code>, <code>As</code>, and
+<code>B</code>, but the card fields still carry NX Nastran's shell-property scaling rules.</p>
+<p>Use this path when you have verified the mapping for the NX Nastran solution
+sequence and element family you plan to use:</p>
+<ol>
+<li>Decide whether <code>MAT2</code> or <code>MAT8</code> is the right material card for each block.</li>
+<li>Account for <code>PSHELL</code> thickness and bending-inertia factors, including
+   <code>12I/T**3</code>, and any transverse-shear factors.</li>
+<li>Print or recover the element section stiffness from NX Nastran when that
+   output is available.</li>
+<li>Run a one-element patch model with imposed membrane strains and curvatures,
+   then compare recovered resultants with <code>K_ABD @ eta</code>.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Verify the section stiffness</p>
+<p><code>MID1</code> through <code>MID4</code> can be a useful high-fidelity path, but it is not a
+universal "paste the ABD matrix here" slot. If the recovered section
+stiffness does not match the Tensyl matrix within the tolerance needed for
+the analysis, keep the NX Nastran model reduced and document the
+approximation.</p>
+</div>
+<h2 id="ansys">ANSYS</h2>
+<p>ANSYS Mechanical APDL has a direct preintegrated shell-section path. The current
+command reference lists <code>SECTYPE,,GENS</code> as a preintegrated general shell section
+and identifies <code>SSPA</code>, <code>SSPB</code>, <code>SSPD</code>, and <code>SSPE</code> as the follow-on commands for
+membrane, coupling, bending, and transverse shear. The command
+field layouts are:</p>
+<table>
+<thead>
+<tr>
+<th>Tensyl block</th>
+<th>ANSYS command</th>
+<th>Field order</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A</code></td>
+<td><code>SSPA</code></td>
+<td><code>A11, A21, A31, A22, A32, A33, T</code></td>
+</tr>
+<tr>
+<td><code>B</code></td>
+<td><code>SSPB</code></td>
+<td><code>B11, B21, B31, B22, B32, B33, T, B12, B13, B23</code></td>
+</tr>
+<tr>
+<td><code>D</code></td>
+<td><code>SSPD</code></td>
+<td><code>D11, D21, D31, D22, D32, D33, T</code></td>
+</tr>
+<tr>
+<td><code>As</code></td>
+<td><code>SSPE</code></td>
+<td><code>E11, E21, E22, T</code></td>
+</tr>
+</tbody>
+</table>
+<p>The first six fields are the lower symmetric part of each three-by-three block:
+<code>11</code>, <code>21</code>, <code>31</code>, <code>22</code>, <code>32</code>, <code>33</code>. For Tensyl's symmetric <code>B</code>, omit the optional
+upper <code>B12</code>, <code>B13</code>, and <code>B23</code> fields unless the solver workflow specifically asks
+for them.</p>
+<pre><code class="language-text">! Illustrative APDL fragment.
+SECTYPE, 10, GENS, , TENSYL_WALL
+SSPA, A11, A12, A16, A22, A26, A66, T_REF
+SSPB, B11, B12, B16, B22, B26, B66, T_REF
+SSPD, D11, D12, D16, D22, D26, D66, T_REF
+SSPE, AS11, AS12, AS22, T_REF
+SECNUM, 10
+</code></pre>
+<p>Use <code>T_REF</code> as the nominal section thickness required by the solver command
+syntax and stress-output workflow. The preintegrated stiffness terms still need
+to be entered with their actual integrated units.</p>
+<p>For a reduced workflow, define an orthotropic material with <code>MP</code>/<code>TB</code> data and a
+normal shell section thickness. That route is easier to inspect in Mechanical,
+but it inherits the same limitations as the reduced-property method above.</p>
+<h2 id="abaqus">Abaqus</h2>
+<p>Abaqus has two relevant routes:</p>
+<ul>
+<li>material-based shell sections for reduced orthotropic workflows;</li>
+<li>direct general shell sections for full linear section stiffness.</li>
+</ul>
+<p>For the direct route, omit <code>MATERIAL</code>, <code>COMPOSITE</code>, and <code>USER</code> on
+<code>*SHELL GENERAL SECTION</code>. Abaqus then reads the symmetric half of the six-by-six
+section stiffness matrix, 21 entries total, eight entries on each of the first
+two lines and five on the third line. Abaqus also accepts an
+<code>ORIENTATION</code> parameter, which should align section direction 1 with Tensyl
+<code>e1</code>.</p>
+<p>Pack:</p>
+<div class="arithmatex">\[
+\mathbf K =
+\begin{bmatrix}
+A_{11} &amp; A_{12} &amp; A_{16} &amp; B_{11} &amp; B_{12} &amp; B_{16} \\
+A_{12} &amp; A_{22} &amp; A_{26} &amp; B_{12} &amp; B_{22} &amp; B_{26} \\
+A_{16} &amp; A_{26} &amp; A_{66} &amp; B_{16} &amp; B_{26} &amp; B_{66} \\
+B_{11} &amp; B_{12} &amp; B_{16} &amp; D_{11} &amp; D_{12} &amp; D_{16} \\
+B_{12} &amp; B_{22} &amp; B_{26} &amp; D_{12} &amp; D_{22} &amp; D_{26} \\
+B_{16} &amp; B_{26} &amp; B_{66} &amp; D_{16} &amp; D_{26} &amp; D_{66}
+\end{bmatrix}.
+\]</div>
+<p>The data order is:</p>
+<pre><code class="language-text">K11, K12, K22, K13, K23, K33, K14, K24,
+K34, K44, K15, K25, K35, K45, K55, K16,
+K26, K36, K46, K56, K66
+</code></pre>
+<p>An illustrative input fragment:</p>
+<pre><code class="language-text">*SHELL GENERAL SECTION, ELSET=panel, ORIENTATION=tensyl_axes, DENSITY=rho_area
+A11, A12, A22, A16, A26, A66, B11, B12
+B16, D11, B12, B22, B26, D12, D22, B16
+B26, B66, D16, D26, D66
+*TRANSVERSE SHEAR STIFFNESS
+AS11, AS22, AS12
+</code></pre>
+<p>The transverse shear line is separate. Abaqus documents
+<code>*TRANSVERSE SHEAR STIFFNESS</code> as a shell-compatible option with first-direction
+stiffness, second-direction stiffness, and coupling term fields.</p>
+<p>For a reduced workflow, define an engineering-constants material and use
+<code>*SHELL SECTION</code> or a material-based <code>*SHELL GENERAL SECTION</code>. That is convenient
+when <code>B = 0</code> and the ABD stiffness behaves like a conventional orthotropic
+shell. It is not a substitute for the direct 21-entry stiffness when stiffener
+eccentricity coupling matters.</p>
+<h2 id="patch-check">Patch Check</h2>
+<p>Before using a translated stiffness in a production model, run a one-element
+check in the target solver:</p>
+<ol>
+<li>Use one shell element with the intended section, orientation, offset, and
+   units.</li>
+<li>Impose a pure <code>epsilon11</code>, <code>epsilon22</code>, <code>gamma12</code>, <code>kappa11</code>, <code>kappa22</code>, and
+   <code>kappa12</code> case, one at a time if the solver setup allows it.</li>
+<li>Compare solver-reported section forces and moments with:</li>
+</ol>
+<p>$<span class="arithmatex">\(\mathbf r_{ABD} = \mathbf K_{ABD}\boldsymbol\eta_{ABD}.\)</span>$</p>
+<ol>
+<li>For transverse shear flexible elements, apply independent shear checks against
+   <code>As</code>.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Small model, large leverage</p>
+<p>The patch check catches axis swaps, offset mistakes, solver-specific scaling,
+and the occasional perfectly formatted wrong number. A single element is
+cheap; a bad coordinate system can get expensive.</p>
+</div>
+<p>Next: <a href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>.</p>
+<h2 id="references">References</h2>
+<ul>
+<li>Abaqus 2024, <code>*SHELL GENERAL SECTION</code>, direct stiffness data lines and
+  orientation parameter:
+  <a href="https://docs.software.vt.edu/abaqusv2024/English/SIMACAEKEYRefMap/simakey-r-shellgeneralsection.htm">https://docs.software.vt.edu/abaqusv2024/English/SIMACAEKEYRefMap/simakey-r-shellgeneralsection.htm</a>.</li>
+<li>Abaqus 2024, <code>*TRANSVERSE SHEAR STIFFNESS</code>:
+  <a href="https://docs.software.vt.edu/abaqusv2024/English/SIMACAEKEYRefMap/simakey-r-transverseshearstiffness.htm">https://docs.software.vt.edu/abaqusv2024/English/SIMACAEKEYRefMap/simakey-r-transverseshearstiffness.htm</a>.</li>
+<li>ANSYS 2024 R2 command reference, <code>SECTYPE</code>, shell section considerations for
+  <code>GENS</code>:
+  <a href="https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SECTYPE.html">https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SECTYPE.html</a>.</li>
+<li>ANSYS command reference mirror, <code>SSPA</code>, <code>SSPB</code>, <code>SSPD</code>, and <code>SSPE</code> command
+  field layouts:
+  <a href="https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPA.html">https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPA.html</a>,
+  <a href="https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPB.html">https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPB.html</a>,
+  <a href="https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPD.html">https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPD.html</a>,
+  and
+  <a href="https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPE.html">https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPE.html</a>.</li>
+<li>Siemens NX Nastran Quick Reference Guide, <code>MAT8</code>, <code>PSHELL</code>, <code>PCOMP</code>, <code>PCOMPG</code>,
+  and <code>MAT2</code> Bulk Data entries. Use the guide installed with the NX Nastran
+  release being used for analysis.</li>
+<li>pyNastran shell property reference, <code>PSHELL</code> fields and material references
+  as an accessible cross-check for common NASTRAN Bulk Data names:
+  <a href="https://pynastran-git.readthedocs.io/en/latest/reference/bdf/cards/properties/pyNastran.bdf.cards.properties.shell.html">https://pynastran-git.readthedocs.io/en/latest/reference/bdf/cards/properties/pyNastran.bdf.cards.properties.shell.html</a>.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../external-workflows/" class="btn btn-neutral float-left" title="External Workflows"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../sp8007-data-handoff/" class="btn btn-neutral float-right" title="SP-8007 Data Handoff">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../external-workflows/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../sp8007-data-handoff/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

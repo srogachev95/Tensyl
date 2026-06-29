@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/theory/equivalent-stiffness/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Equivalent-Stiffness Mechanics - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Equivalent-Stiffness Mechanics";
+        var mkdocs_page_input_path = "theory/equivalent-stiffness.md";
+        var mkdocs_page_url = "/Tensyl/theory/equivalent-stiffness/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Equivalent-Stiffness Mechanics</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#stored-energy-contract">Stored Energy Contract</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#linear-abd-stiffness">Linear ABD Stiffness</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-the-abd-stiffness-does-not-prove">What the ABD Stiffness Does Not Prove</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Theory</li>
+      <li class="breadcrumb-item active">Equivalent-Stiffness Mechanics</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/theory/equivalent-stiffness.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="equivalent-stiffness-mechanics">Equivalent-Stiffness Mechanics</h1>
+<p>An equivalent ABD stiffness is the constitutive part of a plate or shell model. It
+does not solve shell equilibrium and it does not decide boundary conditions. It
+answers a local question: for generalized strains measured on a reference
+surface, what generalized resultants are produced?</p>
+<p>Tensyl uses a generalized strain vector:</p>
+<div class="arithmatex">\[
+\boldsymbol\eta
+=
+\begin{bmatrix}
+\epsilon_{11}^0 &amp;
+\epsilon_{22}^0 &amp;
+\gamma_{12}^0 &amp;
+\kappa_{11} &amp;
+\kappa_{22} &amp;
+\kappa_{12} &amp;
+\gamma_{13}^0 &amp;
+\gamma_{23}^0
+\end{bmatrix}^T.
+\]</div>
+<p>The corresponding generalized resultant vector is:</p>
+<div class="arithmatex">\[
+\mathbf r
+=
+\begin{bmatrix}
+N_{11} &amp;
+N_{22} &amp;
+N_{12} &amp;
+M_{11} &amp;
+M_{22} &amp;
+M_{12} &amp;
+Q_{13} &amp;
+Q_{23}
+\end{bmatrix}^T.
+\]</div>
+<p>Those eight numbers are really three familiar things stacked together: three
+membrane strains, three curvatures, and two transverse shears. Feed them in, get
+the eight matching resultants out — that is the whole job of an ABD stiffness.</p>
+<p>The current public strain convention uses engineering shear strains. Tensor
+shear conventions are rejected so twist and shear factors are not silently
+mixed.</p>
+<div class="admonition note">
+<p class="admonition-title">Ordering is part of the public API contract</p>
+<p>The component order above is not arbitrary house style — it is a contract.
+User code should not reorder the matrices without also transforming the
+strains and resultants to match, or the energy and resultants will quietly
+stop meaning what they say.</p>
+</div>
+<h2 id="stored-energy-contract">Stored Energy Contract</h2>
+<p>Tensyl treats an ABD stiffness as a generalized hyperelastic operator in the
+small-strain stiffness sense. That means the stiffness derives from a stored-energy
+potential:</p>
+<div class="arithmatex">\[
+\mathbf r(\boldsymbol\eta)=
+\frac{\partial W}{\partial\boldsymbol\eta},
+\qquad
+\mathbf C(\boldsymbol\eta)=
+\frac{\partial^2 W}{\partial\boldsymbol\eta^2}.
+\]</div>
+<p>For a linear stiffness:</p>
+<div class="arithmatex">\[
+W(\boldsymbol\eta)=
+\frac{1}{2}\boldsymbol\eta^T\mathbf C_\text{stiffness}\boldsymbol\eta.
+\]</div>
+<p>This use of "hyperelastic" does not mean finite-strain continuum
+hyperelasticity. It means the generalized ABD stiffness has an energy potential.</p>
+<h2 id="linear-abd-stiffness">Linear ABD Stiffness</h2>
+<p><code>ABDStiffness</code> stores:</p>
+<div class="arithmatex">\[
+\mathbf C_\text{stiffness}
+=
+\begin{bmatrix}
+\mathbf A &amp; \mathbf B &amp; \mathbf 0 \\
+\mathbf B &amp; \mathbf D &amp; \mathbf 0 \\
+\mathbf 0 &amp; \mathbf 0 &amp; \mathbf A_s
+\end{bmatrix}.
+\]</div>
+<p>The <span class="arithmatex">\(8\times8\)</span> tangent is the canonical payload. The <code>A</code>, <code>B</code>, <code>D</code>, and <code>As</code>
+properties are read-only views of that payload.</p>
+<p><code>A</code>, <code>B</code>, and <code>D</code> follow the usual first-order plate/shell ABD notation used in
+laminated plate theory. <code>As</code> is the transverse-shear block retained for
+first-order shear-deformation workflows. See <a href="../../references/">References</a> for
+plate, shell, laminate, and equivalent-plate sources.</p>
+<h2 id="what-the-abd-stiffness-does-not-prove">What the ABD Stiffness Does Not Prove</h2>
+<p>An ABD stiffness is a constitutive approximation. It does not prove that a stiffener
+layout is manufacturable, that local crippling is acceptable, that joints are
+adequately modeled, or that a shell buckling calculation is valid. Tensyl
+reports diagnostics and scale-separation warnings so the downstream workflow can
+decide whether the local equivalent-stiffness approximation is acceptable for the
+intended use.</p>
+<p>For how these ABD stiffnesses are actually computed and inspected in practice, see
+<a href="../../user-guide/homogenization/">Homogenization</a> in the User Guide.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../background/terminology/" class="btn btn-neutral float-left" title="Terminology"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../conventions/" class="btn btn-neutral float-right" title="Frames and Conventions">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../background/terminology/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../conventions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

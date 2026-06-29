@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/beam-sections-and-cells/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Beam Sections and Cells - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Beam Sections and Cells";
+        var mkdocs_page_input_path = "user-guide/beam-sections-and-cells.md";
+        var mkdocs_page_url = "/Tensyl/user-guide/beam-sections-and-cells/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Beam Sections and Cells</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#geometry-derived-sections">Geometry-Derived Sections</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#blade-section">Blade Section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tee-section">Tee Section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#zee-section">Zee Section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#channel-section">Channel Section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#hat-section">Hat Section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-thin-wall-sections">Custom Thin-Wall Sections</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#named-cells">Named Cells</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#angles-and-eccentricity">Angles and Eccentricity</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#graph-cells">Graph Cells</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">Beam Sections and Cells</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/beam-sections-and-cells.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="beam-sections-and-cells">Beam Sections and Cells</h1>
+<p>Stiffener homogenization begins with member-local beam-section stiffnesses.
+If you already have centroidal stiffness products from a handbook, section
+solver, or CAD workflow, pass them directly:</p>
+<pre><code class="language-python">from tensyl import BeamSection
+
+section = BeamSection(
+    EA=3.2e6,
+    EIy=2.4e4,
+    EIz=6.5e3,
+    GJ=4.0e3,
+    kGAy=1.1e6,
+    kGAz=0.9e6,
+)
+</code></pre>
+<p>Tensyl asks for stiffness products instead of raw dimensions because the current
+homogenizer consumes centroidal beam stiffnesses.</p>
+<h2 id="geometry-derived-sections">Geometry-Derived Sections</h2>
+<p>For common isotropic thin-wall stiffeners, Tensyl can compute those products
+from section geometry. The section constructors use member-local <code>(y, z)</code>
+coordinates:</p>
+<ul>
+<li><code>+z</code> is the same direction as wall <code>+n</code>;</li>
+<li><code>z = 0</code> is the section construction datum;</li>
+<li>for the named external stiffeners below, <code>z = 0</code> is the skin outer face where
+  the stiffener touches the skin;</li>
+<li><code>centroid_z</code> is measured from that construction datum.</li>
+</ul>
+<p>The wall reference surface is often the skin mid-surface, not the skin outer
+face. For an external stiffener sitting on the <code>+n</code> face of an <code>isotropic_plate</code>,
+the member eccentricity is therefore:</p>
+<div class="arithmatex">\[
+e = \frac{t_\mathrm{skin}}{2} + z_c .
+\]</div>
+<p>Using <code>section.centroid_z</code> directly is correct only when your section datum
+already coincides with the wall reference surface.</p>
+<p>The diagrams below are schematic section-coordinate drawings. They define Tensyl
+input conventions; they are not fabrication drawings, bend-radius details, or a
+promise that local stress recovery has suddenly become easy.</p>
+<pre><code class="language-python">from tensyl import IsotropicMaterial, blade_section, hat_section
+
+aluminum = IsotropicMaterial(E=10.6e6, nu=0.33)
+
+blade = blade_section(
+    material=aluminum,
+    height=0.50,
+    thickness=0.050,
+    shear_correction_y=5.0 / 6.0,
+    shear_correction_z=5.0 / 6.0,
+)
+
+hat = hat_section(
+    material=aluminum,
+    web_height=0.50,
+    web_thickness=0.050,
+    crown_width=0.40,
+    crown_thickness=0.050,
+    flange_width=0.20,
+    flange_thickness=0.050,
+)
+</code></pre>
+<p>Geometry-derived sections expose both the computed <code>BeamSection</code> and the
+section centroid:</p>
+<pre><code class="language-python">from tensyl import EnergyHomogenizer, isotropic_plate, orthogrid_cell
+
+skin_thickness = 0.080
+skin = isotropic_plate(aluminum, thickness=skin_thickness)
+skin_face_offset = 0.5 * skin_thickness
+
+cell = orthogrid_cell(
+    skin=skin,
+    stringer_section=hat.section,
+    rib_section=blade.section,
+    stringer_spacing=6.0,
+    rib_spacing=8.0,
+    stringer_eccentricity=skin_face_offset + hat.centroid_z,
+    rib_eccentricity=skin_face_offset + blade.centroid_z,
+)
+
+result = EnergyHomogenizer().compute(cell)
+</code></pre>
+<p>The named helpers are convenience wrappers over <code>thin_wall_section</code>, which
+accepts custom <code>ThinWallSegment</code> layouts in member-local <code>(y, z)</code> coordinates.
+Use this for a stiffener shape that is just ordinary enough to be useful and just
+odd enough to avoid having its own constructor.</p>
+<h3 id="blade-section">Blade Section</h3>
+<p><img alt="Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness." src="../../assets/sections/blade-section.svg" /></p>
+<p><code>blade_section</code> creates one vertical web rooted at <code>z = 0</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>height</code></td>
+<td>Web midline height measured from the construction datum in <code>+z</code>.</td>
+</tr>
+<tr>
+<td><code>thickness</code></td>
+<td>Web thickness measured in the local <code>y</code> direction.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tee-section">Tee Section</h3>
+<p><img alt="Tee section diagram showing a web rooted at z equals zero and a top flange above the web." src="../../assets/sections/tee-section.svg" /></p>
+<p><code>tee_section</code> creates a web at <code>y = 0</code> with a centered top flange. The flange is
+above the web, not touching the skin.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>web_height</code></td>
+<td>Web midline height from <code>z = 0</code> to the flange midline junction.</td>
+</tr>
+<tr>
+<td><code>web_thickness</code></td>
+<td>Web thickness measured in the local <code>y</code> direction.</td>
+</tr>
+<tr>
+<td><code>flange_width</code></td>
+<td>Full flange midline width in the local <code>y</code> direction.</td>
+</tr>
+<tr>
+<td><code>flange_thickness</code></td>
+<td>Flange thickness measured in the local <code>z</code> direction.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="zee-section">Zee Section</h3>
+<p><img alt="Zee section diagram showing bottom and top flanges on opposite sides of the web." src="../../assets/sections/zee-section.svg" /></p>
+<p><code>zee_section</code> creates a lower flange at the skin-face datum and an upper flange
+on the opposite side of the web. The lower flange extends toward <code>-y</code>; the upper
+flange extends toward <code>+y</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>web_height</code></td>
+<td>Web midline height between the lower and upper flange regions.</td>
+</tr>
+<tr>
+<td><code>web_thickness</code></td>
+<td>Web thickness measured in the local <code>y</code> direction.</td>
+</tr>
+<tr>
+<td><code>bottom_flange_width</code></td>
+<td>Lower flange width extending toward <code>-y</code>.</td>
+</tr>
+<tr>
+<td><code>top_flange_width</code></td>
+<td>Upper flange width extending toward <code>+y</code>.</td>
+</tr>
+<tr>
+<td><code>flange_thickness</code></td>
+<td>Thickness used for both flanges, measured in local <code>z</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="channel-section">Channel Section</h3>
+<p><img alt="Channel section diagram showing top and bottom flanges extending to the same side of the web." src="../../assets/sections/channel-section.svg" /></p>
+<p><code>channel_section</code> creates lower and upper flanges on the same side of the web.
+Both flanges extend toward <code>+y</code>; the lower flange sits at the skin-face datum.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>web_height</code></td>
+<td>Web midline height between the lower and upper flange regions.</td>
+</tr>
+<tr>
+<td><code>web_thickness</code></td>
+<td>Web thickness measured in the local <code>y</code> direction.</td>
+</tr>
+<tr>
+<td><code>flange_width</code></td>
+<td>Width of each flange extending toward <code>+y</code>.</td>
+</tr>
+<tr>
+<td><code>flange_thickness</code></td>
+<td>Thickness used for both flanges, measured in local <code>z</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hat-section">Hat Section</h3>
+<p><img alt="Hat section diagram showing an open hat rising upward with lower mounting flanges at the skin-face datum." src="../../assets/sections/hat-section.svg" /></p>
+<p><code>hat_section</code> creates an open hat that rises in <code>+z</code>. The two lower mounting
+flanges sit on the <code>z = 0</code> construction datum, so this is the usual external
+hat orientation with flanges touching the skin face. It is not flipped downward
+into the skin.</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>web_height</code></td>
+<td>Height of the two side webs from the mounting flanges toward the crown.</td>
+</tr>
+<tr>
+<td><code>web_thickness</code></td>
+<td>Thickness of each side web, measured in local <code>y</code>.</td>
+</tr>
+<tr>
+<td><code>crown_width</code></td>
+<td>Width of the top crown between the two web centerlines.</td>
+</tr>
+<tr>
+<td><code>crown_thickness</code></td>
+<td>Crown thickness measured in local <code>z</code>.</td>
+</tr>
+<tr>
+<td><code>flange_width</code></td>
+<td>Width of each lower mounting flange.</td>
+</tr>
+<tr>
+<td><code>flange_thickness</code></td>
+<td>Thickness of each lower mounting flange, measured in local <code>z</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="custom-thin-wall-sections">Custom Thin-Wall Sections</h3>
+<p><img alt="Custom thin-wall segment diagram showing segment midline endpoints, thickness, axes, and centroid." src="../../assets/sections/thin-wall-segment.svg" /></p>
+<p>Use <code>thin_wall_section</code> with <code>ThinWallSegment</code> values for custom open thin-wall
+layouts:</p>
+<pre><code class="language-python">from tensyl import ThinWallSegment, thin_wall_section
+
+custom = thin_wall_section(
+    material=aluminum,
+    segments=(
+        ThinWallSegment(-0.5, 0.0, 0.5, 0.0, 0.050, label=&quot;flange&quot;),
+        ThinWallSegment(0.0, 0.0, 0.0, 0.75, 0.040, label=&quot;web&quot;),
+    ),
+)
+</code></pre>
+<p><code>start_y</code>, <code>start_z</code>, <code>end_y</code>, and <code>end_z</code> are segment midline endpoint
+coordinates. <code>thickness</code> is measured normal to that midline in the same <code>(y, z)</code>
+section plane.</p>
+<p>For US customary examples:</p>
+<ul>
+<li><code>EA</code>, <code>kGAy</code>, and <code>kGAz</code> use <code>lbf</code>;</li>
+<li><code>EIy</code>, <code>EIz</code>, and <code>GJ</code> use <code>lbf*in^2</code>;</li>
+<li>cell dimensions use <code>in</code>.</li>
+</ul>
+<h2 id="named-cells">Named Cells</h2>
+<p>Tensyl provides constructors for common tangent-plane patterns:</p>
+<ul>
+<li><code>unidirectional_cell</code>;</li>
+<li><code>orthogrid_cell</code>;</li>
+<li><code>braced_orthogrid_cell</code>;</li>
+<li><code>equilateral_isogrid_cell</code>;</li>
+<li><code>isosceles_triangle_grid_cell</code>;</li>
+<li><code>kagome_cell</code>;</li>
+<li><code>hexagonal_grid_cell</code>;</li>
+<li><code>star_cell</code>;</li>
+<li>sandwich-core variants.</li>
+</ul>
+<p>Named constructors are convenience layers over canonical <code>BeamMember</code>
+contributions. They do not model joint details, intersection stresses, or local
+crippling.</p>
+<p>The treatise figures below show the kind of repeated cell each named constructor
+is reducing to member contributions. They are topology references, not a promise
+that the constructor reproduces every label, dimension convention, or special
+case in the original report.</p>
+<table>
+<thead>
+<tr>
+<th>Constructor family</th>
+<th>Treatise topology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>braced_orthogrid_cell</code></td>
+<td><img alt="Orthogonal stiffener pattern with two diagonal braces per bay and a basic cell." src="../../assets/nemeth-treatise/fig-14-braced-orthogrid-cell.jpg" /></td>
+</tr>
+<tr>
+<td><code>isosceles_triangle_grid_cell</code></td>
+<td><img alt="Isosceles-triangle stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-17-isosceles-triangle-cell.jpg" /></td>
+</tr>
+<tr>
+<td><code>kagome_cell</code></td>
+<td><img alt="Kagome stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-18-kagome-cell.jpg" /></td>
+</tr>
+<tr>
+<td><code>hexagonal_grid_cell</code></td>
+<td><img alt="Hexagon-shaped stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-21-hexagon-cell.jpg" /></td>
+</tr>
+<tr>
+<td><code>star_cell</code></td>
+<td><img alt="Isosceles-star-shaped stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-23-star-cell.jpg" /></td>
+</tr>
+</tbody>
+</table>
+<p><em>Source for topology figures: Nemeth, NASA/TP-2011-216882, figures 14, 17, 18,
+21, and 23; full citation in <a href="../../references/">References</a>.</em></p>
+<h2 id="angles-and-eccentricity">Angles and Eccentricity</h2>
+<p>Angles are measured in the local frame. <code>0</code> points along <code>e1</code>, <code>pi/2</code>
+points along <code>e2</code>, and positive angles follow the positive rotation convention
+about <code>n</code>.</p>
+<p>Every eccentricity is signed along <code>+n</code> from the reference surface to the
+member centroid. For an outward-normal cylinder, an external stringer has
+positive <code>stringer_eccentricity</code>; an internal stringer has negative
+eccentricity.</p>
+<p>For a geometry-derived stiffener, <code>centroid_z</code> is measured from the section's own
+construction datum. If that datum is not the wall reference surface, shift the
+value before passing it to the cell constructor. A skin mid-surface reference and
+an outer-face stiffener datum differ by half the skin thickness. Tensyl is
+helpful here, but it is not a mind reader.</p>
+<div class="admonition warning">
+<p class="admonition-title">A wrong eccentricity sign is silently wrong</p>
+<p>The sign changes the coupling block <code>B</code>, so flipping it produces a different
+physical ABD stiffness — with no validation error to catch it. See
+<a href="../../theory/conventions/">Frames and Conventions</a> for the full sign rule.</p>
+</div>
+<h2 id="graph-cells">Graph Cells</h2>
+<p>Use <code>graph_unit_cell</code> when a named constructor is not enough. It converts local
+tangent-plane nodes and edges into canonical beam members.</p>
+<pre><code class="language-python">from tensyl import CellEdge, CellNode, graph_unit_cell
+
+cell = graph_unit_cell(
+    area=48.0,
+    skin=skin,
+    nodes=(
+        CellNode(0.0, 0.0),
+        CellNode(6.0, 0.0),
+        CellNode(0.0, 8.0),
+    ),
+    edges=(
+        CellEdge(0, 1, section, eccentricity=0.45),
+        CellEdge(0, 2, section, eccentricity=0.45),
+    ),
+)
+</code></pre>
+<p>Node coordinates and area must use the same length unit.</p>
+<p>Next: <a href="../../theory/conventions/">Frames and Conventions</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../materials-and-laminates/" class="btn btn-neutral float-left" title="Materials and Laminates"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../homogenization/" class="btn btn-neutral float-right" title="Homogenization and Results">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../materials-and-laminates/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../homogenization/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

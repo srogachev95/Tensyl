@@ -1,0 +1,2838 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/api/cells-and-sections/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Cells and Sections - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Cells and Sections";
+        var mkdocs_page_input_path = "api/cells-and-sections.md";
+        var mkdocs_page_url = "/Tensyl/api/cells-and-sections/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Cells and Sections</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections">sections</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.BeamSection">BeamSection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EA">EA</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EIy">EIy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EIyz">EIyz</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EIz">EIz</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.GJ">GJ</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.kGAy">kGAy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.kGAz">kGAz</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.ThinWallSegment">ThinWallSegment</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.end_y">end_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.end_z">end_z</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.length">length</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.start_y">start_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.start_z">start_z</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.thickness">thickness</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.SectionProperties">SectionProperties</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iy">Iy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iyz">Iyz</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iz">Iz</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.J">J</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.area">area</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.centroid_y">centroid_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.centroid_z">centroid_z</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.ThinWallSection">ThinWallSection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.centroid_y">centroid_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.centroid_z">centroid_z</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.material">material</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.properties">properties</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.section">section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.segments">segments</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.shear_correction_y">shear_correction_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.shear_correction_z">shear_correction_z</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.thin_wall_section">thin_wall_section</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.blade_section">blade_section</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.tee_section">tee_section</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.zee_section">zee_section</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.channel_section">channel_section</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.hat_section">hat_section</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells">cells</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.BeamMember">BeamMember</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.angle_rad">angle_rad</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.eccentricity">eccentricity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.length">length</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.multiplicity">multiplicity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.section">section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.CellNode">CellNode</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.x">x</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.y">y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.CellEdge">CellEdge</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.eccentricity">eccentricity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.end">end</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.multiplicity">multiplicity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.section">section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.start">start</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.area">area</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.convention">convention</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.frame">frame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.members">members</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.metadata">metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.skin">skin</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.StiffenerFamily">StiffenerFamily</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.angle_rad">angle_rad</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.eccentricity">eccentricity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.label">label</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.multiplicity">multiplicity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.section">section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.spacing">spacing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.graph_unit_cell">graph_unit_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.unidirectional_cell">unidirectional_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.orthogrid_cell">orthogrid_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.braced_orthogrid_cell">braced_orthogrid_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.equilateral_isogrid_cell">equilateral_isogrid_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.isosceles_triangle_grid_cell">isosceles_triangle_grid_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.kagome_cell">kagome_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.hexagonal_grid_cell">hexagonal_grid_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.regular_hexagonal_grid_cell">regular_hexagonal_grid_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.star_cell">star_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.equilateral_star_cell">equilateral_star_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.sandwich_hexagonal_core_cell">sandwich_hexagonal_core_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.sandwich_orthogrid_core_cell">sandwich_orthogrid_core_cell</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.sandwich_star_core_cell">sandwich_star_core_cell</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">API Reference</li>
+      <li class="breadcrumb-item active">Cells and Sections</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/cells-and-sections.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="cells-and-sections-api">Cells and Sections API</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.sections"></a>
+    <div class="doc doc-contents first">
+
+        <p>Section stiffness value objects.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.sections.BeamSection" class="doc doc-heading">
+            <code>BeamSection</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Centroidal beam-section stiffnesses for a tangent-plane stiffener member.</p>
+<p><code>EA</code> is the axial stiffness, <code>EIy</code> is the out-of-plane bending stiffness,
+<code>EIz</code> is the in-plane bending stiffness retained for provenance, and
+<code>GJ</code> is the torsional stiffness. <code>kGAy</code> and <code>kGAz</code> are optional shear
+stiffnesses in the member-local in-plane transverse and normal directions.
+Tensyl expects stiffness products in a consistent unit system; it does not
+calculate them from cross-section dimensions.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.EA" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">EA</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.EIy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">EIy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.EIyz" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">EIyz</span> <span class="o">=</span> <span class="mf">0.0</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.EIz" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">EIz</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.GJ" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">GJ</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.kGAy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">kGAy</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.kGAz" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">kGAz</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.BeamSection.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">EA</span><span class="p">,</span> <span class="n">EIy</span><span class="p">,</span> <span class="n">EIz</span><span class="p">,</span> <span class="n">GJ</span><span class="p">,</span> <span class="n">kGAy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kGAz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EIyz</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.BeamSection.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.sections.ThinWallSegment" class="doc doc-heading">
+            <code>ThinWallSegment</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>A rectangular wall segment in member-local section coordinates.</p>
+<p><code>start_*</code> and <code>end_*</code> are the segment midline endpoints in member-local
+<code>(y, z)</code> coordinates. <code>thickness</code> is measured normal to that midline in
+the same coordinate plane. For section constructors, <code>z = 0</code> is a
+construction datum, not automatically the skin mid-surface.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.end_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">end_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.end_z" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">end_z</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.length" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">length</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Segment midline length.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.start_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">start_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.start_z" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">start_z</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSegment.thickness" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">thickness</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.ThinWallSegment.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">start_y</span><span class="p">,</span> <span class="n">start_z</span><span class="p">,</span> <span class="n">end_y</span><span class="p">,</span> <span class="n">end_z</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.ThinWallSegment.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.sections.SectionProperties" class="doc doc-heading">
+            <code>SectionProperties</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Centroidal geometric properties of a thin-wall section.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.Iy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Iy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.Iyz" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Iyz</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.Iz" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Iz</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.J" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">J</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.area" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">area</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.centroid_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">centroid_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.SectionProperties.centroid_z" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">centroid_z</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.SectionProperties.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">centroid_y</span><span class="p">,</span> <span class="n">centroid_z</span><span class="p">,</span> <span class="n">Iy</span><span class="p">,</span> <span class="n">Iz</span><span class="p">,</span> <span class="n">Iyz</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.SectionProperties.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.sections.ThinWallSection" class="doc doc-heading">
+            <code>ThinWallSection</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>A geometry-derived isotropic thin-wall stiffener section.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.centroid_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">centroid_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Centroid <code>y</code> coordinate.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.centroid_z" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">centroid_z</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Centroid <code>z</code> coordinate, commonly used as member eccentricity.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.material" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">material</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.properties" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">properties</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">section</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.segments" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">segments</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.shear_correction_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">shear_correction_y</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.shear_correction_z" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">shear_correction_z</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.ThinWallSection.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">segments</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.ThinWallSection.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.sections.thin_wall_section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">thin_wall_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">segments</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build an isotropic thin-wall section from rectangular wall segments.</p>
+<p>Segment coordinates use the member-local <code>(y, z)</code> section plane. The
+returned <code>centroid_z</code> is measured from the same <code>z = 0</code> construction
+datum used by the supplied segments; shift it before using it as a member
+eccentricity when the wall reference surface is somewhere else.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.sections.blade_section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">blade_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a vertical blade stiffener rooted at <code>z = 0</code>.</p>
+<p>The blade web rises in <code>+z</code> from the construction datum. If that datum is
+the skin outer face and the wall reference surface is the skin mid-surface,
+use <code>0.5 * skin_thickness + section.centroid_z</code> as member eccentricity.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.sections.tee_section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tee_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">web_height</span><span class="p">,</span> <span class="n">web_thickness</span><span class="p">,</span> <span class="n">flange_width</span><span class="p">,</span> <span class="n">flange_thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a tee stiffener with a vertical web and top flange.</p>
+<p>The web root is at <code>z = 0</code> and the flange sits above the web in <code>+z</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.sections.zee_section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">zee_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">web_height</span><span class="p">,</span> <span class="n">web_thickness</span><span class="p">,</span> <span class="n">top_flange_width</span><span class="p">,</span> <span class="n">bottom_flange_width</span><span class="p">,</span> <span class="n">flange_thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a zee stiffener with opposite top and bottom flanges.</p>
+<p>The lower flange sits at the <code>z = 0</code> datum and extends toward negative
+<code>y</code>. The upper flange sits above the web and extends toward positive
+<code>y</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.sections.channel_section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">channel_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">web_height</span><span class="p">,</span> <span class="n">web_thickness</span><span class="p">,</span> <span class="n">flange_width</span><span class="p">,</span> <span class="n">flange_thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a channel stiffener with same-side top and bottom flanges.</p>
+<p>Both flanges extend toward positive <code>y</code>. The lower flange sits at the
+<code>z = 0</code> construction datum.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.sections.hat_section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">hat_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">web_height</span><span class="p">,</span> <span class="n">web_thickness</span><span class="p">,</span> <span class="n">crown_width</span><span class="p">,</span> <span class="n">crown_thickness</span><span class="p">,</span> <span class="n">flange_width</span><span class="p">,</span> <span class="n">flange_thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build an open hat stiffener with two webs, crown, and mounting flanges.</p>
+<p>The open hat rises in <code>+z</code>. The mounting flanges sit on the <code>z = 0</code>
+construction datum, so this is the usual external hat orientation rather
+than a hat flipped down into the skin.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="tensyl.cells"></a>
+    <div class="doc doc-contents first">
+
+        <p>Tangent-plane canonical cell value objects and constructors.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.cells.BeamMember" class="doc doc-heading">
+            <code>BeamMember</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>A straight stiffener member in a local tangent-plane unit cell.</p>
+<p><code>angle_rad</code> is measured from local <code>e1</code> toward <code>e2</code>. <code>eccentricity</code>
+is the signed distance from the reference surface to the member
+centroid along <code>+n</code>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.BeamMember.angle_rad" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">angle_rad</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.BeamMember.eccentricity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">eccentricity</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.BeamMember.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.BeamMember.length" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">length</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.BeamMember.multiplicity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">multiplicity</span> <span class="o">=</span> <span class="mf">1.0</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.BeamMember.section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">section</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.BeamMember.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.BeamMember.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.cells.CellNode" class="doc doc-heading">
+            <code>CellNode</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>A node in a local tangent-plane graph cell.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellNode.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellNode.x" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">x</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellNode.y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.CellNode.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.CellNode.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.cells.CellEdge" class="doc doc-heading">
+            <code>CellEdge</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>A beam edge in a local tangent-plane graph cell.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellEdge.eccentricity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">eccentricity</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellEdge.end" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">end</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellEdge.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellEdge.multiplicity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">multiplicity</span> <span class="o">=</span> <span class="mf">1.0</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellEdge.section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">section</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CellEdge.start" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">start</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.CellEdge.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.CellEdge.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.cells.CanonicalUnitCell" class="doc doc-heading">
+            <code>CanonicalUnitCell</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Canonical tangent-plane cell consumed by tangent-plane homogenizers.</p>
+<p><code>area</code> is the repeated tangent-plane area represented by <code>members</code>.
+The cell frame and strain convention must match the skin ABD stiffness.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.area" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">area</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.convention" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">convention</span> <span class="o">=</span> <span class="n">DEFAULT_STRAIN_CONVENTION</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.frame" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">frame</span> <span class="o">=</span> <span class="n">DEFAULT_FRAME</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.members" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">members</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.metadata" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.skin" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">skin</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">DEFAULT_FRAME</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="n">DEFAULT_STRAIN_CONVENTION</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.CanonicalUnitCell.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.cells.StiffenerFamily" class="doc doc-heading">
+            <code>StiffenerFamily</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Continuous straight stiffener-family input for direct EC homogenization.</p>
+<p><code>spacing</code> is the family pitch normal to the member direction.
+<code>eccentricity</code> uses the same signed <code>+n</code> convention as <code>BeamMember</code>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.StiffenerFamily.angle_rad" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">angle_rad</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.StiffenerFamily.eccentricity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">eccentricity</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.StiffenerFamily.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.StiffenerFamily.multiplicity" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">multiplicity</span> <span class="o">=</span> <span class="mf">1.0</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.StiffenerFamily.section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">section</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.cells.StiffenerFamily.spacing" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">spacing</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.StiffenerFamily.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.cells.StiffenerFamily.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.graph_unit_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">graph_unit_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert a local graph cell into the canonical member representation.</p>
+<p>Node coordinates are local tangent-plane coordinates in the same length
+unit used by <code>area</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.unidirectional_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">unidirectional_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">angle_rad</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;unidirectional&#39;</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a one-family canonical strip cell.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.orthogrid_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">orthogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">rib_section</span><span class="p">,</span> <span class="n">stringer_spacing</span><span class="p">,</span> <span class="n">rib_spacing</span><span class="p">,</span> <span class="n">stringer_eccentricity</span><span class="p">,</span> <span class="n">rib_eccentricity</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create an orthogrid cell with one stringer and one rib family.</p>
+<p>Stringers run along local <code>e1</code> and ribs run along local <code>e2</code>. The two
+eccentricity inputs are signed centroid offsets along <code>+n</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.braced_orthogrid_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">braced_orthogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">rib_section</span><span class="p">,</span> <span class="n">brace_section</span><span class="p">,</span> <span class="n">stringer_spacing</span><span class="p">,</span> <span class="n">rib_spacing</span><span class="p">,</span> <span class="n">stringer_eccentricity</span><span class="p">,</span> <span class="n">rib_eccentricity</span><span class="p">,</span> <span class="n">brace_eccentricity</span><span class="p">,</span> <span class="n">opposite_brace_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opposite_brace_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">brace_pattern</span><span class="o">=</span><span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a braced orthogrid with alternating or crossed diagonal braces.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.equilateral_isogrid_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">equilateral_isogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create an equilateral isogrid cell with three identical member families.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.isosceles_triangle_grid_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">isosceles_triangle_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">stringer_eccentricity</span><span class="p">,</span> <span class="n">diagonal_eccentricity</span><span class="p">,</span> <span class="n">opposite_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opposite_diagonal_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create Nemeth's isosceles-triangle grid cell.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.kagome_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">kagome_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">stringer_eccentricity</span><span class="p">,</span> <span class="n">diagonal_eccentricity</span><span class="p">,</span> <span class="n">opposite_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opposite_diagonal_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create Nemeth's Kagome grid cell.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.hexagonal_grid_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">hexagonal_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">rib_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">half_width</span><span class="p">,</span> <span class="n">diagonal_rise</span><span class="p">,</span> <span class="n">rib_length</span><span class="p">,</span> <span class="n">rib_eccentricity</span><span class="p">,</span> <span class="n">diagonal_eccentricity</span><span class="p">,</span> <span class="n">opposite_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opposite_diagonal_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create Nemeth's hexagon-shaped grid cell.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.regular_hexagonal_grid_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">regular_hexagonal_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create the identical-member regular hexagonal-grid special case.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.star_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">star_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">stringer_eccentricity</span><span class="p">,</span> <span class="n">diagonal_eccentricity</span><span class="p">,</span> <span class="n">opposite_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opposite_diagonal_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create Nemeth's isosceles-star-cell grid.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.equilateral_star_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">equilateral_star_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">eccentricity</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create the identical-member equilateral star-cell special case.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.sandwich_hexagonal_core_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sandwich_hexagonal_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_offset</span><span class="p">,</span> <span class="n">top_face_offset</span><span class="p">,</span> <span class="n">rib_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">half_width</span><span class="p">,</span> <span class="n">diagonal_rise</span><span class="p">,</span> <span class="n">rib_length</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a hexagonal-core sandwich cell with shifted face sheets.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.sandwich_orthogrid_core_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sandwich_orthogrid_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_offset</span><span class="p">,</span> <span class="n">top_face_offset</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">rib_section</span><span class="p">,</span> <span class="n">stringer_spacing</span><span class="p">,</span> <span class="n">rib_spacing</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create an orthogrid-core sandwich cell with shifted face sheets.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.sandwich_star_core_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sandwich_star_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_offset</span><span class="p">,</span> <span class="n">top_face_offset</span><span class="p">,</span> <span class="n">stringer_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a star-core sandwich cell with shifted face sheets.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../materials/" class="btn btn-neutral float-left" title="Materials"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../homogenizers/" class="btn btn-neutral float-right" title="Homogenizers">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../materials/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../homogenizers/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
