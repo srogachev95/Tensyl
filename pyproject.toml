@@ -36,7 +36,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/srogachev95/Tensyl"
-Documentation = "https://github.com/srogachev95/Tensyl/tree/main/docs"
+Documentation = "https://srogachev95.github.io/Tensyl/"
 Repository = "https://github.com/srogachev95/Tensyl"
 Issues = "https://github.com/srogachev95/Tensyl/issues"
 Changelog = "https://github.com/srogachev95/Tensyl/blob/main/CHANGELOG.md"

@@ -1,5 +1,6 @@
 site_name: Tensyl
 site_description: Equivalent-stiffness homogenization tools for stiffened plates and shells.
+site_url: https://srogachev95.github.io/Tensyl/
 repo_url: https://github.com/srogachev95/Tensyl
 docs_dir: docs
 strict: true
