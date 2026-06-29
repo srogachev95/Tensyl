@@ -12,6 +12,21 @@ explicit.
 
 The public Python package name is `tensyl`.
 
+## Mechanics Lineage
+
+Tensyl implements a documented equivalent-plate tradition in Python. The first
+stiffened-cell homogenization family is based on Michael P. Nemeth's NASA
+treatise, *A Treatise on Equivalent-Plate Stiffnesses for Stiffened
+Laminated-Composite Plates and Plate-Like Lattices* (NASA/TP-2011-216882), which
+collects direct equilibrium-compatibility and strain-energy formulations for
+stiffened laminated plates and plate-like lattices.
+
+The stiffness notation follows classical laminated plate and first-order
+shear-deformation theory: `A`, `B`, `D`, and `As` are stored together as one
+canonical `8 x 8` tangent. The documentation lists the mechanics sources in
+[References](docs/references.md) and writes out the governing equations in
+[Equivalent-Stiffness Mechanics](docs/theory/equivalent-stiffness.md).
+
 ## Install
 
 ```bash
