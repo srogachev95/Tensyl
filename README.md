@@ -5,41 +5,12 @@
 Tensyl is a Python scientific-computing library for equivalent-stiffness
 homogenization of stiffened plates and shells.
 
-It takes the local things analysts actually have - skins, composite layups,
-stiffener sections, repeated cells, curved shell surfaces, and solver handoff
-constraints - and turns them into auditable ABD stiffness laws. The product is
-not a magic scalar modulus. It is a local constitutive matrix with its
-assumptions, diagnostics, coordinate frame, and validity warnings still attached.
-
-In one line: Tensyl replaces a panel full of repeated stiffeners with a single
-equivalent stiffness matrix that behaves like the panel under global loads,
-without asking the solver to model every rib, stringer, and bay.
+The library builds local ABD and transverse-shear stiffness laws for skins,
+laminates, stiffened tangent-plane cells, and geometry-bound stiffness fields. It
+keeps conventions, diagnostics, validity data, and serialization metadata
+explicit.
 
 The public Python package name is `tensyl`.
-
-## Why Tensyl Exists
-
-Detailed stiffener-by-stiffener shell models are valuable, but they are expensive
-when the design question is still local stiffness, not final local failure. Tensyl
-sits in that gap. It helps you build the local wall law first, inspect it, compare
-it, attach it to geometry, and hand it to the next analysis step in a form that
-keeps the mechanics visible.
-
-That means Tensyl is useful when you need to:
-
-- compare skin, laminate, and stiffener layouts before committing to a detailed
-  finite-element model;
-- reduce orthogrid, isogrid, Kagome, hexagonal, star, or custom repeated cells
-  into local ABD stiffnesses;
-- keep membrane, bending, membrane-bending coupling, and transverse shear terms
-  in one consistent operator;
-- move stiffness data across flat panels, cylinders, domes, cones, and ellipsoids
-  without losing the local frame;
-- export stiffness and homogenization results to solver-neutral YAML or JSON.
-
-Tensyl keeps the matrix honest. It reports symmetry, rank, positive-energy
-checks, assumptions, and scale-separation warnings because those are part of the
-answer, not bookkeeping.
 
 ## Install
 
@@ -59,10 +30,7 @@ For local development from this repository:
 uv sync --dev
 ```
 
-## What You Can Build Today
-
-Tensyl already covers the main pieces needed for first-pass equivalent-stiffness
-workflows.
+## Library Capabilities
 
 **Materials and skins**
 
@@ -73,12 +41,10 @@ workflows.
 
 **Stiffener sections**
 
-- direct `BeamSection` input when you already have `EA`, `EI`, `GJ`, and shear
-  stiffness products from a handbook, CAD workflow, or section solver;
+- direct `BeamSection` input for `EA`, `EI`, `GJ`, and shear stiffness products;
 - geometry-derived open thin-wall sections for blade, tee, zee, channel, and hat
   stiffeners;
-- custom `ThinWallSegment` layouts for section shapes that do not deserve their
-  own named constructor.
+- custom `ThinWallSegment` layouts for open thin-wall section geometry.
 
 **Cell and pattern libraries**
 
@@ -90,10 +56,10 @@ workflows.
 - graph-defined custom unit cells through `CellNode`, `CellEdge`, and
   `graph_unit_cell`.
 
-**Homogenization and review**
+**Homogenization and review data**
 
-- `EnergyHomogenizer` as the reference path;
-- `DirectECHomogenizer` where the direct equilibrium-compatibility path applies;
+- `EnergyHomogenizer` as the reference homogenizer;
+- `DirectECHomogenizer` for supported direct equilibrium-compatibility cases;
 - `HomogenizationResult` with stiffness, diagnostics, assumptions, and validity;
 - scale-separation checks for stiffener height, pitch, curvature radius, response
   length, and membrane-bending coupling.
@@ -106,17 +72,16 @@ workflows.
 - pointwise homogenized stiffness fields with local cell factories;
 - sampled stiffness atlases with bilinear interpolation in canonical `C8` storage.
 
-**External workflow handoff**
+**External handoff**
 
 - YAML and JSON serialization for `ABDStiffness` and `HomogenizationResult`;
 - schema versioning, unit labels, diagnostics, assumptions, and validity metadata;
-- solver-neutral artifacts that downstream tooling can read without guessing what
-  convention produced the numbers.
+- solver-neutral artifacts for downstream tools.
 
-## Example 1: A Skin-Only ABD Stiffness
+## Example 1: Skin-Only ABD Stiffness
 
-Start with the smallest useful stiffness: an isotropic skin about its mid-surface.
-The `B` block is zero because this reference surface is symmetric.
+An isotropic skin about its mid-surface has zero membrane-bending coupling in
+the `B` block.
 
 ```python
 from tensyl import IsotropicMaterial, isotropic_plate
@@ -139,13 +104,12 @@ operator:
 - `As`: transverse-shear stiffness.
 
 Tensyl keeps stiffness as the first-class result. Scalar equivalent moduli are
-derived interpretations, not the product.
+derived interpretations, not the primary object.
 
-## Example 2: A Composite Laminate
+## Example 2: Composite Laminate
 
-Replace the isotropic skin with a symmetric cross-ply laminate. The workflow is
-still skin-only, but the stiffness now comes from ply material, ply thickness,
-and ply angle.
+`laminate_plate` builds a plate stiffness from ply material, ply thickness, and
+ply angle. The stack is supplied bottom-to-top.
 
 ```python
 import math
@@ -178,10 +142,10 @@ The two zero-degree plies make the local `e1` direction stiffer than `e2`. The
 symmetric stack keeps `B` near zero, so membrane strain and bending curvature are
 not coupled by the chosen reference surface.
 
-## Example 3: A Geometry-Derived Orthogrid
+## Example 3: Geometry-Derived Orthogrid
 
-If you already know stiffener stiffness products, pass a `BeamSection` directly.
-If you have thin-wall dimensions, let Tensyl compute the section properties first.
+Thin-wall section helpers compute centroidal beam-section stiffnesses from
+section geometry. Those sections can be used directly in cell constructors.
 
 ```python
 from tensyl import (
@@ -234,17 +198,23 @@ print(result.diagnostics)
 print(result.validity.warnings)
 ```
 
-The result carries the homogenized stiffness, diagnostics, modeling assumptions,
-and validity warnings. Nonzero `B` is not a nuisance here; it is the stiffness
-consequence of eccentric stiffeners relative to the chosen reference surface.
+The result contains the homogenized stiffness, diagnostics, modeling assumptions,
+and validity warnings. Nonzero `B` follows from eccentric stiffeners relative to
+the chosen reference surface.
 
-## Example 4: A Custom Cell
+## Example 4: Custom Graph Cell
 
-Named constructors are convenience. When the topology is your own, build the
-tangent-plane graph directly.
+`graph_unit_cell` defines a tangent-plane cell from local nodes, edges, section
+properties, eccentricities, and cell area.
 
 ```python
-from tensyl import BeamSection, CellEdge, CellNode, EnergyHomogenizer, graph_unit_cell
+from tensyl import (
+    BeamSection,
+    CellEdge,
+    CellNode,
+    EnergyHomogenizer,
+    graph_unit_cell,
+)
 
 section = BeamSection(
     EA=3.2e6,
@@ -272,14 +242,14 @@ custom = graph_unit_cell(
 custom_result = EnergyHomogenizer().compute(custom)
 ```
 
-This is the escape hatch for custom implementations: you provide the cell area,
-nodes, edges, sections, and eccentricities; Tensyl canonicalizes the beam-member
-contributions and computes the equivalent local wall law.
+The graph constructor converts the node and edge layout into canonical beam
+members before homogenization.
 
-## Example 5: Put the Stiffness on a Shell
+## Example 5: Stiffness on a Shell Surface
 
 Geometry is separate from constitutive stiffness. A cylinder supplies local
-frames and curvature context; it does not secretly rewrite the ABD matrix.
+frames and curvature context; it does not alter the numeric ABD matrix in a
+constant stiffness field.
 
 ```python
 from tensyl import ConstantStiffnessField, Cylinder
@@ -293,15 +263,14 @@ assert stiffness_at_midbay.frame.label == "cylinder"
 assert stiffness_at_midbay.C8.shape == (8, 8)
 ```
 
-For variable structure, use `HomogenizedStiffnessField` to rebuild the local cell
-at each surface point, or sample already-computed stiffnesses into an `ABDAtlas`.
-That is where station-dependent pitch, thickness, material, section, and
-stiffener angle belong.
+Variable structure can be represented with `HomogenizedStiffnessField`, which
+rebuilds the local cell at each surface point, or with `ABDAtlas`, which
+interpolates sampled stiffnesses.
 
-## Example 6: Export the Result
+## Example 6: Export
 
-Hand off the result, not just the matrix, when you can. The result preserves the
-diagnostics and validity context that make the matrix worth trusting.
+`tensyl.io` serializes stiffnesses and homogenization results to solver-neutral
+YAML or JSON artifacts.
 
 ```python
 from pathlib import Path
@@ -323,19 +292,18 @@ same_result = read_yaml(Path("stiffness.yaml"))
 ```
 
 Tensyl records unit labels but does not infer or convert units. Inputs and
-outputs must already share one consistent system. It will not rescue a mixed
-unit deck. That is not spite; it is algebra.
+outputs must already share one consistent system. Unit labels are metadata only.
 
-## What Tensyl Is Not
+## Scope
 
 Tensyl is not a certification buckling solver, local stress recovery tool, or
 replacement for detailed finite-element analysis. The tangent-plane
 homogenization tools assume scale separation between stiffener pitch, stiffener
 height, local curvature radius, and the structural response length of interest.
 
-Use Tensyl to form and audit equivalent ABD stiffnesses. Use detailed analysis
-for local buckling, crippling, joints, cutouts, load introduction, nonlinear
-postbuckling, and final allowables.
+The package forms and audits equivalent ABD stiffnesses. Local buckling,
+crippling, joints, cutouts, load introduction, nonlinear postbuckling, and final
+allowables are outside the current package scope.
 
 ## Documentation Map
 
@@ -348,7 +316,7 @@ The formal documentation is built with MkDocs from `docs/`.
 - [Theory](docs/theory/equivalent-stiffness.md) documents ABD stiffnesses,
   conventions, tangent-plane homogenization, and validity limits.
 - [User guide](docs/user-guide/materials-and-laminates.md) covers materials,
-  cells, sections, geometry, fields, and external workflows.
+  cells, sections, geometry, fields, and external handoff.
 - [Examples](docs/examples/skin-only.md) provides worked examples and executable
   snippets.
 - [API reference](docs/api/core.md) exposes the public Python interfaces.
@@ -369,9 +337,9 @@ uv run mkdocs build --strict
 ```
 
 Release notes are tracked in [CHANGELOG.md](CHANGELOG.md), and contribution
-workflow details are in [CONTRIBUTING.md](CONTRIBUTING.md).
+process details are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Documentation Authoring
 
-Documentation math should use `$...$` for inline equations and `$$...$$` for
-display equations so the same Markdown renders in Obsidian and MkDocs.
+Documentation math uses `$...$` for inline equations and `$$...$$` for display
+equations so the same Markdown renders in Obsidian and MkDocs.
