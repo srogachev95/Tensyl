@@ -21,14 +21,6 @@ from tensyl.core.typing import FloatArray
 _TOLERANCE = 1.0e-12
 
 
-def _finite(value: float, *, name: str) -> float:
-    return finite_number(value, name=name)
-
-
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name, finite_and_positive_message=False)
-
-
 def _unit_vector(values: FloatArray, *, name: str) -> FloatArray:
     return normalized_vector3(values, name=name, tolerance=_TOLERANCE)
 
@@ -81,8 +73,8 @@ class SurfacePoint:
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "u", _finite(self.u, name="u"))
-        object.__setattr__(self, "v", _finite(self.v, name="v"))
+        object.__setattr__(self, "u", finite_number(self.u, name="u"))
+        object.__setattr__(self, "v", finite_number(self.v, name="v"))
         object.__setattr__(self, "position", _readonly_vector(self.position, name="position"))
         object.__setattr__(self, "tangent_u", _readonly_vector(self.tangent_u, name="tangent_u"))
         object.__setattr__(self, "tangent_v", _readonly_vector(self.tangent_v, name="tangent_v"))
@@ -96,13 +88,13 @@ class SurfacePoint:
             "curvature",
             _readonly_matrix(self.curvature, shape=(2, 2), name="curvature"),
         )
-        jacobian = _finite(self.jacobian, name="jacobian")
+        jacobian = finite_number(self.jacobian, name="jacobian")
         if jacobian <= 0.0:
             msg = "jacobian must be positive."
             raise ValueError(msg)
         object.__setattr__(self, "jacobian", jacobian)
         principal = tuple(
-            _finite(value, name="principal_curvature") for value in self.principal_curvatures
+            finite_number(value, name="principal_curvature") for value in self.principal_curvatures
         )
         if len(principal) != 2:
             msg = "principal_curvatures must contain two values."
@@ -150,8 +142,8 @@ class FlatPlate:
         object.__setattr__(self, "e2", frame.e2)
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        u_checked = _finite(u, name="u")
-        v_checked = _finite(v, name="v")
+        u_checked = finite_number(u, name="u")
+        v_checked = finite_number(v, name="v")
         frame = Frame2D(e1=self.e1, e2=self.e2, n=np.cross(self.e1, self.e2), label=self.label)
         return SurfacePoint(
             u=u_checked,
@@ -182,13 +174,21 @@ class Cylinder:
     label: str = "cylinder"
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "radius", _positive(self.radius, name="radius"))
+        object.__setattr__(
+            self,
+            "radius",
+            positive_number(self.radius, name="radius", finite_and_positive_message=False),
+        )
         if self.length is not None:
-            object.__setattr__(self, "length", _positive(self.length, name="length"))
+            object.__setattr__(
+                self,
+                "length",
+                positive_number(self.length, name="length", finite_and_positive_message=False),
+            )
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        x = _finite(u, name="u")
-        theta = _finite(v, name="v")
+        x = finite_number(u, name="u")
+        theta = finite_number(v, name="v")
         radius = self.radius
         c = float(np.cos(theta))
         s = float(np.sin(theta))
@@ -226,11 +226,15 @@ class Sphere:
     label: str = "sphere"
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "radius", _positive(self.radius, name="radius"))
+        object.__setattr__(
+            self,
+            "radius",
+            positive_number(self.radius, name="radius", finite_and_positive_message=False),
+        )
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        phi = _finite(u, name="u")
-        theta = _finite(v, name="v")
+        phi = finite_number(u, name="u")
+        theta = finite_number(v, name="v")
         if phi <= _TOLERANCE or phi >= np.pi - _TOLERANCE:
             # The polar chart has no unique azimuth direction at either pole.
             msg = "spherical coordinates are singular at the poles."
@@ -278,16 +282,22 @@ class SphericalCap:
     label: str = "spherical_cap"
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "radius", _positive(self.radius, name="radius"))
-        half_angle = _positive(self.half_angle_rad, name="half_angle_rad")
+        object.__setattr__(
+            self,
+            "radius",
+            positive_number(self.radius, name="radius", finite_and_positive_message=False),
+        )
+        half_angle = positive_number(
+            self.half_angle_rad, name="half_angle_rad", finite_and_positive_message=False
+        )
         if half_angle > np.pi:
             msg = "half_angle_rad must be less than or equal to pi."
             raise ValueError(msg)
         object.__setattr__(self, "half_angle_rad", half_angle)
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        phi = _finite(u, name="u")
-        theta = _finite(v, name="v")
+        phi = finite_number(u, name="u")
+        theta = finite_number(v, name="v")
         if phi <= _TOLERANCE or phi >= self.half_angle_rad - _TOLERANCE:
             # Rejecting the cap boundary keeps the single chart smooth and
             # avoids pretending boundary conditions are part of geometry data.
@@ -342,10 +352,20 @@ class ConicalFrustum:
         object.__setattr__(
             self,
             "radius_start",
-            _positive(self.radius_start, name="radius_start"),
+            positive_number(
+                self.radius_start, name="radius_start", finite_and_positive_message=False
+            ),
         )
-        object.__setattr__(self, "radius_end", _positive(self.radius_end, name="radius_end"))
-        object.__setattr__(self, "length", _positive(self.length, name="length"))
+        object.__setattr__(
+            self,
+            "radius_end",
+            positive_number(self.radius_end, name="radius_end", finite_and_positive_message=False),
+        )
+        object.__setattr__(
+            self,
+            "length",
+            positive_number(self.length, name="length", finite_and_positive_message=False),
+        )
 
     @property
     def slope(self) -> float:
@@ -356,7 +376,7 @@ class ConicalFrustum:
     def radius_at(self, u: float) -> float:
         """Return the local radius at axial coordinate ``u``."""
 
-        x = _finite(u, name="u")
+        x = finite_number(u, name="u")
         radius = self.radius_start + self.slope * x
         if radius <= _TOLERANCE:
             # A cone apex is not a smooth shell midsurface point for the local
@@ -366,8 +386,8 @@ class ConicalFrustum:
         return float(radius)
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        x = _finite(u, name="u")
-        theta = _finite(v, name="v")
+        x = finite_number(u, name="u")
+        theta = finite_number(v, name="v")
         radius = self.radius_at(x)
         slope = self.slope
         q = float(np.sqrt(1.0 + slope * slope))
@@ -407,13 +427,19 @@ class Ellipsoid:
     label: str = "ellipsoid"
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "a", _positive(self.a, name="a"))
-        object.__setattr__(self, "b", _positive(self.b, name="b"))
-        object.__setattr__(self, "c", _positive(self.c, name="c"))
+        object.__setattr__(
+            self, "a", positive_number(self.a, name="a", finite_and_positive_message=False)
+        )
+        object.__setattr__(
+            self, "b", positive_number(self.b, name="b", finite_and_positive_message=False)
+        )
+        object.__setattr__(
+            self, "c", positive_number(self.c, name="c", finite_and_positive_message=False)
+        )
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        phi = _finite(u, name="u")
-        theta = _finite(v, name="v")
+        phi = finite_number(u, name="u")
+        theta = finite_number(v, name="v")
         sp = float(np.sin(phi))
         if abs(sp) <= _TOLERANCE:
             msg = "ellipsoid coordinates are singular at the poles."

@@ -14,18 +14,6 @@ from tensyl.core._validation import (
 )
 
 
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name)
-
-
-def _optional_positive(value: float | None, *, name: str) -> float | None:
-    return optional_positive_number(value, name=name)
-
-
-def _finite(value: float, *, name: str) -> float:
-    return finite_number(value, name=name)
-
-
 @dataclass(frozen=True, slots=True)
 class BeamSection:
     """Centroidal beam-section stiffnesses for a tangent-plane stiffener member.
@@ -48,13 +36,21 @@ class BeamSection:
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "EA", _positive(self.EA, name="EA"))
-        object.__setattr__(self, "EIy", _positive(self.EIy, name="EIy"))
-        object.__setattr__(self, "EIz", _positive(self.EIz, name="EIz"))
-        object.__setattr__(self, "GJ", _positive(self.GJ, name="GJ"))
-        object.__setattr__(self, "kGAy", _optional_positive(self.kGAy, name="kGAy"))
-        object.__setattr__(self, "kGAz", _optional_positive(self.kGAz, name="kGAz"))
-        EIyz = _finite(self.EIyz, name="EIyz")
+        object.__setattr__(self, "EA", positive_number(self.EA, name="EA"))
+        object.__setattr__(self, "EIy", positive_number(self.EIy, name="EIy"))
+        object.__setattr__(self, "EIz", positive_number(self.EIz, name="EIz"))
+        object.__setattr__(self, "GJ", positive_number(self.GJ, name="GJ"))
+        object.__setattr__(
+            self,
+            "kGAy",
+            optional_positive_number(self.kGAy, name="kGAy"),
+        )
+        object.__setattr__(
+            self,
+            "kGAz",
+            optional_positive_number(self.kGAz, name="kGAz"),
+        )
+        EIyz = finite_number(self.EIyz, name="EIyz")
         if self.EIy * self.EIz - EIyz**2 <= 0.0:
             msg = "section bending stiffness block must be positive definite."
             raise ValueError(msg)
