@@ -23,10 +23,6 @@ from tensyl.materials.base import IsotropicMaterial, OrthotropicPlyMaterial
 PlyMaterial = IsotropicMaterial | OrthotropicPlyMaterial
 
 
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name)
-
-
 def _metadata(mapping: dict[str, Any] | None, *, source: str) -> dict[str, Any]:
     data = {} if mapping is None else dict(mapping)
     data.setdefault("source", source)
@@ -63,7 +59,7 @@ class Ply:
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "thickness", _positive(self.thickness, name="thickness"))
+        object.__setattr__(self, "thickness", positive_number(self.thickness, name="thickness"))
         angle = float(self.angle_rad)
         if not np.isfinite(angle):
             msg = "angle_rad must be finite."
@@ -82,8 +78,8 @@ def isotropic_plate(
 ) -> ABDStiffness:
     """Build a skin-only isotropic plate stiffness about its mid-surface."""
 
-    h = _positive(thickness, name="thickness")
-    kappa = _positive(shear_correction, name="shear_correction")
+    h = positive_number(thickness, name="thickness")
+    kappa = positive_number(shear_correction, name="shear_correction")
     Q = material.plane_stress_stiffness()
     A = Q * h
     B = np.zeros((3, 3), dtype=np.float64)
@@ -116,7 +112,7 @@ def laminate_plate(
     if not ply_tuple:
         msg = "laminate_plate requires at least one ply."
         raise ValueError(msg)
-    kappa = _positive(shear_correction, name="shear_correction")
+    kappa = positive_number(shear_correction, name="shear_correction")
     total_thickness = sum(ply.thickness for ply in ply_tuple)
     z_bottom = -0.5 * total_thickness
 
