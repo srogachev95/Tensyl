@@ -3,7 +3,9 @@ site_description: Equivalent-stiffness homogenization tools for stiffened plates
 repo_url: https://github.com/srogachev95/Tensyl
 docs_dir: docs
 strict: true
-theme: readthedocs
+theme:
+  name: readthedocs
+  logo: assets/brand/tensyl-logo.jpeg
 exclude_docs: |
   internal/**
   llm_wiki/**
