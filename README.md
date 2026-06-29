@@ -1,4 +1,4 @@
-![Tensyl logo](docs/assets/brand/tensyl-logo.jpeg)
+<img src="docs/assets/brand/tensyl-logo.jpeg" alt="Tensyl logo" width="420">
 
 # Tensyl
 
