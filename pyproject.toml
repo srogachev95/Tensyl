@@ -1,13 +1,13 @@
 [project]
 name = "tensyl"
 version = "0.1.0"
-description = "Equivalent-wall homogenization tools for stiffened thin-wall structures."
+description = "Equivalent-stiffness homogenization for stiffened plates and shells."
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [
-    { name = "Sergey Rogachev" },
+    { name = "Sergey Rogachev", email = "srsergey@gmail.com" },
 ]
 keywords = [
     "homogenization",
@@ -35,6 +35,7 @@ dependencies = [
 ]
 
 [project.urls]
+Homepage = "https://github.com/srogachev95/Tensyl"
 Documentation = "https://github.com/srogachev95/Tensyl/tree/main/docs"
 Repository = "https://github.com/srogachev95/Tensyl"
 Issues = "https://github.com/srogachev95/Tensyl/issues"
