@@ -1,4 +1,4 @@
-![Tensyl logo](https://raw.githubusercontent.com/srogachev95/Tensyl/main/docs/assets/brand/tensyl-logo.jpeg)
+![Tensyl logo](docs/assets/brand/tensyl-logo.jpeg)
 
 # Tensyl
 
