@@ -10,14 +10,6 @@ from tensyl.core._validation import optional_nonnegative_number, positive_number
 from tensyl.core.typing import FloatArray
 
 
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name)
-
-
-def _optional_nonnegative(value: float | None, *, name: str) -> float | None:
-    return optional_nonnegative_number(value, name=name)
-
-
 @dataclass(frozen=True, slots=True)
 class IsotropicMaterial:
     """Plane-stress isotropic material."""
@@ -27,14 +19,18 @@ class IsotropicMaterial:
     density: float | None = None
 
     def __post_init__(self) -> None:
-        E = _positive(self.E, name="E")
+        E = positive_number(self.E, name="E")
         nu = float(self.nu)
         if not np.isfinite(nu) or not -1.0 < nu < 0.5:
             msg = "nu must be finite and satisfy -1 < nu < 0.5."
             raise ValueError(msg)
         object.__setattr__(self, "E", E)
         object.__setattr__(self, "nu", nu)
-        object.__setattr__(self, "density", _optional_nonnegative(self.density, name="density"))
+        object.__setattr__(
+            self,
+            "density",
+            optional_nonnegative_number(self.density, name="density"),
+        )
 
     @property
     def G(self) -> float:
@@ -71,11 +67,11 @@ class OrthotropicPlyMaterial:
     density: float | None = None
 
     def __post_init__(self) -> None:
-        E1 = _positive(self.E1, name="E1")
-        E2 = _positive(self.E2, name="E2")
-        G12 = _positive(self.G12, name="G12")
-        G13 = _positive(self.G13, name="G13")
-        G23 = _positive(self.G23, name="G23")
+        E1 = positive_number(self.E1, name="E1")
+        E2 = positive_number(self.E2, name="E2")
+        G12 = positive_number(self.G12, name="G12")
+        G13 = positive_number(self.G13, name="G13")
+        G23 = positive_number(self.G23, name="G23")
         nu12 = float(self.nu12)
         if not np.isfinite(nu12):
             msg = "nu12 must be finite."
@@ -90,7 +86,11 @@ class OrthotropicPlyMaterial:
         object.__setattr__(self, "nu12", nu12)
         object.__setattr__(self, "G13", G13)
         object.__setattr__(self, "G23", G23)
-        object.__setattr__(self, "density", _optional_nonnegative(self.density, name="density"))
+        object.__setattr__(
+            self,
+            "density",
+            optional_nonnegative_number(self.density, name="density"),
+        )
 
     @property
     def nu21(self) -> float:

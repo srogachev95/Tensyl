@@ -29,12 +29,8 @@ CellFactory = Callable[[Surface, SurfacePoint], CanonicalUnitCell]
 ValidityContextFactory = Callable[[SurfacePoint, CanonicalUnitCell], ValidityContext | None]
 
 
-def _finite(value: float, *, name: str) -> float:
-    return finite_number(value, name=name)
-
-
 def _increasing(values: tuple[float, ...], *, name: str) -> tuple[float, ...]:
-    checked = tuple(_finite(value, name=name) for value in values)
+    checked = tuple(finite_number(value, name=name) for value in values)
     if len(checked) < 2:
         msg = f"{name} must contain at least two values."
         raise ValueError(msg)
@@ -109,8 +105,8 @@ class StiffnessCache:
 
     def key(self, u: float, v: float) -> tuple[float, float]:
         return (
-            round(_finite(u, name="u"), self.precision),
-            round(_finite(v, name="v"), self.precision),
+            round(finite_number(u, name="u"), self.precision),
+            round(finite_number(v, name="v"), self.precision),
         )
 
     def get(self, u: float, v: float) -> ABDStiffness | None:
@@ -171,7 +167,7 @@ class HomogenizedStiffnessField:
 
 
 def _cell_index(values: tuple[float, ...], value: float, *, name: str) -> tuple[int, float]:
-    checked = _finite(value, name=name)
+    checked = finite_number(value, name=name)
     if checked < values[0] or checked > values[-1]:
         msg = f"{name} is outside the atlas grid."
         raise ValueError(msg)

@@ -29,21 +29,13 @@ class HomogenizationInputError(HomogenizationFailure, ValueError):
     """Raised when a homogenizer receives malformed or unsupported input."""
 
 
-def _positive(value: float, *, name: str) -> float:
-    return positive_number(value, name=name)
-
-
-def _optional_positive(value: float | None, *, name: str) -> float | None:
-    return optional_positive_number(value, name=name)
-
-
 def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
     if value is None:
         return None
     checked = float(value)
     if checked == np.inf:
         return checked
-    return _positive(checked, name=name)
+    return positive_number(checked, name=name)
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
@@ -69,9 +61,9 @@ class ValidityContext:
         object.__setattr__(
             self,
             "characteristic_height",
-            _optional_positive(self.characteristic_height, name="characteristic_height"),
+            optional_positive_number(self.characteristic_height, name="characteristic_height"),
         )
-        object.__setattr__(self, "pitch", _optional_positive(self.pitch, name="pitch"))
+        object.__setattr__(self, "pitch", optional_positive_number(self.pitch, name="pitch"))
         object.__setattr__(
             self,
             "min_radius",
@@ -80,7 +72,7 @@ class ValidityContext:
         object.__setattr__(
             self,
             "response_length",
-            _optional_positive(self.response_length, name="response_length"),
+            optional_positive_number(self.response_length, name="response_length"),
         )
 
 
@@ -94,17 +86,17 @@ class ValidityThresholds:
     coupling_ratio: float = 0.10
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "h_over_R", _positive(self.h_over_R, name="h_over_R"))
-        object.__setattr__(self, "p_over_R", _positive(self.p_over_R, name="p_over_R"))
+        object.__setattr__(self, "h_over_R", positive_number(self.h_over_R, name="h_over_R"))
+        object.__setattr__(self, "p_over_R", positive_number(self.p_over_R, name="p_over_R"))
         object.__setattr__(
             self,
             "p_over_L_response",
-            _positive(self.p_over_L_response, name="p_over_L_response"),
+            positive_number(self.p_over_L_response, name="p_over_L_response"),
         )
         object.__setattr__(
             self,
             "coupling_ratio",
-            _positive(self.coupling_ratio, name="coupling_ratio"),
+            positive_number(self.coupling_ratio, name="coupling_ratio"),
         )
 
 
