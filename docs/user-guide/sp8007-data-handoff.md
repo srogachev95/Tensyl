@@ -19,9 +19,9 @@ the full ABD stiffness. The public
 [SP-8007 reconciliation report](../validation/sp8007-reconciliation.md) shows
 where Tensyl and the SP-8007 elastic-constant formulas agree, and where they
 diverge because the models retain different bending physics. That report also
-calls out a printed-equation problem in SP-8007: isogrid Eqs. 97-98 do not show
-the explicit eccentric `EA z^2` bending terms. Correct that omission before
-using the isogrid bending formulas as a physics reference.
+calls out a printed-equation problem in SP-8007: isogrid Eqs. 97-98 omit the
+explicit eccentric `EA z^2` bending terms. Correct that omission before using
+the isogrid bending formulas as a physics reference.
 
 A downstream SP-8007-style workflow commonly needs these data categories from a
 stiffness model:
@@ -67,10 +67,9 @@ strain convention uses engineering shear/twist ordering
 
 For stiffened walls, pay special attention to `Dbar_x`, `Dbar_y`, and
 `Dbar_xy`. Tensyl retains centroidal beam-section terms through the member
-strain map. Some SP-8007 elastic-constant expressions are more compact and do
-not expose every possible beam contribution as a separate term. When those
-numbers disagree, inspect section inertia, torsion constant, reference-surface
-choice, and eccentricity before deciding that either source is wrong.
+strain map. Some SP-8007 elastic-constant expressions omit beam contributions
+that Tensyl includes. When those numbers disagree, inspect section inertia,
+torsion constant, reference-surface choice, and eccentricity.
 
 For orthogrids, the main known reduction is cross-family in-plane bending.
 Tensyl includes rib `EIz` in `Dbar_x` and stringer `EIz` in `Dbar_y`. SP-8007

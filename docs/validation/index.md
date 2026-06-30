@@ -32,8 +32,7 @@ orthogrid and equilateral-isogrid stiffnesses with the SP-8007 elastic-constant
 formulas, without treating either source as ground truth. The important result
 is not a single pass/fail number. It is a map of which terms agree by convention
 and which terms diverge because the models retain different bending physics,
-after first correcting the apparent missing `EA z^2` terms in SP-8007 isogrid
-Eqs. 97-98.
+after first correcting the missing `EA z^2` terms in SP-8007 isogrid Eqs. 97-98.
 
 ## Why This Is LLM-Led
 

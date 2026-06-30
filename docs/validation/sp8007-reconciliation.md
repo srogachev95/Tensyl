@@ -6,13 +6,18 @@ SP-8007 is a published design reference, but it is not an oracle for Tensyl, and
 Tensyl is not an oracle for SP-8007. The useful question is narrower and harder:
 when the numbers diverge, which physics did each model keep or throw away?
 
+The SP-8007 source used for this audit is Mark Hilburger's
+*Buckling of Thin-Walled Circular Cylinders*, NASA/SP-8007-2020/REV 2:
+<https://ntrs.nasa.gov/citations/20205011530>.
+
 ## Read This First
 
-The isogrid equations in SP-8007 Eqs. 97-98 appear to contain a real printed
-formula error. They do not show explicit parallel-axis `EA z^2` bending terms,
-even though the same section includes eccentric extensional-bending coupling
-terms and the earlier general stiffener formulas include the corresponding
-parallel-axis contribution.
+The isogrid equations in SP-8007 Eqs. 97-98 omit the explicit parallel-axis
+`EA z^2` bending terms. The same section includes eccentric
+extensional-bending coupling terms, and the earlier general stiffener formulas
+include the corresponding parallel-axis contribution. For a centroidal
+stiffener offset from the reference surface, the `EA z^2` bending energy is part
+of the stiffness. Tensyl includes that term.
 
 For the eccentric isogrid cases, this audit therefore reports two SP-8007
 references:
@@ -49,9 +54,8 @@ $$
 $$
 
 With that correction, the large eccentric-isogrid discrepancy goes away in the
-case where in-plane member bending has been suppressed. That matters because
-typos are not very interesting. The remaining differences are the ones that
-tell us something about the model.
+case where in-plane member bending has been suppressed. The remaining
+differences come from model content.
 
 ## What Was Compared
 
@@ -89,23 +93,21 @@ $$
 ## Correcting the Isogrid Typo
 
 The plot below isolates the eccentric isogrid case with the member in-plane
-bending inertia driven very small. SP-8007 as printed misses the eccentric axial
+bending inertia driven very small. SP-8007 as printed omits the eccentric axial
 energy in the bending terms. Once the `EA z^2` terms are restored, Tensyl and
 the corrected hand formula agree to the residual left by the intentionally tiny
 `EIz`.
 
 ![SP-8007 isogrid correction](../assets/validation/sp8007-isogrid-correction.svg)
 
-This is the right way to use SP-8007 in the rest of the audit: not as an oracle,
-but as a source that can still contain a mistake. After this correction, the
-main isogrid discrepancy is no longer evidence of a Tensyl problem.
+After this correction, the main isogrid discrepancy is not a Tensyl problem. It
+is the missing printed `EA z^2` term in SP-8007 Eqs. 97-98.
 
 ## Orthogrid Model Difference
 
-The orthogrid mismatch is different. It does not disappear because of the
-isogrid correction, and it is not a convention problem. Tensyl is retaining a
-real member stiffness that the SP-8007 ring/stringer formulas in Eqs. 89-91 do
-not expose.
+The orthogrid mismatch is different. It is not affected by the isogrid
+correction, and it is not a convention problem. Tensyl retains a member
+stiffness that the SP-8007 ring/stringer formulas in Eqs. 89-91 do not include.
 
 Tensyl's member strain map gives each rib or stringer a finite in-plane bending
 stiffness contribution when the equivalent wall bends across that member. For an
@@ -138,9 +140,9 @@ $$
 \Delta \bar{D}_y = \frac{(EI_z)_s}{b_s}.
 $$
 
-In plain terms, a rib is not invisible when the wall bends axially across it,
-and a stringer is not invisible when the wall bends circumferentially across it.
-If that member has appreciable in-plane bending stiffness, Tensyl stores that
+In plain terms, a rib contributes stiffness when the wall bends axially across
+it, and a stringer contributes stiffness when the wall bends circumferentially
+across it. If that member has in-plane bending stiffness, Tensyl stores that
 energy. The SP-8007 orthogrid hand equations used here do not.
 
 The coefficient-level comparison below uses the corrected SP-8007 reference.
@@ -163,10 +165,9 @@ collapses.
 ## Engineering Impact
 
 The orthogrid mismatch lives in the bending block of the equivalent wall law. It
-does not change the basic axis-aligned membrane `A` terms in these cases, and it
-does not mean every SP-8007-style handoff is wrong. It means that an SP-8007
-orthogrid reduction can underpredict bending stiffness when the stiffener has
-meaningful in-plane section inertia.
+does not change the basic axis-aligned membrane `A` terms in these cases. An
+SP-8007 orthogrid reduction underpredicts bending stiffness when the stiffener
+has meaningful in-plane section inertia.
 
 The impact is largest for grids where the stiffener is not a slender blade. Wide
 caps, flanges, tees, channels, z-stiffeners, hat sections, box-like stiffeners,
@@ -175,19 +176,17 @@ cross-family term to matter. Dense grids and thin skins make the effect easier
 to see because the member stiffness is spread over a smaller wall area and the
 skin contributes less of the total bending stiffness.
 
-The downstream risk is usually a buckling or load-redistribution risk. A
+The downstream impact is usually a buckling or load-redistribution impact. A
 classical orthotropic-cylinder calculation that receives the lower SP-8007
-bending terms may predict different buckling loads, different preferred modes,
-or different margins than a calculation that receives Tensyl's fuller ABD
-stiffness. That does not automatically make Tensyl conservative or
-nonconservative in every case; the sign of the margin change depends on the
-load, shell geometry, mode shape, and knockdown workflow. It does mean engineers
-should not collapse a stiffener-rich wall into SP-8007 barred constants without
-checking how much `EIz` has been thrown away.
+bending terms can predict different buckling loads, different preferred modes,
+or different margins than a calculation that receives Tensyl's full ABD
+stiffness. The sign of the margin change depends on the load, shell geometry,
+mode shape, and knockdown workflow. Engineers should not collapse a
+stiffener-rich wall into SP-8007 barred constants without checking how much
+`EIz` has been removed.
 
-This is the strongest conclusion from the audit: for these orthogrid cases,
-Tensyl is capturing more first-order section physics than the compact SP-8007
-ring/stringer formulas show.
+For these orthogrid cases, Tensyl includes first-order section physics that the
+compact SP-8007 ring/stringer formulas omit.
 
 ## Which `J` Should Be Used?
 
@@ -203,9 +202,8 @@ $$
 J_{\mathrm{sv}} \approx \sum_i \frac{l_i t_i^3}{3}.
 $$
 
-This is appropriate for first estimates of blades, angles, tees, channels, and
-other open members when warping is not strongly restrained. It is not a magic
-property of the drawing.
+This is the correct input for blades, angles, tees, channels, and other open
+members when warping is not strongly restrained.
 
 Use a closed-cell torsional stiffness when the actual modeled member has a
 closed shear-flow path. A closed hat bonded to a skin, a tube, or a box can have
@@ -219,11 +217,11 @@ attachments, or neighboring structure prevent the section from warping freely.
 That value is usually a section-analysis or finite-element result, not the free
 St Venant constant and not the closed-cell Bredt constant by itself.
 
-So the answer is not that open-section `J`, closed-cell `J`, or restrained
-warping `J` is always more correct. The correct value is the torsional stiffness
-of the section and boundary condition represented by the homogenized member. If
-that boundary condition is uncertain, bracket it. The plot below shows how much
-the modified twisting stiffness moves when the supplied member `J` is swept over
+Open-section `J`, closed-cell `J`, and restrained-warping `J` represent
+different member models. The correct value is the torsional stiffness of the
+section and boundary condition represented by the homogenized member. If that
+boundary condition is uncertain, bracket it. The plot below shows how much the
+modified twisting stiffness moves when the supplied member `J` is swept over
 large factors.
 
 ![SP-8007 torsion sweep](../assets/validation/sp8007-torsion-sweep.svg)
@@ -238,8 +236,7 @@ with the artifact, and do not pass `D66` as `\bar{D}_{xy}`.
 Keep the full Tensyl ABD stiffness when the wall has meaningful off-axis terms,
 strong membrane-bending coupling, or section properties that do not match the
 simplified SP-8007 assumptions. Reducing a richer wall law to a short list of
-barred constants can be the right handoff, but it is a reduction. It should be
-treated as one.
+barred constants can be the right handoff, but it is a reduction.
 
 Be especially careful with these inputs:
 
