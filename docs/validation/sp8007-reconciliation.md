@@ -90,6 +90,22 @@ $$
 \bar{D}_{xy} = 2D_{12} + 4D_{66}.
 $$
 
+The named cases in the plots are:
+
+| Plot label | Model | What changed | Why it is in the audit |
+| --- | --- | --- | --- |
+| `orthogrid full EIz` | Orthogrid | Uses the full member in-plane bending stiffness, `EIz = E * 1.20e-3 in^4`. | Shows Tensyl's cross-family in-plane bending contribution. |
+| `orthogrid low EIz` | Orthogrid | Reduces in-plane bending to `EIz = E * 1.20e-6 in^4`. | Shows that the orthogrid bending mismatch collapses when the missing SP-8007 term is made small. |
+| `isogrid full EIz` | Isogrid | Uses full `EIz` and eccentric stiffeners. | Shows the combined effect of retained in-plane member bending and eccentric axial bending. |
+| `isogrid z = 0` | Isogrid | Uses low `EIz` and zero eccentricity. | Checks the centered-member isogrid limit where the printed and corrected SP-8007 formulas are the same. |
+| `isogrid corrected z` | Isogrid | Uses low `EIz` and eccentricity `z = 0.32 in`. | Isolates the missing `EA z^2` terms in SP-8007 Eqs. 97-98. |
+
+All five cases use the same material, skin thickness, stiffener area,
+out-of-plane inertia, torsion constant, and local spacing or pitch unless the
+table says otherwise. The baseline values are `E = 10.6e6 psi`, `nu = 0.33`,
+`t = 0.080 in`, `A = 0.030 in^2`, `Iy = 1.20e-3 in^4`, `J = 2.50e-4 in^4`,
+orthogrid spacings `bs = 6 in` and `br = 8 in`, and isogrid pitch `a = 6 in`.
+
 ## Correcting the Isogrid Typo
 
 The plot below isolates the eccentric isogrid case with the member in-plane
@@ -99,6 +115,11 @@ the corrected hand formula agree to the residual left by the intentionally tiny
 `EIz`.
 
 ![SP-8007 isogrid correction](../assets/validation/sp8007-isogrid-correction.svg)
+
+The bars compare the same physical case three ways. The blue bar is Tensyl. The
+orange bar is SP-8007 exactly as printed. The green bar is SP-8007 with the
+`EA z^2` correction restored. The green and blue bars lie together because the
+missing printed term is the source of the large orange-bar gap.
 
 After this correction, the main isogrid discrepancy is not a Tensyl problem. It
 is the missing printed `EA z^2` term in SP-8007 Eqs. 97-98.
@@ -152,15 +173,34 @@ terms remain different until the cross-family `EIz` contribution is made small.
 
 ![SP-8007 coefficient deltas](../assets/validation/sp8007-term-errors.svg)
 
+This plot is a corrected-reference error plot. Bars at the bottom of the log
+axis are roundoff-level agreement. The remaining visible bars are bending terms.
+For the orthogrid full-`EIz` case, those bars are the cross-family in-plane
+bending terms retained by Tensyl and omitted by SP-8007 Eqs. 89-91. For the
+low-`EIz` cases, the bars collapse because the omitted term has been made small.
+
 The bending ratios show the same point more directly.
 
 ![SP-8007 bending ratios](../assets/validation/sp8007-bending-ratio.svg)
+
+This plot divides Tensyl's bending coefficients by the corrected SP-8007
+values. A ratio of `1.0` means the two calculations agree. The `orthogrid full
+EIz` case rises above `1.0` in `Dbar_x` and `Dbar_y` because Tensyl includes the
+rib and stringer cross-family `EIz` terms. The low-`EIz` and corrected-isogrid
+cases sit at `1.0` because the isolated formula error has been corrected and
+the retained member-bending residual has been made small.
 
 And the sweep below makes the mechanism explicit. As the member in-plane inertia
 is reduced relative to its out-of-plane inertia, the orthogrid bending mismatch
 collapses.
 
 ![SP-8007 in-plane bending sweep](../assets/validation/sp8007-inplane-bending-sweep.svg)
+
+The horizontal axis is the ratio `Iz / Iy` used for the stiffener section. Moving
+left makes the member closer to a blade with negligible in-plane bending. Moving
+right makes the member closer to a section with comparable in-plane and
+out-of-plane bending stiffness. The error grows with `Iz / Iy` because the
+missing SP-8007 contribution is proportional to `EIz`.
 
 ## Engineering Impact
 
@@ -225,6 +265,14 @@ modified twisting stiffness moves when the supplied member `J` is swept over
 large factors.
 
 ![SP-8007 torsion sweep](../assets/validation/sp8007-torsion-sweep.svg)
+
+This plot does not choose a torsion model. It shows the consequence of the `J`
+value supplied to the member. The orthogrid line moves strongly because its
+modified twisting stiffness receives direct stringer and rib `GJ` terms. The
+isogrid line moves less in this synthetic case because the same coefficient also
+contains larger bending and corrected eccentric-axial contributions. A closed
+cell or restrained-warping model can move a real design along this axis by large
+factors.
 
 ## Guidance
 
