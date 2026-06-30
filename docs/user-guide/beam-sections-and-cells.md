@@ -195,6 +195,14 @@ custom = thin_wall_section(
 coordinates. `thickness` is measured normal to that midline in the same `(y, z)`
 section plane.
 
+This is a thin-wall idealization, not an exact solid model of the corner
+material. When two segments meet at right angles, the coordinates describe the
+meeting of their midlines. That is the same convention a shell or plate model
+would usually use for a stiffener wall. If the local corner material, weld
+radius, flange/web overlap, or manufacturing detail matters to the section
+properties, compute the section externally and pass Tensyl a `BeamSection`
+instead.
+
 For US customary examples:
 
 - `EA`, `kGAy`, and `kGAz` use `lbf`;
