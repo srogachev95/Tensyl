@@ -166,6 +166,10 @@ I_z = \int_A (y-y_c)^2\,dA,\qquad
 I_{yz} = \int_A (y-y_c)(z-z_c)\,dA.
 $$
 
+The segment endpoints are midline coordinates. This is the intended thin-wall
+modeling convention; local corner buildup, weld radii, and exact flange/web
+overlap are outside this geometry helper.
+
 For an isotropic material, the generated `BeamSection` uses:
 
 $$
