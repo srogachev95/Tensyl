@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/validation/sp8007-reconciliation/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>SP-8007 Reconciliation - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SP-8007 Reconciliation";
+        var mkdocs_page_input_path = "validation/sp8007-reconciliation.md";
+        var mkdocs_page_url = "/Tensyl/validation/sp8007-reconciliation/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Background</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Theory</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Validation</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../">Validation Roadmap</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SP-8007 Reconciliation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#read-this-first">Read This First</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-was-compared">What Was Compared</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#correcting-the-isogrid-typo">Correcting the Isogrid Typo</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#orthogrid-model-difference">Orthogrid Model Difference</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#engineering-impact">Engineering Impact</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#which-j-should-be-used">Which J Should Be Used?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#guidance">Guidance</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#artifacts">Artifacts</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Validation</li>
+      <li class="breadcrumb-item active">SP-8007 Reconciliation</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/validation/sp8007-reconciliation.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="sp-8007-reconciliation">SP-8007 Reconciliation</h1>
+<p>This page compares Tensyl's tangent-plane stiffnesses with the elastic-constant
+formulas in NASA SP-8007 Section 4.1.2.6. It is not a calibration exercise.
+SP-8007 is a published design reference, but it is not an oracle for Tensyl, and
+Tensyl is not an oracle for SP-8007. The useful question is narrower and harder:
+when the numbers diverge, which physics did each model keep or throw away?</p>
+<p>The SP-8007 source used for this audit is Mark Hilburger's
+<em>Buckling of Thin-Walled Circular Cylinders</em>, NASA/SP-8007-2020/REV 2:
+<a href="https://ntrs.nasa.gov/citations/20205011530">https://ntrs.nasa.gov/citations/20205011530</a>.</p>
+<h2 id="read-this-first">Read This First</h2>
+<p>The isogrid equations in SP-8007 Eqs. 97-98 omit the explicit parallel-axis
+<code>EA z^2</code> bending terms. The same section includes eccentric
+extensional-bending coupling terms, and the earlier general stiffener formulas
+include the corresponding parallel-axis contribution. For a centroidal
+stiffener offset from the reference surface, the <code>EA z^2</code> bending energy is part
+of the stiffness. Tensyl includes that term.</p>
+<p>For the eccentric isogrid cases, this audit therefore reports two SP-8007
+references:</p>
+<ul>
+<li>SP-8007 as printed;</li>
+<li>SP-8007 with the missing isogrid parallel-axis terms restored.</li>
+</ul>
+<p>The correction used here is</p>
+<div class="arithmatex">\[
+\bar{D}_{x,\mathrm{corr}}
+=
+\bar{D}_{x,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
+\]</div>
+<div class="arithmatex">\[
+\bar{D}_{y,\mathrm{corr}}
+=
+\bar{D}_{y,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
+\]</div>
+<p>and</p>
+<div class="arithmatex">\[
+\bar{D}_{xy,\mathrm{corr}}
+=
+\bar{D}_{xy,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{2}\frac{EA}{a}z^2.
+\]</div>
+<p>With that correction, the large eccentric-isogrid discrepancy goes away in the
+case where in-plane member bending has been suppressed. The remaining
+differences come from model content.</p>
+<h2 id="what-was-compared">What Was Compared</h2>
+<p>The audit computes three sets of coefficients for each case. First it evaluates
+the SP-8007 equations as printed: ring-and-stringer orthogrids use Eqs. 82-91,
+and equilateral isogrids use Eqs. 92-98. Second it applies the isogrid correction
+above where it is needed. Third it computes a Tensyl ABD stiffness and extracts
+the same SP-8007-style barred coefficients from that matrix.</p>
+<p>For a cylinder, Tensyl's local <code>e1</code> direction is axial and <code>e2</code> is
+circumferential, so the mapping is:</p>
+<table>
+<thead>
+<tr>
+<th>SP-8007 coefficient</th>
+<th>Tensyl source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ebar_x</code></td>
+<td><code>A[0, 0]</code></td>
+</tr>
+<tr>
+<td><code>Ebar_y</code></td>
+<td><code>A[1, 1]</code></td>
+</tr>
+<tr>
+<td><code>Ebar_xy</code></td>
+<td><code>A[0, 1]</code></td>
+</tr>
+<tr>
+<td><code>Gbar_xy</code></td>
+<td><code>A[2, 2]</code></td>
+</tr>
+<tr>
+<td><code>Dbar_x</code></td>
+<td><code>D[0, 0]</code></td>
+</tr>
+<tr>
+<td><code>Dbar_y</code></td>
+<td><code>D[1, 1]</code></td>
+</tr>
+<tr>
+<td><code>Dbar_xy</code></td>
+<td><code>2*D[0, 1] + 4*D[2, 2]</code></td>
+</tr>
+<tr>
+<td><code>Cbar_x</code></td>
+<td><code>B[0, 0]</code></td>
+</tr>
+<tr>
+<td><code>Cbar_y</code></td>
+<td><code>B[1, 1]</code></td>
+</tr>
+<tr>
+<td><code>Cbar_xy</code></td>
+<td><code>B[0, 1]</code></td>
+</tr>
+<tr>
+<td><code>Kbar_xy</code></td>
+<td><code>B[2, 2]</code></td>
+</tr>
+</tbody>
+</table>
+<p>The last bending row is the easy place to make a bad comparison. SP-8007's
+<code>\bar{D}_{xy}</code> is a modified twisting stiffness, not Tensyl's <code>D66</code> entry by
+itself. With Tensyl's engineering twist convention, the coefficient is</p>
+<div class="arithmatex">\[
+\bar{D}_{xy} = 2D_{12} + 4D_{66}.
+\]</div>
+<p>The named cases in the plots are:</p>
+<table>
+<thead>
+<tr>
+<th>Plot label</th>
+<th>Model</th>
+<th>What changed</th>
+<th>Why it is in the audit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orthogrid full EIz</code></td>
+<td>Orthogrid</td>
+<td>Uses the full member in-plane bending stiffness, <code>EIz = E * 1.20e-3 in^4</code>.</td>
+<td>Shows Tensyl's cross-family in-plane bending contribution.</td>
+</tr>
+<tr>
+<td><code>orthogrid low EIz</code></td>
+<td>Orthogrid</td>
+<td>Reduces in-plane bending to <code>EIz = E * 1.20e-6 in^4</code>.</td>
+<td>Shows that the orthogrid bending mismatch collapses when the missing SP-8007 term is made small.</td>
+</tr>
+<tr>
+<td><code>isogrid full EIz</code></td>
+<td>Isogrid</td>
+<td>Uses full <code>EIz</code> and eccentric stiffeners.</td>
+<td>Shows the combined effect of retained in-plane member bending and eccentric axial bending.</td>
+</tr>
+<tr>
+<td><code>isogrid z = 0</code></td>
+<td>Isogrid</td>
+<td>Uses low <code>EIz</code> and zero eccentricity.</td>
+<td>Checks the centered-member isogrid limit where the printed and corrected SP-8007 formulas are the same.</td>
+</tr>
+<tr>
+<td><code>isogrid corrected z</code></td>
+<td>Isogrid</td>
+<td>Uses low <code>EIz</code> and eccentricity <code>z = 0.32 in</code>.</td>
+<td>Isolates the missing <code>EA z^2</code> terms in SP-8007 Eqs. 97-98.</td>
+</tr>
+</tbody>
+</table>
+<p>All five cases use the same material, skin thickness, stiffener area,
+out-of-plane inertia, torsion constant, and local spacing or pitch unless the
+table says otherwise. The baseline values are <code>E = 10.6e6 psi</code>, <code>nu = 0.33</code>,
+<code>t = 0.080 in</code>, <code>A = 0.030 in^2</code>, <code>Iy = 1.20e-3 in^4</code>, <code>J = 2.50e-4 in^4</code>,
+orthogrid spacings <code>bs = 6 in</code> and <code>br = 8 in</code>, and isogrid pitch <code>a = 6 in</code>.</p>
+<h2 id="correcting-the-isogrid-typo">Correcting the Isogrid Typo</h2>
+<p>The plot below isolates the eccentric isogrid case with the member in-plane
+bending inertia driven very small. SP-8007 as printed omits the eccentric axial
+energy in the bending terms. Once the <code>EA z^2</code> terms are restored, Tensyl and
+the corrected hand formula agree to the residual left by the intentionally tiny
+<code>EIz</code>.</p>
+<p><img alt="SP-8007 isogrid correction" src="../../assets/validation/sp8007-isogrid-correction.svg" /></p>
+<p>The bars compare the same physical case three ways. The blue bar is Tensyl. The
+orange bar is SP-8007 exactly as printed. The green bar is SP-8007 with the
+<code>EA z^2</code> correction restored. The green and blue bars lie together because the
+missing printed term is the source of the large orange-bar gap.</p>
+<p>After this correction, the main isogrid discrepancy is not a Tensyl problem. It
+is the missing printed <code>EA z^2</code> term in SP-8007 Eqs. 97-98.</p>
+<h2 id="orthogrid-model-difference">Orthogrid Model Difference</h2>
+<p>The orthogrid mismatch is different. It is not affected by the isogrid
+correction, and it is not a convention problem. Tensyl retains a member
+stiffness that the SP-8007 ring/stringer formulas in Eqs. 89-91 do not include.</p>
+<p>Tensyl's member strain map gives each rib or stringer a finite in-plane bending
+stiffness contribution when the equivalent wall bends across that member. For an
+axis-aligned orthogrid, the SP-8007 printed formulas include same-family
+out-of-plane bending and eccentric axial bending:</p>
+<div class="arithmatex">\[
+\bar{D}_x
+\leftarrow
+\frac{(EI_y)_s}{b_s}
++
+\frac{(EA)_s z_s^2}{b_s},
+\]</div>
+<div class="arithmatex">\[
+\bar{D}_y
+\leftarrow
+\frac{(EI_y)_r}{b_r}
++
+\frac{(EA)_r z_r^2}{b_r}.
+\]</div>
+<p>Tensyl also includes the cross-family in-plane bending terms:</p>
+<div class="arithmatex">\[
+\Delta \bar{D}_x = \frac{(EI_z)_r}{b_r},
+\]</div>
+<div class="arithmatex">\[
+\Delta \bar{D}_y = \frac{(EI_z)_s}{b_s}.
+\]</div>
+<p>In plain terms, a rib contributes stiffness when the wall bends axially across
+it, and a stringer contributes stiffness when the wall bends circumferentially
+across it. If that member has in-plane bending stiffness, Tensyl stores that
+energy. The SP-8007 orthogrid hand equations used here do not.</p>
+<p>The coefficient-level comparison below uses the corrected SP-8007 reference.
+The membrane terms, coupling terms, and modified twisting term agree to roundoff
+for the orthogrid cases when the inputs are normalized the same way. The bending
+terms remain different until the cross-family <code>EIz</code> contribution is made small.</p>
+<p><img alt="SP-8007 coefficient deltas" src="../../assets/validation/sp8007-term-errors.svg" /></p>
+<p>This plot is a corrected-reference error plot. Bars at the bottom of the log
+axis are roundoff-level agreement. The remaining visible bars are bending terms.
+For the orthogrid full-<code>EIz</code> case, those bars are the cross-family in-plane
+bending terms retained by Tensyl and omitted by SP-8007 Eqs. 89-91. For the
+low-<code>EIz</code> cases, the bars collapse because the omitted term has been made small.</p>
+<p>The bending ratios show the same point more directly.</p>
+<p><img alt="SP-8007 bending ratios" src="../../assets/validation/sp8007-bending-ratio.svg" /></p>
+<p>This plot divides Tensyl's bending coefficients by the corrected SP-8007
+values. A ratio of <code>1.0</code> means the two calculations agree. The <code>orthogrid full
+EIz</code> case rises above <code>1.0</code> in <code>Dbar_x</code> and <code>Dbar_y</code> because Tensyl includes the
+rib and stringer cross-family <code>EIz</code> terms. The low-<code>EIz</code> and corrected-isogrid
+cases sit at <code>1.0</code> because the isolated formula error has been corrected and
+the retained member-bending residual has been made small.</p>
+<p>And the sweep below makes the mechanism explicit. As the member in-plane inertia
+is reduced relative to its out-of-plane inertia, the orthogrid bending mismatch
+collapses.</p>
+<p><img alt="SP-8007 in-plane bending sweep" src="../../assets/validation/sp8007-inplane-bending-sweep.svg" /></p>
+<p>The horizontal axis is the ratio <code>Iz / Iy</code> used for the stiffener section. Moving
+left makes the member closer to a blade with negligible in-plane bending. Moving
+right makes the member closer to a section with comparable in-plane and
+out-of-plane bending stiffness. The error grows with <code>Iz / Iy</code> because the
+missing SP-8007 contribution is proportional to <code>EIz</code>.</p>
+<h2 id="engineering-impact">Engineering Impact</h2>
+<p>The orthogrid mismatch lives in the bending block of the equivalent wall law. It
+does not change the basic axis-aligned membrane <code>A</code> terms in these cases. An
+SP-8007 orthogrid reduction underpredicts bending stiffness when the stiffener
+has meaningful in-plane section inertia.</p>
+<p>The impact is largest for grids where the stiffener is not a slender blade. Wide
+caps, flanges, tees, channels, z-stiffeners, hat sections, box-like stiffeners,
+and closed or nearly closed sections can all have enough <code>EIz</code> for the
+cross-family term to matter. Dense grids and thin skins make the effect easier
+to see because the member stiffness is spread over a smaller wall area and the
+skin contributes less of the total bending stiffness.</p>
+<p>The downstream impact is usually a buckling or load-redistribution impact. A
+classical orthotropic-cylinder calculation that receives the lower SP-8007
+bending terms can predict different buckling loads, different preferred modes,
+or different margins than a calculation that receives Tensyl's full ABD
+stiffness. The sign of the margin change depends on the load, shell geometry,
+mode shape, and knockdown workflow. Engineers should not collapse a
+stiffener-rich wall into SP-8007 barred constants without checking how much
+<code>EIz</code> has been removed.</p>
+<p>For these orthogrid cases, Tensyl includes first-order section physics that the
+compact SP-8007 ring/stringer formulas omit.</p>
+<h2 id="which-j-should-be-used">Which <code>J</code> Should Be Used?</h2>
+<p>The torsion constant is not a universal number. <code>BeamSection.GJ</code> should be the
+torsional stiffness of the member idealization you mean to put into the
+homogenized wall.</p>
+<p>Use an open-section St Venant <code>J</code> when the stiffener behaves like a freely
+warping open member. That is the assumption behind Tensyl's simple thin-wall
+section helper:</p>
+<div class="arithmatex">\[
+J_{\mathrm{sv}} \approx \sum_i \frac{l_i t_i^3}{3}.
+\]</div>
+<p>This is the correct input for blades, angles, tees, channels, and other open
+members when warping is not strongly restrained.</p>
+<p>Use a closed-cell torsional stiffness when the actual modeled member has a
+closed shear-flow path. A closed hat bonded to a skin, a tube, or a box can have
+a torsional stiffness many times larger than the open-section estimate. But the
+closure has to belong to the member model. If the skin is already present as a
+separate plate in the ABD calculation, adding a closed-cell <code>J</code> that also uses
+that same skin can double-count skin shear stiffness.</p>
+<p>Use a restrained-warping torsional stiffness when the boundary conditions,
+attachments, or neighboring structure prevent the section from warping freely.
+That value is usually a section-analysis or finite-element result, not the free
+St Venant constant and not the closed-cell Bredt constant by itself.</p>
+<p>Open-section <code>J</code>, closed-cell <code>J</code>, and restrained-warping <code>J</code> represent
+different member models. The correct value is the torsional stiffness of the
+section and boundary condition represented by the homogenized member. If that
+boundary condition is uncertain, bracket it. The plot below shows how much the
+modified twisting stiffness moves when the supplied member <code>J</code> is swept over
+large factors.</p>
+<p><img alt="SP-8007 torsion sweep" src="../../assets/validation/sp8007-torsion-sweep.svg" /></p>
+<p>This plot does not choose a torsion model. It shows the consequence of the <code>J</code>
+value supplied to the member. The orthogrid line moves strongly because its
+modified twisting stiffness receives direct stringer and rib <code>GJ</code> terms. The
+isogrid line moves less in this synthetic case because the same coefficient also
+contains larger bending and corrected eccentric-axial contributions. A closed
+cell or restrained-warping model can move a real design along this axis by large
+factors.</p>
+<h2 id="guidance">Guidance</h2>
+<p>Use the SP-8007-style coefficients when a downstream classical
+orthotropic-cylinder calculation expects exactly that data shape. In that
+workflow, export the coefficients with the mapping above, keep the assumptions
+with the artifact, and do not pass <code>D66</code> as <code>\bar{D}_{xy}</code>.</p>
+<p>Keep the full Tensyl ABD stiffness when the wall has meaningful off-axis terms,
+strong membrane-bending coupling, or section properties that do not match the
+simplified SP-8007 assumptions. Reducing a richer wall law to a short list of
+barred constants can be the right handoff, but it is a reduction.</p>
+<p>Be especially careful with these inputs:</p>
+<ul>
+<li><code>EIz</code>: Tensyl retains cross-family in-plane member bending, while the SP-8007
+  orthogrid expressions used here do not expose the same term.</li>
+<li>Eccentricity: SP-8007 isogrid Eqs. 97-98 should be corrected for explicit
+  <code>EA z^2</code> bending terms before drawing physics conclusions.</li>
+<li><code>J</code>: open-section St Venant torsion, closed-cell torsion, and restrained
+  warping can differ by large factors; choose the value that matches the member
+  model and boundary condition.</li>
+</ul>
+<h2 id="artifacts">Artifacts</h2>
+<p>The committed evidence lives under
+<code>validation/artifacts/committed/sp8007_reconciliation/</code>:</p>
+<ul>
+<li><code>comparison_table.json</code> and <code>comparison_table.csv</code> contain the coefficient
+  rows, including the printed and corrected SP-8007 references;</li>
+<li><code>summary.json</code> records the worst corrected-reference term by case and the
+  interpretation notes;</li>
+<li><code>inplane_bending_sweep.json</code> records the <code>EIz</code> sweep;</li>
+<li><code>torsion_sweep.json</code> records the <code>J</code> sensitivity sweep;</li>
+<li><code>manifest.json</code> records provenance for the run.</li>
+</ul>
+<p>Regenerate the report data with:</p>
+<pre><code class="language-bash">uv run python validation/scripts/build_sp8007_reconciliation.py
+</code></pre>
+<p>The public mechanics references for this page are NASA SP-8007 and Nemeth's
+equivalent-plate treatise, both listed in <a href="../../references/">References</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../" class="btn btn-neutral float-left" title="Validation Roadmap"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../examples/skin-only/" class="btn btn-neutral float-right" title="Skin and Laminate ABD Stiffness">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../examples/skin-only/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

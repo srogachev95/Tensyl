@@ -117,6 +117,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
@@ -221,6 +223,12 @@ A_{s12} &amp; A_{s22}
 <li>Review <code>result.validity.warnings</code> before export. The solver sees stiffness
   numbers; the validity context has to travel with the model.</li>
 </ul>
+<p>When a solver card, spreadsheet, or hand equation wants scalar terms, use the
+named coefficient view instead of indexing matrices throughout the export code:</p>
+<pre><code class="language-python">coefficients = result.coefficients
+
+print(coefficients.A11, coefficients.B12, coefficients.D66, coefficients.As22)
+</code></pre>
 <h2 id="reduced-orthotropic-properties">Reduced Orthotropic Properties</h2>
 <p>The simplest route is to convert the membrane block to equivalent orthotropic
 plane-stress constants and let the solver build a conventional shell section.

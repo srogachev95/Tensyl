@@ -95,6 +95,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
@@ -114,6 +116,56 @@
     <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive">constitutive</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.ConstitutiveModel">ConstitutiveModel</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients">ABDStiffnessCoefficients</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.A11">A11</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.A12">A12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.A16">A16</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.A22">A22</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.A26">A26</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.A66">A66</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.As11">As11</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.As12">As12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.As22">As22</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.B11">B11</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.B12">B12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.B16">B16</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.B22">B22</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.B26">B26</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.B66">B66</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.D11">D11</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.D12">D12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.D16">D16</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.D22">D22</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.D26">D26</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.D66">D66</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffnessCoefficients.__post_init__">__post_init__</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.HyperelasticModel">HyperelasticModel</a>
         <ul>
@@ -171,6 +223,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.areal_mass">areal_mass</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.coefficients">coefficients</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.constant_tangent">constant_tangent</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.convention">convention</a>
@@ -191,6 +245,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.from_tangent">from_tangent</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.orthotropic_coefficients">orthotropic_coefficients</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.reduced_orthotropic_properties">reduced_orthotropic_properties</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.resultants">resultants</a>
@@ -200,6 +256,40 @@
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.tangent">tangent</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.ABDStiffness.with_validity">with_validity</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients">OrthotropicStiffnessCoefficients</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Cbar_x">Cbar_x</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Cbar_xy">Cbar_xy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Cbar_y">Cbar_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Dbar_x">Dbar_x</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Dbar_xy">Dbar_xy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Dbar_y">Dbar_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Ebar_x">Ebar_x</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Ebar_xy">Ebar_xy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Ebar_y">Ebar_y</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Gbar_xy">Gbar_xy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Kbar_xy">Kbar_xy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.unsupported_terms">unsupported_terms</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.warnings">warnings</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.__init__">__init__</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
@@ -383,6 +473,511 @@
 </div>
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.constitutive.ABDStiffnessCoefficients" class="doc doc-heading">
+            <code>ABDStiffnessCoefficients</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Named scalar view of an <code>ABDStiffness</code> matrix.</p>
+<p>The fields use the conventional laminate/shell coefficient names. For
+example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2, 2]</code>, and <code>As12</code> is
+<code>As[0, 1]</code>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.A11" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A11</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.A12" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.A16" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A16</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.A22" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A22</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.A26" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A26</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.A66" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">A66</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.As11" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">As11</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.As12" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">As12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.As22" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">As22</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.B11" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B11</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.B12" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.B16" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B16</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.B22" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B22</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.B26" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B26</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.B66" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">B66</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.D11" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D11</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.D12" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D12</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.D16" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D16</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.D22" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D22</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.D26" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D26</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.D66" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">D66</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">A11</span><span class="p">,</span> <span class="n">A22</span><span class="p">,</span> <span class="n">A12</span><span class="p">,</span> <span class="n">A16</span><span class="p">,</span> <span class="n">A26</span><span class="p">,</span> <span class="n">A66</span><span class="p">,</span> <span class="n">B11</span><span class="p">,</span> <span class="n">B22</span><span class="p">,</span> <span class="n">B12</span><span class="p">,</span> <span class="n">B16</span><span class="p">,</span> <span class="n">B26</span><span class="p">,</span> <span class="n">B66</span><span class="p">,</span> <span class="n">D11</span><span class="p">,</span> <span class="n">D22</span><span class="p">,</span> <span class="n">D12</span><span class="p">,</span> <span class="n">D16</span><span class="p">,</span> <span class="n">D26</span><span class="p">,</span> <span class="n">D66</span><span class="p">,</span> <span class="n">As11</span><span class="p">,</span> <span class="n">As22</span><span class="p">,</span> <span class="n">As12</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.ABDStiffnessCoefficients.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
 
 <div class="doc doc-object doc-class">
 
@@ -1087,6 +1682,28 @@
 
 
 
+<h3 id="tensyl.core.constitutive.ABDStiffness.coefficients" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">coefficients</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the independent ABD and transverse-shear terms as named scalars.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="tensyl.core.constitutive.ABDStiffness.constant_tangent" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">constant_tangent</span></code>
 
@@ -1286,6 +1903,34 @@ gamma23]</code>.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="tensyl.core.constitutive.ABDStiffness.orthotropic_coefficients" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">orthotropic_coefficients</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return barred coefficients for aligned orthotropic shell equations.</p>
+<p>The returned <code>Dbar_xy</code> is the modified twisting coefficient used by
+classical orthotropic shell formulas, including NASA SP-8007-style hand
+equations. It is not the raw ABD <code>D66</code> term. Tensyl computes
+<code>Dbar_xy = 2*D12 + 4*D66</code> so the combined bending-twist input is
+handed off in the form those equations expect.</p>
+<p>Off-axis terms such as <code>A16</code> and <code>D26</code> are not represented by this
+coefficient set. When they exceed <code>tolerance</code>, the method still returns
+the reduced coefficients, records the terms in <code>unsupported_terms</code>, and
+emits a warning so the caller can decide whether the reduction is
+acceptable for the downstream calculation.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="tensyl.core.constitutive.ABDStiffness.reduced_orthotropic_properties" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">reduced_orthotropic_properties</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
 
@@ -1371,6 +2016,354 @@ transverse-shear blocks.</p>
     <div class="doc doc-contents ">
 
         <p>Return an equivalent stiffness with attached validity diagnostics.</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients" class="doc doc-heading">
+            <code>OrthotropicStiffnessCoefficients</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Barred coefficients for aligned orthotropic shell equations.</p>
+<p>This is a reduction of a full ABD stiffness, not another complete stiffness
+representation. <code>warnings</code> and <code>unsupported_terms</code> record off-axis terms
+that were present in the source ABD matrix but are not carried by this
+coefficient set.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Cbar_x" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Cbar_x</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Cbar_xy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Cbar_xy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Cbar_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Cbar_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Dbar_x" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Dbar_x</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Dbar_xy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Dbar_xy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Dbar_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Dbar_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Ebar_x" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Ebar_x</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Ebar_xy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Ebar_xy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Ebar_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Ebar_y</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Gbar_xy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Gbar_xy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.Kbar_xy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">Kbar_xy</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.unsupported_terms" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">unsupported_terms</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.warnings" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">warnings</span> <span class="o">=</span> <span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">Ebar_x</span><span class="p">,</span> <span class="n">Ebar_y</span><span class="p">,</span> <span class="n">Ebar_xy</span><span class="p">,</span> <span class="n">Gbar_xy</span><span class="p">,</span> <span class="n">Dbar_x</span><span class="p">,</span> <span class="n">Dbar_y</span><span class="p">,</span> <span class="n">Dbar_xy</span><span class="p">,</span> <span class="n">Cbar_x</span><span class="p">,</span> <span class="n">Cbar_y</span><span class="p">,</span> <span class="n">Cbar_xy</span><span class="p">,</span> <span class="n">Kbar_xy</span><span class="p">,</span> <span class="n">warnings</span><span class="o">=</span><span class="p">(),</span> <span class="n">unsupported_terms</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.core.constitutive.OrthotropicStiffnessCoefficients.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
 
 
     </div>

@@ -109,6 +109,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
@@ -339,6 +341,9 @@ I_y = \int_A (z-z_c)^2\,dA,
 I_z = \int_A (y-y_c)^2\,dA,\qquad
 I_{yz} = \int_A (y-y_c)(z-z_c)\,dA.
 \]</div>
+<p>The segment endpoints are midline coordinates. This is the intended thin-wall
+modeling convention; local corner buildup, weld radii, and exact flange/web
+overlap are outside this geometry helper.</p>
 <p>For an isotropic material, the generated <code>BeamSection</code> uses:</p>
 <div class="arithmatex">\[
 EA = E A,\qquad EI_y = E I_y,\qquad EI_z = E I_z,\qquad
@@ -354,6 +359,15 @@ restrained warping, local flange/web stress recovery, crippling, or joint
 details. If those effects matter, compute the section properties externally and
 pass a <code>BeamSection</code> directly. There is no shame in outsourcing a problem to the
 tool that actually solves it.</p>
+<p>There is no universal torsion constant for a stiffener drawing. Use the <code>GJ</code>
+that belongs to the member idealization and boundary condition in the equivalent
+wall. A freely warping blade, tee, angle, or channel should usually use an
+open-section St Venant value. A tube, closed hat, or box should use a closed-cell
+torsional stiffness only when the closed shear-flow path is truly part of the
+member model; if the skin is already modeled as the plate skin, do not count the
+same skin again inside the stiffener <code>J</code>. If joints, end constraints, or
+neighboring structure restrain warping, use a section-analysis or finite-element
+torsional stiffness for that restrained condition.</p>
 <p>Transverse shear stiffnesses are optional. If <code>shear_correction_y</code> or
 <code>shear_correction_z</code> is supplied, Tensyl computes <code>kGAy</code> or <code>kGAz</code> as
 <span class="arithmatex">\(\kappa G A\)</span>. If a correction is omitted, the corresponding shear stiffness is

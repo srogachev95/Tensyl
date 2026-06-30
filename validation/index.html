@@ -101,6 +101,8 @@
     </li>
     </ul>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
@@ -180,6 +182,13 @@ work will focus on:</p>
 </ul>
 <p>Until those artifacts are promoted, validation status should be read as planned
 work rather than product evidence.</p>
+<p>The first literature-facing audit is the
+<a href="sp8007-reconciliation/">SP-8007 reconciliation</a>. It compares Tensyl's
+orthogrid and equilateral-isogrid stiffnesses with the SP-8007 elastic-constant
+formulas, without treating either source as ground truth. The important result
+is not a single pass/fail number. It is a map of which terms agree by convention
+and which terms diverge because the models retain different bending physics,
+after first correcting the missing <code>EA z^2</code> terms in SP-8007 isogrid Eqs. 97-98.</p>
 <h2 id="why-this-is-llm-led">Why This Is LLM-Led</h2>
 <p>This is a good LLM-led project because most of the work is mechanical, exacting,
 and repetitive: generate cases, write solver decks, run solvers, parse output,
@@ -205,7 +214,7 @@ starts.</p>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../user-guide/sp8007-data-handoff/" class="btn btn-neutral float-left" title="SP-8007 Data Handoff"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../examples/skin-only/" class="btn btn-neutral float-right" title="Skin and Laminate ABD Stiffness">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="sp8007-reconciliation/" class="btn btn-neutral float-right" title="SP-8007 Reconciliation">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -235,7 +244,7 @@ starts.</p>
       <span><a href="../user-guide/sp8007-data-handoff/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../examples/skin-only/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="sp8007-reconciliation/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

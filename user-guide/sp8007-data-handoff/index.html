@@ -105,6 +105,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
@@ -171,6 +173,17 @@ calculation to consume.</p>
 <p>NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
 source for stiffened equivalent-plate stiffness concepts. Tensyl sits between
 those worlds: it produces local stiffness data, then gets out of the way.</p>
+<p>Treat an SP-8007 handoff as a translation, not as proof that either model is
+right. The barred constants below are the data shape expected by a classical
+orthotropic-cylinder calculation. They are useful precisely because they are
+small and familiar, but that also means they can hide terms that are present in
+the full ABD stiffness. The public
+<a href="../../validation/sp8007-reconciliation/">SP-8007 reconciliation report</a> shows
+where Tensyl and the SP-8007 elastic-constant formulas agree, and where they
+diverge because the models retain different bending physics. That report also
+calls out a printed-equation problem in SP-8007: isogrid Eqs. 97-98 omit the
+explicit eccentric <code>EA z^2</code> bending terms. Correct that omission before using
+the isogrid bending formulas as a physics reference.</p>
 <p>A downstream SP-8007-style workflow commonly needs these data categories from a
 stiffness model:</p>
 <ul>
@@ -245,57 +258,61 @@ coefficients used in Eqs. 54-59 and 71-81 map to Tensyl's local ABD stiffness as
 </tr>
 </tbody>
 </table>
-<p><code>Dbar_xy</code> is not just <code>D[2, 2]</code>; SP-8007 uses a modified twisting coefficient
-that combines anticlastic bending and engineering twist terms. Tensyl's public
+<p><code>Dbar_xy</code> is not just <code>D[2, 2]</code>. It is the modified twisting coefficient: the
+combined bending-twist term used by classical orthotropic shell equations when
+they collapse the bending block into a smaller coefficient set. Tensyl's public
 strain convention uses engineering shear/twist ordering
 <code>(e11, e22, gamma12, k11, k22, k12, gamma13, gamma23)</code>, so the coefficient is
 <code>2*D12 + 4*D66</code>.</p>
-<pre><code class="language-python">def sp8007_orthotropic_coefficients(stiffness, *, tolerance=1.0e-9):
-    &quot;&quot;&quot;Extract SP-8007 orthotropic-cylinder coefficients from a local ABD stiffness.&quot;&quot;&quot;
+<p>For stiffened walls, pay special attention to <code>Dbar_x</code>, <code>Dbar_y</code>, and
+<code>Dbar_xy</code>. Tensyl retains centroidal beam-section terms through the member
+strain map. Some SP-8007 elastic-constant expressions omit beam contributions
+that Tensyl includes. When those numbers disagree, inspect section inertia,
+torsion constant, reference-surface choice, and eccentricity.</p>
+<p>For orthogrids, the main known reduction is cross-family in-plane bending.
+Tensyl includes rib <code>EIz</code> in <code>Dbar_x</code> and stringer <code>EIz</code> in <code>Dbar_y</code>. SP-8007
+ring/stringer Eqs. 89-91 do not expose those terms, so a handoff that keeps only
+the barred constants can hide bending stiffness from wide, flanged, capped, or
+closed stiffeners.</p>
+<p>For isogrids with eccentric members, use corrected bending terms:</p>
+<div class="arithmatex">\[
+\bar{D}_{x,\mathrm{corr}}
+=
+\bar{D}_{x,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
+\]</div>
+<div class="arithmatex">\[
+\bar{D}_{y,\mathrm{corr}}
+=
+\bar{D}_{y,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
+\]</div>
+<p>and</p>
+<div class="arithmatex">\[
+\bar{D}_{xy,\mathrm{corr}}
+=
+\bar{D}_{xy,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{2}\frac{EA}{a}z^2.
+\]</div>
+<p>Use <code>orthotropic_coefficients()</code> when a downstream hand calculation wants this
+smaller coefficient set:</p>
+<pre><code class="language-python">coefficients = result.orthotropic_coefficients()
 
-    unsupported = {
-        &quot;A16&quot;: stiffness.A[0, 2],
-        &quot;A26&quot;: stiffness.A[1, 2],
-        &quot;B16&quot;: stiffness.B[0, 2],
-        &quot;B26&quot;: stiffness.B[1, 2],
-        &quot;B61&quot;: stiffness.B[2, 0],
-        &quot;B62&quot;: stiffness.B[2, 1],
-        &quot;D16&quot;: stiffness.D[0, 2],
-        &quot;D26&quot;: stiffness.D[1, 2],
-    }
-    nonzero = {
-        name: value
-        for name, value in unsupported.items()
-        if abs(value) &gt; tolerance
-    }
-    if nonzero:
-        msg = (
-            &quot;SP-8007 orthotropic-cylinder coefficients assume axial/circumferential &quot;
-            f&quot;orthotropy; unsupported coupling terms are nonzero: {nonzero}&quot;
-        )
-        raise ValueError(msg)
-
-    return {
-        &quot;Ebar_x&quot;: stiffness.A[0, 0],
-        &quot;Ebar_y&quot;: stiffness.A[1, 1],
-        &quot;Ebar_xy&quot;: stiffness.A[0, 1],
-        &quot;Gbar_xy&quot;: stiffness.A[2, 2],
-        &quot;Dbar_x&quot;: stiffness.D[0, 0],
-        &quot;Dbar_y&quot;: stiffness.D[1, 1],
-        &quot;Dbar_xy&quot;: 2.0 * stiffness.D[0, 1] + 4.0 * stiffness.D[2, 2],
-        &quot;Cbar_x&quot;: stiffness.B[0, 0],
-        &quot;Cbar_y&quot;: stiffness.B[1, 1],
-        &quot;Cbar_xy&quot;: stiffness.B[0, 1],
-        &quot;Kbar_xy&quot;: stiffness.B[2, 2],
-    }
+print(coefficients.Ebar_x, coefficients.Dbar_x, coefficients.Dbar_xy)
+print(coefficients.warnings)
+print(coefficients.unsupported_terms)
 </code></pre>
 <div class="admonition warning">
 <p class="admonition-title">Do not silently drop the off-axis terms</p>
 <p>This coefficient set does not represent every possible ABD stiffness. If <code>A16</code>,
 <code>A26</code>, <code>B16</code>, <code>B26</code>, <code>B61</code>, <code>B62</code>, <code>D16</code>, or <code>D26</code> are not negligible,
-rotate the stiffness into its orthotropic axes or use a more general downstream
-buckling workflow. Dropping those terms to make the data fit the SP-8007
-mold throws away real anisotropy. The structure will not file a complaint.</p>
+<code>orthotropic_coefficients()</code> returns the reduced values but records the issue
+in <code>warnings</code> and <code>unsupported_terms</code>, and also emits a Python warning. That
+is a prompt to decide whether the off-axis terms matter, not a command to
+ignore them.</p>
 </div>
 <h2 id="orthogrid-handoff">Orthogrid Handoff</h2>
 <p>This worked handoff prepares an orthogrid equivalent stiffness for a separate
@@ -334,7 +351,7 @@ result = EnergyHomogenizer().compute(
 )
 surface = Cylinder(radius=120.0, length=300.0)
 point = surface.point_at(150.0, 0.0)
-sp8007 = sp8007_orthotropic_coefficients(result.stiffness)
+sp8007 = result.orthotropic_coefficients()
 
 report = {
     &quot;radius&quot;: surface.radius,
@@ -359,8 +376,8 @@ artifact = to_yaml(
 loaded = from_yaml(artifact)
 
 assert loaded.stiffness.C8.shape == (8, 8)
-assert report[&quot;sp8007&quot;][&quot;Ebar_x&quot;] == result.stiffness.A[0, 0]
-assert report[&quot;sp8007&quot;][&quot;Dbar_xy&quot;] == 2.0 * result.stiffness.D[0, 1] + 4.0 * result.stiffness.D[2, 2]
+assert report[&quot;sp8007&quot;].Ebar_x == result.stiffness.A[0, 0]
+assert report[&quot;sp8007&quot;].Dbar_xy == 2.0 * result.stiffness.D[0, 1] + 4.0 * result.stiffness.D[2, 2]
 assert report[&quot;p_over_R&quot;] == 8.0 / 120.0
 </code></pre>
 <p>Use the serialized artifact as a traceable record of the stiffness-property
@@ -398,10 +415,10 @@ isogrid_result = EnergyHomogenizer().compute(
         response_length=80.0,
     ),
 )
-isogrid_sp8007 = sp8007_orthotropic_coefficients(isogrid_result.stiffness)
+isogrid_sp8007 = isogrid_result.orthotropic_coefficients()
 
-assert abs(isogrid_sp8007[&quot;Ebar_x&quot;] - isogrid_sp8007[&quot;Ebar_y&quot;]) &lt; 1.0e-6
-assert abs(isogrid_sp8007[&quot;Cbar_x&quot;] - isogrid_sp8007[&quot;Cbar_y&quot;]) &lt; 1.0e-6
+assert abs(isogrid_sp8007.Ebar_x - isogrid_sp8007.Ebar_y) &lt; 1.0e-6
+assert abs(isogrid_sp8007.Cbar_x - isogrid_sp8007.Cbar_y) &lt; 1.0e-6
 </code></pre>
 <p>The equality checks are not SP-8007 requirements. They are useful sanity checks
 for this equilateral, equal-member example because the isogrid should be
@@ -430,7 +447,7 @@ laminate_stiffness = laminate_plate(
         Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
     )
 )
-laminate_sp8007 = sp8007_orthotropic_coefficients(laminate_stiffness)
+laminate_sp8007 = laminate_stiffness.orthotropic_coefficients()
 laminate_report = {
     &quot;radius&quot;: surface.radius,
     &quot;length&quot;: surface.length,
@@ -441,8 +458,8 @@ laminate_report = {
     },
 }
 
-assert abs(laminate_report[&quot;sp8007&quot;][&quot;Cbar_x&quot;]) &lt; 1.0e-9
-assert abs(laminate_report[&quot;sp8007&quot;][&quot;Cbar_y&quot;]) &lt; 1.0e-9
+assert abs(laminate_report[&quot;sp8007&quot;].Cbar_x) &lt; 1.0e-9
+assert abs(laminate_report[&quot;sp8007&quot;].Cbar_y) &lt; 1.0e-9
 </code></pre>
               
             </div>

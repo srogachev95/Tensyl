@@ -119,6 +119,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
               </ul>
               <p class="caption"><span class="caption-text">Examples</span></p>
               <ul>
@@ -433,6 +435,13 @@ custom = thin_wall_section(
 <p><code>start_y</code>, <code>start_z</code>, <code>end_y</code>, and <code>end_z</code> are segment midline endpoint
 coordinates. <code>thickness</code> is measured normal to that midline in the same <code>(y, z)</code>
 section plane.</p>
+<p>This is a thin-wall idealization, not an exact solid model of the corner
+material. When two segments meet at right angles, the coordinates describe the
+meeting of their midlines. That is the same convention a shell or plate model
+would usually use for a stiffener wall. If the local corner material, weld
+radius, flange/web overlap, or manufacturing detail matters to the section
+properties, compute the section externally and pass Tensyl a <code>BeamSection</code>
+instead.</p>
 <p>For US customary examples:</p>
 <ul>
 <li><code>EA</code>, <code>kGAy</code>, and <code>kGAz</code> use <code>lbf</code>;</li>
