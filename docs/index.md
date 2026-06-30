@@ -71,7 +71,7 @@ postbuckling, and final allowables.
 ```python
 from tensyl import IsotropicMaterial, isotropic_plate
 
-aluminum = IsotropicMaterial(E=10.0e6, nu=0.33, density=0.1)
+aluminum = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
 stiffness = isotropic_plate(aluminum, thickness=0.080)
 
 print(stiffness.A)

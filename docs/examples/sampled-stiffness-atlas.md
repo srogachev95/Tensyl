@@ -125,8 +125,8 @@ assert station_0.A[0, 0] > station_150.A[0, 0]
 assert station_150.validity.p_over_R == 8.0 / 120.0
 ```
 
-The stiffness changes because the cell factory changes the local cell, not
-because the cylinder secretly curves the ABD matrix. At each point:
+The stiffness changes because the cell factory changes the local cell. The
+cylinder itself does not curve the ABD matrix. At each point:
 
 1. `surface.point_at(u, v)` supplies the local frame and `min_radius`.
 2. `cell_factory` builds a skin and orthogrid cell in that frame.

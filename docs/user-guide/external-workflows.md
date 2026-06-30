@@ -24,9 +24,9 @@ write_yaml(
 same_result = read_yaml(Path("stiffness.yaml"))
 ```
 
-Tensyl records unit labels but does not infer or convert units; inputs and
-outputs alike must already share one consistent system (see
-[Units and Consistency](units-and-consistency.md)).
+The values pass through untouched and the unit labels travel with them as
+metadata, so both ends of the workflow have to agree on one consistent system
+beforehand (see [Units and Consistency](units-and-consistency.md)).
 
 ## Schema
 

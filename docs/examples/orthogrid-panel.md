@@ -67,6 +67,10 @@ Review `result.validity.warnings` before using the ABD stiffness downstream.
 
 ## Selected Output
 
+These inputs match the walkthrough in
+[Homogenization and Results](../user-guide/homogenization.md), so the blocks come
+out the same; that page reads them term by term.
+
 Rounded diagonal values:
 
 | Block | Diagonal values |
@@ -113,5 +117,6 @@ separate workflow.
 
 !!! tip "Check the frame before the solver sees it"
     A constant field keeps the matrix fixed, but the solver still consumes
-    stiffness in local directions. Confirm axial and circumferential axes before
-    exporting the property. Axis swaps have excellent handwriting.
+    stiffness in local directions. Confirm the axial and circumferential axes
+    before exporting the property. A swapped axis produces a perfectly
+    well-formatted, perfectly wrong result.

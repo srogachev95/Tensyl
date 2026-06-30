@@ -44,14 +44,13 @@ membrane strains, three curvatures, and two transverse shears. Feed them in, get
 the eight matching resultants out — that is the whole job of an ABD stiffness.
 
 The current public strain convention uses engineering shear strains. Tensor
-shear conventions are rejected so twist and shear factors are not silently
-mixed.
+shear conventions are rejected so twist and shear factors are never combined by
+a stray factor of two.
 
 !!! note "Ordering is part of the public API contract"
-    The component order above is not arbitrary house style — it is a contract.
-    User code should not reorder the matrices without also transforming the
-    strains and resultants to match, or the energy and resultants will quietly
-    stop meaning what they say.
+    The component order above is a contract, not house style. User code should
+    not reorder the matrices without also transforming the strains and resultants
+    to match, or the energy and resultants will no longer mean what they say.
 
 ## Stored Energy Contract
 

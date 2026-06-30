@@ -31,8 +31,7 @@ assert abs(stiffness.B).max() == 0.0
 
 This verifies the ABD block shapes and the expected zero coupling for a
 symmetric isotropic skin. It does not include stiffeners, shell curvature, local
-failure, or buckling. One thing at a time; the matrix has enough opinions
-already.
+failure, or buckling — one thing at a time.
 
 ## Symmetric Laminate
 
