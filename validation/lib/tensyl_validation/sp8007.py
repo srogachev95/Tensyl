@@ -171,36 +171,8 @@ def sp8007_coefficients_from_abd(
 ) -> dict[CoefficientName, float]:
     """Extract SP-8007 barred coefficients from Tensyl local ABD stiffness."""
 
-    unsupported = {
-        "A16": stiffness.A[0, 2],
-        "A26": stiffness.A[1, 2],
-        "B16": stiffness.B[0, 2],
-        "B26": stiffness.B[1, 2],
-        "B61": stiffness.B[2, 0],
-        "B62": stiffness.B[2, 1],
-        "D16": stiffness.D[0, 2],
-        "D26": stiffness.D[1, 2],
-    }
-    nonzero = {name: float(value) for name, value in unsupported.items() if abs(value) > tolerance}
-    if nonzero:
-        msg = (
-            "SP-8007 orthotropic-cylinder coefficients assume axial/circumferential "
-            f"orthotropy; unsupported coupling terms are nonzero: {nonzero}"
-        )
-        raise ValueError(msg)
-    return {
-        "Ebar_x": float(stiffness.A[0, 0]),
-        "Ebar_y": float(stiffness.A[1, 1]),
-        "Ebar_xy": float(stiffness.A[0, 1]),
-        "Gbar_xy": float(stiffness.A[2, 2]),
-        "Dbar_x": float(stiffness.D[0, 0]),
-        "Dbar_y": float(stiffness.D[1, 1]),
-        "Dbar_xy": float(2.0 * stiffness.D[0, 1] + 4.0 * stiffness.D[2, 2]),
-        "Cbar_x": float(stiffness.B[0, 0]),
-        "Cbar_y": float(stiffness.B[1, 1]),
-        "Cbar_xy": float(stiffness.B[0, 1]),
-        "Kbar_xy": float(stiffness.B[2, 2]),
-    }
+    coefficients = stiffness.orthotropic_coefficients(tolerance=tolerance)
+    return {name: float(getattr(coefficients, name)) for name in COEFFICIENTS}
 
 
 def tensyl_coefficients(case: SP8007ComparisonCase) -> dict[CoefficientName, float]:

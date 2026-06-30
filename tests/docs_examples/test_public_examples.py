@@ -74,40 +74,6 @@ def _orthogrid_result():
     )
 
 
-def _sp8007_orthotropic_coefficients(stiffness, *, tolerance=1.0e-9):
-    unsupported = {
-        "A16": stiffness.A[0, 2],
-        "A26": stiffness.A[1, 2],
-        "B16": stiffness.B[0, 2],
-        "B26": stiffness.B[1, 2],
-        "B61": stiffness.B[2, 0],
-        "B62": stiffness.B[2, 1],
-        "D16": stiffness.D[0, 2],
-        "D26": stiffness.D[1, 2],
-    }
-    nonzero = {name: value for name, value in unsupported.items() if abs(value) > tolerance}
-    if nonzero:
-        msg = (
-            "SP-8007 orthotropic-cylinder coefficients assume axial/circumferential "
-            f"orthotropy; unsupported coupling terms are nonzero: {nonzero}"
-        )
-        raise ValueError(msg)
-
-    return {
-        "Ebar_x": stiffness.A[0, 0],
-        "Ebar_y": stiffness.A[1, 1],
-        "Ebar_xy": stiffness.A[0, 1],
-        "Gbar_xy": stiffness.A[2, 2],
-        "Dbar_x": stiffness.D[0, 0],
-        "Dbar_y": stiffness.D[1, 1],
-        "Dbar_xy": 2.0 * stiffness.D[0, 1] + 4.0 * stiffness.D[2, 2],
-        "Cbar_x": stiffness.B[0, 0],
-        "Cbar_y": stiffness.B[1, 1],
-        "Cbar_xy": stiffness.B[0, 1],
-        "Kbar_xy": stiffness.B[2, 2],
-    }
-
-
 def test_skin_only_example() -> None:
     stiffness = isotropic_plate(_material(), thickness=0.080)
 
@@ -336,7 +302,7 @@ def test_stiffness_field_map_render_smoke(tmp_path: Path) -> None:
 def test_sp8007_data_prep_and_serialization_handoff() -> None:
     result = _orthogrid_result()
     surface = Cylinder(radius=120.0, length=300.0)
-    sp8007 = _sp8007_orthotropic_coefficients(result.stiffness)
+    sp8007 = result.orthotropic_coefficients()
 
     report = {
         "radius": surface.radius,
@@ -360,10 +326,9 @@ def test_sp8007_data_prep_and_serialization_handoff() -> None:
 
     assert isinstance(loaded, HomogenizationResult)
     assert loaded.stiffness.C8.shape == (8, 8)
-    assert report["sp8007"]["Ebar_x"] == result.stiffness.A[0, 0]
+    assert report["sp8007"].Ebar_x == result.stiffness.A[0, 0]
     assert (
-        report["sp8007"]["Dbar_xy"]
-        == 2.0 * result.stiffness.D[0, 1] + 4.0 * result.stiffness.D[2, 2]
+        report["sp8007"].Dbar_xy == 2.0 * result.stiffness.D[0, 1] + 4.0 * result.stiffness.D[2, 2]
     )
     assert report["p_over_R"] == 8.0 / 120.0
 
@@ -396,10 +361,10 @@ def test_sp8007_isogrid_data_prep_handoff() -> None:
             response_length=80.0,
         ),
     )
-    isogrid_sp8007 = _sp8007_orthotropic_coefficients(isogrid_result.stiffness)
+    isogrid_sp8007 = isogrid_result.orthotropic_coefficients()
 
-    assert abs(isogrid_sp8007["Ebar_x"] - isogrid_sp8007["Ebar_y"]) < 1.0e-6
-    assert abs(isogrid_sp8007["Cbar_x"] - isogrid_sp8007["Cbar_y"]) < 1.0e-6
+    assert abs(isogrid_sp8007.Ebar_x - isogrid_sp8007.Ebar_y) < 1.0e-6
+    assert abs(isogrid_sp8007.Cbar_x - isogrid_sp8007.Cbar_y) < 1.0e-6
 
 
 def test_sp8007_symmetric_laminate_data_prep_handoff() -> None:
@@ -421,7 +386,7 @@ def test_sp8007_symmetric_laminate_data_prep_handoff() -> None:
             Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
         )
     )
-    laminate_sp8007 = _sp8007_orthotropic_coefficients(laminate_stiffness)
+    laminate_sp8007 = laminate_stiffness.orthotropic_coefficients()
     laminate_report = {
         "radius": surface.radius,
         "length": surface.length,
@@ -432,5 +397,5 @@ def test_sp8007_symmetric_laminate_data_prep_handoff() -> None:
         },
     }
 
-    assert abs(laminate_report["sp8007"]["Cbar_x"]) < 1.0e-9
-    assert abs(laminate_report["sp8007"]["Cbar_y"]) < 1.0e-9
+    assert abs(laminate_report["sp8007"].Cbar_x) < 1.0e-9
+    assert abs(laminate_report["sp8007"].Cbar_y) < 1.0e-9
