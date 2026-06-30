@@ -6,6 +6,13 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
+## 0.2.1 - 2026-06-30
+
+- Tighten public README and documentation prose, including solver handoff,
+  homogenization, validity, conventions, and example pages.
+- Fix documentation consistency around Tensyl's current equivalent-stiffness
+  terminology and coefficient handoff wording.
+
 ## 0.2.0 - 2026-06-30
 
 - Add `ABDStiffnessCoefficients` and `ABDStiffness.coefficients` so direct
