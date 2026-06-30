@@ -56,7 +56,6 @@ nav:
       - SP-8007 Data Handoff: user-guide/sp8007-data-handoff.md
   - Validation:
       - Validation Roadmap: validation/index.md
-      - Literature Cell Checks: validation/literature-cell-checks.md
       - SP-8007 Reconciliation: validation/sp8007-reconciliation.md
   - Examples:
       - Skin and Laminate ABD Stiffness: examples/skin-only.md
