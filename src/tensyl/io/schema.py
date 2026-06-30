@@ -15,8 +15,8 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 from tensyl._version import tensyl_version
 from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.conventions import Frame2D, StrainConvention
+from tensyl.core.typing import FloatArray
 from tensyl.homogenizers import HomogenizationResult, ValidityReport
-from tensyl.typing import FloatArray
 
 SCHEMA_NAME = "tensyl.external_workflow"
 SCHEMA_VERSION = 2

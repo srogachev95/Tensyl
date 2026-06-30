@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 from tensyl import IsotropicMaterial, OrthotropicPlyMaterial, Ply, isotropic_plate, laminate_plate
-from tensyl.rotations import (
+from tensyl.core.rotations import (
     generalized_resultant_transform,
     generalized_strain_transform,
     rotate_tangent,
