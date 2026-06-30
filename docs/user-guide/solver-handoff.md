@@ -57,6 +57,15 @@ Keep these checks explicit:
 - Review `result.validity.warnings` before export. The solver sees stiffness
   numbers; the validity context has to travel with the model.
 
+When a solver card, spreadsheet, or hand equation wants scalar terms, use the
+named coefficient view instead of indexing matrices throughout the export code:
+
+```python
+coefficients = result.coefficients
+
+print(coefficients.A11, coefficients.B12, coefficients.D66, coefficients.As22)
+```
+
 ## Reduced Orthotropic Properties
 
 The simplest route is to convert the membrane block to equivalent orthotropic

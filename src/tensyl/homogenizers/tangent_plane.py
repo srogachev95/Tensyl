@@ -11,7 +11,12 @@ import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
 from tensyl.core._validation import optional_positive_number, positive_number, readonly_array
-from tensyl.core.constitutive import ABDStiffness, ReducedOrthotropicProperties
+from tensyl.core.constitutive import (
+    ABDStiffness,
+    ABDStiffnessCoefficients,
+    OrthotropicStiffnessCoefficients,
+    ReducedOrthotropicProperties,
+)
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
 from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
@@ -154,6 +159,21 @@ class HomogenizationResult:
             t_eff,
             tolerance=tolerance,
         )
+
+    @property
+    def coefficients(self) -> ABDStiffnessCoefficients:
+        """Return the homogenized ABD stiffness terms as named scalars."""
+
+        return self.stiffness.coefficients
+
+    def orthotropic_coefficients(
+        self,
+        *,
+        tolerance: float = 1.0e-9,
+    ) -> OrthotropicStiffnessCoefficients:
+        """Return aligned orthotropic shell coefficients for ``stiffness``."""
+
+        return self.stiffness.orthotropic_coefficients(tolerance=tolerance)
 
 
 class Homogenizer(Protocol):

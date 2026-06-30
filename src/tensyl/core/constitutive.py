@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings as warnings_module
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
@@ -35,6 +36,12 @@ _REDUCTION_WARNING_B = "membrane_bending_coupling_discarded"
 _REDUCTION_WARNING_A16_A26 = "off_axis_membrane_coupling_discarded"
 _REDUCTION_WARNING_D16_D26 = "off_axis_bending_coupling_discarded"
 _REDUCTION_WARNING_VALIDITY_B = "validity_membrane_bending_coupling_exceeds_threshold"
+_ORTHOTROPIC_WARNING_OFF_AXIS = "orthotropic_reduction_off_axis_terms_present"
+
+
+def _checked_finite_fields(obj: object, names: tuple[str, ...]) -> None:
+    for name in names:
+        object.__setattr__(obj, name, finite_number(getattr(obj, name), name=name))
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
@@ -160,6 +167,111 @@ class ReducedOrthotropicProperties:
             object.__setattr__(self, name, finite_number(getattr(self, name), name=name))
         object.__setattr__(self, "warnings", tuple(self.warnings))
         object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
+
+
+_ABD_COEFFICIENT_FIELD_NAMES = (
+    "A11",
+    "A22",
+    "A12",
+    "A16",
+    "A26",
+    "A66",
+    "B11",
+    "B22",
+    "B12",
+    "B16",
+    "B26",
+    "B66",
+    "D11",
+    "D22",
+    "D12",
+    "D16",
+    "D26",
+    "D66",
+    "As11",
+    "As22",
+    "As12",
+)
+
+
+@dataclass(frozen=True, slots=True)
+class ABDStiffnessCoefficients:
+    """Named scalar view of an ``ABDStiffness`` matrix.
+
+    The fields use the conventional laminate/shell coefficient names. For
+    example, ``A16`` is ``A[0, 2]``, ``D66`` is ``D[2, 2]``, and ``As12`` is
+    ``As[0, 1]``.
+    """
+
+    A11: float
+    A22: float
+    A12: float
+    A16: float
+    A26: float
+    A66: float
+    B11: float
+    B22: float
+    B12: float
+    B16: float
+    B26: float
+    B66: float
+    D11: float
+    D22: float
+    D12: float
+    D16: float
+    D26: float
+    D66: float
+    As11: float
+    As22: float
+    As12: float
+
+    def __post_init__(self) -> None:
+        _checked_finite_fields(self, _ABD_COEFFICIENT_FIELD_NAMES)
+
+
+_ORTHOTROPIC_COEFFICIENT_FIELD_NAMES = (
+    "Ebar_x",
+    "Ebar_y",
+    "Ebar_xy",
+    "Gbar_xy",
+    "Dbar_x",
+    "Dbar_y",
+    "Dbar_xy",
+    "Cbar_x",
+    "Cbar_y",
+    "Cbar_xy",
+    "Kbar_xy",
+)
+
+
+@dataclass(frozen=True, slots=True)
+class OrthotropicStiffnessCoefficients:
+    """Barred coefficients for aligned orthotropic shell equations.
+
+    This is a reduction of a full ABD stiffness, not another complete stiffness
+    representation. ``warnings`` and ``unsupported_terms`` record off-axis terms
+    that were present in the source ABD matrix but are not carried by this
+    coefficient set.
+    """
+
+    Ebar_x: float
+    Ebar_y: float
+    Ebar_xy: float
+    Gbar_xy: float
+    Dbar_x: float
+    Dbar_y: float
+    Dbar_xy: float
+    Cbar_x: float
+    Cbar_y: float
+    Cbar_xy: float
+    Kbar_xy: float
+    warnings: tuple[str, ...] = ()
+    unsupported_terms: Mapping[str, float] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        _checked_finite_fields(self, _ORTHOTROPIC_COEFFICIENT_FIELD_NAMES)
+        object.__setattr__(self, "warnings", tuple(self.warnings))
+        object.__setattr__(self, "unsupported_terms", readonly_mapping(self.unsupported_terms))
 
 
 @dataclass(frozen=True, slots=True)
@@ -314,6 +426,85 @@ class ABDStiffness:
 
         return rotate_abd_stiffness(self, angle_rad)
 
+    @property
+    def coefficients(self) -> ABDStiffnessCoefficients:
+        """Return the independent ABD and transverse-shear terms as named scalars."""
+
+        return ABDStiffnessCoefficients(
+            A11=float(self.A[0, 0]),
+            A22=float(self.A[1, 1]),
+            A12=float(self.A[0, 1]),
+            A16=float(self.A[0, 2]),
+            A26=float(self.A[1, 2]),
+            A66=float(self.A[2, 2]),
+            B11=float(self.B[0, 0]),
+            B22=float(self.B[1, 1]),
+            B12=float(self.B[0, 1]),
+            B16=float(self.B[0, 2]),
+            B26=float(self.B[1, 2]),
+            B66=float(self.B[2, 2]),
+            D11=float(self.D[0, 0]),
+            D22=float(self.D[1, 1]),
+            D12=float(self.D[0, 1]),
+            D16=float(self.D[0, 2]),
+            D26=float(self.D[1, 2]),
+            D66=float(self.D[2, 2]),
+            As11=float(self.As[0, 0]),
+            As22=float(self.As[1, 1]),
+            As12=float(self.As[0, 1]),
+        )
+
+    def orthotropic_coefficients(
+        self,
+        *,
+        tolerance: float = 1.0e-9,
+    ) -> OrthotropicStiffnessCoefficients:
+        """Return barred coefficients for aligned orthotropic shell equations.
+
+        The returned ``Dbar_xy`` is the modified twisting coefficient used by
+        classical orthotropic shell formulas, including NASA SP-8007-style hand
+        equations. It is not the raw ABD ``D66`` term. Tensyl computes
+        ``Dbar_xy = 2*D12 + 4*D66`` so the combined bending-twist input is
+        handed off in the form those equations expect.
+
+        Off-axis terms such as ``A16`` and ``D26`` are not represented by this
+        coefficient set. When they exceed ``tolerance``, the method still returns
+        the reduced coefficients, records the terms in ``unsupported_terms``, and
+        emits a warning so the caller can decide whether the reduction is
+        acceptable for the downstream calculation.
+        """
+
+        checked_tolerance = nonnegative_number(tolerance, name="tolerance")
+        coefficients = self.coefficients
+        unsupported_terms = _orthotropic_unsupported_terms(
+            coefficients,
+            tolerance=checked_tolerance,
+        )
+        warning_codes = ()
+        if unsupported_terms:
+            warning_codes = (_ORTHOTROPIC_WARNING_OFF_AXIS,)
+            warnings_module.warn(
+                "orthotropic_coefficients() does not represent nonzero off-axis "
+                f"ABD terms: {unsupported_terms}",
+                UserWarning,
+                stacklevel=2,
+            )
+        return OrthotropicStiffnessCoefficients(
+            Ebar_x=coefficients.A11,
+            Ebar_y=coefficients.A22,
+            Ebar_xy=coefficients.A12,
+            Gbar_xy=coefficients.A66,
+            Dbar_x=coefficients.D11,
+            Dbar_y=coefficients.D22,
+            Dbar_xy=2.0 * coefficients.D12 + 4.0 * coefficients.D66,
+            Cbar_x=coefficients.B11,
+            Cbar_y=coefficients.B22,
+            Cbar_xy=coefficients.B12,
+            Kbar_xy=coefficients.B66,
+            warnings=warning_codes,
+            unsupported_terms=unsupported_terms,
+        )
+
     def reduced_orthotropic_properties(
         self,
         t_eff: float,
@@ -360,6 +551,24 @@ class ABDStiffness:
 
 def _has_nonzero(values: FloatArray, *, tolerance: float) -> bool:
     return bool(np.any(np.abs(values) > tolerance))
+
+
+def _orthotropic_unsupported_terms(
+    coefficients: ABDStiffnessCoefficients,
+    *,
+    tolerance: float,
+) -> dict[str, float]:
+    terms = {
+        "A16": coefficients.A16,
+        "A26": coefficients.A26,
+        "B16": coefficients.B16,
+        "B26": coefficients.B26,
+        "B61": coefficients.B16,
+        "B62": coefficients.B26,
+        "D16": coefficients.D16,
+        "D26": coefficients.D26,
+    }
+    return {name: value for name, value in terms.items() if abs(value) > tolerance}
 
 
 def _reduced_orthotropic_warnings(
@@ -456,10 +665,12 @@ def superpose_abd_stiffnesses(
 
 
 __all__ = [
+    "ABDStiffnessCoefficients",
     "ConstitutiveModel",
     "HyperelasticModel",
     "ABDStiffness",
     "LinearModel",
+    "OrthotropicStiffnessCoefficients",
     "ReducedOrthotropicProperties",
     "shift_reference_surface",
     "superpose_abd_stiffnesses",

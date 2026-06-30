@@ -5,10 +5,12 @@ import pytest
 
 from tensyl import (
     ABDStiffness,
+    ABDStiffnessCoefficients,
     GeneralizedResultant,
     GeneralizedStrain,
     HomogenizationResult,
     IsotropicMaterial,
+    OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
     ValidityReport,
     generalized_strain,
@@ -98,6 +100,98 @@ def test_abd_stiffness_rejects_bad_eta_shape() -> None:
         stiffness.energy(np.zeros(7))
 
 
+def test_abd_stiffness_coefficients_expose_named_matrix_terms() -> None:
+    A = np.array(
+        [
+            [10.0, 1.0, 2.0],
+            [1.0, 12.0, 3.0],
+            [2.0, 3.0, 4.0],
+        ]
+    )
+    B = np.array(
+        [
+            [0.1, 0.2, 0.3],
+            [0.2, 0.4, 0.5],
+            [0.3, 0.5, 0.6],
+        ]
+    )
+    D = np.array(
+        [
+            [5.0, 0.7, 0.8],
+            [0.7, 6.0, 0.9],
+            [0.8, 0.9, 2.0],
+        ]
+    )
+    As = np.array([[7.0, 0.25], [0.25, 8.0]])
+    stiffness = ABDStiffness(A=A, B=B, D=D, As=As)
+
+    coefficients = stiffness.coefficients
+
+    assert isinstance(coefficients, ABDStiffnessCoefficients)
+    assert pytest.approx(A[0, 0]) == coefficients.A11
+    assert pytest.approx(A[0, 2]) == coefficients.A16
+    assert pytest.approx(A[1, 2]) == coefficients.A26
+    assert pytest.approx(A[2, 2]) == coefficients.A66
+    assert pytest.approx(B[0, 1]) == coefficients.B12
+    assert pytest.approx(B[2, 2]) == coefficients.B66
+    assert pytest.approx(D[0, 1]) == coefficients.D12
+    assert pytest.approx(D[1, 2]) == coefficients.D26
+    assert pytest.approx(D[2, 2]) == coefficients.D66
+    assert coefficients.As11 == pytest.approx(As[0, 0])
+    assert coefficients.As12 == pytest.approx(As[0, 1])
+    assert coefficients.As22 == pytest.approx(As[1, 1])
+
+
+def test_orthotropic_coefficients_use_modified_twisting_coefficient() -> None:
+    stiffness = _stiffness()
+
+    coefficients = stiffness.orthotropic_coefficients()
+
+    assert isinstance(coefficients, OrthotropicStiffnessCoefficients)
+    assert coefficients.Ebar_x == pytest.approx(stiffness.A[0, 0])
+    assert coefficients.Ebar_y == pytest.approx(stiffness.A[1, 1])
+    assert coefficients.Ebar_xy == pytest.approx(stiffness.A[0, 1])
+    assert coefficients.Gbar_xy == pytest.approx(stiffness.A[2, 2])
+    assert coefficients.Dbar_x == pytest.approx(stiffness.D[0, 0])
+    assert coefficients.Dbar_y == pytest.approx(stiffness.D[1, 1])
+    assert coefficients.Dbar_xy == pytest.approx(2.0 * stiffness.D[0, 1] + 4.0 * stiffness.D[2, 2])
+    assert coefficients.Dbar_xy != pytest.approx(stiffness.D[2, 2])
+    assert coefficients.Cbar_x == pytest.approx(stiffness.B[0, 0])
+    assert coefficients.Kbar_xy == pytest.approx(stiffness.B[2, 2])
+    assert coefficients.warnings == ()
+    assert coefficients.unsupported_terms == {}
+
+
+def test_orthotropic_coefficients_warn_about_off_axis_terms_without_failing() -> None:
+    A = np.array(
+        [
+            [10.0, 1.0, 0.2],
+            [1.0, 12.0, 0.3],
+            [0.2, 0.3, 4.0],
+        ]
+    )
+    D = np.array(
+        [
+            [5.0, 0.0, 0.4],
+            [0.0, 6.0, 0.5],
+            [0.4, 0.5, 2.0],
+        ]
+    )
+    stiffness = ABDStiffness(A=A, B=np.zeros((3, 3)), D=D, As=np.eye(2))
+
+    with pytest.warns(UserWarning, match="off-axis ABD terms"):
+        coefficients = stiffness.orthotropic_coefficients(tolerance=1.0e-12)
+
+    assert coefficients.Dbar_xy == pytest.approx(8.0)
+    assert coefficients.warnings == ("orthotropic_reduction_off_axis_terms_present",)
+    assert coefficients.unsupported_terms == {
+        "A16": pytest.approx(0.2),
+        "A26": pytest.approx(0.3),
+        "D16": pytest.approx(0.4),
+        "D26": pytest.approx(0.5),
+    }
+
+
 def test_reduced_orthotropic_properties_recover_isotropic_plate_constants() -> None:
     material = IsotropicMaterial(E=70.0e9, nu=0.3)
     thickness = 0.012
@@ -162,6 +256,27 @@ def test_homogenization_result_delegates_reduced_orthotropic_properties() -> Non
     reduced = result.reduced_orthotropic_properties(t_eff=0.2)
 
     assert reduced == stiffness.with_validity(validity).reduced_orthotropic_properties(t_eff=0.2)
+
+
+def test_homogenization_result_delegates_coefficient_views() -> None:
+    stiffness = isotropic_plate(IsotropicMaterial(E=10.0, nu=0.25), thickness=0.2)
+    validity = ValidityReport(
+        h_over_R=None,
+        p_over_R=None,
+        p_over_L_response=None,
+        coupling_ratios={},
+        warnings=(),
+    )
+    result = HomogenizationResult(
+        stiffness=stiffness,
+        validity=validity,
+        diagnostics={},
+        assumptions=(),
+        source="imported",
+    )
+
+    assert result.coefficients == result.stiffness.coefficients
+    assert result.orthotropic_coefficients() == result.stiffness.orthotropic_coefficients()
 
 
 def test_reduced_orthotropic_properties_reject_invalid_inputs() -> None:

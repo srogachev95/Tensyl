@@ -24,9 +24,11 @@ from tensyl.cells import (
 )
 from tensyl.core.constitutive import (
     ABDStiffness,
+    ABDStiffnessCoefficients,
     ConstitutiveModel,
     HyperelasticModel,
     LinearModel,
+    OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
     shift_reference_surface,
     superpose_abd_stiffnesses,
@@ -120,7 +122,9 @@ __all__ = [
     "HyperelasticModel",
     "IsotropicMaterial",
     "ABDStiffness",
+    "ABDStiffnessCoefficients",
     "LinearModel",
+    "OrthotropicStiffnessCoefficients",
     "OrthotropicPlyMaterial",
     "Ply",
     "HomogenizedStiffnessField",

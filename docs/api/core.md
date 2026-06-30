@@ -4,10 +4,12 @@
     options:
       show_source: false
       members:
+        - ABDStiffnessCoefficients
         - HyperelasticModel
         - ConstitutiveModel
         - LinearModel
         - ABDStiffness
+        - OrthotropicStiffnessCoefficients
         - ReducedOrthotropicProperties
         - shift_reference_surface
         - superpose_abd_stiffnesses
