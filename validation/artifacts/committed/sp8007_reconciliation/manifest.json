@@ -1,0 +1,48 @@
+{
+  "case_name": "sp8007_reconciliation",
+  "command": [
+    "validation/scripts/build_sp8007_reconciliation.py"
+  ],
+  "created_utc": "2026-06-30T04:12:14+00:00",
+  "inputs": [],
+  "metadata": {
+    "artifact_role": "literature_comparison",
+    "case_type": "sp8007_reconciliation",
+    "phase": "validation",
+    "reference_is_oracle": false,
+    "solver_required": false
+  },
+  "outputs": [
+    {
+      "path": "validation/artifacts/committed/sp8007_reconciliation/comparison_table.json"
+    },
+    {
+      "path": "validation/artifacts/committed/sp8007_reconciliation/comparison_table.csv"
+    },
+    {
+      "path": "validation/artifacts/committed/sp8007_reconciliation/summary.json"
+    },
+    {
+      "path": "validation/artifacts/committed/sp8007_reconciliation/inplane_bending_sweep.json"
+    },
+    {
+      "path": "docs/assets/validation/sp8007-term-errors.svg"
+    },
+    {
+      "path": "docs/assets/validation/sp8007-bending-ratio.svg"
+    },
+    {
+      "path": "docs/assets/validation/sp8007-inplane-bending-sweep.svg"
+    },
+    {
+      "path": "validation/artifacts/committed/sp8007_reconciliation/manifest.json"
+    }
+  ],
+  "schema_version": "tensyl.validation.artifact-manifest.v1",
+  "software": {
+    "git_commit": "5cc8c01",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "python": "3.12.13",
+    "tensyl": "0.1.0"
+  }
+}

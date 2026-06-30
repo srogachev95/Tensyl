@@ -1,0 +1,108 @@
+{
+  "interpretation": [
+    "SP-8007 is treated as an independent comparator, not as an oracle.",
+    "Membrane and coupling terms are mostly convention checks in these cases.",
+    "Large bending differences track retained in-plane member bending and eccentric axial stiffness.",
+    "A disagreement can mean a Tensyl bug, an SP-8007 limitation, a convention mismatch, or two valid model choices."
+  ],
+  "schema_version": "tensyl.validation.sp8007-reconciliation-summary.v1",
+  "source_equations": {
+    "isogrid": "NASA/SP-8007-2020/REV 2, Eqs. 92-98",
+    "orthogrid": "NASA/SP-8007-2020/REV 2, Eqs. 82-91"
+  },
+  "sweep": [
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.0001,
+      "max_bending_abs_relative_delta": 3.437129510204388e-05,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.001,
+      "max_bending_abs_relative_delta": 0.00034371295102117607,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.01,
+      "max_bending_abs_relative_delta": 0.0034371295102119085,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.1,
+      "max_bending_abs_relative_delta": 0.03437129510211938,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 1.0,
+      "max_bending_abs_relative_delta": 0.34371295102119365,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.0001,
+      "max_bending_abs_relative_delta": 8.261727634108119e-05,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.001,
+      "max_bending_abs_relative_delta": 0.0008261727634071285,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.01,
+      "max_bending_abs_relative_delta": 0.008261727634067875,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.1,
+      "max_bending_abs_relative_delta": 0.0826172763406741,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 1.0,
+      "max_bending_abs_relative_delta": 0.8261727634067362,
+      "model": "isogrid"
+    }
+  ],
+  "title": "SP-8007 reconciliation summary",
+  "worst_by_case": [
+    {
+      "case_name": "isogrid_full_section_eccentric",
+      "model": "isogrid",
+      "worst_abs_relative_delta": 2.94117503772798,
+      "worst_coefficient": "Dbar_xy"
+    },
+    {
+      "case_name": "isogrid_suppressed_inplane_bending_eccentric",
+      "model": "isogrid",
+      "worst_abs_relative_delta": 2.1158284470846502,
+      "worst_coefficient": "Dbar_xy"
+    },
+    {
+      "case_name": "isogrid_suppressed_inplane_bending_zero_eccentricity",
+      "model": "isogrid",
+      "worst_abs_relative_delta": 0.0008261727634071285,
+      "worst_coefficient": "Dbar_xy"
+    },
+    {
+      "case_name": "orthogrid_full_section_eccentric",
+      "model": "orthogrid",
+      "worst_abs_relative_delta": 0.34371295102119365,
+      "worst_coefficient": "Dbar_y"
+    },
+    {
+      "case_name": "orthogrid_suppressed_inplane_bending",
+      "model": "orthogrid",
+      "worst_abs_relative_delta": 0.00034371295102117607,
+      "worst_coefficient": "Dbar_y"
+    }
+  ]
+}

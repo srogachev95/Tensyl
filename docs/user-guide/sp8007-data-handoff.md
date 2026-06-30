@@ -11,6 +11,15 @@ NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
 source for stiffened equivalent-plate stiffness concepts. Tensyl sits between
 those worlds: it produces local stiffness data, then gets out of the way.
 
+Treat an SP-8007 handoff as a translation, not as proof that either model is
+right. The barred constants below are the data shape expected by a classical
+orthotropic-cylinder calculation. They are useful precisely because they are
+small and familiar, but that also means they can hide terms that are present in
+the full ABD stiffness. The public
+[SP-8007 reconciliation report](../validation/sp8007-reconciliation.md) shows
+where Tensyl and the SP-8007 elastic-constant formulas agree, and where they
+diverge because the models retain different bending physics.
+
 A downstream SP-8007-style workflow commonly needs these data categories from a
 stiffness model:
 
@@ -52,6 +61,13 @@ that combines anticlastic bending and engineering twist terms. Tensyl's public
 strain convention uses engineering shear/twist ordering
 `(e11, e22, gamma12, k11, k22, k12, gamma13, gamma23)`, so the coefficient is
 `2*D12 + 4*D66`.
+
+For stiffened walls, pay special attention to `Dbar_x`, `Dbar_y`, and
+`Dbar_xy`. Tensyl retains centroidal beam-section terms through the member
+strain map. Some SP-8007 elastic-constant expressions are more compact and do
+not expose every possible beam contribution as a separate term. When those
+numbers disagree, inspect section inertia, torsion constant, reference-surface
+choice, and eccentricity before deciding that either source is wrong.
 
 ```python
 def sp8007_orthotropic_coefficients(stiffness, *, tolerance=1.0e-9):

@@ -123,3 +123,55 @@ def test_build_skin_only_abd6_comparison_writes_table_and_plot(tmp_path: Path) -
     )
     assert csv_table.read_text(encoding="utf-8").splitlines()[0].startswith("resultant,strain")
     assert plot.read_text(encoding="utf-8").startswith("<?xml")
+
+
+def test_build_sp8007_reconciliation_writes_artifacts_and_plots(tmp_path: Path) -> None:
+    artifact_dir = tmp_path / "sp8007"
+    plot_dir = tmp_path / "plots"
+
+    completed = subprocess.run(
+        [
+            "uv",
+            "run",
+            "python",
+            str(ROOT / "validation" / "scripts" / "build_sp8007_reconciliation.py"),
+            "--artifact-dir",
+            str(artifact_dir),
+            "--plot-dir",
+            str(plot_dir),
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    table = json.loads((artifact_dir / "comparison_table.json").read_text(encoding="utf-8"))
+    summary = json.loads((artifact_dir / "summary.json").read_text(encoding="utf-8"))
+    sweep = json.loads((artifact_dir / "inplane_bending_sweep.json").read_text(encoding="utf-8"))
+
+    assert table["schema_version"] == "tensyl.validation.sp8007-reconciliation-table.v1"
+    assert len(table["cases"]) == 5
+    assert len(table["rows"]) == 55
+    assert summary["source_equations"]["orthogrid"].endswith("Eqs. 82-91")
+    assert summary["source_equations"]["isogrid"].endswith("Eqs. 92-98")
+    assert any(
+        item["case_name"] == "isogrid_suppressed_inplane_bending_eccentric"
+        and item["worst_abs_relative_delta"] > 1.0
+        for item in summary["worst_by_case"]
+    )
+    assert len(sweep["rows"]) == 10
+    assert (
+        (artifact_dir / "comparison_table.csv")
+        .read_text(encoding="utf-8")
+        .splitlines()[0]
+        .startswith("case_name,model,coefficient")
+    )
+    assert (plot_dir / "sp8007-term-errors.svg").read_text(encoding="utf-8").startswith("<?xml")
+    assert (plot_dir / "sp8007-bending-ratio.svg").read_text(encoding="utf-8").startswith("<?xml")
+    assert (
+        (plot_dir / "sp8007-inplane-bending-sweep.svg")
+        .read_text(encoding="utf-8")
+        .startswith("<?xml")
+    )

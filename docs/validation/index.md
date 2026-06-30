@@ -26,6 +26,13 @@ work will focus on:
 Until those artifacts are promoted, validation status should be read as planned
 work rather than product evidence.
 
+The first literature-facing audit is the
+[SP-8007 reconciliation](sp8007-reconciliation.md). It compares Tensyl's
+orthogrid and equilateral-isogrid stiffnesses with the SP-8007 elastic-constant
+formulas, without treating either source as ground truth. The important result
+is not a single pass/fail number. It is a map of which terms agree by convention
+and which terms diverge because the models retain different bending physics.
+
 ## Why This Is LLM-Led
 
 This is a good LLM-led project because most of the work is mechanical, exacting,
