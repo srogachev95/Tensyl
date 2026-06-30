@@ -224,6 +224,9 @@ assert stiffness.B[0, 0] &gt; 0.0
 </code></pre>
 <p>Review <code>result.validity.warnings</code> before using the ABD stiffness downstream.</p>
 <h2 id="selected-output">Selected Output</h2>
+<p>These inputs match the walkthrough in
+<a href="../../user-guide/homogenization/">Homogenization and Results</a>, so the blocks come
+out the same; that page reads them term by term.</p>
 <p>Rounded diagonal values:</p>
 <table>
 <thead>
@@ -281,8 +284,9 @@ separate workflow.</p>
 <div class="admonition tip">
 <p class="admonition-title">Check the frame before the solver sees it</p>
 <p>A constant field keeps the matrix fixed, but the solver still consumes
-stiffness in local directions. Confirm axial and circumferential axes before
-exporting the property. Axis swaps have excellent handwriting.</p>
+stiffness in local directions. Confirm the axial and circumferential axes
+before exporting the property. A swapped axis produces a perfectly
+well-formatted, perfectly wrong result.</p>
 </div>
               
             </div>

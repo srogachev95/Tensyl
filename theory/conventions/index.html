@@ -232,10 +232,10 @@ positive <code>stringer_eccentricity</code>. An internal stringer has negative
 eccentricity.</p>
 <div class="admonition warning">
 <p class="admonition-title">The eccentricity sign is not cosmetic</p>
-<p>Flip it and you change the membrane-bending coupling block <code>B</code> — which means
-you get a <em>physically different ABD stiffness</em>, with no exception and no
-validation error to warn you. The numbers will look perfectly reasonable and
-be quietly wrong. Decide which way <code>+n</code> points before you type a sign.</p>
+<p>Flip it and you change the membrane-bending coupling block <code>B</code>, which gives
+you a <em>physically different ABD stiffness</em>. Tensyl raises no exception and no
+validation error, and the result looks entirely ordinary. Decide which way
+<code>+n</code> points before you type a sign.</p>
 </div>
 <p>Positive eccentricity adds membrane-bending coupling according to the chosen
 reference surface. Moving the reference surface also changes <code>B</code>. Equal and
@@ -253,9 +253,9 @@ and offsets are symmetric.</p>
 longitudinal stringer uses angle <code>0</code>; a ring rib uses angle <code>pi/2</code>.</p>
 <h2 id="engineering-shear">Engineering Shear</h2>
 <p>Tensyl's public strain convention uses engineering shear components
-<code>gamma12</code>, <code>gamma13</code>, and <code>gamma23</code>. Tensor shear is rejected because a silent
-factor-of-two convention mix can produce plausible but wrong stiffnesses,
-energies, and resultants.</p>
+<code>gamma12</code>, <code>gamma13</code>, and <code>gamma23</code>. Tensor shear is rejected because an
+unnoticed factor-of-two convention mix would corrupt the stiffnesses, energies,
+and resultants while leaving the matrices looking well-formed.</p>
               
             </div>
           </div><footer>

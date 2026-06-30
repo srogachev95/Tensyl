@@ -283,8 +283,8 @@ print(props.warnings)
   or legacy model conventions.</li>
 </ul>
 <p>Changing <code>t_eff</code> changes the reported <code>E1</code>, <code>E2</code>, and <code>G12</code>, but the membrane
-reduction remains consistent because <code>A = Q_eff * t_eff</code>. The trick is not to
-forget which thickness went into the trick.</p>
+reduction stays consistent because <code>A = Q_eff * t_eff</code>. Just keep a record of
+which thickness the reduction used.</p>
 <h2 id="nx-nastran">NX Nastran</h2>
 <p>For NX Nastran, the most common handoff is through ordinary Bulk Data shell
 properties and materials. The examples below use NX Nastran-style <code>MAT8</code>,
@@ -360,29 +360,32 @@ field layouts are:</p>
 <tr>
 <td><code>A</code></td>
 <td><code>SSPA</code></td>
-<td><code>A11, A21, A31, A22, A32, A33, T</code></td>
+<td><code>A11, A12, A16, A22, A26, A66, T</code></td>
 </tr>
 <tr>
 <td><code>B</code></td>
 <td><code>SSPB</code></td>
-<td><code>B11, B21, B31, B22, B32, B33, T, B12, B13, B23</code></td>
+<td><code>B11, B12, B16, B22, B26, B66, T</code></td>
 </tr>
 <tr>
 <td><code>D</code></td>
 <td><code>SSPD</code></td>
-<td><code>D11, D21, D31, D22, D32, D33, T</code></td>
+<td><code>D11, D12, D16, D22, D26, D66, T</code></td>
 </tr>
 <tr>
 <td><code>As</code></td>
 <td><code>SSPE</code></td>
-<td><code>E11, E21, E22, T</code></td>
+<td><code>As11, As12, As22, T</code></td>
 </tr>
 </tbody>
 </table>
-<p>The first six fields are the lower symmetric part of each three-by-three block:
-<code>11</code>, <code>21</code>, <code>31</code>, <code>22</code>, <code>32</code>, <code>33</code>. For Tensyl's symmetric <code>B</code>, omit the optional
-upper <code>B12</code>, <code>B13</code>, and <code>B23</code> fields unless the solver workflow specifically asks
-for them.</p>
+<p>The first six stiffness fields are the lower symmetric half of each
+three-by-three block, taken column by column: <code>(1,1)</code>, <code>(2,1)</code>, <code>(6,1)</code>,
+<code>(2,2)</code>, <code>(6,2)</code>, <code>(6,6)</code>, written here with Tensyl's engineering index <code>6</code> for
+the in-plane shear/twist component. <code>SSPB</code> also accepts three optional
+off-diagonal fields for a non-symmetric coupling block; Tensyl's <code>B</code> is
+symmetric, so those repeat the lower terms and can be omitted unless the solver
+workflow specifically asks for them.</p>
 <pre><code class="language-text">! Illustrative APDL fragment.
 SECTYPE, 10, GENS, , TENSYL_WALL
 SSPA, A11, A12, A16, A22, A26, A66, T_REF

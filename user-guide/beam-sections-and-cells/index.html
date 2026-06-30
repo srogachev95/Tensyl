@@ -215,7 +215,7 @@ e = \frac{t_\mathrm{skin}}{2} + z_c .
 already coincides with the wall reference surface.</p>
 <p>The diagrams below are schematic section-coordinate drawings. They define Tensyl
 input conventions; they are not fabrication drawings, bend-radius details, or a
-promise that local stress recovery has suddenly become easy.</p>
+substitute for local stress recovery.</p>
 <pre><code class="language-python">from tensyl import IsotropicMaterial, blade_section, hat_section
 
 aluminum = IsotropicMaterial(E=10.6e6, nu=0.33)
@@ -511,12 +511,12 @@ eccentricity.</p>
 <p>For a geometry-derived stiffener, <code>centroid_z</code> is measured from the section's own
 construction datum. If that datum is not the wall reference surface, shift the
 value before passing it to the cell constructor. A skin mid-surface reference and
-an outer-face stiffener datum differ by half the skin thickness. Tensyl is
-helpful here, but it is not a mind reader.</p>
+an outer-face stiffener datum differ by half the skin thickness. Tensyl cannot
+infer that offset for you; set it explicitly.</p>
 <div class="admonition warning">
-<p class="admonition-title">A wrong eccentricity sign is silently wrong</p>
+<p class="admonition-title">Get the eccentricity sign right</p>
 <p>The sign changes the coupling block <code>B</code>, so flipping it produces a different
-physical ABD stiffness — with no validation error to catch it. See
+physical ABD stiffness, and no validation error will catch the mistake. See
 <a href="../../theory/conventions/">Frames and Conventions</a> for the full sign rule.</p>
 </div>
 <h2 id="graph-cells">Graph Cells</h2>

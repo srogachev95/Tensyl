@@ -276,8 +276,8 @@ assert station_150.validity is not None
 assert station_0.A[0, 0] &gt; station_150.A[0, 0]
 assert station_150.validity.p_over_R == 8.0 / 120.0
 </code></pre>
-<p>The stiffness changes because the cell factory changes the local cell, not
-because the cylinder secretly curves the ABD matrix. At each point:</p>
+<p>The stiffness changes because the cell factory changes the local cell. The
+cylinder itself does not curve the ABD matrix. At each point:</p>
 <ol>
 <li><code>surface.point_at(u, v)</code> supplies the local frame and <code>min_radius</code>.</li>
 <li><code>cell_factory</code> builds a skin and orthogrid cell in that frame.</li>

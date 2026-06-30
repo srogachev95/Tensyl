@@ -165,10 +165,10 @@
               
                 <h1 id="stiffness-field-maps">Stiffness Field Maps</h1>
 <p>These examples show why Tensyl treats equivalent stiffness as a local
-constitutive model that can be evaluated over a surface, not as one heroic
+constitutive model that can be evaluated over a surface rather than as one
 closed-form answer. The first case is practical: a cylindrical barrel with skin
 thickness and orthogrid spacing that vary along the axis. The second case is
-less polite: a triaxial ellipsoid with pointwise pitch, orientation, and section
+harder: a triaxial ellipsoid with pointwise pitch, orientation, and section
 changes.</p>
 <p>The mechanics loop is the same in both:</p>
 <ol>
@@ -182,16 +182,15 @@ changes.</p>
 <p class="admonition-title">These are stiffness-field examples, not sizing sign-offs</p>
 <p>Tensyl computes local equivalent stiffnesses and validity signals here. It
 does not compute buckling loads, joint stresses, imperfections, margins, or
-allowables. The pictures are useful because the assumptions are visible, not
-because the colors are persuasive. Colors are charming liars if left
-unsupervised.</p>
+allowables. The pictures are useful because the assumptions behind them are
+visible, not because a color map is convincing on its own.</p>
 </div>
 <h2 id="variable-orthogrid-cylinder">Variable Orthogrid Cylinder</h2>
-<p>Start with a friendlier surface: a 100 inch diameter cylinder with 1 inch tall
+<p>Start with the simpler surface: a 100 inch diameter cylinder with 1 inch tall
 orthogrid stiffeners. The skin thickness, stringer spacing, and rib spacing vary
-smoothly by axial station. That is a common enough pattern in early sizing: a
-barrel gets heavier where load path, cutout, or local stiffness needs ask for
-help, while the rest of the shell would prefer not to carry souvenir mass.</p>
+smoothly by axial station. That is a common pattern in early sizing: a barrel
+gets heavier where load path, cutout, or local stiffness needs demand it, and
+stays light everywhere else.</p>
 <p>The figure colors the cylinder by normalized axial membrane stiffness,
 <code>A11 / median(A11)</code>. The right-side plots show what changed in the input and
 what Tensyl reported back: normalized <code>A11</code>, normalized <code>D11</code>, membrane-bending
@@ -215,15 +214,15 @@ supplies the local frame and curvature scale. Tensyl recomputes that stiffness
 wherever the design changes, then lets you plot the consequences instead of
 guessing where the property table got interesting.</p>
 <h2 id="ellipsoid-showpiece">Ellipsoid Showpiece</h2>
-<p>Now make the surface less cooperative. A triaxial ellipsoid is not the first
-shape anyone reaches for when they want a tidy closed-form stiffened shell
-calculation. That is the point.</p>
+<p>Now make the surface harder. A triaxial ellipsoid is not the shape anyone
+reaches for when they want a tidy closed-form stiffened shell calculation. That
+is the point.</p>
 <p>The local skin thickness, stiffener pitch, stiffener orientation, and section
 scale vary with position. The left panel colors the ellipsoid by normalized
 local <code>A11</code> membrane stiffness. The right panel shows <code>p_over_R</code>, the
 pitch-to-local-radius ratio that says where the tangent-plane approximation is
-working hardest. The white contours are normalized <code>A11</code> again, because a
-contour line is sometimes the polite way to tell a heatmap it has company.</p>
+working hardest. The white contours are normalized <code>A11</code> again, overlaid so the
+stiffness pattern stays readable against the heatmap.</p>
 <p><img alt="A two-panel Matplotlib figure: a triaxial ellipsoid colored by normalized local membrane stiffness, beside a latitude-longitude map of pitch over local radius with stiffness contours." src="../../assets/examples/ellipsoid-stiffness-map.png" /></p>
 <p>At each ellipsoid sample point:</p>
 <ul>
@@ -234,8 +233,8 @@ contour line is sometimes the polite way to tell a heatmap it has company.</p>
 <li><code>EnergyHomogenizer</code> returns a local <code>ABDStiffness</code>;</li>
 <li><code>ValidityContext</code> records <code>p_over_R</code>, <code>h_over_R</code>, and response-length checks.</li>
 </ul>
-<p>That is the useful trick. The curved surface does not magically bend the ABD
-matrix. The pointwise cell factory changes the local equivalent stiffness, while
+<p>That is the useful part. The curved surface does not bend the ABD matrix on its
+own. The pointwise cell factory changes the local equivalent stiffness, while
 the surface tells Tensyl how to read that stiffness locally.</p>
 <h2 id="rebuild-the-figures">Rebuild the Figures</h2>
 <p>The full generator lives at
@@ -302,7 +301,7 @@ In both cases, Tensyl still computes a consistent local equivalent stiffness at
 each point.</p>
 <p>That does not make the result automatically valid. It does make the assumptions
 visible enough to argue with, which is a more useful starting point than a
-beautiful spreadsheet with no place to put curvature.</p>
+closed-form table that has nowhere to record the curvature it assumed away.</p>
               
             </div>
           </div><footer>
