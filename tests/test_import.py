@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import importlib.util
+
 import tensyl
 
 
@@ -8,16 +10,16 @@ def test_package_exposes_version() -> None:
     assert tensyl.__version__
 
 
-def test_legacy_module_imports_remain_available() -> None:
-    from tensyl.cells import CanonicalUnitCell
-    from tensyl.constitutive import (
+def test_public_package_imports_remain_available() -> None:
+    from tensyl import (
         ABDStiffness,
         ABDStiffnessCoefficients,
         OrthotropicStiffnessCoefficients,
         ReducedOrthotropicProperties,
+        isotropic_plate,
     )
+    from tensyl.cells import CanonicalUnitCell
     from tensyl.homogenizers import EnergyHomogenizer
-    from tensyl.laminates import isotropic_plate
     from tensyl.materials import IsotropicMaterial
     from tensyl.sections import BeamSection, ThinWallSegment, blade_section
 
@@ -32,3 +34,11 @@ def test_legacy_module_imports_remain_available() -> None:
     assert OrthotropicStiffnessCoefficients
     assert ReducedOrthotropicProperties
     assert isotropic_plate
+
+
+def test_top_level_compatibility_shims_are_not_packaged() -> None:
+    assert importlib.util.find_spec("tensyl.constitutive") is None
+    assert importlib.util.find_spec("tensyl.conventions") is None
+    assert importlib.util.find_spec("tensyl.laminates") is None
+    assert importlib.util.find_spec("tensyl.rotations") is None
+    assert importlib.util.find_spec("tensyl.typing") is None
