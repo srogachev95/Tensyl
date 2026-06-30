@@ -186,6 +186,16 @@ details. If those effects matter, compute the section properties externally and
 pass a `BeamSection` directly. There is no shame in outsourcing a problem to the
 tool that actually solves it.
 
+There is no universal torsion constant for a stiffener drawing. Use the `GJ`
+that belongs to the member idealization and boundary condition in the equivalent
+wall. A freely warping blade, tee, angle, or channel should usually use an
+open-section St Venant value. A tube, closed hat, or box should use a closed-cell
+torsional stiffness only when the closed shear-flow path is truly part of the
+member model; if the skin is already modeled as the plate skin, do not count the
+same skin again inside the stiffener `J`. If joints, end constraints, or
+neighboring structure restrain warping, use a section-analysis or finite-element
+torsional stiffness for that restrained condition.
+
 Transverse shear stiffnesses are optional. If `shear_correction_y` or
 `shear_correction_z` is supplied, Tensyl computes `kGAy` or `kGAz` as
 \(\kappa G A\). If a correction is omitted, the corresponding shear stiffness is

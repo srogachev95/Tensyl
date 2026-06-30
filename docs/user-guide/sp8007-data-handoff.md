@@ -11,6 +11,18 @@ NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
 source for stiffened equivalent-plate stiffness concepts. Tensyl sits between
 those worlds: it produces local stiffness data, then gets out of the way.
 
+Treat an SP-8007 handoff as a translation, not as proof that either model is
+right. The barred constants below are the data shape expected by a classical
+orthotropic-cylinder calculation. They are useful precisely because they are
+small and familiar, but that also means they can hide terms that are present in
+the full ABD stiffness. The public
+[SP-8007 reconciliation report](../validation/sp8007-reconciliation.md) shows
+where Tensyl and the SP-8007 elastic-constant formulas agree, and where they
+diverge because the models retain different bending physics. That report also
+calls out a printed-equation problem in SP-8007: isogrid Eqs. 97-98 omit the
+explicit eccentric `EA z^2` bending terms. Correct that omission before using
+the isogrid bending formulas as a physics reference.
+
 A downstream SP-8007-style workflow commonly needs these data categories from a
 stiffness model:
 
@@ -52,6 +64,46 @@ that combines anticlastic bending and engineering twist terms. Tensyl's public
 strain convention uses engineering shear/twist ordering
 `(e11, e22, gamma12, k11, k22, k12, gamma13, gamma23)`, so the coefficient is
 `2*D12 + 4*D66`.
+
+For stiffened walls, pay special attention to `Dbar_x`, `Dbar_y`, and
+`Dbar_xy`. Tensyl retains centroidal beam-section terms through the member
+strain map. Some SP-8007 elastic-constant expressions omit beam contributions
+that Tensyl includes. When those numbers disagree, inspect section inertia,
+torsion constant, reference-surface choice, and eccentricity.
+
+For orthogrids, the main known reduction is cross-family in-plane bending.
+Tensyl includes rib `EIz` in `Dbar_x` and stringer `EIz` in `Dbar_y`. SP-8007
+ring/stringer Eqs. 89-91 do not expose those terms, so a handoff that keeps only
+the barred constants can hide bending stiffness from wide, flanged, capped, or
+closed stiffeners.
+
+For isogrids with eccentric members, use corrected bending terms:
+
+$$
+\bar{D}_{x,\mathrm{corr}}
+=
+\bar{D}_{x,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
+$$
+
+$$
+\bar{D}_{y,\mathrm{corr}}
+=
+\bar{D}_{y,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
+$$
+
+and
+
+$$
+\bar{D}_{xy,\mathrm{corr}}
+=
+\bar{D}_{xy,\mathrm{printed}}
++
+\frac{3\sqrt{3}}{2}\frac{EA}{a}z^2.
+$$
 
 ```python
 def sp8007_orthotropic_coefficients(stiffness, *, tolerance=1.0e-9):

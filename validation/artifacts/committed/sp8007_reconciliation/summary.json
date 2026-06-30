@@ -1,0 +1,217 @@
+{
+  "interpretation": [
+    "SP-8007 is treated as an independent comparator, not as an oracle.",
+    "SP-8007 isogrid Eqs. 97-98 as printed omit explicit stiffener parallel-axis EA*z^2 bending terms.",
+    "Correcting that omission removes the large eccentric-isogrid bending discrepancy.",
+    "The remaining orthogrid bending differences track Tensyl's retained cross-family in-plane member bending.",
+    "The supplied member torsion constant J is a model input, not a universal section truth."
+  ],
+  "schema_version": "tensyl.validation.sp8007-reconciliation-summary.v2",
+  "source_equations": {
+    "isogrid": "NASA/SP-8007-2020/REV 2, Eqs. 92-98",
+    "isogrid_correction": "Eqs. 97-98 corrected with explicit stiffener parallel-axis EA*z^2 terms",
+    "orthogrid": "NASA/SP-8007-2020/REV 2, Eqs. 82-91"
+  },
+  "sweep": [
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.0001,
+      "max_bending_abs_relative_delta": 3.437129510204388e-05,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.001,
+      "max_bending_abs_relative_delta": 0.00034371295102117607,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.01,
+      "max_bending_abs_relative_delta": 0.0034371295102119085,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 0.1,
+      "max_bending_abs_relative_delta": 0.03437129510211938,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "orthogrid_inplane_bending_sweep",
+      "in_plane_inertia_ratio": 1.0,
+      "max_bending_abs_relative_delta": 0.34371295102119365,
+      "model": "orthogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.0001,
+      "max_bending_abs_relative_delta": 8.261727634108119e-05,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.001,
+      "max_bending_abs_relative_delta": 0.0008261727634071285,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.01,
+      "max_bending_abs_relative_delta": 0.008261727634067875,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 0.1,
+      "max_bending_abs_relative_delta": 0.0826172763406741,
+      "model": "isogrid"
+    },
+    {
+      "case_name": "isogrid_inplane_bending_sweep_zero_eccentricity",
+      "in_plane_inertia_ratio": 1.0,
+      "max_bending_abs_relative_delta": 0.8261727634067362,
+      "model": "isogrid"
+    }
+  ],
+  "title": "SP-8007 reconciliation summary",
+  "torsion_sweep": [
+    {
+      "case_name": "orthogrid_torsion_sweep",
+      "corrected_relative_delta": 1.116787748738746e-16,
+      "model": "orthogrid",
+      "sp8007_corrected_Dbar_xy": 1017.9807026895598,
+      "tensyl_Dbar_xy": 1017.98070268956,
+      "tensyl_Dbar_xy_over_baseline": 0.779676378475847,
+      "torsion_constant": 2.5e-06,
+      "torsion_multiplier": 0.01
+    },
+    {
+      "case_name": "orthogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0,
+      "model": "orthogrid",
+      "sp8007_corrected_Dbar_xy": 1044.1320184790336,
+      "tensyl_Dbar_xy": 1044.1320184790336,
+      "tensyl_Dbar_xy_over_baseline": 0.7997057986144064,
+      "torsion_constant": 2.5e-05,
+      "torsion_multiplier": 0.1
+    },
+    {
+      "case_name": "orthogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0,
+      "model": "orthogrid",
+      "sp8007_corrected_Dbar_xy": 1305.6451763737705,
+      "tensyl_Dbar_xy": 1305.6451763737705,
+      "tensyl_Dbar_xy_over_baseline": 1.0,
+      "torsion_constant": 0.00025,
+      "torsion_multiplier": 1.0
+    },
+    {
+      "case_name": "orthogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0,
+      "model": "orthogrid",
+      "sp8007_corrected_Dbar_xy": 3920.776755321139,
+      "tensyl_Dbar_xy": 3920.776755321139,
+      "tensyl_Dbar_xy_over_baseline": 3.002942013855936,
+      "torsion_constant": 0.0025,
+      "torsion_multiplier": 10.0
+    },
+    {
+      "case_name": "orthogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0,
+      "model": "orthogrid",
+      "sp8007_corrected_Dbar_xy": 30072.09254479482,
+      "tensyl_Dbar_xy": 30072.09254479482,
+      "tensyl_Dbar_xy_over_baseline": 23.032362152415292,
+      "torsion_constant": 0.025,
+      "torsion_multiplier": 100.0
+    },
+    {
+      "case_name": "isogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0002670544493104477,
+      "model": "isogrid",
+      "sp8007_corrected_Dbar_xy": 20624.71373270956,
+      "tensyl_Dbar_xy": 20630.221654277633,
+      "tensyl_Dbar_xy_over_baseline": 0.9931468789784832,
+      "torsion_constant": 2.5e-06,
+      "torsion_multiplier": 0.01
+    },
+    {
+      "case_name": "isogrid_torsion_sweep",
+      "corrected_relative_delta": 0.00026688698371742694,
+      "model": "isogrid",
+      "sp8007_corrected_Dbar_xy": 20637.655277747315,
+      "tensyl_Dbar_xy": 20643.163199315393,
+      "tensyl_Dbar_xy_over_baseline": 0.9937698899804395,
+      "torsion_constant": 2.5e-05,
+      "torsion_multiplier": 0.1
+    },
+    {
+      "case_name": "isogrid_torsion_sweep",
+      "corrected_relative_delta": 0.00026522380744909926,
+      "model": "isogrid",
+      "sp8007_corrected_Dbar_xy": 20767.070728124876,
+      "tensyl_Dbar_xy": 20772.578649692954,
+      "tensyl_Dbar_xy_over_baseline": 1.0,
+      "torsion_constant": 0.00025,
+      "torsion_multiplier": 1.0
+    },
+    {
+      "case_name": "isogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0002496652615700407,
+      "model": "isogrid",
+      "sp8007_corrected_Dbar_xy": 22061.225231900495,
+      "tensyl_Dbar_xy": 22066.733153468573,
+      "tensyl_Dbar_xy_over_baseline": 1.0623011001956055,
+      "torsion_constant": 0.0025,
+      "torsion_multiplier": 10.0
+    },
+    {
+      "case_name": "isogrid_torsion_sweep",
+      "corrected_relative_delta": 0.0001573567327850777,
+      "model": "isogrid",
+      "sp8007_corrected_Dbar_xy": 35002.77026965668,
+      "tensyl_Dbar_xy": 35008.27819122474,
+      "tensyl_Dbar_xy_over_baseline": 1.6853121021516606,
+      "torsion_constant": 0.025,
+      "torsion_multiplier": 100.0
+    }
+  ],
+  "worst_by_case": [
+    {
+      "case_name": "isogrid_full_section_eccentric",
+      "interpretation": "retained_member_bending_residual",
+      "model": "isogrid",
+      "worst_abs_relative_delta_corrected": 0.2652238074486673,
+      "worst_coefficient": "Dbar_xy"
+    },
+    {
+      "case_name": "isogrid_suppressed_inplane_bending_eccentric",
+      "interpretation": "retained_member_bending_residual",
+      "model": "isogrid",
+      "worst_abs_relative_delta_corrected": 0.00026522380744909926,
+      "worst_coefficient": "Dbar_xy"
+    },
+    {
+      "case_name": "isogrid_suppressed_inplane_bending_zero_eccentricity",
+      "interpretation": "retained_member_bending_residual",
+      "model": "isogrid",
+      "worst_abs_relative_delta_corrected": 0.0008261727634071285,
+      "worst_coefficient": "Dbar_xy"
+    },
+    {
+      "case_name": "orthogrid_full_section_eccentric",
+      "interpretation": "cross_family_inplane_bending",
+      "model": "orthogrid",
+      "worst_abs_relative_delta_corrected": 0.34371295102119365,
+      "worst_coefficient": "Dbar_y"
+    },
+    {
+      "case_name": "orthogrid_suppressed_inplane_bending",
+      "interpretation": "cross_family_inplane_bending",
+      "model": "orthogrid",
+      "worst_abs_relative_delta_corrected": 0.00034371295102117607,
+      "worst_coefficient": "Dbar_y"
+    }
+  ]
+}
