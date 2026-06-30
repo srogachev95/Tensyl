@@ -128,8 +128,8 @@ Common `t_eff` choices are:
   or legacy model conventions.
 
 Changing `t_eff` changes the reported `E1`, `E2`, and `G12`, but the membrane
-reduction remains consistent because `A = Q_eff * t_eff`. The trick is not to
-forget which thickness went into the trick.
+reduction stays consistent because `A = Q_eff * t_eff`. Just keep a record of
+which thickness the reduction used.
 
 ## NX Nastran
 
@@ -205,15 +205,18 @@ field layouts are:
 
 | Tensyl block | ANSYS command | Field order |
 | --- | --- | --- |
-| `A` | `SSPA` | `A11, A21, A31, A22, A32, A33, T` |
-| `B` | `SSPB` | `B11, B21, B31, B22, B32, B33, T, B12, B13, B23` |
-| `D` | `SSPD` | `D11, D21, D31, D22, D32, D33, T` |
-| `As` | `SSPE` | `E11, E21, E22, T` |
+| `A` | `SSPA` | `A11, A12, A16, A22, A26, A66, T` |
+| `B` | `SSPB` | `B11, B12, B16, B22, B26, B66, T` |
+| `D` | `SSPD` | `D11, D12, D16, D22, D26, D66, T` |
+| `As` | `SSPE` | `As11, As12, As22, T` |
 
-The first six fields are the lower symmetric part of each three-by-three block:
-`11`, `21`, `31`, `22`, `32`, `33`. For Tensyl's symmetric `B`, omit the optional
-upper `B12`, `B13`, and `B23` fields unless the solver workflow specifically asks
-for them.
+The first six stiffness fields are the lower symmetric half of each
+three-by-three block, taken column by column: `(1,1)`, `(2,1)`, `(6,1)`,
+`(2,2)`, `(6,2)`, `(6,6)`, written here with Tensyl's engineering index `6` for
+the in-plane shear/twist component. `SSPB` also accepts three optional
+off-diagonal fields for a non-symmetric coupling block; Tensyl's `B` is
+symmetric, so those repeat the lower terms and can be omitted unless the solver
+workflow specifically asks for them.
 
 ```text
 ! Illustrative APDL fragment.

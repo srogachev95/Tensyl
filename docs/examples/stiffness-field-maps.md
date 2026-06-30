@@ -1,10 +1,10 @@
 # Stiffness Field Maps
 
 These examples show why Tensyl treats equivalent stiffness as a local
-constitutive model that can be evaluated over a surface, not as one heroic
+constitutive model that can be evaluated over a surface rather than as one
 closed-form answer. The first case is practical: a cylindrical barrel with skin
 thickness and orthogrid spacing that vary along the axis. The second case is
-less polite: a triaxial ellipsoid with pointwise pitch, orientation, and section
+harder: a triaxial ellipsoid with pointwise pitch, orientation, and section
 changes.
 
 The mechanics loop is the same in both:
@@ -18,17 +18,16 @@ The mechanics loop is the same in both:
 !!! warning "These are stiffness-field examples, not sizing sign-offs"
     Tensyl computes local equivalent stiffnesses and validity signals here. It
     does not compute buckling loads, joint stresses, imperfections, margins, or
-    allowables. The pictures are useful because the assumptions are visible, not
-    because the colors are persuasive. Colors are charming liars if left
-    unsupervised.
+    allowables. The pictures are useful because the assumptions behind them are
+    visible, not because a color map is convincing on its own.
 
 ## Variable Orthogrid Cylinder
 
-Start with a friendlier surface: a 100 inch diameter cylinder with 1 inch tall
+Start with the simpler surface: a 100 inch diameter cylinder with 1 inch tall
 orthogrid stiffeners. The skin thickness, stringer spacing, and rib spacing vary
-smoothly by axial station. That is a common enough pattern in early sizing: a
-barrel gets heavier where load path, cutout, or local stiffness needs ask for
-help, while the rest of the shell would prefer not to carry souvenir mass.
+smoothly by axial station. That is a common pattern in early sizing: a barrel
+gets heavier where load path, cutout, or local stiffness needs demand it, and
+stays light everywhere else.
 
 The figure colors the cylinder by normalized axial membrane stiffness,
 `A11 / median(A11)`. The right-side plots show what changed in the input and
@@ -57,16 +56,16 @@ guessing where the property table got interesting.
 
 ## Ellipsoid Showpiece
 
-Now make the surface less cooperative. A triaxial ellipsoid is not the first
-shape anyone reaches for when they want a tidy closed-form stiffened shell
-calculation. That is the point.
+Now make the surface harder. A triaxial ellipsoid is not the shape anyone
+reaches for when they want a tidy closed-form stiffened shell calculation. That
+is the point.
 
 The local skin thickness, stiffener pitch, stiffener orientation, and section
 scale vary with position. The left panel colors the ellipsoid by normalized
 local `A11` membrane stiffness. The right panel shows `p_over_R`, the
 pitch-to-local-radius ratio that says where the tangent-plane approximation is
-working hardest. The white contours are normalized `A11` again, because a
-contour line is sometimes the polite way to tell a heatmap it has company.
+working hardest. The white contours are normalized `A11` again, overlaid so the
+stiffness pattern stays readable against the heatmap.
 
 ![A two-panel Matplotlib figure: a triaxial ellipsoid colored by normalized local membrane stiffness, beside a latitude-longitude map of pitch over local radius with stiffness contours.](../assets/examples/ellipsoid-stiffness-map.png)
 
@@ -79,8 +78,8 @@ At each ellipsoid sample point:
 - `EnergyHomogenizer` returns a local `ABDStiffness`;
 - `ValidityContext` records `p_over_R`, `h_over_R`, and response-length checks.
 
-That is the useful trick. The curved surface does not magically bend the ABD
-matrix. The pointwise cell factory changes the local equivalent stiffness, while
+That is the useful part. The curved surface does not bend the ABD matrix on its
+own. The pointwise cell factory changes the local equivalent stiffness, while
 the surface tells Tensyl how to read that stiffness locally.
 
 ## Rebuild the Figures
@@ -158,4 +157,4 @@ each point.
 
 That does not make the result automatically valid. It does make the assumptions
 visible enough to argue with, which is a more useful starting point than a
-beautiful spreadsheet with no place to put curvature.
+closed-form table that has nowhere to record the curvature it assumed away.

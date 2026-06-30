@@ -46,9 +46,9 @@ worth a read before the Theory section.
 ## Brief History
 
 Equivalent-continuum modeling is older than the finite-element method, for the
-unmysterious reason that engineers needed answers before they had the compute to
-model every stiffener. The idea has aged well. Tensyl is a modern implementation
-of a long tradition, not a new invention with a better haircut.
+plain reason that engineers needed answers before they had the compute to model
+every stiffener. The idea has aged well. Tensyl is a modern implementation of a
+long tradition rather than a new invention.
 
 Classical plate and shell theory supplied the language: membrane resultants,
 bending resultants, transverse shear, and stiffness matrices. Reissner- and

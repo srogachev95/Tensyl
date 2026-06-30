@@ -45,7 +45,7 @@ already coincides with the wall reference surface.
 
 The diagrams below are schematic section-coordinate drawings. They define Tensyl
 input conventions; they are not fabrication drawings, bend-radius details, or a
-promise that local stress recovery has suddenly become easy.
+substitute for local stress recovery.
 
 ```python
 from tensyl import IsotropicMaterial, blade_section, hat_section
@@ -257,12 +257,12 @@ eccentricity.
 For a geometry-derived stiffener, `centroid_z` is measured from the section's own
 construction datum. If that datum is not the wall reference surface, shift the
 value before passing it to the cell constructor. A skin mid-surface reference and
-an outer-face stiffener datum differ by half the skin thickness. Tensyl is
-helpful here, but it is not a mind reader.
+an outer-face stiffener datum differ by half the skin thickness. Tensyl cannot
+infer that offset for you; set it explicitly.
 
-!!! warning "A wrong eccentricity sign is silently wrong"
+!!! warning "Get the eccentricity sign right"
     The sign changes the coupling block `B`, so flipping it produces a different
-    physical ABD stiffness — with no validation error to catch it. See
+    physical ABD stiffness, and no validation error will catch the mistake. See
     [Frames and Conventions](../theory/conventions.md) for the full sign rule.
 
 ## Graph Cells

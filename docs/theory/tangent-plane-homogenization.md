@@ -74,8 +74,8 @@ That separation is deliberate. The homogenizer answers a local constitutive
 question: "what resultants follow from these generalized strains in this tangent
 plane?" The surface answers a geometric question: "where is that tangent plane,
 which directions are local 1/2/n, and how curved is the midsurface?" A solver
-answers the global equilibrium question. Mixing those jobs would make the
-numbers harder to trust, and not in an interesting way.
+answers the global equilibrium question. Mixing those jobs would only make the
+numbers harder to trust.
 
 The public stiffness-field helpers implement this separation directly:
 

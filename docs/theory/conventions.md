@@ -86,10 +86,10 @@ positive `stringer_eccentricity`. An internal stringer has negative
 eccentricity.
 
 !!! warning "The eccentricity sign is not cosmetic"
-    Flip it and you change the membrane-bending coupling block `B` — which means
-    you get a *physically different ABD stiffness*, with no exception and no
-    validation error to warn you. The numbers will look perfectly reasonable and
-    be quietly wrong. Decide which way `+n` points before you type a sign.
+    Flip it and you change the membrane-bending coupling block `B`, which gives
+    you a *physically different ABD stiffness*. Tensyl raises no exception and no
+    validation error, and the result looks entirely ordinary. Decide which way
+    `+n` points before you type a sign.
 
 Positive eccentricity adds membrane-bending coupling according to the chosen
 reference surface. Moving the reference surface also changes `B`. Equal and
@@ -111,6 +111,6 @@ longitudinal stringer uses angle `0`; a ring rib uses angle `pi/2`.
 ## Engineering Shear
 
 Tensyl's public strain convention uses engineering shear components
-`gamma12`, `gamma13`, and `gamma23`. Tensor shear is rejected because a silent
-factor-of-two convention mix can produce plausible but wrong stiffnesses,
-energies, and resultants.
+`gamma12`, `gamma13`, and `gamma23`. Tensor shear is rejected because an
+unnoticed factor-of-two convention mix would corrupt the stiffnesses, energies,
+and resultants while leaving the matrices looking well-formed.

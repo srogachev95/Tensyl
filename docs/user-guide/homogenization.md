@@ -145,12 +145,11 @@ Malformed or unsupported inputs raise typed homogenization exceptions. Finite
 rank-deficient assemblies are returned with diagnostics and warnings so the
 caller can decide whether the mechanism is acceptable.
 
-!!! note "Diagnostics check the math, not the design"
-    A clean diagnostics report does not mean the design is valid. Symmetry and
-    positive energy are minimum consistency checks on the assembled operator —
-    they say nothing about local failure, joints, finite-element correlation,
-    shell buckling margins, or manufacturing detail. Passing here is table
-    stakes, not a verdict.
+!!! note "A clean diagnostics report is a floor, not a finish line"
+    Symmetry and positive energy are minimum consistency checks on the assembled
+    operator. They say nothing about local failure, joints, finite-element
+    correlation, shell buckling margins, or manufacturing detail. A design still
+    has to clear all of those on its own.
 
 ## Comparing ABD Stiffnesses
 

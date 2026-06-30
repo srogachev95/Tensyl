@@ -52,9 +52,9 @@ So a warning fired — now what? In practice:
 - or change the model family entirely if the separation of scales simply does
   not hold.
 
-None of these is optional busywork — they are how you find out whether the
-approximation is writing checks the geometry cannot cash. This is exactly the
-boundary drawn in ["What Tensyl Is Not"](../index.md).
+None of these steps is optional. They are how you find out whether the
+approximation actually holds for your geometry. This is the boundary drawn in
+["What Tensyl Is Not"](../index.md).
 
 ## Out of Scope for the First Model Family
 

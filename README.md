@@ -306,19 +306,20 @@ write_yaml(
 same_result = read_yaml(Path("stiffness.yaml"))
 ```
 
-Tensyl records unit labels but does not infer or convert units. Inputs and
-outputs must already share one consistent system. Unit labels are metadata only.
+Unit labels ride along with the export as metadata; Tensyl never inspects or
+converts the values. Whatever consistent system you put in is the system you get
+back.
 
 ## Scope
 
-Tensyl is not a certification buckling solver, local stress recovery tool, or
-replacement for detailed finite-element analysis. The tangent-plane
-homogenization tools assume scale separation between stiffener pitch, stiffener
-height, local curvature radius, and the structural response length of interest.
+Tensyl forms and audits equivalent ABD stiffnesses. It is not a certification
+buckling solver, a local stress recovery tool, or a substitute for detailed
+finite-element analysis, and its tangent-plane homogenization relies on scale
+separation between stiffener pitch, stiffener height, local curvature radius, and
+the structural response length of interest.
 
-The package forms and audits equivalent ABD stiffnesses. Local buckling,
-crippling, joints, cutouts, load introduction, nonlinear postbuckling, and final
-allowables are outside the current package scope.
+Local buckling, crippling, joints, cutouts, load introduction, nonlinear
+postbuckling, and final allowables stay outside the current package scope.
 
 ## Documentation Map
 

@@ -89,10 +89,11 @@ local_stiffness = field.stiffness_at(surface, 10.0, 0.25)
 
 The stiffness tangent is unchanged. The stiffness is rebound to the surface-point frame.
 
-!!! note "Constant means constant matrix, not constant meaning"
+!!! note "A constant matrix still reads differently at each point"
     A constant field reuses the same numeric `C8` tangent, but each surface point
-    still supplies its own frame and curvature context. Same numbers, different
-    place to read them. That distinction is small until it saves an axis swap.
+    still supplies its own frame and curvature context. The numbers are the same;
+    the local directions you read them in are not. That distinction is easy to
+    overlook and expensive when it hides a swapped axis.
 
 ## Surface Recipes
 
