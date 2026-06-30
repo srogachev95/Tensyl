@@ -9,7 +9,9 @@ bug fixes that correct clearly wrong behavior.
 ## Unreleased
 
 - Add an SP-8007 reconciliation report, validation harness, and public artifacts
-  comparing Tensyl orthogrid/isogrid stiffnesses with SP-8007 elastic constants.
+  comparing Tensyl orthogrid/isogrid stiffnesses with SP-8007 elastic constants,
+  including the corrected isogrid `EA z^2` terms and torsion-constant
+  sensitivity plots.
 
 ## 0.1.0 - 2026-06-29
 
