@@ -78,6 +78,89 @@ class SectionProperties:
 
 
 @dataclass(frozen=True, slots=True)
+class _SectionPoint:
+    """Point in the member-local section plane."""
+
+    y: float
+    z: float
+
+
+@dataclass(frozen=True, slots=True)
+class _InertiaBlock:
+    """Area moments and product of inertia about one section-plane point."""
+
+    Iy: float = 0.0
+    Iz: float = 0.0
+    Iyz: float = 0.0
+
+    def __add__(self, other: _InertiaBlock) -> _InertiaBlock:
+        return _InertiaBlock(
+            Iy=self.Iy + other.Iy,
+            Iz=self.Iz + other.Iz,
+            Iyz=self.Iyz + other.Iyz,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class _RectangularStrip:
+    """A thin rectangular wall strip built around a segment midline."""
+
+    start: _SectionPoint
+    end: _SectionPoint
+    thickness: float
+
+    @classmethod
+    def from_segment(cls, segment: ThinWallSegment) -> _RectangularStrip:
+        return cls(
+            start=_SectionPoint(segment.start_y, segment.start_z),
+            end=_SectionPoint(segment.end_y, segment.end_z),
+            thickness=segment.thickness,
+        )
+
+    @property
+    def length(self) -> float:
+        return float(np.hypot(self.end.y - self.start.y, self.end.z - self.start.z))
+
+    @property
+    def area(self) -> float:
+        return self.length * self.thickness
+
+    @property
+    def centroid(self) -> _SectionPoint:
+        return _SectionPoint(
+            y=0.5 * (self.start.y + self.end.y),
+            z=0.5 * (self.start.z + self.end.z),
+        )
+
+    @property
+    def unit_tangent(self) -> _SectionPoint:
+        length = self.length
+        return _SectionPoint(
+            y=(self.end.y - self.start.y) / length,
+            z=(self.end.z - self.start.z) / length,
+        )
+
+    @property
+    def unit_normal(self) -> _SectionPoint:
+        tangent = self.unit_tangent
+        return _SectionPoint(y=-tangent.z, z=tangent.y)
+
+    def centroidal_inertia(self) -> _InertiaBlock:
+        tangent = self.unit_tangent
+        normal = self.unit_normal
+        along = self.length**3 * self.thickness / 12.0
+        across = self.length * self.thickness**3 / 12.0
+        return _InertiaBlock(
+            Iy=along * tangent.z**2 + across * normal.z**2,
+            Iz=along * tangent.y**2 + across * normal.y**2,
+            Iyz=along * tangent.y * tangent.z + across * normal.y * normal.z,
+        )
+
+    def open_section_torsion_constant(self) -> float:
+        return self.length * self.thickness**3 / 3.0
+
+
+@dataclass(frozen=True, slots=True)
 class ThinWallSection:
     """A geometry-derived isotropic thin-wall stiffener section."""
 
@@ -149,59 +232,53 @@ class ThinWallSection:
 
 
 def _section_properties(segments: tuple[ThinWallSegment, ...]) -> SectionProperties:
-    # First pass finds the centroid from thin rectangular segment midline areas.
-    area = 0.0
-    first_y = 0.0
-    first_z = 0.0
-    for segment in segments:
-        segment_area = segment.length * segment.thickness
-        mid_y = 0.5 * (segment.start_y + segment.end_y)
-        mid_z = 0.5 * (segment.start_z + segment.end_z)
-        area += segment_area
-        first_y += segment_area * mid_y
-        first_z += segment_area * mid_z
-    centroid_y = first_y / area
-    centroid_z = first_z / area
+    strips = tuple(_RectangularStrip.from_segment(segment) for segment in segments)
+    area = sum(strip.area for strip in strips)
+    centroid = _composite_centroid(strips, area=area)
 
-    iy = 0.0
-    iz = 0.0
-    iyz = 0.0
+    inertia = _InertiaBlock()
     torsion = 0.0
-    for segment in segments:
-        length = segment.length
-        thickness = segment.thickness
-        segment_area = length * thickness
-        mid_y = 0.5 * (segment.start_y + segment.end_y)
-        mid_z = 0.5 * (segment.start_z + segment.end_z)
-        unit_y = (segment.end_y - segment.start_y) / length
-        unit_z = (segment.end_z - segment.start_z) / length
-        normal_y = -unit_z
-        normal_z = unit_y
-        # Segment inertia is computed in its local along/across axes and then
-        # rotated into the member-local y/z axes.
-        along = length**3 * thickness / 12.0
-        across = length * thickness**3 / 12.0
-        m_yy = along * unit_y**2 + across * normal_y**2
-        m_zz = along * unit_z**2 + across * normal_z**2
-        m_yz = along * unit_y * unit_z + across * normal_y * normal_z
-        dy = mid_y - centroid_y
-        dz = mid_z - centroid_z
-        # Shift every segment from its own centroid to the section centroid.
-        iz += m_yy + segment_area * dy**2
-        iy += m_zz + segment_area * dz**2
-        iyz += m_yz + segment_area * dy * dz
+    for strip in strips:
+        strip_centroid = strip.centroid
+        shifted = _parallel_axis_shift(
+            strip.centroidal_inertia(),
+            area=strip.area,
+            dy=strip_centroid.y - centroid.y,
+            dz=strip_centroid.z - centroid.z,
+        )
+        inertia += shifted
         # Open-section St Venant torsion approximation. Closed-cell torsion and
         # restrained warping belong in an external section solver for now.
-        torsion += length * thickness**3 / 3.0
+        torsion += strip.open_section_torsion_constant()
 
     return SectionProperties(
         area=area,
-        centroid_y=centroid_y,
-        centroid_z=centroid_z,
-        Iy=iy,
-        Iz=iz,
-        Iyz=iyz,
+        centroid_y=centroid.y,
+        centroid_z=centroid.z,
+        Iy=inertia.Iy,
+        Iz=inertia.Iz,
+        Iyz=inertia.Iyz,
         J=torsion,
+    )
+
+
+def _composite_centroid(strips: tuple[_RectangularStrip, ...], *, area: float) -> _SectionPoint:
+    first_y = sum(strip.area * strip.centroid.y for strip in strips)
+    first_z = sum(strip.area * strip.centroid.z for strip in strips)
+    return _SectionPoint(y=first_y / area, z=first_z / area)
+
+
+def _parallel_axis_shift(
+    inertia: _InertiaBlock,
+    *,
+    area: float,
+    dy: float,
+    dz: float,
+) -> _InertiaBlock:
+    return _InertiaBlock(
+        Iy=inertia.Iy + area * dz**2,
+        Iz=inertia.Iz + area * dy**2,
+        Iyz=inertia.Iyz + area * dy * dz,
     )
 
 

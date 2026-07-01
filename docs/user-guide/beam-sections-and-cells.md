@@ -99,6 +99,46 @@ accepts custom `ThinWallSegment` layouts in member-local `(y, z)` coordinates.
 Use this for a stiffener shape that is just ordinary enough to be useful and just
 odd enough to avoid having its own constructor.
 
+Tensyl computes the section properties as a composite-area problem. Each
+`ThinWallSegment` becomes a rectangular strip whose midline is the supplied
+segment and whose thickness is measured normal to that line. For strip `i`,
+
+$$
+A_i = l_i t_i .
+$$
+
+The section centroid is the area-weighted average of the strip centroids:
+
+$$
+y_c = \frac{\sum_i A_i y_i}{\sum_i A_i},
+\qquad
+z_c = \frac{\sum_i A_i z_i}{\sum_i A_i}.
+$$
+
+Each strip first contributes its own centroidal inertia. Tensyl rotates that
+local strip inertia into the member-local `(y, z)` axes, then shifts it to the
+section centroid with the parallel-axis theorem:
+
+$$
+I_y = \sum_i \left(I_{y,i}^{c} + A_i (z_i-z_c)^2\right),
+$$
+
+$$
+I_z = \sum_i \left(I_{z,i}^{c} + A_i (y_i-y_c)^2\right),
+$$
+
+and
+
+$$
+I_{yz} = \sum_i \left(I_{yz,i}^{c} + A_i (y_i-y_c)(z_i-z_c)\right).
+$$
+
+Those are area properties only. For an isotropic section, Tensyl converts them
+to stiffness products afterward with `EA = E A`, `EIy = E Iy`, `EIz = E Iz`, and
+`EIyz = E Iyz`. This is the standard composite-area and parallel-axis calculation
+for second moments of area; the section-property reference is listed in
+[References](../references.md).
+
 ### Blade Section
 
 ![Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness.](../assets/sections/blade-section.svg)

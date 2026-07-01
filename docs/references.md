@@ -14,6 +14,11 @@ the formal public documentation.
   Elastic Anisotropic Materials*, NASA/TM-2011-217314, 2011. External record:
   <https://ntrs.nasa.gov/citations/20110023650>.
 
+## Section Properties
+
+- R. C. Hibbeler, *Statics and Mechanics of Materials*, 2nd ed., Pearson
+  Prentice Hall, 2004.
+
 ## Plates, Shells, and Laminates
 
 - Manfredo P. do Carmo, *Differential Geometry of Curves and Surfaces*,

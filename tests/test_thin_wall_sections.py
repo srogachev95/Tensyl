@@ -60,6 +60,92 @@ def test_horizontal_thin_wall_segment_matches_closed_form_rectangle() -> None:
     assert section.section.kGAz is None
 
 
+def test_oblique_thin_wall_segment_rotates_centroidal_inertia() -> None:
+    section = thin_wall_section(
+        material=_material(),
+        segments=(ThinWallSegment(0.0, 0.0, 3.0, 4.0, 0.2),),
+    )
+    length = 5.0
+    thickness = 0.2
+    along = length**3 * thickness / 12.0
+    across = length * thickness**3 / 12.0
+    unit_y = 3.0 / 5.0
+    unit_z = 4.0 / 5.0
+    normal_y = -unit_z
+    normal_z = unit_y
+
+    assert section.properties.area == pytest.approx(length * thickness)
+    assert section.properties.centroid_y == pytest.approx(1.5)
+    assert section.properties.centroid_z == pytest.approx(2.0)
+    assert section.properties.Iy == pytest.approx(along * unit_z**2 + across * normal_z**2)
+    assert section.properties.Iz == pytest.approx(along * unit_y**2 + across * normal_y**2)
+    assert section.properties.Iyz == pytest.approx(
+        along * unit_y * unit_z + across * normal_y * normal_z
+    )
+
+
+def test_tee_section_matches_composite_area_parallel_axis_solution() -> None:
+    section = tee_section(
+        material=_material(),
+        web_height=3.0,
+        web_thickness=0.2,
+        flange_width=2.0,
+        flange_thickness=0.2,
+    )
+    web_area = 3.0 * 0.2
+    flange_area = 2.0 * 0.2
+    total_area = web_area + flange_area
+    centroid_z = (web_area * 1.5 + flange_area * 3.1) / total_area
+    web_dz = 1.5 - centroid_z
+    flange_dz = 3.1 - centroid_z
+    web_iy = 0.2 * 3.0**3 / 12.0
+    web_iz = 3.0 * 0.2**3 / 12.0
+    flange_iy = 2.0 * 0.2**3 / 12.0
+    flange_iz = 0.2 * 2.0**3 / 12.0
+
+    assert section.properties.area == pytest.approx(total_area)
+    assert section.properties.centroid_y == pytest.approx(0.0)
+    assert section.properties.centroid_z == pytest.approx(centroid_z)
+    assert section.properties.Iy == pytest.approx(
+        web_iy + web_area * web_dz**2 + flange_iy + flange_area * flange_dz**2
+    )
+    assert section.properties.Iz == pytest.approx(web_iz + flange_iz)
+    assert section.properties.Iyz == pytest.approx(0.0)
+
+
+def test_unsymmetric_composite_section_tracks_product_inertia_sign() -> None:
+    section = thin_wall_section(
+        material=_material(),
+        segments=(
+            ThinWallSegment(0.0, 0.0, 0.0, 2.0, 0.2, label="web"),
+            ThinWallSegment(0.0, 0.0, 2.0, 0.0, 0.2, label="flange"),
+        ),
+    )
+
+    assert section.properties.area == pytest.approx(0.8)
+    assert section.properties.centroid_y == pytest.approx(0.5)
+    assert section.properties.centroid_z == pytest.approx(0.5)
+    vertical_centroidal_iy = 0.2 * 2.0**3 / 12.0
+    vertical_centroidal_iz = 2.0 * 0.2**3 / 12.0
+    horizontal_centroidal_iy = 2.0 * 0.2**3 / 12.0
+    horizontal_centroidal_iz = 0.2 * 2.0**3 / 12.0
+    parallel_axis_shift = 0.4 * 0.5**2
+
+    assert section.properties.Iy == pytest.approx(
+        vertical_centroidal_iy
+        + parallel_axis_shift
+        + horizontal_centroidal_iy
+        + parallel_axis_shift
+    )
+    assert section.properties.Iz == pytest.approx(
+        vertical_centroidal_iz
+        + parallel_axis_shift
+        + horizontal_centroidal_iz
+        + parallel_axis_shift
+    )
+    assert section.properties.Iyz == pytest.approx(-0.2)
+
+
 def test_named_sections_record_geometry_kind_and_positive_properties() -> None:
     material = _material()
     sections = [
