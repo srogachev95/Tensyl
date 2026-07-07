@@ -29,7 +29,7 @@ type PlainYaml = None | str | bool | int | float | list[PlainYaml] | dict[str, P
 
 
 class SchemaError(ValueError):
-    """Raised when a Tensyl external-workflow payload is malformed."""
+    """Raised when an external-workflow payload is malformed."""
 
 
 class _SchemaModel(BaseModel):
@@ -447,7 +447,20 @@ def to_schema(
     *,
     units: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Return a versioned solver-neutral schema payload for ``obj``."""
+    """Return a versioned solver-neutral schema payload.
+
+    Args:
+        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        units: Optional plain mapping describing the unit system. Tensyl stores
+            these values as metadata; it does not convert units.
+
+    Returns:
+        Plain Python mapping compatible with JSON and safe YAML.
+
+    Raises:
+        SchemaError: If the object cannot be represented by the external
+            workflow schema.
+    """
 
     try:
         return _model_dump(ExternalWorkflowEnvelope.from_tensyl(obj, units=units))
@@ -458,7 +471,18 @@ def to_schema(
 
 
 def from_schema(payload: Mapping[str, Any]) -> ABDStiffness | HomogenizationResult:
-    """Reconstruct a Tensyl object from a versioned solver-neutral schema payload."""
+    """Reconstruct a Tensyl object from a schema payload.
+
+    Args:
+        payload: Versioned external-workflow mapping.
+
+    Returns:
+        ``ABDStiffness`` or ``HomogenizationResult`` described by the payload.
+
+    Raises:
+        SchemaError: If the payload is missing required fields, has unexpected
+            fields, or violates schema validation.
+    """
 
     try:
         return ExternalWorkflowEnvelope.model_validate(payload).to_tensyl()
@@ -473,7 +497,18 @@ def to_yaml(
     *,
     units: Mapping[str, Any] | None = None,
 ) -> str:
-    """Serialize ``obj`` to a safe YAML string."""
+    """Serialize an object to a safe YAML string.
+
+    Args:
+        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        units: Optional plain mapping describing the unit system.
+
+    Returns:
+        Safe-YAML text containing the versioned schema payload.
+
+    Raises:
+        SchemaError: If the object cannot be represented by the schema.
+    """
 
     return yaml.safe_dump(to_schema(obj, units=units), sort_keys=False)
 
@@ -483,7 +518,19 @@ def to_json(
     *,
     units: Mapping[str, Any] | None = None,
 ) -> str:
-    """Serialize ``obj`` to a deterministic JSON string."""
+    """Serialize an object to deterministic JSON text.
+
+    Args:
+        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        units: Optional plain mapping describing the unit system.
+
+    Returns:
+        Pretty-printed JSON text with a trailing newline.
+
+    Raises:
+        SchemaError: If the object cannot be represented by the schema or would
+            require non-finite JSON constants.
+    """
 
     try:
         return json.dumps(to_schema(obj, units=units), indent=2, allow_nan=False) + "\n"
@@ -492,7 +539,18 @@ def to_json(
 
 
 def from_yaml(text: str) -> ABDStiffness | HomogenizationResult:
-    """Load a Tensyl object from a safe YAML string."""
+    """Load a Tensyl object from a safe YAML string.
+
+    Args:
+        text: YAML text containing a versioned external-workflow mapping.
+
+    Returns:
+        ``ABDStiffness`` or ``HomogenizationResult`` described by the payload.
+
+    Raises:
+        SchemaError: If the YAML is invalid, unsafe, not a mapping, or fails
+            schema validation.
+    """
 
     try:
         # safe_load rejects executable YAML tags; schema validation then checks
@@ -514,7 +572,18 @@ def _reject_json_constant(value: str) -> None:
 
 
 def from_json(text: str) -> ABDStiffness | HomogenizationResult:
-    """Load a Tensyl object from a JSON string."""
+    """Load a Tensyl object from a JSON string.
+
+    Args:
+        text: JSON text containing a versioned external-workflow mapping.
+
+    Returns:
+        ``ABDStiffness`` or ``HomogenizationResult`` described by the payload.
+
+    Raises:
+        SchemaError: If the JSON is invalid, contains NaN or infinity, is not a
+            mapping, or fails schema validation.
+    """
 
     try:
         payload = json.loads(text, parse_constant=_reject_json_constant)
@@ -533,7 +602,17 @@ def write_yaml(
     *,
     units: Mapping[str, Any] | None = None,
 ) -> None:
-    """Write ``obj`` to ``path`` as safe YAML."""
+    """Write an object to a safe YAML file.
+
+    Args:
+        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        path: Destination file path.
+        units: Optional plain mapping describing the unit system.
+
+    Raises:
+        SchemaError: If the object cannot be represented by the schema.
+        OSError: If the file cannot be written.
+    """
 
     Path(path).write_text(to_yaml(obj, units=units), encoding="utf-8")
 
@@ -544,19 +623,51 @@ def write_json(
     *,
     units: Mapping[str, Any] | None = None,
 ) -> None:
-    """Write ``obj`` to ``path`` as JSON."""
+    """Write an object to a JSON file.
+
+    Args:
+        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        path: Destination file path.
+        units: Optional plain mapping describing the unit system.
+
+    Raises:
+        SchemaError: If the object cannot be represented by the schema.
+        OSError: If the file cannot be written.
+    """
 
     Path(path).write_text(to_json(obj, units=units), encoding="utf-8")
 
 
 def read_yaml(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
-    """Read a Tensyl object from a safe YAML file."""
+    """Read a Tensyl object from a safe YAML file.
+
+    Args:
+        path: Source YAML file path.
+
+    Returns:
+        ``ABDStiffness`` or ``HomogenizationResult`` described by the file.
+
+    Raises:
+        SchemaError: If the file contents fail YAML or schema validation.
+        OSError: If the file cannot be read.
+    """
 
     return from_yaml(Path(path).read_text(encoding="utf-8"))
 
 
 def read_json(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
-    """Read a Tensyl object from a JSON file."""
+    """Read a Tensyl object from a JSON file.
+
+    Args:
+        path: Source JSON file path.
+
+    Returns:
+        ``ABDStiffness`` or ``HomogenizationResult`` described by the file.
+
+    Raises:
+        SchemaError: If the file contents fail JSON or schema validation.
+        OSError: If the file cannot be read.
+    """
 
     return from_json(Path(path).read_text(encoding="utf-8"))
 

@@ -102,7 +102,14 @@ def _freeze_for_hash(value: Any) -> Any:
 
 @runtime_checkable
 class HyperelasticModel(Protocol):
-    """Public mechanics contract for a generalized hyperelastic stiffness model."""
+    """Public mechanics contract for a generalized hyperelastic model.
+
+    Attributes:
+        frame: Local right-handed frame for the model components.
+        convention: Generalized strain/resultant ordering.
+        metadata: Provenance metadata.
+        validity: Optional validity or warning object attached by builders.
+    """
 
     frame: Frame2D
     convention: StrainConvention
@@ -110,25 +117,61 @@ class HyperelasticModel(Protocol):
     validity: Any
 
     def energy(self, eta: GeneralizedStrain) -> float:
-        """Return strain energy density for generalized strain ``eta``."""
+        """Return strain energy density for a generalized strain.
+
+        Args:
+            eta: Generalized strain vector in the model convention.
+
+        Returns:
+            Stored strain energy density in the active unit system.
+        """
 
     def resultants(self, eta: GeneralizedStrain) -> GeneralizedResultant:
-        """Return generalized resultants for generalized strain ``eta``."""
+        """Return generalized resultants for a generalized strain.
+
+        Args:
+            eta: Generalized strain vector in the model convention.
+
+        Returns:
+            Generalized force and moment resultants in the conjugate ordering.
+        """
 
     def tangent(self, eta: GeneralizedStrain) -> FloatArray:
-        """Return the constitutive tangent at generalized strain ``eta``."""
+        """Return the constitutive tangent at a generalized strain.
+
+        Args:
+            eta: Generalized strain vector in the model convention.
+
+        Returns:
+            Tangent matrix mapping generalized strain increments to resultants.
+        """
 
     def rotate(self, angle_rad: float) -> HyperelasticModel:
-        """Return an equivalent stiffness expressed in a rotated local frame."""
+        """Return an equivalent model in a rotated local frame.
+
+        Args:
+            angle_rad: Counterclockwise rotation angle about the local normal.
+
+        Returns:
+            Model representing the same physical law in the rotated frame.
+        """
 
 
 @runtime_checkable
 class LinearModel(HyperelasticModel, Protocol):
-    """Refinement for stiffness models whose tangent is independent of strain."""
+    """Refinement for models whose tangent is independent of strain.
+
+    Attributes:
+        constant_tangent: Strain-independent tangent matrix.
+    """
 
     @property
     def constant_tangent(self) -> FloatArray:
-        """Return the strain-independent tangent."""
+        """Return the strain-independent tangent.
+
+        Returns:
+            Constant tangent matrix for the linear model.
+        """
 
 
 ConstitutiveModel = HyperelasticModel
@@ -138,7 +181,7 @@ ConstitutiveModel = HyperelasticModel
 class ReducedOrthotropicProperties:
     """Membrane-equivalent orthotropic plane-stress constants.
 
-    Args:
+    Attributes:
         t_eff: Effective shell thickness used for the membrane reduction.
         E1: Young's modulus in local direction 1.
         E2: Young's modulus in local direction 2.
@@ -201,6 +244,29 @@ class ABDStiffnessCoefficients:
     The fields use the conventional laminate/shell coefficient names. For
     example, ``A16`` is ``A[0, 2]``, ``D66`` is ``D[2, 2]``, and ``As12`` is
     ``As[0, 1]``.
+
+    Attributes:
+        A11: Extensional stiffness in local direction 1.
+        A22: Extensional stiffness in local direction 2.
+        A12: Extensional coupling stiffness.
+        A16: Extensional-shear coupling stiffness.
+        A26: Extensional-shear coupling stiffness.
+        A66: In-plane shear stiffness.
+        B11: Membrane-bending coupling in local direction 1.
+        B22: Membrane-bending coupling in local direction 2.
+        B12: Membrane-bending coupling cross term.
+        B16: Membrane-twist coupling term.
+        B26: Membrane-twist coupling term.
+        B66: Membrane-shear/twist coupling term.
+        D11: Bending stiffness in local direction 1.
+        D22: Bending stiffness in local direction 2.
+        D12: Bending coupling stiffness.
+        D16: Bending-twist coupling term.
+        D26: Bending-twist coupling term.
+        D66: Twist stiffness coefficient.
+        As11: Transverse-shear stiffness in local direction 1.
+        As22: Transverse-shear stiffness in local direction 2.
+        As12: Transverse-shear coupling stiffness.
     """
 
     A11: float
@@ -252,6 +318,21 @@ class OrthotropicStiffnessCoefficients:
     representation. ``warnings`` and ``unsupported_terms`` record off-axis terms
     that were present in the source ABD matrix but are not carried by this
     coefficient set.
+
+    Attributes:
+        Ebar_x: Effective axial membrane coefficient in the x direction.
+        Ebar_y: Effective axial membrane coefficient in the y direction.
+        Ebar_xy: Effective membrane coupling coefficient.
+        Gbar_xy: Effective in-plane shear coefficient.
+        Dbar_x: Effective bending coefficient in the x direction.
+        Dbar_y: Effective bending coefficient in the y direction.
+        Dbar_xy: Modified bending-twist coefficient ``2*D12 + 4*D66``.
+        Cbar_x: Membrane-bending coupling coefficient in the x direction.
+        Cbar_y: Membrane-bending coupling coefficient in the y direction.
+        Cbar_xy: Membrane-bending coupling cross coefficient.
+        Kbar_xy: Membrane-shear/twist coupling coefficient.
+        warnings: Warning identifiers recorded during reduction.
+        unsupported_terms: Off-axis source ABD terms not represented here.
     """
 
     Ebar_x: float
@@ -278,7 +359,7 @@ class OrthotropicStiffnessCoefficients:
 class ABDStiffness:
     """Linear ABD stiffness in ABD plus transverse-shear form.
 
-    Args:
+    Attributes:
         A: ``3x3`` extensional stiffness block in the active unit system.
         B: ``3x3`` membrane-bending coupling block about the reference surface.
         D: ``3x3`` bending and twisting stiffness block.
@@ -343,6 +424,21 @@ class ABDStiffness:
         The tangent order is ``[N11, N22, N12, M11, M22, M12, Q13, Q23]`` by
         ``[eps11, eps22, gamma12, kappa11, kappa22, kappa12, gamma13,
         gamma23]``.
+
+        Args:
+            tangent: Symmetric 8x8 generalized stiffness matrix.
+            frame: Local frame for the matrix components.
+            convention: Generalized strain/resultant ordering.
+            areal_mass: Optional nonnegative mass per unit area.
+            metadata: Optional provenance metadata.
+            validity: Optional validity report to attach.
+
+        Returns:
+            ``ABDStiffness`` with readonly block views of the supplied tangent.
+
+        Raises:
+            ValueError: If the tangent has the wrong shape, is not finite, or
+                is not symmetric within tolerance.
         """
 
         c8 = _readonly_tangent(tangent, name="tangent")
@@ -362,7 +458,14 @@ class ABDStiffness:
         )
 
     def with_validity(self, validity: Any) -> ABDStiffness:
-        """Return an equivalent stiffness with attached validity diagnostics."""
+        """Return an equivalent stiffness with attached validity diagnostics.
+
+        Args:
+            validity: Validity or warning object to attach to the copy.
+
+        Returns:
+            New ``ABDStiffness`` with the same numeric tangent and metadata.
+        """
 
         return ABDStiffness.from_tangent(
             self.C8,
@@ -389,24 +492,55 @@ class ABDStiffness:
 
     @property
     def C8(self) -> FloatArray:
-        """The canonical 8x8 stiffness tangent."""
+        """Return the canonical 8x8 stiffness tangent.
+
+        Returns:
+            Read-only stiffness matrix in the active generalized ordering.
+        """
 
         return self._c8
 
     @property
     def constant_tangent(self) -> FloatArray:
-        """Return the strain-independent stiffness tangent."""
+        """Return the strain-independent stiffness tangent.
+
+        Returns:
+            The same read-only matrix as ``C8``.
+        """
 
         return self.C8
 
     def tangent(self, eta: GeneralizedStrainInput) -> FloatArray:
-        """Return the constant stiffness tangent after validating ``eta``."""
+        """Return the constant stiffness tangent after validating strain.
+
+        Args:
+            eta: Generalized strain vector with shape ``(8,)``.
+
+        Returns:
+            The strain-independent tangent matrix.
+
+        Raises:
+            ValueError: If ``eta`` does not have shape ``(8,)`` or contains
+                non-finite values.
+        """
 
         generalized_strain(eta)
         return self.constant_tangent
 
     def resultants(self, eta: GeneralizedStrainInput) -> GeneralizedResultant:
-        """Return generalized resultants ``[N11, N22, N12, M11, M22, M12, Q13, Q23]``."""
+        """Return generalized resultants for a strain vector.
+
+        Args:
+            eta: Generalized strain vector with shape ``(8,)``.
+
+        Returns:
+            Read-only generalized resultants in order
+            ``[N11, N22, N12, M11, M22, M12, Q13, Q23]``.
+
+        Raises:
+            ValueError: If ``eta`` does not have shape ``(8,)`` or contains
+                non-finite values.
+        """
 
         vector = np.asarray(generalized_strain(eta), dtype=np.float64)
         result = self.C8 @ vector
@@ -414,13 +548,34 @@ class ABDStiffness:
         return generalized_resultant(result)
 
     def energy(self, eta: GeneralizedStrainInput) -> float:
-        """Return ``0.5 * eta @ C8 @ eta``."""
+        """Return linear strain energy density.
+
+        Args:
+            eta: Generalized strain vector with shape ``(8,)``.
+
+        Returns:
+            ``0.5 * eta @ C8 @ eta``.
+
+        Raises:
+            ValueError: If ``eta`` does not have shape ``(8,)`` or contains
+                non-finite values.
+        """
 
         vector = np.asarray(generalized_strain(eta), dtype=np.float64)
         return 0.5 * float(vector @ self.C8 @ vector)
 
     def rotate(self, angle_rad: float) -> ABDStiffness:
-        """Return this stiffness expressed in a frame rotated about ``n``."""
+        """Return this stiffness in a frame rotated about ``n``.
+
+        Args:
+            angle_rad: Counterclockwise rotation angle in radians.
+
+        Returns:
+            Equivalent ``ABDStiffness`` expressed in the rotated local frame.
+
+        Raises:
+            ValueError: If ``angle_rad`` is not finite.
+        """
 
         from tensyl.core.rotations import rotate_abd_stiffness
 
@@ -428,7 +583,11 @@ class ABDStiffness:
 
     @property
     def coefficients(self) -> ABDStiffnessCoefficients:
-        """Return the independent ABD and transverse-shear terms as named scalars."""
+        """Return independent stiffness terms as named scalars.
+
+        Returns:
+            Named scalar view of the ABD and transverse-shear blocks.
+        """
 
         return ABDStiffnessCoefficients(
             A11=float(self.A[0, 0]),
@@ -472,6 +631,15 @@ class ABDStiffness:
         the reduced coefficients, records the terms in ``unsupported_terms``, and
         emits a warning so the caller can decide whether the reduction is
         acceptable for the downstream calculation.
+
+        Args:
+            tolerance: Nonnegative absolute tolerance for off-axis terms.
+
+        Returns:
+            Barred orthotropic coefficient view plus warning metadata.
+
+        Raises:
+            ValueError: If ``tolerance`` is negative or non-finite.
         """
 
         checked_tolerance = nonnegative_number(tolerance, name="tolerance")
@@ -517,6 +685,18 @@ class ABDStiffness:
         membrane stiffness per unit width into material stiffness. The reduction
         is based on ``A / t_eff`` and does not preserve the bending, coupling, or
         transverse-shear blocks.
+
+        Args:
+            t_eff: Positive effective shell thickness.
+            tolerance: Nonnegative absolute tolerance for warning about
+                discarded coupling or off-axis terms.
+
+        Returns:
+            Membrane-equivalent orthotropic plane-stress constants.
+
+        Raises:
+            ValueError: If ``t_eff`` is not positive, ``tolerance`` is invalid,
+                or the membrane stiffness block cannot be inverted.
         """
 
         checked_t_eff = positive_number(t_eff, name="t_eff")
@@ -595,6 +775,16 @@ def shift_reference_surface(stiffness: ABDStiffness, offset: float) -> ABDStiffn
     ``offset`` is the signed distance from the current reference surface
     to the new reference surface along ``+n``. Curvatures and transverse-shear
     strains are unchanged.
+
+    Args:
+        stiffness: Source stiffness about the current reference surface.
+        offset: Signed distance from the current surface to the new surface.
+
+    Returns:
+        Equivalent stiffness about the shifted reference surface.
+
+    Raises:
+        ValueError: If ``offset`` is not finite.
     """
 
     checked_offset = finite_number(offset, name="offset")
@@ -624,7 +814,22 @@ def superpose_abd_stiffnesses(
     *stiffnesses: ABDStiffness,
     metadata: dict[str, Any] | None = None,
 ) -> ABDStiffness:
-    """Return the superposition of compatible ABD stiffnesses."""
+    """Return the superposition of compatible ABD stiffnesses.
+
+    Args:
+        *stiffnesses: One or more stiffnesses using the same frame and strain
+            convention.
+        metadata: Optional metadata to merge into the combined result.
+
+    Returns:
+        Sum of the supplied stiffness tangents. Areal mass is summed only when
+        every input provides it; shared validity is preserved only when all
+        inputs agree.
+
+    Raises:
+        ValueError: If no stiffnesses are supplied, or if frames/conventions do
+            not match.
+    """
 
     if not stiffnesses:
         msg = "at least one stiffness is required."

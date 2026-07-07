@@ -30,6 +30,16 @@ class BeamMember:
     ``angle_rad`` is measured from local ``e1`` toward ``e2``. ``eccentricity``
     is the signed distance from the reference surface to the member
     centroid along ``+n``.
+
+    Attributes:
+        section: Centroidal beam stiffness for the member.
+        length: Positive member length inside the repeated cell.
+        angle_rad: Member angle measured from local ``e1`` toward ``e2``.
+        eccentricity: Signed centroid offset from the reference surface along
+            ``+n``.
+        multiplicity: Positive count or density multiplier for identical
+            members represented by this object.
+        label: Optional member label for diagnostics and metadata.
     """
 
     section: BeamSection
@@ -52,7 +62,13 @@ class BeamMember:
 
 @dataclass(frozen=True, slots=True)
 class CellNode:
-    """A node in a local tangent-plane graph cell."""
+    """A node in a local tangent-plane graph cell.
+
+    Attributes:
+        x: Node coordinate along local ``e1``.
+        y: Node coordinate along local ``e2``.
+        label: Optional node label for caller provenance.
+    """
 
     x: float
     y: float
@@ -65,7 +81,17 @@ class CellNode:
 
 @dataclass(frozen=True, slots=True)
 class CellEdge:
-    """A beam edge in a local tangent-plane graph cell."""
+    """A beam edge in a local tangent-plane graph cell.
+
+    Attributes:
+        start: Index of the start node in the node tuple.
+        end: Index of the end node in the node tuple.
+        section: Centroidal beam stiffness for the edge.
+        eccentricity: Signed centroid offset from the reference surface along
+            ``+n``.
+        multiplicity: Positive count or density multiplier.
+        label: Optional edge label for diagnostics and metadata.
+    """
 
     start: int
     end: int
@@ -89,6 +115,14 @@ class CanonicalUnitCell:
 
     ``area`` is the repeated tangent-plane area represented by ``members``.
     The cell frame and strain convention must match the skin ABD stiffness.
+
+    Attributes:
+        area: Positive repeated tangent-plane area.
+        skin: Baseline skin stiffness for the cell.
+        members: One or more straight beam members in the local tangent plane.
+        frame: Local frame shared by the skin and members.
+        convention: Generalized strain convention shared by the skin and cell.
+        metadata: Read-only cell provenance.
     """
 
     area: float
@@ -120,6 +154,15 @@ class StiffenerFamily:
 
     ``spacing`` is the family pitch normal to the member direction.
     ``eccentricity`` uses the same signed ``+n`` convention as ``BeamMember``.
+
+    Attributes:
+        section: Centroidal beam stiffness for the family.
+        spacing: Positive family pitch normal to the member direction.
+        angle_rad: Family angle measured from local ``e1`` toward ``e2``.
+        eccentricity: Signed centroid offset from the reference surface along
+            ``+n``.
+        multiplicity: Positive family multiplier.
+        label: Optional family label for diagnostics and metadata.
     """
 
     section: BeamSection
@@ -208,6 +251,24 @@ def graph_unit_cell(
 
     Node coordinates are local tangent-plane coordinates in the same length
     unit used by ``area``.
+
+    Args:
+        area: Positive repeated-cell area.
+        skin: Baseline skin stiffness.
+        nodes: Graph nodes in local tangent-plane coordinates.
+        edges: Beam edges connecting nodes by index.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+        metadata: Optional metadata merged into the cell provenance.
+
+    Returns:
+        Canonical unit cell with graph edges converted to length and angle.
+
+    Raises:
+        ValueError: If the graph is underspecified, an edge index is invalid,
+            an edge has zero length, or the resulting cell is incompatible with
+            the skin.
     """
 
     node_tuple = tuple(nodes)
@@ -267,7 +328,26 @@ def unidirectional_cell(
     convention: StrainConvention | None = None,
     label: str = "unidirectional",
 ) -> CanonicalUnitCell:
-    """Create a one-family canonical strip cell."""
+    """Create a one-family canonical strip cell.
+
+    Args:
+        skin: Baseline skin stiffness.
+        member_section: Section stiffness for the repeated family.
+        spacing: Positive pitch normal to the family direction.
+        eccentricity: Signed family centroid offset along ``+n``.
+        angle_rad: Family angle measured from local ``e1``.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+        label: Source label stored in metadata.
+
+    Returns:
+        Canonical unit cell with one representative member.
+
+    Raises:
+        ValueError: If spacing, angle, eccentricity, frame, or convention
+            validation fails.
+    """
 
     d = positive_number(spacing, name="spacing")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -306,6 +386,25 @@ def orthogrid_cell(
 
     Stringers run along local ``e1`` and ribs run along local ``e2``. The two
     eccentricity inputs are signed centroid offsets along ``+n``.
+
+    Args:
+        skin: Baseline skin stiffness.
+        stringer_section: Section stiffness for local ``e1`` members.
+        rib_section: Section stiffness for local ``e2`` members.
+        stringer_spacing: Positive pitch between stringers.
+        rib_spacing: Positive pitch between ribs.
+        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
+        rib_eccentricity: Signed rib centroid offset along ``+n``.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical orthogrid unit cell.
+
+    Raises:
+        ValueError: If spacing, eccentricity, frame, or convention validation
+            fails.
     """
 
     ds = positive_number(stringer_spacing, name="stringer_spacing")
@@ -351,7 +450,24 @@ def equilateral_isogrid_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create an equilateral isogrid cell with three identical member families."""
+    """Create an equilateral isogrid cell with three identical families.
+
+    Args:
+        skin: Baseline skin stiffness.
+        member_section: Section stiffness for all three families.
+        pitch: Positive triangle side length.
+        eccentricity: Signed member centroid offset along ``+n``.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical cell with members at 0 and +/-60 degrees.
+
+    Raises:
+        ValueError: If pitch, eccentricity, frame, or convention validation
+            fails.
+    """
 
     p = positive_number(pitch, name="pitch")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -408,7 +524,34 @@ def braced_orthogrid_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create a braced orthogrid with alternating or crossed diagonal braces."""
+    """Create a braced orthogrid with alternating or crossed braces.
+
+    Args:
+        skin: Baseline skin stiffness.
+        stringer_section: Section stiffness for local ``e1`` members.
+        rib_section: Section stiffness for local ``e2`` members.
+        brace_section: Section stiffness for positive diagonal braces.
+        stringer_spacing: Positive pitch between stringers.
+        rib_spacing: Positive pitch between ribs.
+        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
+        rib_eccentricity: Signed rib centroid offset along ``+n``.
+        brace_eccentricity: Signed positive-brace centroid offset along ``+n``.
+        opposite_brace_section: Optional section for the negative diagonal.
+        opposite_brace_eccentricity: Optional eccentricity for the negative
+            diagonal.
+        brace_pattern: ``"double"`` for crossed braces or ``"single"`` for an
+            averaged alternating diagonal.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical braced orthogrid unit cell.
+
+    Raises:
+        ValueError: If spacing is invalid or ``brace_pattern`` is not
+            ``"double"`` or ``"single"``.
+    """
 
     ds = positive_number(stringer_spacing, name="stringer_spacing")
     dr = positive_number(rib_spacing, name="rib_spacing")
@@ -464,7 +607,31 @@ def isosceles_triangle_grid_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create Nemeth's isosceles-triangle grid cell."""
+    """Create an isosceles-triangle grid cell.
+
+    Args:
+        skin: Baseline skin stiffness.
+        stringer_section: Section stiffness for the base member.
+        diagonal_section: Section stiffness for the positive diagonal.
+        base: Positive triangle base length.
+        height: Positive triangle height.
+        stringer_eccentricity: Signed base-member centroid offset along ``+n``.
+        diagonal_eccentricity: Signed positive-diagonal centroid offset along
+            ``+n``.
+        opposite_diagonal_section: Optional section for the negative diagonal.
+        opposite_diagonal_eccentricity: Optional eccentricity for the negative
+            diagonal.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical isosceles-triangle grid unit cell.
+
+    Raises:
+        ValueError: If dimensions, eccentricities, frame, or convention
+            validation fails.
+    """
 
     b = positive_number(base, name="base")
     h = positive_number(height, name="height")
@@ -509,7 +676,31 @@ def kagome_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create Nemeth's Kagome grid cell."""
+    """Create a Kagome grid cell.
+
+    Args:
+        skin: Baseline skin stiffness.
+        stringer_section: Section stiffness for horizontal members.
+        diagonal_section: Section stiffness for the positive diagonal family.
+        base: Positive base length of the repeat geometry.
+        height: Positive height of the repeat geometry.
+        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
+        diagonal_eccentricity: Signed positive-diagonal centroid offset along
+            ``+n``.
+        opposite_diagonal_section: Optional section for the negative diagonal.
+        opposite_diagonal_eccentricity: Optional eccentricity for the negative
+            diagonal.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical Kagome unit cell.
+
+    Raises:
+        ValueError: If dimensions, eccentricities, frame, or convention
+            validation fails.
+    """
 
     b = positive_number(base, name="base")
     h = positive_number(height, name="height")
@@ -562,7 +753,32 @@ def hexagonal_grid_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create Nemeth's hexagon-shaped grid cell."""
+    """Create a hexagon-shaped grid cell.
+
+    Args:
+        skin: Baseline skin stiffness.
+        rib_section: Section stiffness for vertical rib members.
+        diagonal_section: Section stiffness for positive diagonal members.
+        half_width: Positive half-width of the hexagon construction.
+        diagonal_rise: Positive rise of the diagonal construction.
+        rib_length: Positive vertical rib length.
+        rib_eccentricity: Signed rib centroid offset along ``+n``.
+        diagonal_eccentricity: Signed positive-diagonal centroid offset along
+            ``+n``.
+        opposite_diagonal_section: Optional section for the negative diagonal.
+        opposite_diagonal_eccentricity: Optional eccentricity for the negative
+            diagonal.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical hexagonal-grid unit cell.
+
+    Raises:
+        ValueError: If dimensions, eccentricities, frame, or convention
+            validation fails.
+    """
 
     a = positive_number(half_width, name="half_width")
     b = positive_number(diagonal_rise, name="diagonal_rise")
@@ -609,7 +825,24 @@ def regular_hexagonal_grid_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create the identical-member regular hexagonal-grid special case."""
+    """Create the identical-member regular hexagonal-grid case.
+
+    Args:
+        skin: Baseline skin stiffness.
+        member_section: Section stiffness for all grid members.
+        pitch: Positive regular-hexagon pitch.
+        eccentricity: Signed member centroid offset along ``+n``.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical regular hexagonal-grid unit cell.
+
+    Raises:
+        ValueError: If pitch, eccentricity, frame, or convention validation
+            fails.
+    """
 
     p = positive_number(pitch, name="pitch")
     return hexagonal_grid_cell(
@@ -640,7 +873,31 @@ def star_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create Nemeth's isosceles-star-cell grid."""
+    """Create an isosceles star-cell grid.
+
+    Args:
+        skin: Baseline skin stiffness.
+        stringer_section: Section stiffness for short horizontal members.
+        diagonal_section: Section stiffness for positive diagonal members.
+        base: Positive star-cell base dimension.
+        height: Positive star-cell height dimension.
+        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
+        diagonal_eccentricity: Signed positive-diagonal centroid offset along
+            ``+n``.
+        opposite_diagonal_section: Optional section for the negative diagonal.
+        opposite_diagonal_eccentricity: Optional eccentricity for the negative
+            diagonal.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical star-cell grid.
+
+    Raises:
+        ValueError: If dimensions, eccentricities, graph connectivity, frame,
+            or convention validation fails.
+    """
 
     b = positive_number(base, name="base")
     h = positive_number(height, name="height")
@@ -698,7 +955,24 @@ def equilateral_star_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create the identical-member equilateral star-cell special case."""
+    """Create the identical-member equilateral star-cell case.
+
+    Args:
+        skin: Baseline skin stiffness.
+        member_section: Section stiffness for all star-cell members.
+        pitch: Positive equilateral base pitch.
+        eccentricity: Signed member centroid offset along ``+n``.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical equilateral star-cell grid.
+
+    Raises:
+        ValueError: If pitch, eccentricity, frame, or convention validation
+            fails.
+    """
 
     p = positive_number(pitch, name="pitch")
     return star_cell(
@@ -746,7 +1020,32 @@ def sandwich_orthogrid_core_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create an orthogrid-core sandwich cell with shifted face sheets."""
+    """Create an orthogrid-core sandwich cell with shifted faces.
+
+    Args:
+        bottom_face: Bottom face-sheet stiffness about its own reference
+            surface.
+        top_face: Top face-sheet stiffness about its own reference surface.
+        bottom_face_offset: Signed shift from bottom-face reference surface to
+            the sandwich reference surface.
+        top_face_offset: Signed shift from top-face reference surface to the
+            sandwich reference surface.
+        stringer_section: Section stiffness for the core stringer family.
+        rib_section: Section stiffness for the core rib family.
+        stringer_spacing: Positive pitch between stringers.
+        rib_spacing: Positive pitch between ribs.
+        frame: Optional cell frame. Defaults to the combined face stiffness
+            frame.
+        convention: Optional strain convention. Defaults to the combined face
+            stiffness convention.
+
+    Returns:
+        Canonical orthogrid-core sandwich unit cell.
+
+    Raises:
+        ValueError: If shifts, spacings, faces, frame, or convention validation
+            fails.
+    """
 
     skin = _sandwich_face_skin(
         bottom_face=bottom_face,
@@ -782,7 +1081,33 @@ def sandwich_hexagonal_core_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create a hexagonal-core sandwich cell with shifted face sheets."""
+    """Create a hexagonal-core sandwich cell with shifted faces.
+
+    Args:
+        bottom_face: Bottom face-sheet stiffness about its own reference
+            surface.
+        top_face: Top face-sheet stiffness about its own reference surface.
+        bottom_face_offset: Signed shift from bottom-face reference surface to
+            the sandwich reference surface.
+        top_face_offset: Signed shift from top-face reference surface to the
+            sandwich reference surface.
+        rib_section: Section stiffness for core rib members.
+        diagonal_section: Section stiffness for core diagonal members.
+        half_width: Positive half-width of the hexagon construction.
+        diagonal_rise: Positive rise of the diagonal construction.
+        rib_length: Positive vertical rib length.
+        frame: Optional cell frame. Defaults to the combined face stiffness
+            frame.
+        convention: Optional strain convention. Defaults to the combined face
+            stiffness convention.
+
+    Returns:
+        Canonical hexagonal-core sandwich unit cell.
+
+    Raises:
+        ValueError: If shifts, dimensions, faces, frame, or convention
+            validation fails.
+    """
 
     skin = _sandwich_face_skin(
         bottom_face=bottom_face,
@@ -818,7 +1143,32 @@ def sandwich_star_core_cell(
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create a star-core sandwich cell with shifted face sheets."""
+    """Create a star-core sandwich cell with shifted faces.
+
+    Args:
+        bottom_face: Bottom face-sheet stiffness about its own reference
+            surface.
+        top_face: Top face-sheet stiffness about its own reference surface.
+        bottom_face_offset: Signed shift from bottom-face reference surface to
+            the sandwich reference surface.
+        top_face_offset: Signed shift from top-face reference surface to the
+            sandwich reference surface.
+        stringer_section: Section stiffness for core stringer members.
+        diagonal_section: Section stiffness for core diagonal members.
+        base: Positive star-cell base dimension.
+        height: Positive star-cell height dimension.
+        frame: Optional cell frame. Defaults to the combined face stiffness
+            frame.
+        convention: Optional strain convention. Defaults to the combined face
+            stiffness convention.
+
+    Returns:
+        Canonical star-core sandwich unit cell.
+
+    Raises:
+        ValueError: If shifts, dimensions, faces, frame, or convention
+            validation fails.
+    """
 
     skin = _sandwich_face_skin(
         bottom_face=bottom_face,

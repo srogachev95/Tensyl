@@ -24,6 +24,20 @@ class BeamSection:
     stiffnesses in the member-local in-plane transverse and normal directions.
     Tensyl expects stiffness products in a consistent unit system; it does not
     calculate them from cross-section dimensions.
+
+    Attributes:
+        EA: Positive axial stiffness.
+        EIy: Positive bending stiffness about the member-local ``y`` axis.
+        EIz: Positive bending stiffness about the member-local ``z`` axis.
+        GJ: Positive torsional stiffness.
+        kGAy: Optional positive shear stiffness in the member-local ``y``
+            direction.
+        kGAz: Optional positive shear stiffness in the member-local ``z``
+            direction.
+        EIyz: Product bending stiffness. The ``EIy/EIz/EIyz`` block must be
+            positive definite.
+        metadata: Read-only provenance metadata carried into homogenized
+            results.
     """
 
     EA: float

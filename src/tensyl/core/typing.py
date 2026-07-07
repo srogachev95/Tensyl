@@ -23,13 +23,34 @@ def generalized_strain(values: Any) -> GeneralizedStrain:
 
     The runtime value is still a NumPy array, but the public type is distinct
     from resultants for static checkers.
+
+    Args:
+        values: Array-like generalized strain values with shape ``(8,)``.
+
+    Returns:
+        Read-only generalized strain vector.
+
+    Raises:
+        ValueError: If ``values`` cannot be read as a finite vector with shape
+            ``(8,)``.
     """
 
     return GeneralizedStrain(_readonly_generalized_vector(values, name="eta"))
 
 
 def generalized_resultant(values: Any) -> GeneralizedResultant:
-    """Return a read-only generalized resultant vector."""
+    """Return a read-only generalized resultant vector.
+
+    Args:
+        values: Array-like generalized resultant values with shape ``(8,)``.
+
+    Returns:
+        Read-only generalized resultant vector.
+
+    Raises:
+        ValueError: If ``values`` cannot be read as a finite vector with shape
+            ``(8,)``.
+    """
 
     return GeneralizedResultant(_readonly_generalized_vector(values, name="resultant"))
 

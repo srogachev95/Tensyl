@@ -57,7 +57,23 @@ def _min_radius(principal_curvatures: tuple[float, float]) -> float:
 
 @dataclass(frozen=True, slots=True)
 class SurfacePoint:
-    """Differential geometry data at a parametric surface point."""
+    """Differential geometry data at a parametric surface point.
+
+    Attributes:
+        u: First parametric coordinate after validation.
+        v: Second parametric coordinate after validation.
+        position: Three-dimensional point on the midsurface.
+        tangent_u: Physical tangent vector for increasing ``u``.
+        tangent_v: Physical tangent vector for increasing ``v``.
+        metric: First fundamental form in the ``(u, v)`` chart.
+        curvature: Second fundamental form in the ``(u, v)`` chart.
+        frame: Right-handed local tangent frame used by stiffness values.
+        jacobian: Positive surface area scale for the parameterization.
+        principal_curvatures: The two signed principal curvatures.
+        min_radius: Smallest positive curvature radius, or infinity for flat
+            directions.
+        metadata: Read-only provenance for the surface and coordinate names.
+    """
 
     u: float
     v: float
@@ -109,15 +125,39 @@ class SurfacePoint:
 
 
 class Surface(Protocol):
-    """Protocol for parametric shell midsurfaces."""
+    """Protocol for parametric shell midsurfaces.
+
+    Attributes:
+        point_at: Method that evaluates the surface chart at ``(u, v)``.
+    """
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
-        """Return differential geometry data at parametric coordinates ``(u, v)``."""
+        """Return differential geometry data at parametric coordinates.
+
+        Args:
+            u: First coordinate in the surface's parameterization.
+            v: Second coordinate in the surface's parameterization.
+
+        Returns:
+            The surface point, local frame, metric, curvature, and metadata
+            needed to embed an ABD stiffness on the shell midsurface.
+
+        Raises:
+            ValueError: If the coordinates are non-finite or land on a
+                singular point of the parameterization.
+        """
 
 
 @dataclass(frozen=True, slots=True)
 class FlatPlate:
-    """Flat plate parameterized by Cartesian coordinates ``(u, v)``."""
+    """Flat plate parameterized by Cartesian coordinates ``(u, v)``.
+
+    Attributes:
+        origin: Three-dimensional point where ``u = v = 0``.
+        e1: Unit direction for increasing ``u``.
+        e2: Unit direction for increasing ``v``.
+        label: Frame and metadata label attached to sampled points.
+    """
 
     origin: FloatArray = field(default_factory=lambda: np.array([0.0, 0.0, 0.0]))
     e1: FloatArray = field(default_factory=lambda: np.array([1.0, 0.0, 0.0]))
@@ -142,6 +182,20 @@ class FlatPlate:
         object.__setattr__(self, "e2", frame.e2)
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
+        """Return the flat-plate geometry at Cartesian coordinates.
+
+        Args:
+            u: Distance along ``e1``.
+            v: Distance along ``e2``.
+
+        Returns:
+            A ``SurfacePoint`` with identity metric, zero curvature, and
+            infinite minimum curvature radius.
+
+        Raises:
+            ValueError: If either coordinate is not finite.
+        """
+
         u_checked = finite_number(u, name="u")
         v_checked = finite_number(v, name="v")
         frame = Frame2D(e1=self.e1, e2=self.e2, n=np.cross(self.e1, self.e2), label=self.label)
@@ -167,6 +221,12 @@ class Cylinder:
 
     The local frame has ``e1`` in the axial direction, ``e2`` in the
     circumferential direction, and ``n`` outward.
+
+    Attributes:
+        radius: Positive cylinder radius.
+        length: Optional positive axial length used as model metadata by
+            callers. The parameterization itself does not clip ``u``.
+        label: Frame and metadata label attached to sampled points.
     """
 
     radius: float
@@ -187,6 +247,20 @@ class Cylinder:
             )
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
+        """Return cylinder geometry at axial station and angle.
+
+        Args:
+            u: Axial coordinate ``x``.
+            v: Circumferential angle ``theta`` in radians.
+
+        Returns:
+            A ``SurfacePoint`` with outward normal and signed curvature
+            ``-1 / radius`` in the circumferential direction.
+
+        Raises:
+            ValueError: If either coordinate is not finite.
+        """
+
         x = finite_number(u, name="u")
         theta = finite_number(v, name="v")
         radius = self.radius
@@ -220,6 +294,10 @@ class Sphere:
 
     The single chart excludes both poles. Use ``SphericalCap`` when a partial
     spherical domain is a better model for the physical shell.
+
+    Attributes:
+        radius: Positive sphere radius.
+        label: Frame and metadata label attached to sampled points.
     """
 
     radius: float
@@ -233,6 +311,21 @@ class Sphere:
         )
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
+        """Return spherical geometry away from the poles.
+
+        Args:
+            u: Polar angle ``phi`` in radians.
+            v: Azimuth angle ``theta`` in radians.
+
+        Returns:
+            A ``SurfacePoint`` with equal signed principal curvatures
+            ``-1 / radius``.
+
+        Raises:
+            ValueError: If either coordinate is non-finite or ``u`` is at a
+                polar singularity.
+        """
+
         phi = finite_number(u, name="u")
         theta = finite_number(v, name="v")
         if phi <= _TOLERANCE or phi >= np.pi - _TOLERANCE:
@@ -275,6 +368,12 @@ class SphericalCap:
 
     The pole and cap boundary are singular for the current coordinate chart and
     are rejected by ``point_at``.
+
+    Attributes:
+        radius: Positive spherical radius.
+        half_angle_rad: Positive polar half-angle of the cap, no larger than
+            ``pi``.
+        label: Frame and metadata label attached to sampled points.
     """
 
     radius: float
@@ -296,6 +395,20 @@ class SphericalCap:
         object.__setattr__(self, "half_angle_rad", half_angle)
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
+        """Return spherical-cap geometry inside the open cap.
+
+        Args:
+            u: Polar angle ``phi`` in radians.
+            v: Azimuth angle ``theta`` in radians.
+
+        Returns:
+            A ``SurfacePoint`` with outward normal and spherical curvature.
+
+        Raises:
+            ValueError: If either coordinate is non-finite, at the pole, or at
+                the cap boundary.
+        """
+
         phi = finite_number(u, name="u")
         theta = finite_number(v, name="v")
         if phi <= _TOLERANCE or phi >= self.half_angle_rad - _TOLERANCE:
@@ -341,6 +454,12 @@ class ConicalFrustum:
     axial station/generator direction, ``e2`` opposite the positive ``theta``
     tangent, and ``n`` outward. The apex is not part of the supported smooth
     midsurface domain.
+
+    Attributes:
+        radius_start: Positive radius at ``u = 0``.
+        radius_end: Positive radius at ``u = length``.
+        length: Positive axial length.
+        label: Frame and metadata label attached to sampled points.
     """
 
     radius_start: float
@@ -369,12 +488,28 @@ class ConicalFrustum:
 
     @property
     def slope(self) -> float:
-        """Return ``dr/dx`` for the linear radius stiffness."""
+        """Return ``dr/dx`` for the linear radius law.
+
+        Returns:
+            The signed radius change per unit axial distance.
+        """
 
         return (self.radius_end - self.radius_start) / self.length
 
     def radius_at(self, u: float) -> float:
-        """Return the local radius at axial coordinate ``u``."""
+        """Return the local radius at an axial coordinate.
+
+        Args:
+            u: Axial coordinate measured from ``radius_start``.
+
+        Returns:
+            The positive interpolated radius.
+
+        Raises:
+            ValueError: If ``u`` is non-finite or the interpolated radius is
+                nonpositive, which would put the point at or beyond the cone
+                apex.
+        """
 
         x = finite_number(u, name="u")
         radius = self.radius_start + self.slope * x
@@ -386,6 +521,21 @@ class ConicalFrustum:
         return float(radius)
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
+        """Return conical-frustum geometry at axial station and angle.
+
+        Args:
+            u: Axial coordinate ``x``.
+            v: Circumferential angle ``theta`` in radians.
+
+        Returns:
+            A ``SurfacePoint`` with the generator-aligned local frame and
+            signed circumferential curvature.
+
+        Raises:
+            ValueError: If either coordinate is non-finite or the local radius
+                is singular.
+        """
+
         x = finite_number(u, name="u")
         theta = finite_number(v, name="v")
         radius = self.radius_at(x)
@@ -419,7 +569,14 @@ class ConicalFrustum:
 
 @dataclass(frozen=True, slots=True)
 class Ellipsoid:
-    """Triaxial ellipsoid parameterized by polar angle and azimuth ``(phi, theta)``."""
+    """Triaxial ellipsoid parameterized by polar angle and azimuth.
+
+    Attributes:
+        a: Positive semi-axis along global ``x``.
+        b: Positive semi-axis along global ``y``.
+        c: Positive semi-axis along global ``z``.
+        label: Frame and metadata label attached to sampled points.
+    """
 
     a: float
     b: float
@@ -438,6 +595,21 @@ class Ellipsoid:
         )
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
+        """Return ellipsoid geometry away from the poles.
+
+        Args:
+            u: Polar angle ``phi`` in radians.
+            v: Azimuth angle ``theta`` in radians.
+
+        Returns:
+            A ``SurfacePoint`` with metric, curvature, and principal
+            curvatures computed from the local ellipsoid chart.
+
+        Raises:
+            ValueError: If either coordinate is non-finite or the chart is
+                singular at the requested point.
+        """
+
         phi = finite_number(u, name="u")
         theta = finite_number(v, name="v")
         sp = float(np.sin(phi))
