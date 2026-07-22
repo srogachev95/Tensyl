@@ -116,11 +116,14 @@ homogenization sources listed in [References](../references.md).
 - `BeamSection` supplies centroidal beam stiffness products. Those products may
   be entered directly or produced from isotropic thin-wall section geometry.
 - `BeamMember` supplies member length, angle, eccentricity, and multiplicity
-  inside a finite canonical cell.
+  inside a finite canonical cell. It can retain separate extension- and
+  shear-weighted eccentricities.
 - `StiffenerFamily` supplies angle, spacing, eccentricity, and multiplicity for
   the direct equilibrium-compatibility path.
 - `CanonicalUnitCell.area` is the tangent-plane area represented by one
   repeated cell.
+- `CanonicalUnitCell.geometry` retains drawable topology and repeat vectors;
+  it does not alter the member-energy sum.
 
 ## Beam Section Quantities
 
@@ -137,6 +140,25 @@ homogenization sources listed in [References](../references.md).
 
 Omitted shear stiffnesses contribute zero in the current homogenizer and are
 recorded as assumptions in the result.
+
+Nemeth's first-approximation kinematics set the member's in-plane bending
+strain $\chi_Z$ to zero. Tensyl therefore omits `EIz` and `EIyz` from the
+homogenized tangent by default even though `BeamSection` retains them for
+section completeness and other workflows. Set
+`include_in_plane_bending=True` on a member or named constructor only to request
+the explicit beyond-Nemeth extension; the homogenization result records that
+choice in `assumptions`.
+
+For the member-frame in-plane shear term, the two effective offsets enter as
+
+$$
+\Gamma_{XY}
+=
+\frac{1}{2}\left(\gamma_{XY}^0+\bar{\bar z}\kappa_{XY}\right).
+$$
+
+Thus positive shear-weighted eccentricity produces positive membrane-twist
+coupling under the documented `+n` convention.
 
 `BeamSection` still asks for stiffness products (`EA`, `EIy`, `EIz`, `GJ`,
 `kGAy`, `kGAz`) because the homogenizer consumes centroidal beam stiffnesses.

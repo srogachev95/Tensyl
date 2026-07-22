@@ -49,7 +49,7 @@ def test_single_member_family_has_expected_axis_aligned_contributions() -> None:
         skin=_zero_skin(),
         member_section=section,
         spacing=spacing,
-        eccentricity=0.0,
+        axial_eccentricity=0.0,
     )
 
     stiffness = EnergyHomogenizer().compute(cell).stiffness
@@ -59,22 +59,71 @@ def test_single_member_family_has_expected_axis_aligned_contributions() -> None:
     assert stiffness.A[0, 0] == pytest.approx(section.EA / spacing)
     assert stiffness.A[2, 2] == pytest.approx(0.25 * section.kGAy / spacing)
     assert stiffness.D[0, 0] == pytest.approx(section.EIy / spacing)
-    assert stiffness.D[1, 1] == pytest.approx(section.EIz / spacing)
+    assert stiffness.D[1, 1] == pytest.approx(0.0)
     assert stiffness.D[2, 2] == pytest.approx(0.25 * section.GJ / spacing)
     assert stiffness.As[0, 0] == pytest.approx(section.kGAz / spacing)
     assert stiffness.As[1, 1] == pytest.approx(0.0)
+
+
+def test_distinct_nemeth_eccentricities_have_positive_b11_and_b66_coupling() -> None:
+    section = BeamSection(
+        EA=1000.0,
+        EIy=50.0,
+        EIz=30.0,
+        GJ=20.0,
+        kGAy=240.0,
+        kGAz=300.0,
+    )
+    cell = unidirectional_cell(
+        skin=_zero_skin(),
+        member_section=section,
+        spacing=2.0,
+        axial_eccentricity=0.15,
+        shear_eccentricity=0.10,
+    )
+
+    stiffness = EnergyHomogenizer().compute(cell).stiffness
+
+    assert stiffness.B[0, 0] == pytest.approx(75.0)
+    assert stiffness.B[2, 2] == pytest.approx(3.0)
+
+
+def test_in_plane_member_bending_is_an_explicit_beyond_nemeth_option() -> None:
+    section = _section()
+    strict = unidirectional_cell(
+        skin=_zero_skin(),
+        member_section=section,
+        spacing=2.0,
+        axial_eccentricity=0.0,
+    )
+    extended = unidirectional_cell(
+        skin=_zero_skin(),
+        member_section=section,
+        spacing=2.0,
+        axial_eccentricity=0.0,
+        include_in_plane_bending=True,
+    )
+
+    strict_result = EnergyHomogenizer().compute(strict)
+    extended_result = EnergyHomogenizer().compute(extended)
+
+    assert strict_result.stiffness.D[1, 1] == pytest.approx(0.0)
+    assert extended_result.stiffness.D[1, 1] == pytest.approx(section.EIz / 2.0)
+    assert extended_result.stiffness.D[0, 1] == pytest.approx(section.EIyz / 2.0)
+    assert not any("beyond-Nemeth" in item for item in strict_result.assumptions)
+    assert any("beyond-Nemeth" in item for item in extended_result.assumptions)
 
 
 def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
     skin = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.004)
     cell = orthogrid_cell(
         skin=skin,
-        stringer_section=_section(),
-        rib_section=_section(),
-        stringer_spacing=0.25,
-        rib_spacing=0.40,
-        stringer_eccentricity=0.012,
-        rib_eccentricity=0.009,
+        e1_section=_section(),
+        e2_section=_section(),
+        e1_pitch=0.40,
+        e2_pitch=0.25,
+        e1_axial_eccentricity=0.012,
+        e2_axial_eccentricity=0.009,
     )
     eta = np.array([0.003, -0.002, 0.001, 0.02, -0.01, 0.04, 0.005, -0.006])
 
@@ -99,7 +148,7 @@ def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
             skin=skin,
             member_section=section,
             spacing=spacing,
-            eccentricity=0.04,
+            axial_eccentricity=0.04,
             angle_rad=0.37,
         )
     )
@@ -110,7 +159,7 @@ def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
                 section=section,
                 spacing=spacing,
                 angle_rad=0.37,
-                eccentricity=0.04,
+                axial_eccentricity=0.04,
             ),
         ),
     )
@@ -123,12 +172,12 @@ def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
     angle = 0.41
     original = orthogrid_cell(
         skin=_zero_skin(),
-        stringer_section=section,
-        rib_section=section,
-        stringer_spacing=1.3,
-        rib_spacing=1.9,
-        stringer_eccentricity=0.05,
-        rib_eccentricity=0.02,
+        e1_section=section,
+        e2_section=section,
+        e1_pitch=1.9,
+        e2_pitch=1.3,
+        e1_axial_eccentricity=0.05,
+        e2_axial_eccentricity=0.02,
     )
     rotated = CanonicalUnitCell(
         area=original.area,
@@ -138,9 +187,11 @@ def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
                 section=member.section,
                 length=member.length,
                 angle_rad=member.angle_rad + angle,
-                eccentricity=member.eccentricity,
+                axial_eccentricity=member.axial_eccentricity,
+                shear_eccentricity=member.shear_eccentricity,
                 multiplicity=member.multiplicity,
                 label=member.label,
+                include_in_plane_bending=member.include_in_plane_bending,
             )
             for member in original.members
         ),
@@ -162,8 +213,8 @@ def test_equilateral_isogrid_has_expected_membrane_symmetry() -> None:
     cell = equilateral_isogrid_cell(
         skin=_zero_skin(),
         member_section=section,
-        pitch=2.0,
-        eccentricity=0.0,
+        side_length=2.0,
+        axial_eccentricity=0.0,
     )
 
     stiffness = EnergyHomogenizer().compute(cell).stiffness
@@ -179,7 +230,7 @@ def test_validity_report_warns_for_large_scale_ratios() -> None:
         skin=_zero_skin(),
         member_section=_section(),
         spacing=1.0,
-        eccentricity=0.2,
+        axial_eccentricity=0.2,
     )
 
     result = EnergyHomogenizer().compute(
@@ -206,7 +257,7 @@ def test_rank_deficient_tangent_is_reported_not_raised() -> None:
         skin=_zero_skin(),
         member_section=_section(shear=False),
         spacing=1.0,
-        eccentricity=0.0,
+        axial_eccentricity=0.0,
     )
 
     result = EnergyHomogenizer().compute(cell)

@@ -84,17 +84,17 @@ section = BeamSection(EA=3.2e6, EIy=2.4e4, EIz=6.5e3, GJ=4.0e3, kGAy=1.1e6, kGAz
 
 def cell_factory(surface, point):
     del surface
-    stringer_spacing = 6.0 + point.u / 150.0
-    rib_spacing = 8.0
+    e1_pitch = 8.0
+    e2_pitch = 6.0 + point.u / 150.0
     skin = isotropic_plate(field.material, thickness=0.080, frame=point.frame)
     return orthogrid_cell(
         skin=skin,
-        stringer_section=section,
-        rib_section=section,
-        stringer_spacing=stringer_spacing,
-        rib_spacing=rib_spacing,
-        stringer_eccentricity=0.45,
-        rib_eccentricity=0.45,
+        e1_section=section,
+        e2_section=section,
+        e1_pitch=e1_pitch,
+        e2_pitch=e2_pitch,
+        e1_axial_eccentricity=0.45,
+        e2_axial_eccentricity=0.45,
         frame=point.frame,
     )
 
@@ -102,7 +102,7 @@ def cell_factory(surface, point):
 def validity_context(point, cell):
     return ValidityContext(
         characteristic_height=0.50,
-        pitch=max(cell.metadata["stringer_spacing"], cell.metadata["rib_spacing"]),
+        pitch=max(cell.metadata["e1_pitch"], cell.metadata["e2_pitch"]),
         min_radius=point.min_radius,
         response_length=80.0,
     )

@@ -25,15 +25,15 @@ section:
 """
     geometry = {
         "skin_only": "geometry: {}\n",
-        "unidirectional": "geometry:\n  spacing: 2.0\n  eccentricity: 0.0\n",
+        "unidirectional": "geometry:\n  spacing: 2.0\n  axial_eccentricity: 0.0\n",
         "orthogrid": (
             "geometry:\n"
-            "  stringer_spacing: 2.0\n"
-            "  rib_spacing: 3.0\n"
-            "  stringer_eccentricity: 0.1\n"
-            "  rib_eccentricity: 0.0\n"
+            "  e1_pitch: 3.0\n"
+            "  e2_pitch: 2.0\n"
+            "  e1_axial_eccentricity: 0.1\n"
+            "  e2_axial_eccentricity: 0.0\n"
         ),
-        "equilateral_isogrid": "geometry:\n  pitch: 2.0\n  eccentricity: 0.0\n",
+        "equilateral_isogrid": ("geometry:\n  side_length: 2.0\n  axial_eccentricity: 0.0\n"),
     }[model]
     section_text = "" if model == "skin_only" else section
     return f"""

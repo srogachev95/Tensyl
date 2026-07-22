@@ -197,12 +197,12 @@ rib = blade_section(
 skin_face_offset = 0.5 * skin_thickness
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=stringer.section,
-    rib_section=rib.section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=skin_face_offset + stringer.centroid_z,
-    rib_eccentricity=skin_face_offset + rib.centroid_z,
+    e1_section=stringer.section,
+    e2_section=rib.section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=skin_face_offset + stringer.centroid_z,
+    e2_axial_eccentricity=skin_face_offset + rib.centroid_z,
 )
 
 result = EnergyHomogenizer().compute(cell)
@@ -227,6 +227,7 @@ from tensyl import (
     BeamSection,
     CellEdge,
     CellNode,
+    CellVector,
     EnergyHomogenizer,
     graph_unit_cell,
 )
@@ -249,16 +250,19 @@ custom = graph_unit_cell(
         CellNode(0.0, 8.0),
     ),
     edges=(
-        CellEdge(0, 1, section, eccentricity=0.45),
-        CellEdge(0, 2, section, eccentricity=0.45),
+        CellEdge(0, 1, section, axial_eccentricity=0.45, family="e1"),
+        CellEdge(0, 2, section, axial_eccentricity=0.45, family="e2"),
     ),
+    repeat_vectors=(CellVector(6.0, 0.0), CellVector(0.0, 8.0)),
+    boundary=(0, 1, 2),
 )
 
 custom_result = EnergyHomogenizer().compute(custom)
 ```
 
 The graph constructor converts the node and edge layout into canonical beam
-members before homogenization.
+members before homogenization. Supplying repeat vectors also retains
+plot-agnostic geometry in `custom.geometry`.
 
 ## Example 5: Stiffness on a Shell Surface
 

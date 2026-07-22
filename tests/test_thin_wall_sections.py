@@ -218,12 +218,12 @@ def test_geometry_derived_section_can_drive_homogenizer() -> None:
     )
     cell = orthogrid_cell(
         skin=skin,
-        stringer_section=stringer.section,
-        rib_section=rib.section,
-        stringer_spacing=6.0,
-        rib_spacing=8.0,
-        stringer_eccentricity=0.5 * skin_thickness + stringer.centroid_z,
-        rib_eccentricity=0.5 * skin_thickness + rib.centroid_z,
+        e1_section=stringer.section,
+        e2_section=rib.section,
+        e1_pitch=8.0,
+        e2_pitch=6.0,
+        e1_axial_eccentricity=0.5 * skin_thickness + stringer.centroid_z,
+        e2_axial_eccentricity=0.5 * skin_thickness + rib.centroid_z,
     )
     result = EnergyHomogenizer().compute(cell)
 

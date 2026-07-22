@@ -83,12 +83,12 @@ skin_face_offset = 0.5 * skin_thickness
 
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=hat.section,
-    rib_section=blade.section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=skin_face_offset + hat.centroid_z,
-    rib_eccentricity=skin_face_offset + blade.centroid_z,
+    e1_section=hat.section,
+    e2_section=blade.section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=skin_face_offset + hat.centroid_z,
+    e2_axial_eccentricity=skin_face_offset + blade.centroid_z,
 )
 
 result = EnergyHomogenizer().compute(cell)
@@ -256,6 +256,7 @@ Tensyl provides constructors for common tangent-plane patterns:
 - `unidirectional_cell`;
 - `orthogrid_cell`;
 - `braced_orthogrid_cell`;
+- `diamond_cell`;
 - `equilateral_isogrid_cell`;
 - `isosceles_triangle_grid_cell`;
 - `kagome_cell`;
@@ -267,21 +268,22 @@ Named constructors are convenience layers over canonical `BeamMember`
 contributions. They do not model joint details, intersection stresses, or local
 crippling.
 
-The treatise figures below show the kind of repeated cell each named constructor
-is reducing to member contributions. They are topology references, not a promise
-that the constructor reproduces every label, dimension convention, or special
-case in the original report.
+The treatise figures below are the source topologies represented by the named
+constructors. Each returned cell retains nodes, drawable edges, family labels,
+and repeat vectors separately from the aggregated beam members used by the
+homogenizer.
 
 | Constructor family | Treatise topology |
 | --- | --- |
 | `braced_orthogrid_cell` | ![Orthogonal stiffener pattern with two diagonal braces per bay and a basic cell.](../assets/nemeth-treatise/fig-14-braced-orthogrid-cell.jpg) |
+| `diamond_cell` | Nemeth figure 15, represented as the figure-14 cell without an `e2` family. |
 | `isosceles_triangle_grid_cell` | ![Isosceles-triangle stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-17-isosceles-triangle-cell.jpg) |
 | `kagome_cell` | ![Kagome stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-18-kagome-cell.jpg) |
 | `hexagonal_grid_cell` | ![Hexagon-shaped stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-21-hexagon-cell.jpg) |
 | `star_cell` | ![Isosceles-star-shaped stiffener pattern and basic cell.](../assets/nemeth-treatise/fig-23-star-cell.jpg) |
 
-*Source for topology figures: Nemeth, NASA/TP-2011-216882, figures 14, 17, 18,
-21, and 23; full citation in [References](../references.md).*
+*Source for topology definitions: Nemeth, NASA/TP-2011-216882, figures 14-18,
+21, and 23 and tables 4-9; full citation in [References](../references.md).*
 
 ## Angles and Eccentricity
 
@@ -289,10 +291,11 @@ Angles are measured in the local frame. `0` points along `e1`, `pi/2`
 points along `e2`, and positive angles follow the positive rotation convention
 about `n`.
 
-Every eccentricity is signed along `+n` from the reference surface to the
-member centroid. For an outward-normal cylinder, an external stringer has
-positive `stringer_eccentricity`; an internal stringer has negative
-eccentricity.
+Every eccentricity is signed along `+n` from the reference surface. Nemeth
+distinguishes the extension-weighted `axial_eccentricity` from the
+shear-weighted `shear_eccentricity`; the latter defaults to the former for a
+homogeneous member. For an outward-normal cylinder, an external member has a
+positive eccentricity and an internal member has a negative eccentricity.
 
 For a geometry-derived stiffener, `centroid_z` is measured from the section's own
 construction datum. If that datum is not the wall reference surface, shift the
@@ -311,7 +314,7 @@ Use `graph_unit_cell` when a named constructor is not enough. It converts local
 tangent-plane nodes and edges into canonical beam members.
 
 ```python
-from tensyl import CellEdge, CellNode, graph_unit_cell
+from tensyl import CellEdge, CellNode, CellVector, graph_unit_cell
 
 cell = graph_unit_cell(
     area=48.0,
@@ -322,12 +325,16 @@ cell = graph_unit_cell(
         CellNode(0.0, 8.0),
     ),
     edges=(
-        CellEdge(0, 1, section, eccentricity=0.45),
-        CellEdge(0, 2, section, eccentricity=0.45),
+        CellEdge(0, 1, section, axial_eccentricity=0.45, family="e1"),
+        CellEdge(0, 2, section, axial_eccentricity=0.45, family="e2"),
     ),
+    repeat_vectors=(CellVector(6.0, 0.0), CellVector(0.0, 8.0)),
+    boundary=(0, 1, 2),
 )
 ```
 
-Node coordinates and area must use the same length unit.
+Node coordinates and area must use the same length unit. With repeat vectors,
+`cell.geometry.segments(repeat_a=2, repeat_b=2)` returns ordinary line-segment
+records that Matplotlib, Plotly, a CAD export, or another renderer can consume.
 
 Next: [Frames and Conventions](../theory/conventions.md).

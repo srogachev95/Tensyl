@@ -36,12 +36,12 @@ def _orthogrid():
     section = _section()
     return orthogrid_cell(
         skin=_skin(),
-        stringer_section=section,
-        rib_section=section,
-        stringer_spacing=0.25,
-        rib_spacing=0.40,
-        stringer_eccentricity=0.012,
-        rib_eccentricity=0.009,
+        e1_section=section,
+        e2_section=section,
+        e1_pitch=0.40,
+        e2_pitch=0.25,
+        e1_axial_eccentricity=0.012,
+        e2_axial_eccentricity=0.009,
     )
 
 
@@ -55,15 +55,15 @@ class HomogenizationSuite:
                 section=self.section,
                 spacing=0.25,
                 angle_rad=0.0,
-                eccentricity=0.012,
-                label="stringer",
+                axial_eccentricity=0.012,
+                label="e1",
             ),
             StiffenerFamily(
                 section=self.section,
                 spacing=0.40,
                 angle_rad=np.pi / 2.0,
-                eccentricity=0.009,
-                label="rib",
+                axial_eccentricity=0.009,
+                label="e2",
             ),
         )
         self.energy = EnergyHomogenizer()

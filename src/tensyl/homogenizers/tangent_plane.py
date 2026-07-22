@@ -266,27 +266,39 @@ class Homogenizer(Protocol):
         """
 
 
-def _beam_strain_map(eccentricity: float) -> FloatArray:
-    """Map member-frame generalized strains into simplified beam strains."""
+def _beam_strain_map(
+    axial_eccentricity: float,
+    shear_eccentricity: float,
+    *,
+    include_in_plane_bending: bool,
+) -> FloatArray:
+    """Map wall strains to Nemeth beam strains, with one explicit extension."""
 
-    z = float(eccentricity)
+    axial_z = float(axial_eccentricity)
+    shear_z = float(shear_eccentricity)
     # This is the shared first-approximation member kinematics used by both the
     # energy and direct EC paths. Agreement between those paths checks assembly,
     # not the truth of this strain map.
     transform = np.zeros((6, 8), dtype=np.float64)
     transform[0, 0] = 1.0
-    transform[0, 3] = z
+    transform[0, 3] = axial_z
     transform[1, 2] = 0.5
-    transform[1, 5] = -0.5 * z
+    # Nemeth Eqs. 10c, 12b, and 13b use gamma_xy(z) = gamma_xy^0 + z*kappa_xy.
+    # The positive sign is required for a positive shear-weighted eccentricity
+    # to produce positive B66 coupling under Tensyl's +n convention.
+    transform[1, 5] = 0.5 * shear_z
     transform[2, 6] = 1.0
-    transform[3, 4] = 1.0
+    if include_in_plane_bending:
+        # Nemeth sets chi_Z = 0 in Eq. 11b. This row is Tensyl's explicit
+        # beyond-Nemeth extension for users who choose to retain member EIz.
+        transform[3, 4] = 1.0
     transform[4, 3] = 1.0
     transform[5, 5] = -0.5
     transform.setflags(write=False)
     return transform
 
 
-def _beam_stiffness(section: BeamSection) -> FloatArray:
+def _beam_stiffness(section: BeamSection, *, include_in_plane_bending: bool) -> FloatArray:
     # Optional shear stiffnesses are intentionally zeroed when omitted. The
     # result assumptions report that modeling choice instead of silently
     # inventing a shear correction.
@@ -296,9 +308,10 @@ def _beam_stiffness(section: BeamSection) -> FloatArray:
         stiffness[1, 1] = section.kGAy
     if section.kGAz is not None:
         stiffness[2, 2] = section.kGAz
-    stiffness[3, 3] = section.EIz
-    stiffness[3, 4] = section.EIyz
-    stiffness[4, 3] = section.EIyz
+    if include_in_plane_bending:
+        stiffness[3, 3] = section.EIz
+        stiffness[3, 4] = section.EIyz
+        stiffness[4, 3] = section.EIyz
     stiffness[4, 4] = section.EIy
     stiffness[5, 5] = section.GJ
     stiffness.setflags(write=False)
@@ -306,7 +319,14 @@ def _beam_stiffness(section: BeamSection) -> FloatArray:
 
 
 def _member_transform(member: BeamMember | StiffenerFamily) -> FloatArray:
-    return _beam_strain_map(member.eccentricity) @ generalized_strain_transform(member.angle_rad)
+    if member.shear_eccentricity is None:  # normalized by the value object
+        msg = "member shear_eccentricity was not normalized."
+        raise HomogenizationInputError(msg)
+    return _beam_strain_map(
+        member.axial_eccentricity,
+        member.shear_eccentricity,
+        include_in_plane_bending=member.include_in_plane_bending,
+    ) @ generalized_strain_transform(member.angle_rad)
 
 
 def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
@@ -322,7 +342,10 @@ def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
     """
 
     transform = _member_transform(member)
-    stiffness = _beam_stiffness(member.section)
+    stiffness = _beam_stiffness(
+        member.section,
+        include_in_plane_bending=member.include_in_plane_bending,
+    )
     # The transform maps ABD generalized strain to member generalized strain,
     # so the equivalent stiffness contribution is T.T K T.
     tangent = transform.T @ stiffness @ transform
@@ -375,15 +398,22 @@ def member_energy(member: BeamMember, eta: FloatArray) -> float:
         0.5
         * member.multiplicity
         * member.length
-        * float(strain @ _beam_stiffness(member.section) @ strain)
+        * float(
+            strain
+            @ _beam_stiffness(
+                member.section,
+                include_in_plane_bending=member.include_in_plane_bending,
+            )
+            @ strain
+        )
     )
 
 
 def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
     assumptions = [
         "Local tangent-plane equivalent-stiffness homogenization.",
-        "Centroidal beam-section stiffnesses with member eccentricity measured along +n.",
-        "Beam members use first-approximation generalized strain kinematics.",
+        "Extension- and shear-weighted member eccentricities are measured along +n.",
+        "Beam members use Nemeth first-approximation generalized strain kinematics.",
     ]
     if any(member.section.kGAy is None for member in members):
         assumptions.append(
@@ -392,6 +422,11 @@ def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) 
     if any(member.section.kGAz is None for member in members):
         assumptions.append(
             "Omitted member kGAz values contribute no transverse stiffener shear stiffness."
+        )
+    if any(member.include_in_plane_bending for member in members):
+        assumptions.append(
+            "Selected members retain the explicit beyond-Nemeth EIz/EIyz "
+            "in-plane-bending extension."
         )
     return tuple(assumptions)
 

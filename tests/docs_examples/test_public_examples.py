@@ -56,12 +56,12 @@ def _orthogrid_result():
     section = _section()
     cell = orthogrid_cell(
         skin=skin,
-        stringer_section=section,
-        rib_section=section,
-        stringer_spacing=6.0,
-        rib_spacing=8.0,
-        stringer_eccentricity=0.45,
-        rib_eccentricity=0.45,
+        e1_section=section,
+        e2_section=section,
+        e1_pitch=8.0,
+        e2_pitch=6.0,
+        e1_axial_eccentricity=0.45,
+        e2_axial_eccentricity=0.45,
     )
     return EnergyHomogenizer().compute(
         cell,
@@ -143,12 +143,12 @@ def test_geometry_derived_stiffener_section_example() -> None:
     skin_face_offset = 0.5 * skin_thickness
     cell = orthogrid_cell(
         skin=skin,
-        stringer_section=hat.section,
-        rib_section=blade.section,
-        stringer_spacing=6.0,
-        rib_spacing=8.0,
-        stringer_eccentricity=skin_face_offset + hat.centroid_z,
-        rib_eccentricity=skin_face_offset + blade.centroid_z,
+        e1_section=hat.section,
+        e2_section=blade.section,
+        e1_pitch=8.0,
+        e2_pitch=6.0,
+        e1_axial_eccentricity=skin_face_offset + hat.centroid_z,
+        e2_axial_eccentricity=skin_face_offset + blade.centroid_z,
     )
     result = EnergyHomogenizer().compute(cell)
 
@@ -210,24 +210,24 @@ def test_non_constant_homogenized_stiffness_field_example() -> None:
 
     def cell_factory(surface, point):
         del surface
-        stringer_spacing = 6.0 + point.u / 150.0
-        rib_spacing = 8.0
+        e1_pitch = 8.0
+        e2_pitch = 6.0 + point.u / 150.0
         skin = isotropic_plate(material, thickness=0.080, frame=point.frame)
         return orthogrid_cell(
             skin=skin,
-            stringer_section=section,
-            rib_section=section,
-            stringer_spacing=stringer_spacing,
-            rib_spacing=rib_spacing,
-            stringer_eccentricity=0.45,
-            rib_eccentricity=0.45,
+            e1_section=section,
+            e2_section=section,
+            e1_pitch=e1_pitch,
+            e2_pitch=e2_pitch,
+            e1_axial_eccentricity=0.45,
+            e2_axial_eccentricity=0.45,
             frame=point.frame,
         )
 
     def validity_context(point, cell):
         return ValidityContext(
             characteristic_height=0.50,
-            pitch=max(cell.metadata["stringer_spacing"], cell.metadata["rib_spacing"]),
+            pitch=max(cell.metadata["e1_pitch"], cell.metadata["e2_pitch"]),
             min_radius=point.min_radius,
             response_length=80.0,
         )
@@ -260,8 +260,8 @@ def test_cylinder_stiffness_map_numerics() -> None:
     assert np.isclose(data["radius"], 50.0)
     assert np.isclose(data["stiffener_height"], 1.0)
     assert np.ptp(data["skin_thickness"][:, 0]) > 0.02
-    assert np.ptp(data["stringer_spacing"][:, 0]) > 1.5
-    assert np.ptp(data["rib_spacing"][:, 0]) > 1.0
+    assert np.ptp(data["e1_pitch"][:, 0]) > 1.0
+    assert np.ptp(data["e2_pitch"][:, 0]) > 1.5
     assert np.ptp(data["A11_ratio"][:, 0]) > 0.20
     assert np.ptp(data["D11_ratio"][:, 0]) > 0.25
     assert np.max(data["warning_count"]) > 0
@@ -349,8 +349,8 @@ def test_sp8007_isogrid_data_prep_handoff() -> None:
     isogrid_cell = equilateral_isogrid_cell(
         skin=isogrid_skin,
         member_section=isogrid_section,
-        pitch=6.0,
-        eccentricity=0.35,
+        side_length=6.0,
+        axial_eccentricity=0.35,
     )
     isogrid_result = EnergyHomogenizer().compute(
         isogrid_cell,

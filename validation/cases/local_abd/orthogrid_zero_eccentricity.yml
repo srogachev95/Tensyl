@@ -51,12 +51,12 @@ cell:
   topology: orthogrid
   constructor: orthogrid_cell
   arguments:
-    stringer_section: validation_stringer
-    rib_section: validation_rib
-    stringer_spacing: 6.0
-    rib_spacing: 8.0
-    stringer_eccentricity: 0.0
-    rib_eccentricity: 0.0
+    e1_section: validation_stringer
+    e2_section: validation_rib
+    e1_pitch: 8.0
+    e2_pitch: 6.0
+    e1_axial_eccentricity: 0.0
+    e2_axial_eccentricity: 0.0
   representative_area: 48.0
   boundary_condition: generalized_strain_periodic
 tensyl_reference:

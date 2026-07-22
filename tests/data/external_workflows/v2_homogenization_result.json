@@ -4,7 +4,7 @@
   "artifact_type": "homogenization_result",
   "producer": {
     "name": "tensyl",
-    "version": "0.1.0"
+    "version": "0.2.1"
   },
   "units": null,
   "payload": {
@@ -36,7 +36,7 @@
           105263282.89473683,
           0.0,
           0.0,
-          -5.0,
+          5.0,
           0.0,
           0.0
         ],
@@ -55,7 +55,7 @@
           0.0,
           0.0,
           138.25608798114692,
-          456.4578423671119,
+          418.9578423671119,
           0.0,
           0.0,
           0.0
@@ -63,7 +63,7 @@
         [
           0.0,
           0.0,
-          -5.0,
+          5.0,
           0.0,
           0.0,
           146.80087719298243,
@@ -141,7 +141,7 @@
         "p_over_R": 0.04,
         "p_over_L_response": 0.08,
         "coupling_ratios": {
-          "B_fro": 0.00010326833031299523
+          "B_fro": 0.00010502828389539764
         },
         "warnings": [
           "p_over_L_response_exceeds_threshold"
@@ -153,7 +153,7 @@
       "p_over_R": 0.04,
       "p_over_L_response": 0.08,
       "coupling_ratios": {
-        "B_fro": 0.00010326833031299523
+        "B_fro": 0.00010502828389539764
       },
       "warnings": [
         "p_over_L_response_exceeds_threshold"
@@ -173,8 +173,8 @@
     },
     "assumptions": [
       "Local tangent-plane equivalent-stiffness homogenization.",
-      "Centroidal beam-section stiffnesses with member eccentricity measured along +n.",
-      "Beam members use first-approximation generalized strain kinematics."
+      "Extension- and shear-weighted member eccentricities are measured along +n.",
+      "Beam members use Nemeth first-approximation generalized strain kinematics."
     ],
     "source": "energy"
   }

@@ -27,16 +27,21 @@ from tensyl.sections.beam import BeamSection
 class BeamMember:
     """A straight stiffener member in a local tangent-plane unit cell.
 
-    ``angle_rad`` is measured from local ``e1`` toward ``e2``. ``eccentricity``
-    is the signed distance from the reference surface to the member
-    centroid along ``+n``.
+    ``angle_rad`` is measured from local ``e1`` toward ``e2``.
+    ``axial_eccentricity`` is Nemeth's extension-weighted effective offset, and
+    ``shear_eccentricity`` is the shear-weighted effective offset. Both are
+    signed from the reference surface along ``+n``. For a homogeneous member,
+    omit ``shear_eccentricity`` and it defaults to ``axial_eccentricity``.
 
     Attributes:
         section: Centroidal beam stiffness for the member.
         length: Positive member length inside the repeated cell.
         angle_rad: Member angle measured from local ``e1`` toward ``e2``.
-        eccentricity: Signed centroid offset from the reference surface along
-            ``+n``.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+            Defaults to ``axial_eccentricity``.
+        include_in_plane_bending: Whether to retain the member ``EIz`` and
+            ``EIyz`` extension beyond Nemeth's ``chi_Z = 0`` assumption.
         multiplicity: Positive count or density multiplier for identical
             members represented by this object.
         label: Optional member label for diagnostics and metadata.
@@ -45,16 +50,26 @@ class BeamMember:
     section: BeamSection
     length: float
     angle_rad: float
-    eccentricity: float
+    axial_eccentricity: float
     multiplicity: float = 1.0
     label: str = ""
+    shear_eccentricity: float | None = None
+    include_in_plane_bending: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "length", positive_number(self.length, name="length"))
         object.__setattr__(self, "angle_rad", finite_number(self.angle_rad, name="angle_rad"))
-        object.__setattr__(
-            self, "eccentricity", finite_number(self.eccentricity, name="eccentricity")
+        axial = finite_number(self.axial_eccentricity, name="axial_eccentricity")
+        shear = (
+            axial
+            if self.shear_eccentricity is None
+            else finite_number(
+                self.shear_eccentricity,
+                name="shear_eccentricity",
+            )
         )
+        object.__setattr__(self, "axial_eccentricity", axial)
+        object.__setattr__(self, "shear_eccentricity", shear)
         object.__setattr__(
             self, "multiplicity", positive_number(self.multiplicity, name="multiplicity")
         )
@@ -65,18 +80,186 @@ class CellNode:
     """A node in a local tangent-plane graph cell.
 
     Attributes:
-        x: Node coordinate along local ``e1``.
-        y: Node coordinate along local ``e2``.
+        e1: Node coordinate along local ``e1``.
+        e2: Node coordinate along local ``e2``.
         label: Optional node label for caller provenance.
     """
 
-    x: float
-    y: float
+    e1: float
+    e2: float
     label: str = ""
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "x", finite_number(self.x, name="x"))
-        object.__setattr__(self, "y", finite_number(self.y, name="y"))
+        object.__setattr__(self, "e1", finite_number(self.e1, name="e1"))
+        object.__setattr__(self, "e2", finite_number(self.e2, name="e2"))
+
+
+@dataclass(frozen=True, slots=True)
+class CellVector:
+    """A translation vector for repeating a drawable cell geometry.
+
+    Attributes:
+        e1: Vector component along local ``e1``.
+        e2: Vector component along local ``e2``.
+    """
+
+    e1: float
+    e2: float
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "e1", finite_number(self.e1, name="e1"))
+        object.__setattr__(self, "e2", finite_number(self.e2, name="e2"))
+
+
+@dataclass(frozen=True, slots=True)
+class CellGeometryEdge:
+    """A drawable edge between two nodes in a retained cell geometry.
+
+    Attributes:
+        start: Index of the start node.
+        end: Index of the end node.
+        family: Stable member-family identifier used for grouping or styling.
+        label: Optional source member label.
+    """
+
+    start: int
+    end: int
+    family: str
+    label: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.family:
+            msg = "CellGeometryEdge family must be nonempty."
+            raise ValueError(msg)
+
+
+@dataclass(frozen=True, slots=True)
+class CellSegment:
+    """One plot-agnostic line segment emitted by ``CellGeometry.segments``.
+
+    Attributes:
+        start_e1: Start coordinate along local ``e1``.
+        start_e2: Start coordinate along local ``e2``.
+        end_e1: End coordinate along local ``e1``.
+        end_e2: End coordinate along local ``e2``.
+        family: Stable member-family identifier.
+        label: Optional source member label.
+    """
+
+    start_e1: float
+    start_e2: float
+    end_e1: float
+    end_e2: float
+    family: str
+    label: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class CellGeometry:
+    """Retained topology sufficient to draw and tile a named unit cell.
+
+    Geometry is deliberately separate from the homogenized ``members`` list.
+    The latter may aggregate shared or repeated members by multiplicity, while
+    this object preserves the source topology used for visualization.
+
+    Attributes:
+        nodes: Cell nodes in local tangent-plane coordinates.
+        edges: Drawable edges between nodes.
+        repeat_vectors: Two independent translations that tile the pattern.
+        boundary: Optional ordered node indices describing the basic-cell
+            perimeter. The perimeter is a visualization aid, not a beam family.
+    """
+
+    nodes: tuple[CellNode, ...]
+    edges: tuple[CellGeometryEdge, ...]
+    repeat_vectors: tuple[CellVector, CellVector]
+    boundary: tuple[int, ...] = ()
+
+    def __post_init__(self) -> None:
+        nodes = tuple(self.nodes)
+        edges = tuple(self.edges)
+        repeat_vectors = tuple(self.repeat_vectors)
+        boundary = tuple(self.boundary)
+        if len(nodes) < 2:
+            msg = "CellGeometry requires at least two nodes."
+            raise ValueError(msg)
+        if not edges:
+            msg = "CellGeometry requires at least one edge."
+            raise ValueError(msg)
+        if len(repeat_vectors) != 2:
+            msg = "CellGeometry requires exactly two repeat vectors."
+            raise ValueError(msg)
+        for edge in edges:
+            if edge.start < 0 or edge.start >= len(nodes):
+                msg = f"geometry edge start index {edge.start} is out of range."
+                raise ValueError(msg)
+            if edge.end < 0 or edge.end >= len(nodes):
+                msg = f"geometry edge end index {edge.end} is out of range."
+                raise ValueError(msg)
+            if edge.start == edge.end:
+                msg = "geometry edge start and end nodes must be distinct."
+                raise ValueError(msg)
+        for index in boundary:
+            if index < 0 or index >= len(nodes):
+                msg = f"geometry boundary index {index} is out of range."
+                raise ValueError(msg)
+        a, b = repeat_vectors
+        determinant = a.e1 * b.e2 - a.e2 * b.e1
+        if determinant == 0.0:
+            msg = "CellGeometry repeat vectors must be linearly independent."
+            raise ValueError(msg)
+        object.__setattr__(self, "nodes", nodes)
+        object.__setattr__(self, "edges", edges)
+        object.__setattr__(self, "repeat_vectors", repeat_vectors)
+        object.__setattr__(self, "boundary", boundary)
+
+    @property
+    def repeat_area(self) -> float:
+        """Return the positive area spanned by the two repeat vectors."""
+
+        a, b = self.repeat_vectors
+        return abs(a.e1 * b.e2 - a.e2 * b.e1)
+
+    def segments(self, *, repeat_a: int = 1, repeat_b: int = 1) -> tuple[CellSegment, ...]:
+        """Return drawable segments for one cell or a rectangular repeat block.
+
+        Args:
+            repeat_a: Positive number of repeats along the first repeat vector.
+            repeat_b: Positive number of repeats along the second repeat vector.
+
+        Returns:
+            Immutable plot-agnostic line segments with family metadata.
+
+        Raises:
+            ValueError: If either repeat count is not a positive integer.
+        """
+
+        if isinstance(repeat_a, bool) or not isinstance(repeat_a, int) or repeat_a <= 0:
+            msg = "repeat_a must be a positive integer."
+            raise ValueError(msg)
+        if isinstance(repeat_b, bool) or not isinstance(repeat_b, int) or repeat_b <= 0:
+            msg = "repeat_b must be a positive integer."
+            raise ValueError(msg)
+        vector_a, vector_b = self.repeat_vectors
+        segments: list[CellSegment] = []
+        for index_a in range(repeat_a):
+            for index_b in range(repeat_b):
+                offset_e1 = index_a * vector_a.e1 + index_b * vector_b.e1
+                offset_e2 = index_a * vector_a.e2 + index_b * vector_b.e2
+                for edge in self.edges:
+                    start = self.nodes[edge.start]
+                    end = self.nodes[edge.end]
+                    segments.append(
+                        CellSegment(
+                            start_e1=start.e1 + offset_e1,
+                            start_e2=start.e2 + offset_e2,
+                            end_e1=end.e1 + offset_e1,
+                            end_e2=end.e2 + offset_e2,
+                            family=edge.family,
+                            label=edge.label,
+                        )
+                    )
+        return tuple(segments)
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,23 +270,37 @@ class CellEdge:
         start: Index of the start node in the node tuple.
         end: Index of the end node in the node tuple.
         section: Centroidal beam stiffness for the edge.
-        eccentricity: Signed centroid offset from the reference surface along
-            ``+n``.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         multiplicity: Positive count or density multiplier.
         label: Optional edge label for diagnostics and metadata.
+        family: Optional stable family name retained in drawable geometry.
     """
 
     start: int
     end: int
     section: BeamSection
-    eccentricity: float
+    axial_eccentricity: float
     multiplicity: float = 1.0
     label: str = ""
+    shear_eccentricity: float | None = None
+    family: str = ""
+    include_in_plane_bending: bool = False
 
     def __post_init__(self) -> None:
-        object.__setattr__(
-            self, "eccentricity", finite_number(self.eccentricity, name="eccentricity")
+        axial = finite_number(self.axial_eccentricity, name="axial_eccentricity")
+        shear = (
+            axial
+            if self.shear_eccentricity is None
+            else finite_number(
+                self.shear_eccentricity,
+                name="shear_eccentricity",
+            )
         )
+        object.__setattr__(self, "axial_eccentricity", axial)
+        object.__setattr__(self, "shear_eccentricity", shear)
         object.__setattr__(
             self, "multiplicity", positive_number(self.multiplicity, name="multiplicity")
         )
@@ -122,6 +319,7 @@ class CanonicalUnitCell:
         members: One or more straight beam members in the local tangent plane.
         frame: Local frame shared by the skin and members.
         convention: Generalized strain convention shared by the skin and cell.
+        geometry: Optional retained topology and repeat vectors for plotting.
         metadata: Read-only cell provenance.
     """
 
@@ -130,6 +328,7 @@ class CanonicalUnitCell:
     members: tuple[BeamMember, ...]
     frame: Frame2D = DEFAULT_FRAME
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION
+    geometry: CellGeometry | None = None
     metadata: dict[str, Any] | MappingProxyType[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -144,6 +343,14 @@ class CanonicalUnitCell:
         if self.skin.convention != self.convention:
             msg = "cell convention must match the skin convention."
             raise ValueError(msg)
+        if self.geometry is not None and not np.isclose(
+            self.geometry.repeat_area,
+            self.area,
+            rtol=1.0e-12,
+            atol=0.0,
+        ):
+            msg = "cell geometry repeat area must match the homogenization cell area."
+            raise ValueError(msg)
         object.__setattr__(self, "members", members)
         object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
 
@@ -153,14 +360,16 @@ class StiffenerFamily:
     """Continuous straight stiffener-family input for direct EC homogenization.
 
     ``spacing`` is the family pitch normal to the member direction.
-    ``eccentricity`` uses the same signed ``+n`` convention as ``BeamMember``.
+    Eccentricities use the same signed ``+n`` convention as ``BeamMember``.
 
     Attributes:
         section: Centroidal beam stiffness for the family.
         spacing: Positive family pitch normal to the member direction.
         angle_rad: Family angle measured from local ``e1`` toward ``e2``.
-        eccentricity: Signed centroid offset from the reference surface along
-            ``+n``.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         multiplicity: Positive family multiplier.
         label: Optional family label for diagnostics and metadata.
     """
@@ -168,16 +377,26 @@ class StiffenerFamily:
     section: BeamSection
     spacing: float
     angle_rad: float
-    eccentricity: float
+    axial_eccentricity: float
     multiplicity: float = 1.0
     label: str = ""
+    shear_eccentricity: float | None = None
+    include_in_plane_bending: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "spacing", positive_number(self.spacing, name="spacing"))
         object.__setattr__(self, "angle_rad", finite_number(self.angle_rad, name="angle_rad"))
-        object.__setattr__(
-            self, "eccentricity", finite_number(self.eccentricity, name="eccentricity")
+        axial = finite_number(self.axial_eccentricity, name="axial_eccentricity")
+        shear = (
+            axial
+            if self.shear_eccentricity is None
+            else finite_number(
+                self.shear_eccentricity,
+                name="shear_eccentricity",
+            )
         )
+        object.__setattr__(self, "axial_eccentricity", axial)
+        object.__setattr__(self, "shear_eccentricity", shear)
         object.__setattr__(
             self, "multiplicity", positive_number(self.multiplicity, name="multiplicity")
         )
@@ -209,31 +428,64 @@ def _paired_oblique_members(
     opposite_section: BeamSection | None,
     length: float,
     angle_rad: float,
-    eccentricity: float,
-    opposite_eccentricity: float | None,
+    axial_eccentricity: float,
+    shear_eccentricity: float | None,
+    opposite_axial_eccentricity: float | None,
+    opposite_shear_eccentricity: float | None,
     multiplicity: float = 1.0,
     positive_label: str,
     negative_label: str,
+    include_in_plane_bending: bool = False,
 ) -> tuple[BeamMember, BeamMember]:
     # Several Nemeth-style cells use mirrored oblique members. Keep the pairing
     # in one helper so opposite material/eccentricity overrides stay symmetric.
+    negative_axial_eccentricity = _same_or_value(
+        axial_eccentricity,
+        opposite_axial_eccentricity,
+    )
+    negative_shear_eccentricity = opposite_shear_eccentricity
+    if opposite_axial_eccentricity is None and opposite_shear_eccentricity is None:
+        negative_shear_eccentricity = shear_eccentricity
     return (
         BeamMember(
-            section,
-            length,
-            angle_rad,
-            eccentricity,
+            section=section,
+            length=length,
+            angle_rad=angle_rad,
+            axial_eccentricity=axial_eccentricity,
+            shear_eccentricity=shear_eccentricity,
             multiplicity=multiplicity,
             label=positive_label,
+            include_in_plane_bending=include_in_plane_bending,
         ),
         BeamMember(
-            _same_or_second(section, opposite_section),
-            length,
-            -angle_rad,
-            _same_or_value(eccentricity, opposite_eccentricity),
+            section=_same_or_second(section, opposite_section),
+            length=length,
+            angle_rad=-angle_rad,
+            axial_eccentricity=negative_axial_eccentricity,
+            shear_eccentricity=negative_shear_eccentricity,
             multiplicity=multiplicity,
             label=negative_label,
+            include_in_plane_bending=include_in_plane_bending,
         ),
+    )
+
+
+def _geometry(
+    *,
+    nodes: tuple[tuple[float, float], ...],
+    edges: tuple[tuple[int, int, str, str], ...],
+    repeat_vectors: tuple[tuple[float, float], tuple[float, float]],
+    boundary: tuple[int, ...] = (),
+) -> CellGeometry:
+    vector_a, vector_b = repeat_vectors
+    return CellGeometry(
+        nodes=tuple(CellNode(e1, e2) for e1, e2 in nodes),
+        edges=tuple(
+            CellGeometryEdge(start=start, end=end, family=family, label=label)
+            for start, end, family, label in edges
+        ),
+        repeat_vectors=(CellVector(*vector_a), CellVector(*vector_b)),
+        boundary=boundary,
     )
 
 
@@ -243,6 +495,8 @@ def graph_unit_cell(
     skin: ABDStiffness,
     nodes: tuple[CellNode, ...],
     edges: tuple[CellEdge, ...],
+    repeat_vectors: tuple[CellVector, CellVector] | None = None,
+    boundary: tuple[int, ...] = (),
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
     metadata: dict[str, Any] | MappingProxyType[str, Any] | None = None,
@@ -257,6 +511,9 @@ def graph_unit_cell(
         skin: Baseline skin stiffness.
         nodes: Graph nodes in local tangent-plane coordinates.
         edges: Beam edges connecting nodes by index.
+        repeat_vectors: Optional pair of independent pattern translations. When
+            provided, Tensyl retains drawable geometry on the returned cell.
+        boundary: Optional ordered node indices for the cell perimeter.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -288,31 +545,48 @@ def graph_unit_cell(
             raise ValueError(msg)
         start = node_tuple[edge.start]
         end = node_tuple[edge.end]
-        dx = end.x - start.x
-        dy = end.y - start.y
-        # Graph input is only a convenience layer. The canonical homogenizer
-        # consumes length and angle, so all graph geometry is collapsed here.
+        dx = end.e1 - start.e1
+        dy = end.e2 - start.e2
         length = float(np.hypot(dx, dy))
         members.append(
             BeamMember(
                 section=edge.section,
                 length=length,
                 angle_rad=float(np.arctan2(dy, dx)),
-                eccentricity=edge.eccentricity,
+                axial_eccentricity=edge.axial_eccentricity,
+                shear_eccentricity=edge.shear_eccentricity,
                 multiplicity=edge.multiplicity,
                 label=edge.label,
+                include_in_plane_bending=edge.include_in_plane_bending,
             )
         )
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     cell_metadata = {"source": "graph_unit_cell"}
     if metadata is not None:
         cell_metadata.update(metadata)
+    geometry = None
+    if repeat_vectors is not None:
+        geometry = CellGeometry(
+            nodes=node_tuple,
+            edges=tuple(
+                CellGeometryEdge(
+                    start=edge.start,
+                    end=edge.end,
+                    family=edge.family or edge.label or "member",
+                    label=edge.label,
+                )
+                for edge in edges
+            ),
+            repeat_vectors=repeat_vectors,
+            boundary=boundary,
+        )
     return CanonicalUnitCell(
         area=area,
         skin=skin,
         members=tuple(members),
         frame=cell_frame,
         convention=cell_convention,
+        geometry=geometry,
         metadata=cell_metadata,
     )
 
@@ -322,8 +596,10 @@ def unidirectional_cell(
     skin: ABDStiffness,
     member_section: BeamSection,
     spacing: float,
-    eccentricity: float,
+    axial_eccentricity: float,
+    shear_eccentricity: float | None = None,
     angle_rad: float = 0.0,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
     label: str = "unidirectional",
@@ -334,8 +610,11 @@ def unidirectional_cell(
         skin: Baseline skin stiffness.
         member_section: Section stiffness for the repeated family.
         spacing: Positive pitch normal to the family direction.
-        eccentricity: Signed family centroid offset along ``+n``.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
         angle_rad: Family angle measured from local ``e1``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -357,15 +636,25 @@ def unidirectional_cell(
         section=member_section,
         length=1.0,
         angle_rad=angle_rad,
-        eccentricity=eccentricity,
+        axial_eccentricity=axial_eccentricity,
+        shear_eccentricity=shear_eccentricity,
         label="stiffener",
+        include_in_plane_bending=include_in_plane_bending,
     )
+    angle = member.angle_rad
+    direction = (float(np.cos(angle)), float(np.sin(angle)))
+    normal = (-d * direction[1], d * direction[0])
     return CanonicalUnitCell(
         area=d,
         skin=skin,
         members=(member,),
         frame=cell_frame,
         convention=cell_convention,
+        geometry=_geometry(
+            nodes=((0.0, 0.0), direction),
+            edges=((0, 1, "member", "member"),),
+            repeat_vectors=(direction, normal),
+        ),
         metadata={"source": label, "spacing": d},
     )
 
@@ -373,28 +662,36 @@ def unidirectional_cell(
 def orthogrid_cell(
     *,
     skin: ABDStiffness,
-    stringer_section: BeamSection,
-    rib_section: BeamSection,
-    stringer_spacing: float,
-    rib_spacing: float,
-    stringer_eccentricity: float,
-    rib_eccentricity: float,
+    e1_section: BeamSection,
+    e2_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    e1_axial_eccentricity: float,
+    e2_axial_eccentricity: float,
+    e1_shear_eccentricity: float | None = None,
+    e2_shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
-    """Create an orthogrid cell with one stringer and one rib family.
+    """Create an orthogrid with members aligned to local ``e1`` and ``e2``.
 
-    Stringers run along local ``e1`` and ribs run along local ``e2``. The two
-    eccentricity inputs are signed centroid offsets along ``+n``.
+    ``e1_pitch`` and ``e2_pitch`` are coordinate spans along those axes. They
+    are not family spacings: the spacing normal to the ``e1`` family is
+    ``e2_pitch``, and vice versa.
 
     Args:
         skin: Baseline skin stiffness.
-        stringer_section: Section stiffness for local ``e1`` members.
-        rib_section: Section stiffness for local ``e2`` members.
-        stringer_spacing: Positive pitch between stringers.
-        rib_spacing: Positive pitch between ribs.
-        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
-        rib_eccentricity: Signed rib centroid offset along ``+n``.
+        e1_section: Section stiffness for members running along local ``e1``.
+        e2_section: Section stiffness for members running along local ``e2``.
+        e1_pitch: Positive basic-cell span along local ``e1``.
+        e2_pitch: Positive basic-cell span along local ``e2``.
+        e1_axial_eccentricity: ``e1`` family extension-weighted offset.
+        e2_axial_eccentricity: ``e2`` family extension-weighted offset.
+        e1_shear_eccentricity: Optional ``e1`` family shear-weighted offset.
+        e2_shear_eccentricity: Optional ``e2`` family shear-weighted offset.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -403,40 +700,60 @@ def orthogrid_cell(
         Canonical orthogrid unit cell.
 
     Raises:
-        ValueError: If spacing, eccentricity, frame, or convention validation
+        ValueError: If a pitch, eccentricity, frame, or convention validation
             fails.
     """
 
-    ds = positive_number(stringer_spacing, name="stringer_spacing")
-    dr = positive_number(rib_spacing, name="rib_spacing")
+    pitch_e1 = positive_number(e1_pitch, name="e1_pitch")
+    pitch_e2 = positive_number(e2_pitch, name="e2_pitch")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
-    # Each member spans the opposite cell pitch, so length / area reduces to
-    # the expected 1 / family spacing for stringers and ribs.
+    # Each member spans its coordinate pitch, so length / area reduces to the
+    # reciprocal pitch normal to that family.
     return CanonicalUnitCell(
-        area=ds * dr,
+        area=pitch_e1 * pitch_e2,
         skin=skin,
         members=(
             BeamMember(
-                section=stringer_section,
-                length=dr,
+                section=e1_section,
+                length=pitch_e1,
                 angle_rad=0.0,
-                eccentricity=stringer_eccentricity,
-                label="stringer",
+                axial_eccentricity=e1_axial_eccentricity,
+                shear_eccentricity=e1_shear_eccentricity,
+                label="e1",
+                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
-                section=rib_section,
-                length=ds,
+                section=e2_section,
+                length=pitch_e2,
                 angle_rad=np.pi / 2.0,
-                eccentricity=rib_eccentricity,
-                label="rib",
+                axial_eccentricity=e2_axial_eccentricity,
+                shear_eccentricity=e2_shear_eccentricity,
+                label="e2",
+                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
         convention=cell_convention,
+        geometry=_geometry(
+            nodes=(
+                (-0.5 * pitch_e1, -0.5 * pitch_e2),
+                (0.5 * pitch_e1, -0.5 * pitch_e2),
+                (0.5 * pitch_e1, 0.5 * pitch_e2),
+                (-0.5 * pitch_e1, 0.5 * pitch_e2),
+            ),
+            edges=(
+                (0, 1, "e1", "e1-bottom"),
+                (3, 2, "e1", "e1-top"),
+                (0, 3, "e2", "e2-left"),
+                (1, 2, "e2", "e2-right"),
+            ),
+            repeat_vectors=((pitch_e1, 0.0), (0.0, pitch_e2)),
+            boundary=(0, 1, 2, 3),
+        ),
         metadata={
             "source": "orthogrid",
-            "stringer_spacing": ds,
-            "rib_spacing": dr,
+            "e1_pitch": pitch_e1,
+            "e2_pitch": pitch_e2,
         },
     )
 
@@ -445,8 +762,10 @@ def equilateral_isogrid_cell(
     *,
     skin: ABDStiffness,
     member_section: BeamSection,
-    pitch: float,
-    eccentricity: float,
+    side_length: float,
+    axial_eccentricity: float,
+    shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -455,8 +774,11 @@ def equilateral_isogrid_cell(
     Args:
         skin: Baseline skin stiffness.
         member_section: Section stiffness for all three families.
-        pitch: Positive triangle side length.
-        eccentricity: Signed member centroid offset along ``+n``.
+        side_length: Positive equilateral-triangle side length.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -465,11 +787,12 @@ def equilateral_isogrid_cell(
         Canonical cell with members at 0 and +/-60 degrees.
 
     Raises:
-        ValueError: If pitch, eccentricity, frame, or convention validation
+        ValueError: If side length, eccentricity, frame, or convention
+            validation
             fails.
     """
 
-    p = positive_number(pitch, name="pitch")
+    p = positive_number(side_length, name="side_length")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     height = np.sqrt(3.0) * p / 2.0
     # The three directions share one parallelogram cell area. Multiplicity is
@@ -480,47 +803,68 @@ def equilateral_isogrid_cell(
         skin=skin,
         members=(
             BeamMember(
-                member_section,
+                section=member_section,
                 length=p,
                 angle_rad=0.0,
-                eccentricity=eccentricity,
-                label="0",
+                axial_eccentricity=axial_eccentricity,
+                shear_eccentricity=shear_eccentricity,
+                label="e1",
+                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
-                member_section,
+                section=member_section,
                 length=p,
                 angle_rad=np.pi / 3.0,
-                eccentricity=eccentricity,
-                label="+60",
+                axial_eccentricity=axial_eccentricity,
+                shear_eccentricity=shear_eccentricity,
+                label="positive_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
-                member_section,
+                section=member_section,
                 length=p,
                 angle_rad=-np.pi / 3.0,
-                eccentricity=eccentricity,
-                label="-60",
+                axial_eccentricity=axial_eccentricity,
+                shear_eccentricity=shear_eccentricity,
+                label="negative_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
         convention=cell_convention,
-        metadata={"source": "equilateral_isogrid", "pitch": p},
+        geometry=_geometry(
+            nodes=((0.0, 0.0), (p, 0.0), (0.5 * p, height)),
+            edges=(
+                (0, 1, "e1", "e1"),
+                (0, 2, "positive_diagonal", "+60"),
+                (1, 2, "negative_diagonal", "-60"),
+            ),
+            repeat_vectors=((p, 0.0), (0.5 * p, height)),
+            boundary=(0, 1, 2),
+        ),
+        metadata={"source": "equilateral_isogrid", "side_length": p},
     )
 
 
 def braced_orthogrid_cell(
     *,
     skin: ABDStiffness,
-    stringer_section: BeamSection,
-    rib_section: BeamSection,
-    brace_section: BeamSection,
-    stringer_spacing: float,
-    rib_spacing: float,
-    stringer_eccentricity: float,
-    rib_eccentricity: float,
-    brace_eccentricity: float,
-    opposite_brace_section: BeamSection | None = None,
-    opposite_brace_eccentricity: float | None = None,
-    brace_pattern: Literal["double", "single"] = "double",
+    e1_section: BeamSection,
+    e2_section: BeamSection,
+    positive_diagonal_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    e1_axial_eccentricity: float,
+    e2_axial_eccentricity: float,
+    diagonal_axial_eccentricity: float,
+    e1_shear_eccentricity: float | None = None,
+    e2_shear_eccentricity: float | None = None,
+    diagonal_shear_eccentricity: float | None = None,
+    negative_diagonal_section: BeamSection | None = None,
+    negative_diagonal_axial_eccentricity: float | None = None,
+    negative_diagonal_shear_eccentricity: float | None = None,
+    diagonal_pattern: Literal["double", "single"] = "double",
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -528,19 +872,26 @@ def braced_orthogrid_cell(
 
     Args:
         skin: Baseline skin stiffness.
-        stringer_section: Section stiffness for local ``e1`` members.
-        rib_section: Section stiffness for local ``e2`` members.
-        brace_section: Section stiffness for positive diagonal braces.
-        stringer_spacing: Positive pitch between stringers.
-        rib_spacing: Positive pitch between ribs.
-        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
-        rib_eccentricity: Signed rib centroid offset along ``+n``.
-        brace_eccentricity: Signed positive-brace centroid offset along ``+n``.
-        opposite_brace_section: Optional section for the negative diagonal.
-        opposite_brace_eccentricity: Optional eccentricity for the negative
-            diagonal.
-        brace_pattern: ``"double"`` for crossed braces or ``"single"`` for an
-            averaged alternating diagonal.
+        e1_section: Section stiffness for members running along local ``e1``.
+        e2_section: Section stiffness for members running along local ``e2``.
+        positive_diagonal_section: Section stiffness for the positive diagonal.
+        e1_pitch: Basic-bay span along local ``e1``; Nemeth's ``Lx``.
+        e2_pitch: Basic-bay span along local ``e2``; Nemeth's ``Ly``.
+        e1_axial_eccentricity: ``e1`` family extension-weighted offset.
+        e2_axial_eccentricity: ``e2`` family extension-weighted offset.
+        diagonal_axial_eccentricity: Positive-diagonal extension-weighted offset.
+        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        e2_shear_eccentricity: Optional ``e2`` shear-weighted offset.
+        diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
+        negative_diagonal_section: Optional negative-diagonal section.
+        negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
+            offset.
+        negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
+            offset.
+        diagonal_pattern: ``"double"`` for Nemeth figure 14 or ``"single"``
+            for the alternating figure-16 pattern.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -549,61 +900,238 @@ def braced_orthogrid_cell(
         Canonical braced orthogrid unit cell.
 
     Raises:
-        ValueError: If spacing is invalid or ``brace_pattern`` is not
+        ValueError: If a pitch is invalid or ``diagonal_pattern`` is not
             ``"double"`` or ``"single"``.
     """
 
-    ds = positive_number(stringer_spacing, name="stringer_spacing")
-    dr = positive_number(rib_spacing, name="rib_spacing")
-    if brace_pattern not in {"double", "single"}:
-        msg = "brace_pattern must be 'double' or 'single'."
+    pitch_e1 = positive_number(e1_pitch, name="e1_pitch")
+    pitch_e2 = positive_number(e2_pitch, name="e2_pitch")
+    if diagonal_pattern not in {"double", "single"}:
+        msg = "diagonal_pattern must be 'double' or 'single'."
         raise ValueError(msg)
-    brace_multiplier = 1.0 if brace_pattern == "double" else 0.5
-    # A single alternating diagonal contributes half of a crossed-brace pair in
-    # an averaged repeated cell.
-    diagonal_length = float(np.hypot(ds, dr))
-    diagonal_angle = float(np.arctan2(dr, ds))
+    diagonal_length = float(np.hypot(pitch_e1, pitch_e2))
+    diagonal_angle = float(np.arctan2(pitch_e2, pitch_e1))
+    single = diagonal_pattern == "single"
+    member_scale = 2.0 if single else 1.0
+    orthogonal_multiplicity = 2.0 if single else 1.0
+    cell_area = (4.0 if single else 1.0) * pitch_e1 * pitch_e2
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    if single:
+        geometry = _geometry(
+            nodes=(
+                (-pitch_e1, 0.0),
+                (pitch_e1, 0.0),
+                (0.0, -pitch_e2),
+                (0.0, pitch_e2),
+                (-pitch_e1, -pitch_e2),
+                (pitch_e1, pitch_e2),
+                (pitch_e1, -pitch_e2),
+                (-pitch_e1, pitch_e2),
+            ),
+            edges=(
+                (0, 1, "e1", "1-2"),
+                (2, 3, "e2", "3-4"),
+                (4, 5, "positive_diagonal", "5-6"),
+                (4, 6, "e1", "5-7"),
+                (4, 7, "e2", "5-8"),
+                (6, 7, "negative_diagonal", "7-8"),
+            ),
+            repeat_vectors=((2.0 * pitch_e1, 0.0), (0.0, 2.0 * pitch_e2)),
+            boundary=(4, 6, 5, 7),
+        )
+    else:
+        geometry = _geometry(
+            nodes=(
+                (-0.5 * pitch_e1, 0.0),
+                (0.5 * pitch_e1, 0.0),
+                (0.0, -0.5 * pitch_e2),
+                (0.0, 0.5 * pitch_e2),
+                (-0.5 * pitch_e1, -0.5 * pitch_e2),
+                (0.5 * pitch_e1, 0.5 * pitch_e2),
+                (0.5 * pitch_e1, -0.5 * pitch_e2),
+                (-0.5 * pitch_e1, 0.5 * pitch_e2),
+            ),
+            edges=(
+                (0, 1, "e1", "1-2"),
+                (2, 3, "e2", "3-4"),
+                (4, 5, "positive_diagonal", "5-6"),
+                (6, 7, "negative_diagonal", "7-8"),
+            ),
+            repeat_vectors=((pitch_e1, 0.0), (0.0, pitch_e2)),
+            boundary=(4, 6, 5, 7),
+        )
     return CanonicalUnitCell(
-        area=ds * dr,
+        area=cell_area,
         skin=skin,
         members=(
-            BeamMember(stringer_section, dr, 0.0, stringer_eccentricity, label="stringer"),
-            BeamMember(rib_section, ds, np.pi / 2.0, rib_eccentricity, label="rib"),
+            BeamMember(
+                section=e1_section,
+                length=member_scale * pitch_e1,
+                angle_rad=0.0,
+                axial_eccentricity=e1_axial_eccentricity,
+                shear_eccentricity=e1_shear_eccentricity,
+                multiplicity=orthogonal_multiplicity,
+                label="e1",
+                include_in_plane_bending=include_in_plane_bending,
+            ),
+            BeamMember(
+                section=e2_section,
+                length=member_scale * pitch_e2,
+                angle_rad=np.pi / 2.0,
+                axial_eccentricity=e2_axial_eccentricity,
+                shear_eccentricity=e2_shear_eccentricity,
+                multiplicity=orthogonal_multiplicity,
+                label="e2",
+                include_in_plane_bending=include_in_plane_bending,
+            ),
             *_paired_oblique_members(
-                section=brace_section,
-                opposite_section=opposite_brace_section,
-                length=diagonal_length,
+                section=positive_diagonal_section,
+                opposite_section=negative_diagonal_section,
+                length=member_scale * diagonal_length,
                 angle_rad=diagonal_angle,
-                eccentricity=brace_eccentricity,
-                opposite_eccentricity=opposite_brace_eccentricity,
-                multiplicity=brace_multiplier,
-                positive_label="+brace",
-                negative_label="-brace",
+                axial_eccentricity=diagonal_axial_eccentricity,
+                shear_eccentricity=diagonal_shear_eccentricity,
+                opposite_axial_eccentricity=negative_diagonal_axial_eccentricity,
+                opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
+                positive_label="positive_diagonal",
+                negative_label="negative_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
         convention=cell_convention,
+        geometry=geometry,
         metadata={
             "source": "braced_orthogrid",
-            "brace_pattern": brace_pattern,
-            "stringer_spacing": ds,
-            "rib_spacing": dr,
+            "diagonal_pattern": diagonal_pattern,
+            "e1_pitch": pitch_e1,
+            "e2_pitch": pitch_e2,
         },
+    )
+
+
+def diamond_cell(
+    *,
+    skin: ABDStiffness,
+    e1_section: BeamSection,
+    positive_diagonal_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    e1_axial_eccentricity: float,
+    diagonal_axial_eccentricity: float,
+    e1_shear_eccentricity: float | None = None,
+    diagonal_shear_eccentricity: float | None = None,
+    negative_diagonal_section: BeamSection | None = None,
+    negative_diagonal_axial_eccentricity: float | None = None,
+    negative_diagonal_shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
+    frame: Frame2D | None = None,
+    convention: StrainConvention | None = None,
+) -> CanonicalUnitCell:
+    """Create Nemeth's figure-15 diamond pattern without an ``e2`` family.
+
+    ``e1_pitch`` and ``e2_pitch`` are the rectangular repeat spans. The
+    pattern contains one ``e1`` member family and two mirrored diagonal
+    families; it is not an orthogrid with a nearly-zero ``e2`` stiffness.
+
+    Args:
+        skin: Baseline skin stiffness.
+        e1_section: Section stiffness for members running along local ``e1``.
+        positive_diagonal_section: Section for the positive diagonal family.
+        e1_pitch: Rectangular repeat span along local ``e1``.
+        e2_pitch: Rectangular repeat span along local ``e2``.
+        e1_axial_eccentricity: ``e1`` family extension-weighted offset.
+        diagonal_axial_eccentricity: Positive-diagonal axial offset.
+        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
+        negative_diagonal_section: Optional negative-diagonal section.
+        negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
+            offset.
+        negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
+            offset.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical figure-15 diamond cell.
+
+    Raises:
+        ValueError: If a pitch, eccentricity, frame, or convention validation
+            fails.
+    """
+
+    pitch_e1 = positive_number(e1_pitch, name="e1_pitch")
+    pitch_e2 = positive_number(e2_pitch, name="e2_pitch")
+    diagonal_length = float(np.hypot(pitch_e1, pitch_e2))
+    diagonal_angle = float(np.arctan2(pitch_e2, pitch_e1))
+    cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    return CanonicalUnitCell(
+        area=pitch_e1 * pitch_e2,
+        skin=skin,
+        members=(
+            BeamMember(
+                section=e1_section,
+                length=pitch_e1,
+                angle_rad=0.0,
+                axial_eccentricity=e1_axial_eccentricity,
+                shear_eccentricity=e1_shear_eccentricity,
+                label="e1",
+                include_in_plane_bending=include_in_plane_bending,
+            ),
+            *_paired_oblique_members(
+                section=positive_diagonal_section,
+                opposite_section=negative_diagonal_section,
+                length=diagonal_length,
+                angle_rad=diagonal_angle,
+                axial_eccentricity=diagonal_axial_eccentricity,
+                shear_eccentricity=diagonal_shear_eccentricity,
+                opposite_axial_eccentricity=negative_diagonal_axial_eccentricity,
+                opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
+                positive_label="positive_diagonal",
+                negative_label="negative_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
+            ),
+        ),
+        frame=cell_frame,
+        convention=cell_convention,
+        geometry=_geometry(
+            nodes=(
+                (-0.5 * pitch_e1, -0.5 * pitch_e2),
+                (0.5 * pitch_e1, -0.5 * pitch_e2),
+                (0.5 * pitch_e1, 0.5 * pitch_e2),
+                (-0.5 * pitch_e1, 0.5 * pitch_e2),
+            ),
+            edges=(
+                (0, 1, "e1", "e1-bottom"),
+                (3, 2, "e1", "e1-top"),
+                (0, 2, "positive_diagonal", "positive-diagonal"),
+                (1, 3, "negative_diagonal", "negative-diagonal"),
+            ),
+            repeat_vectors=((pitch_e1, 0.0), (0.0, pitch_e2)),
+            boundary=(0, 1, 2, 3),
+        ),
+        metadata={"source": "diamond", "e1_pitch": pitch_e1, "e2_pitch": pitch_e2},
     )
 
 
 def isosceles_triangle_grid_cell(
     *,
     skin: ABDStiffness,
-    stringer_section: BeamSection,
-    diagonal_section: BeamSection,
-    base: float,
-    height: float,
-    stringer_eccentricity: float,
-    diagonal_eccentricity: float,
-    opposite_diagonal_section: BeamSection | None = None,
-    opposite_diagonal_eccentricity: float | None = None,
+    e1_section: BeamSection,
+    positive_diagonal_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    e1_axial_eccentricity: float,
+    diagonal_axial_eccentricity: float,
+    e1_shear_eccentricity: float | None = None,
+    diagonal_shear_eccentricity: float | None = None,
+    negative_diagonal_section: BeamSection | None = None,
+    negative_diagonal_axial_eccentricity: float | None = None,
+    negative_diagonal_shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -611,16 +1139,21 @@ def isosceles_triangle_grid_cell(
 
     Args:
         skin: Baseline skin stiffness.
-        stringer_section: Section stiffness for the base member.
-        diagonal_section: Section stiffness for the positive diagonal.
-        base: Positive triangle base length.
-        height: Positive triangle height.
-        stringer_eccentricity: Signed base-member centroid offset along ``+n``.
-        diagonal_eccentricity: Signed positive-diagonal centroid offset along
-            ``+n``.
-        opposite_diagonal_section: Optional section for the negative diagonal.
-        opposite_diagonal_eccentricity: Optional eccentricity for the negative
-            diagonal.
+        e1_section: Section stiffness for members running along local ``e1``.
+        positive_diagonal_section: Section stiffness for the positive diagonal.
+        e1_pitch: Triangle base along local ``e1``; Nemeth's ``Lx``.
+        e2_pitch: Triangle height along local ``e2``; Nemeth's ``Ly``.
+        e1_axial_eccentricity: ``e1`` extension-weighted offset.
+        diagonal_axial_eccentricity: Positive-diagonal axial offset.
+        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
+        negative_diagonal_section: Optional negative-diagonal section.
+        negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
+            offset.
+        negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
+            offset.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -633,8 +1166,8 @@ def isosceles_triangle_grid_cell(
             validation fails.
     """
 
-    b = positive_number(base, name="base")
-    h = positive_number(height, name="height")
+    b = positive_number(e1_pitch, name="e1_pitch")
+    h = positive_number(e2_pitch, name="e2_pitch")
     diagonal_length = float(np.hypot(0.5 * b, h))
     diagonal_angle = float(np.arctan2(h, 0.5 * b))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -644,35 +1177,71 @@ def isosceles_triangle_grid_cell(
         area=b * h,
         skin=skin,
         members=(
-            BeamMember(stringer_section, b, 0.0, stringer_eccentricity, label="stringer"),
+            BeamMember(
+                section=e1_section,
+                length=b,
+                angle_rad=0.0,
+                axial_eccentricity=e1_axial_eccentricity,
+                shear_eccentricity=e1_shear_eccentricity,
+                label="e1",
+                include_in_plane_bending=include_in_plane_bending,
+            ),
             *_paired_oblique_members(
-                section=diagonal_section,
-                opposite_section=opposite_diagonal_section,
+                section=positive_diagonal_section,
+                opposite_section=negative_diagonal_section,
                 length=diagonal_length,
                 angle_rad=diagonal_angle,
-                eccentricity=diagonal_eccentricity,
-                opposite_eccentricity=opposite_diagonal_eccentricity,
-                positive_label="+diagonal",
-                negative_label="-diagonal",
+                axial_eccentricity=diagonal_axial_eccentricity,
+                shear_eccentricity=diagonal_shear_eccentricity,
+                opposite_axial_eccentricity=negative_diagonal_axial_eccentricity,
+                opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
+                positive_label="positive_diagonal",
+                negative_label="negative_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
         convention=cell_convention,
-        metadata={"source": "isosceles_triangle_grid", "base": b, "height": h},
+        geometry=_geometry(
+            nodes=(
+                (-0.5 * b, 0.0),
+                (0.5 * b, 0.0),
+                (-0.25 * b, -0.5 * h),
+                (0.25 * b, 0.5 * h),
+                (0.25 * b, -0.5 * h),
+                (-0.25 * b, 0.5 * h),
+                (-0.5 * b, -0.5 * h),
+                (0.5 * b, -0.5 * h),
+                (0.5 * b, 0.5 * h),
+                (-0.5 * b, 0.5 * h),
+            ),
+            edges=(
+                (0, 1, "e1", "1-2"),
+                (2, 3, "positive_diagonal", "3-4"),
+                (4, 5, "negative_diagonal", "5-6"),
+            ),
+            repeat_vectors=((b, 0.0), (0.0, h)),
+            boundary=(6, 7, 8, 9),
+        ),
+        metadata={"source": "isosceles_triangle_grid", "e1_pitch": b, "e2_pitch": h},
     )
 
 
 def kagome_cell(
     *,
     skin: ABDStiffness,
-    stringer_section: BeamSection,
-    diagonal_section: BeamSection,
-    base: float,
-    height: float,
-    stringer_eccentricity: float,
-    diagonal_eccentricity: float,
-    opposite_diagonal_section: BeamSection | None = None,
-    opposite_diagonal_eccentricity: float | None = None,
+    e1_section: BeamSection,
+    positive_diagonal_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    e1_axial_eccentricity: float,
+    diagonal_axial_eccentricity: float,
+    e1_shear_eccentricity: float | None = None,
+    diagonal_shear_eccentricity: float | None = None,
+    negative_diagonal_section: BeamSection | None = None,
+    negative_diagonal_axial_eccentricity: float | None = None,
+    negative_diagonal_shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -680,16 +1249,21 @@ def kagome_cell(
 
     Args:
         skin: Baseline skin stiffness.
-        stringer_section: Section stiffness for horizontal members.
-        diagonal_section: Section stiffness for the positive diagonal family.
-        base: Positive base length of the repeat geometry.
-        height: Positive height of the repeat geometry.
-        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
-        diagonal_eccentricity: Signed positive-diagonal centroid offset along
-            ``+n``.
-        opposite_diagonal_section: Optional section for the negative diagonal.
-        opposite_diagonal_eccentricity: Optional eccentricity for the negative
-            diagonal.
+        e1_section: Section stiffness for members running along local ``e1``.
+        positive_diagonal_section: Section stiffness for the positive diagonal.
+        e1_pitch: Kagome repeat width; Nemeth's ``Lx``.
+        e2_pitch: Half of the Kagome repeat height; Nemeth's ``Ly``.
+        e1_axial_eccentricity: ``e1`` extension-weighted offset.
+        diagonal_axial_eccentricity: Positive-diagonal axial offset.
+        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
+        negative_diagonal_section: Optional negative-diagonal section.
+        negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
+            offset.
+        negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
+            offset.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -702,54 +1276,83 @@ def kagome_cell(
             validation fails.
     """
 
-    b = positive_number(base, name="base")
-    h = positive_number(height, name="height")
+    b = positive_number(e1_pitch, name="e1_pitch")
+    h = positive_number(e2_pitch, name="e2_pitch")
     diagonal_length = 2.0 * float(np.hypot(0.5 * b, h))
     diagonal_angle = float(np.arctan2(2.0 * h, b))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
-    # The doubled stringer multiplicity reflects two horizontal members in the
+    # The doubled e1 multiplicity reflects two horizontal members in the
     # Kagome repeat area without duplicating identical BeamMember objects.
     return CanonicalUnitCell(
         area=2.0 * b * h,
         skin=skin,
         members=(
             BeamMember(
-                stringer_section,
-                b,
-                0.0,
-                stringer_eccentricity,
+                section=e1_section,
+                length=b,
+                angle_rad=0.0,
+                axial_eccentricity=e1_axial_eccentricity,
+                shear_eccentricity=e1_shear_eccentricity,
                 multiplicity=2.0,
-                label="stringer",
+                label="e1",
+                include_in_plane_bending=include_in_plane_bending,
             ),
             *_paired_oblique_members(
-                section=diagonal_section,
-                opposite_section=opposite_diagonal_section,
+                section=positive_diagonal_section,
+                opposite_section=negative_diagonal_section,
                 length=diagonal_length,
                 angle_rad=diagonal_angle,
-                eccentricity=diagonal_eccentricity,
-                opposite_eccentricity=opposite_diagonal_eccentricity,
-                positive_label="+diagonal",
-                negative_label="-diagonal",
+                axial_eccentricity=diagonal_axial_eccentricity,
+                shear_eccentricity=diagonal_shear_eccentricity,
+                opposite_axial_eccentricity=negative_diagonal_axial_eccentricity,
+                opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
+                positive_label="positive_diagonal",
+                negative_label="negative_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
         convention=cell_convention,
-        metadata={"source": "kagome", "base": b, "height": h},
+        geometry=_geometry(
+            nodes=(
+                (-0.5 * b, -0.5 * h),
+                (0.5 * b, -0.5 * h),
+                (-0.5 * b, 0.5 * h),
+                (0.5 * b, 0.5 * h),
+                (-0.5 * b, -h),
+                (0.5 * b, h),
+                (0.5 * b, -h),
+                (-0.5 * b, h),
+            ),
+            edges=(
+                (0, 1, "e1", "1-2"),
+                (2, 3, "e1", "3-4"),
+                (4, 5, "positive_diagonal", "5-6"),
+                (6, 7, "negative_diagonal", "7-8"),
+            ),
+            repeat_vectors=((b, 0.0), (0.0, 2.0 * h)),
+            boundary=(4, 6, 5, 7),
+        ),
+        metadata={"source": "kagome", "e1_pitch": b, "e2_pitch": h},
     )
 
 
 def hexagonal_grid_cell(
     *,
     skin: ABDStiffness,
-    rib_section: BeamSection,
-    diagonal_section: BeamSection,
-    half_width: float,
-    diagonal_rise: float,
-    rib_length: float,
-    rib_eccentricity: float,
-    diagonal_eccentricity: float,
-    opposite_diagonal_section: BeamSection | None = None,
-    opposite_diagonal_eccentricity: float | None = None,
+    e2_section: BeamSection,
+    positive_diagonal_section: BeamSection,
+    e1_half_pitch: float,
+    diagonal_e2_rise: float,
+    e2_member_length: float,
+    e2_axial_eccentricity: float,
+    diagonal_axial_eccentricity: float,
+    e2_shear_eccentricity: float | None = None,
+    diagonal_shear_eccentricity: float | None = None,
+    negative_diagonal_section: BeamSection | None = None,
+    negative_diagonal_axial_eccentricity: float | None = None,
+    negative_diagonal_shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -757,17 +1360,22 @@ def hexagonal_grid_cell(
 
     Args:
         skin: Baseline skin stiffness.
-        rib_section: Section stiffness for vertical rib members.
-        diagonal_section: Section stiffness for positive diagonal members.
-        half_width: Positive half-width of the hexagon construction.
-        diagonal_rise: Positive rise of the diagonal construction.
-        rib_length: Positive vertical rib length.
-        rib_eccentricity: Signed rib centroid offset along ``+n``.
-        diagonal_eccentricity: Signed positive-diagonal centroid offset along
-            ``+n``.
-        opposite_diagonal_section: Optional section for the negative diagonal.
-        opposite_diagonal_eccentricity: Optional eccentricity for the negative
-            diagonal.
+        e2_section: Section stiffness for members running along local ``e2``.
+        positive_diagonal_section: Section stiffness for the positive diagonal.
+        e1_half_pitch: Nemeth's horizontal construction dimension ``a``.
+        diagonal_e2_rise: Nemeth's diagonal rise ``b``.
+        e2_member_length: Nemeth's vertical member length ``c``.
+        e2_axial_eccentricity: ``e2`` extension-weighted offset.
+        diagonal_axial_eccentricity: Positive-diagonal axial offset.
+        e2_shear_eccentricity: Optional ``e2`` shear-weighted offset.
+        diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
+        negative_diagonal_section: Optional negative-diagonal section.
+        negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
+            offset.
+        negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
+            offset.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -780,38 +1388,67 @@ def hexagonal_grid_cell(
             validation fails.
     """
 
-    a = positive_number(half_width, name="half_width")
-    b = positive_number(diagonal_rise, name="diagonal_rise")
-    c = positive_number(rib_length, name="rib_length")
+    a = positive_number(e1_half_pitch, name="e1_half_pitch")
+    b = positive_number(diagonal_e2_rise, name="diagonal_e2_rise")
+    c = positive_number(e2_member_length, name="e2_member_length")
     diagonal_length = 0.5 * float(np.hypot(a, b))
     diagonal_angle = float(np.arctan2(b, a))
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
-    # The half-width/rise/rib-length parameters follow the legacy Nemeth cell
-    # sketch; the metadata preserves those construction dimensions.
+    # These dimensions follow Nemeth table 8; metadata preserves the source
+    # construction dimensions.
     return CanonicalUnitCell(
         area=2.0 * a * (b + c),
         skin=skin,
         members=(
             *_paired_oblique_members(
-                section=diagonal_section,
-                opposite_section=opposite_diagonal_section,
+                section=positive_diagonal_section,
+                opposite_section=negative_diagonal_section,
                 length=diagonal_length,
                 angle_rad=diagonal_angle,
-                eccentricity=diagonal_eccentricity,
-                opposite_eccentricity=opposite_diagonal_eccentricity,
+                axial_eccentricity=diagonal_axial_eccentricity,
+                shear_eccentricity=diagonal_shear_eccentricity,
+                opposite_axial_eccentricity=negative_diagonal_axial_eccentricity,
+                opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
                 multiplicity=2.0,
-                positive_label="+diagonal",
-                negative_label="-diagonal",
+                positive_label="positive_diagonal",
+                negative_label="negative_diagonal",
+                include_in_plane_bending=include_in_plane_bending,
             ),
-            BeamMember(rib_section, c, np.pi / 2.0, rib_eccentricity, label="rib"),
+            BeamMember(
+                section=e2_section,
+                length=c,
+                angle_rad=np.pi / 2.0,
+                axial_eccentricity=e2_axial_eccentricity,
+                shear_eccentricity=e2_shear_eccentricity,
+                label="e2",
+                include_in_plane_bending=include_in_plane_bending,
+            ),
         ),
         frame=cell_frame,
         convention=cell_convention,
+        geometry=_geometry(
+            nodes=(
+                (0.5 * a, -0.5 * (b + c)),
+                (0.0, -0.5 * c),
+                (-0.5 * a, -0.5 * (b + c)),
+                (0.5 * a, 0.5 * (b + c)),
+                (0.0, 0.5 * c),
+                (-0.5 * a, 0.5 * (b + c)),
+            ),
+            edges=(
+                (1, 0, "negative_diagonal", "2-1"),
+                (1, 2, "positive_diagonal", "2-3"),
+                (1, 4, "e2", "2-5"),
+                (4, 3, "positive_diagonal", "5-4"),
+                (4, 5, "negative_diagonal", "5-6"),
+            ),
+            repeat_vectors=((a, b + c), (a, -(b + c))),
+        ),
         metadata={
             "source": "hexagonal_grid",
-            "half_width": a,
-            "diagonal_rise": b,
-            "rib_length": c,
+            "e1_half_pitch": a,
+            "diagonal_e2_rise": b,
+            "e2_member_length": c,
         },
     )
 
@@ -820,8 +1457,10 @@ def regular_hexagonal_grid_cell(
     *,
     skin: ABDStiffness,
     member_section: BeamSection,
-    pitch: float,
-    eccentricity: float,
+    side_length: float,
+    axial_eccentricity: float,
+    shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -830,8 +1469,11 @@ def regular_hexagonal_grid_cell(
     Args:
         skin: Baseline skin stiffness.
         member_section: Section stiffness for all grid members.
-        pitch: Positive regular-hexagon pitch.
-        eccentricity: Signed member centroid offset along ``+n``.
+        side_length: Positive regular-hexagon side length.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -840,20 +1482,24 @@ def regular_hexagonal_grid_cell(
         Canonical regular hexagonal-grid unit cell.
 
     Raises:
-        ValueError: If pitch, eccentricity, frame, or convention validation
+        ValueError: If side length, eccentricity, frame, or convention
+            validation
             fails.
     """
 
-    p = positive_number(pitch, name="pitch")
+    p = positive_number(side_length, name="side_length")
     return hexagonal_grid_cell(
         skin=skin,
-        rib_section=member_section,
-        diagonal_section=member_section,
-        half_width=np.sqrt(3.0) * p / 2.0,
-        diagonal_rise=0.5 * p,
-        rib_length=p,
-        rib_eccentricity=eccentricity,
-        diagonal_eccentricity=eccentricity,
+        e2_section=member_section,
+        positive_diagonal_section=member_section,
+        e1_half_pitch=np.sqrt(3.0) * p / 2.0,
+        diagonal_e2_rise=0.5 * p,
+        e2_member_length=p,
+        e2_axial_eccentricity=axial_eccentricity,
+        diagonal_axial_eccentricity=axial_eccentricity,
+        e2_shear_eccentricity=shear_eccentricity,
+        diagonal_shear_eccentricity=shear_eccentricity,
+        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -862,14 +1508,18 @@ def regular_hexagonal_grid_cell(
 def star_cell(
     *,
     skin: ABDStiffness,
-    stringer_section: BeamSection,
-    diagonal_section: BeamSection,
-    base: float,
-    height: float,
-    stringer_eccentricity: float,
-    diagonal_eccentricity: float,
-    opposite_diagonal_section: BeamSection | None = None,
-    opposite_diagonal_eccentricity: float | None = None,
+    e1_section: BeamSection,
+    positive_diagonal_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    e1_axial_eccentricity: float,
+    diagonal_axial_eccentricity: float,
+    e1_shear_eccentricity: float | None = None,
+    diagonal_shear_eccentricity: float | None = None,
+    negative_diagonal_section: BeamSection | None = None,
+    negative_diagonal_axial_eccentricity: float | None = None,
+    negative_diagonal_shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -877,16 +1527,21 @@ def star_cell(
 
     Args:
         skin: Baseline skin stiffness.
-        stringer_section: Section stiffness for short horizontal members.
-        diagonal_section: Section stiffness for positive diagonal members.
-        base: Positive star-cell base dimension.
-        height: Positive star-cell height dimension.
-        stringer_eccentricity: Signed stringer centroid offset along ``+n``.
-        diagonal_eccentricity: Signed positive-diagonal centroid offset along
-            ``+n``.
-        opposite_diagonal_section: Optional section for the negative diagonal.
-        opposite_diagonal_eccentricity: Optional eccentricity for the negative
-            diagonal.
+        e1_section: Section stiffness for short members along local ``e1``.
+        positive_diagonal_section: Section stiffness for positive diagonals.
+        e1_pitch: Nemeth's star base dimension ``B``.
+        e2_pitch: Nemeth's star height dimension ``H``.
+        e1_axial_eccentricity: ``e1`` extension-weighted offset.
+        diagonal_axial_eccentricity: Positive-diagonal axial offset.
+        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
+        negative_diagonal_section: Optional negative-diagonal section.
+        negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
+            offset.
+        negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
+            offset.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -899,8 +1554,8 @@ def star_cell(
             or convention validation fails.
     """
 
-    b = positive_number(base, name="base")
-    h = positive_number(height, name="height")
+    b = positive_number(e1_pitch, name="e1_pitch")
+    h = positive_number(e2_pitch, name="e2_pitch")
     nodes = (
         CellNode(b / 3.0, 0.0),
         CellNode(b / 2.0, h / 3.0),
@@ -915,34 +1570,149 @@ def star_cell(
         CellNode(b / 6.0, -h / 3.0),
         CellNode(b / 2.0, -h / 3.0),
     )
-    diagonal_2 = _same_or_second(diagonal_section, opposite_diagonal_section)
-    diagonal_2_eccentricity = (
-        diagonal_eccentricity
-        if opposite_diagonal_eccentricity is None
-        else opposite_diagonal_eccentricity
+    diagonal_2 = _same_or_second(positive_diagonal_section, negative_diagonal_section)
+    diagonal_2_axial = _same_or_value(
+        diagonal_axial_eccentricity,
+        negative_diagonal_axial_eccentricity,
     )
+    diagonal_2_shear = negative_diagonal_shear_eccentricity
+    if (
+        negative_diagonal_axial_eccentricity is None
+        and negative_diagonal_shear_eccentricity is None
+    ):
+        diagonal_2_shear = diagonal_shear_eccentricity
     edges = (
-        CellEdge(0, 11, diagonal_2, diagonal_2_eccentricity, label="d2-1"),
-        CellEdge(0, 1, diagonal_section, diagonal_eccentricity, label="d1-1"),
-        CellEdge(2, 1, stringer_section, stringer_eccentricity, label="s-1"),
-        CellEdge(2, 3, diagonal_2, diagonal_2_eccentricity, label="d2-2"),
-        CellEdge(4, 3, diagonal_section, diagonal_eccentricity, label="d1-2"),
-        CellEdge(4, 5, stringer_section, stringer_eccentricity, label="s-2"),
-        CellEdge(6, 5, diagonal_2, diagonal_2_eccentricity, label="d2-3"),
-        CellEdge(6, 7, diagonal_section, diagonal_eccentricity, label="d1-3"),
-        CellEdge(8, 7, stringer_section, stringer_eccentricity, label="s-3"),
-        CellEdge(8, 9, diagonal_2, diagonal_2_eccentricity, label="d2-4"),
-        CellEdge(10, 9, diagonal_section, diagonal_eccentricity, label="d1-4"),
-        CellEdge(10, 11, stringer_section, stringer_eccentricity, label="s-4"),
+        CellEdge(
+            0,
+            11,
+            diagonal_2,
+            diagonal_2_axial,
+            shear_eccentricity=diagonal_2_shear,
+            label="d2-1",
+            family="negative_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            0,
+            1,
+            positive_diagonal_section,
+            diagonal_axial_eccentricity,
+            shear_eccentricity=diagonal_shear_eccentricity,
+            label="d1-1",
+            family="positive_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            2,
+            1,
+            e1_section,
+            e1_axial_eccentricity,
+            shear_eccentricity=e1_shear_eccentricity,
+            label="e1-1",
+            family="e1",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            2,
+            3,
+            diagonal_2,
+            diagonal_2_axial,
+            shear_eccentricity=diagonal_2_shear,
+            label="d2-2",
+            family="negative_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            4,
+            3,
+            positive_diagonal_section,
+            diagonal_axial_eccentricity,
+            shear_eccentricity=diagonal_shear_eccentricity,
+            label="d1-2",
+            family="positive_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            4,
+            5,
+            e1_section,
+            e1_axial_eccentricity,
+            shear_eccentricity=e1_shear_eccentricity,
+            label="e1-2",
+            family="e1",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            6,
+            5,
+            diagonal_2,
+            diagonal_2_axial,
+            shear_eccentricity=diagonal_2_shear,
+            label="d2-3",
+            family="negative_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            6,
+            7,
+            positive_diagonal_section,
+            diagonal_axial_eccentricity,
+            shear_eccentricity=diagonal_shear_eccentricity,
+            label="d1-3",
+            family="positive_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            8,
+            7,
+            e1_section,
+            e1_axial_eccentricity,
+            shear_eccentricity=e1_shear_eccentricity,
+            label="e1-3",
+            family="e1",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            8,
+            9,
+            diagonal_2,
+            diagonal_2_axial,
+            shear_eccentricity=diagonal_2_shear,
+            label="d2-4",
+            family="negative_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            10,
+            9,
+            positive_diagonal_section,
+            diagonal_axial_eccentricity,
+            shear_eccentricity=diagonal_shear_eccentricity,
+            label="d1-4",
+            family="positive_diagonal",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
+        CellEdge(
+            10,
+            11,
+            e1_section,
+            e1_axial_eccentricity,
+            shear_eccentricity=e1_shear_eccentricity,
+            label="e1-4",
+            family="e1",
+            include_in_plane_bending=include_in_plane_bending,
+        ),
     )
     return graph_unit_cell(
         area=4.0 * b * h / 3.0,
         skin=skin,
         nodes=nodes,
         edges=edges,
+        repeat_vectors=(CellVector(b, 0.0), CellVector(0.0, 4.0 * h / 3.0)),
+        boundary=tuple(range(12)),
         frame=frame,
         convention=convention,
-        metadata={"source": "star_cell", "base": b, "height": h},
+        metadata={"source": "star_cell", "e1_pitch": b, "e2_pitch": h},
     )
 
 
@@ -950,8 +1720,10 @@ def equilateral_star_cell(
     *,
     skin: ABDStiffness,
     member_section: BeamSection,
-    pitch: float,
-    eccentricity: float,
+    side_length: float,
+    axial_eccentricity: float,
+    shear_eccentricity: float | None = None,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -960,8 +1732,11 @@ def equilateral_star_cell(
     Args:
         skin: Baseline skin stiffness.
         member_section: Section stiffness for all star-cell members.
-        pitch: Positive equilateral base pitch.
-        eccentricity: Signed member centroid offset along ``+n``.
+        side_length: Positive equilateral-triangle side length.
+        axial_eccentricity: Signed extension-weighted offset along ``+n``.
+        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -970,19 +1745,23 @@ def equilateral_star_cell(
         Canonical equilateral star-cell grid.
 
     Raises:
-        ValueError: If pitch, eccentricity, frame, or convention validation
+        ValueError: If side length, eccentricity, frame, or convention
+            validation
             fails.
     """
 
-    p = positive_number(pitch, name="pitch")
+    p = positive_number(side_length, name="side_length")
     return star_cell(
         skin=skin,
-        stringer_section=member_section,
-        diagonal_section=member_section,
-        base=p,
-        height=np.sqrt(3.0) * p / 2.0,
-        stringer_eccentricity=eccentricity,
-        diagonal_eccentricity=eccentricity,
+        e1_section=member_section,
+        positive_diagonal_section=member_section,
+        e1_pitch=p,
+        e2_pitch=np.sqrt(3.0) * p / 2.0,
+        e1_axial_eccentricity=axial_eccentricity,
+        diagonal_axial_eccentricity=axial_eccentricity,
+        e1_shear_eccentricity=shear_eccentricity,
+        diagonal_shear_eccentricity=shear_eccentricity,
+        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -992,17 +1771,17 @@ def _sandwich_face_skin(
     *,
     bottom_face: ABDStiffness,
     top_face: ABDStiffness,
-    bottom_face_offset: float,
-    top_face_offset: float,
+    bottom_face_to_reference: float,
+    top_face_to_reference: float,
     source: str,
 ) -> ABDStiffness:
     return superpose_abd_stiffnesses(
-        shift_reference_surface(bottom_face, bottom_face_offset),
-        shift_reference_surface(top_face, top_face_offset),
+        shift_reference_surface(bottom_face, bottom_face_to_reference),
+        shift_reference_surface(top_face, top_face_to_reference),
         metadata={
             "source": source,
-            "bottom_face_offset": float(bottom_face_offset),
-            "top_face_offset": float(top_face_offset),
+            "bottom_face_to_reference": float(bottom_face_to_reference),
+            "top_face_to_reference": float(top_face_to_reference),
         },
     )
 
@@ -1011,12 +1790,13 @@ def sandwich_orthogrid_core_cell(
     *,
     bottom_face: ABDStiffness,
     top_face: ABDStiffness,
-    bottom_face_offset: float,
-    top_face_offset: float,
-    stringer_section: BeamSection,
-    rib_section: BeamSection,
-    stringer_spacing: float,
-    rib_spacing: float,
+    bottom_face_to_reference: float,
+    top_face_to_reference: float,
+    e1_section: BeamSection,
+    e2_section: BeamSection,
+    e1_pitch: float,
+    e2_pitch: float,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1026,14 +1806,18 @@ def sandwich_orthogrid_core_cell(
         bottom_face: Bottom face-sheet stiffness about its own reference
             surface.
         top_face: Top face-sheet stiffness about its own reference surface.
-        bottom_face_offset: Signed shift from bottom-face reference surface to
-            the sandwich reference surface.
-        top_face_offset: Signed shift from top-face reference surface to the
-            sandwich reference surface.
-        stringer_section: Section stiffness for the core stringer family.
-        rib_section: Section stiffness for the core rib family.
-        stringer_spacing: Positive pitch between stringers.
-        rib_spacing: Positive pitch between ribs.
+        bottom_face_to_reference: Signed shift from the bottom-face reference
+            surface to the sandwich reference surface. This is the negative of
+            Nemeth's bottom-face eccentricity.
+        top_face_to_reference: Signed shift from the top-face reference surface
+            to the sandwich reference surface. This is the negative of Nemeth's
+            top-face eccentricity.
+        e1_section: Section stiffness for core members along local ``e1``.
+        e2_section: Section stiffness for core members along local ``e2``.
+        e1_pitch: Core repeat span along local ``e1``.
+        e2_pitch: Core repeat span along local ``e2``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1043,25 +1827,26 @@ def sandwich_orthogrid_core_cell(
         Canonical orthogrid-core sandwich unit cell.
 
     Raises:
-        ValueError: If shifts, spacings, faces, frame, or convention validation
+        ValueError: If shifts, dimensions, faces, frame, or convention validation
             fails.
     """
 
     skin = _sandwich_face_skin(
         bottom_face=bottom_face,
         top_face=top_face,
-        bottom_face_offset=bottom_face_offset,
-        top_face_offset=top_face_offset,
+        bottom_face_to_reference=bottom_face_to_reference,
+        top_face_to_reference=top_face_to_reference,
         source="sandwich_orthogrid_core_faces",
     )
     return orthogrid_cell(
         skin=skin,
-        stringer_section=stringer_section,
-        rib_section=rib_section,
-        stringer_spacing=stringer_spacing,
-        rib_spacing=rib_spacing,
-        stringer_eccentricity=0.0,
-        rib_eccentricity=0.0,
+        e1_section=e1_section,
+        e2_section=e2_section,
+        e1_pitch=e1_pitch,
+        e2_pitch=e2_pitch,
+        e1_axial_eccentricity=0.0,
+        e2_axial_eccentricity=0.0,
+        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1071,13 +1856,14 @@ def sandwich_hexagonal_core_cell(
     *,
     bottom_face: ABDStiffness,
     top_face: ABDStiffness,
-    bottom_face_offset: float,
-    top_face_offset: float,
-    rib_section: BeamSection,
+    bottom_face_to_reference: float,
+    top_face_to_reference: float,
+    e2_section: BeamSection,
     diagonal_section: BeamSection,
-    half_width: float,
-    diagonal_rise: float,
-    rib_length: float,
+    e1_half_pitch: float,
+    diagonal_e2_rise: float,
+    e2_member_length: float,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1087,15 +1873,15 @@ def sandwich_hexagonal_core_cell(
         bottom_face: Bottom face-sheet stiffness about its own reference
             surface.
         top_face: Top face-sheet stiffness about its own reference surface.
-        bottom_face_offset: Signed shift from bottom-face reference surface to
-            the sandwich reference surface.
-        top_face_offset: Signed shift from top-face reference surface to the
-            sandwich reference surface.
-        rib_section: Section stiffness for core rib members.
+        bottom_face_to_reference: Signed bottom-face-to-sandwich reference shift.
+        top_face_to_reference: Signed top-face-to-sandwich reference shift.
+        e2_section: Section stiffness for core members along local ``e2``.
         diagonal_section: Section stiffness for core diagonal members.
-        half_width: Positive half-width of the hexagon construction.
-        diagonal_rise: Positive rise of the diagonal construction.
-        rib_length: Positive vertical rib length.
+        e1_half_pitch: Nemeth's horizontal construction dimension ``a``.
+        diagonal_e2_rise: Nemeth's diagonal rise ``b``.
+        e2_member_length: Nemeth's vertical member length ``c``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1112,19 +1898,20 @@ def sandwich_hexagonal_core_cell(
     skin = _sandwich_face_skin(
         bottom_face=bottom_face,
         top_face=top_face,
-        bottom_face_offset=bottom_face_offset,
-        top_face_offset=top_face_offset,
+        bottom_face_to_reference=bottom_face_to_reference,
+        top_face_to_reference=top_face_to_reference,
         source="sandwich_hexagonal_core_faces",
     )
     return hexagonal_grid_cell(
         skin=skin,
-        rib_section=rib_section,
-        diagonal_section=diagonal_section,
-        half_width=half_width,
-        diagonal_rise=diagonal_rise,
-        rib_length=rib_length,
-        rib_eccentricity=0.0,
-        diagonal_eccentricity=0.0,
+        e2_section=e2_section,
+        positive_diagonal_section=diagonal_section,
+        e1_half_pitch=e1_half_pitch,
+        diagonal_e2_rise=diagonal_e2_rise,
+        e2_member_length=e2_member_length,
+        e2_axial_eccentricity=0.0,
+        diagonal_axial_eccentricity=0.0,
+        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1134,12 +1921,13 @@ def sandwich_star_core_cell(
     *,
     bottom_face: ABDStiffness,
     top_face: ABDStiffness,
-    bottom_face_offset: float,
-    top_face_offset: float,
-    stringer_section: BeamSection,
+    bottom_face_to_reference: float,
+    top_face_to_reference: float,
+    e1_section: BeamSection,
     diagonal_section: BeamSection,
-    base: float,
-    height: float,
+    e1_pitch: float,
+    e2_pitch: float,
+    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1149,14 +1937,14 @@ def sandwich_star_core_cell(
         bottom_face: Bottom face-sheet stiffness about its own reference
             surface.
         top_face: Top face-sheet stiffness about its own reference surface.
-        bottom_face_offset: Signed shift from bottom-face reference surface to
-            the sandwich reference surface.
-        top_face_offset: Signed shift from top-face reference surface to the
-            sandwich reference surface.
-        stringer_section: Section stiffness for core stringer members.
+        bottom_face_to_reference: Signed bottom-face-to-sandwich reference shift.
+        top_face_to_reference: Signed top-face-to-sandwich reference shift.
+        e1_section: Section stiffness for core members along local ``e1``.
         diagonal_section: Section stiffness for core diagonal members.
-        base: Positive star-cell base dimension.
-        height: Positive star-cell height dimension.
+        e1_pitch: Nemeth's star base dimension ``B``.
+        e2_pitch: Nemeth's star height dimension ``H``.
+        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
+            extension beyond Nemeth's kinematics.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1173,18 +1961,19 @@ def sandwich_star_core_cell(
     skin = _sandwich_face_skin(
         bottom_face=bottom_face,
         top_face=top_face,
-        bottom_face_offset=bottom_face_offset,
-        top_face_offset=top_face_offset,
+        bottom_face_to_reference=bottom_face_to_reference,
+        top_face_to_reference=top_face_to_reference,
         source="sandwich_star_core_faces",
     )
     return star_cell(
         skin=skin,
-        stringer_section=stringer_section,
-        diagonal_section=diagonal_section,
-        base=base,
-        height=height,
-        stringer_eccentricity=0.0,
-        diagonal_eccentricity=0.0,
+        e1_section=e1_section,
+        positive_diagonal_section=diagonal_section,
+        e1_pitch=e1_pitch,
+        e2_pitch=e2_pitch,
+        e1_axial_eccentricity=0.0,
+        diagonal_axial_eccentricity=0.0,
+        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1194,9 +1983,14 @@ __all__ = [
     "BeamMember",
     "CanonicalUnitCell",
     "CellEdge",
+    "CellGeometry",
+    "CellGeometryEdge",
     "CellNode",
+    "CellSegment",
+    "CellVector",
     "StiffenerFamily",
     "braced_orthogrid_cell",
+    "diamond_cell",
     "equilateral_isogrid_cell",
     "equilateral_star_cell",
     "graph_unit_cell",

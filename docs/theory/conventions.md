@@ -75,15 +75,19 @@ Every eccentricity input follows the same sign rule:
 
 This applies to:
 
-- `BeamMember.eccentricity`;
-- `StiffenerFamily.eccentricity`;
-- `stringer_eccentricity`;
-- `rib_eccentricity`;
-- sandwich `bottom_face_offset` and `top_face_offset`.
+- `BeamMember.axial_eccentricity` and `BeamMember.shear_eccentricity`;
+- the corresponding `StiffenerFamily` inputs;
+- named-cell family inputs such as `e1_axial_eccentricity` and
+  `diagonal_shear_eccentricity`;
+- sandwich `bottom_face_to_reference` and `top_face_to_reference` shifts.
 
-For a cylinder whose local normal points outward, an external stringer has
-positive `stringer_eccentricity`. An internal stringer has negative
-eccentricity.
+For a cylinder whose local normal points outward, an external stiffener has a
+positive eccentricity. An internal stiffener has a negative eccentricity.
+
+Nemeth defines separate extension-weighted and shear-weighted effective
+offsets. Tensyl calls these `axial_eccentricity` and `shear_eccentricity`.
+Omitting the shear value makes it equal to the axial value, which is the usual
+homogeneous-member specialization.
 
 !!! warning "The eccentricity sign is not cosmetic"
     Flip it and you change the membrane-bending coupling block `B`, which gives

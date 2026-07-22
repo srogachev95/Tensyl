@@ -30,12 +30,12 @@ stringer = BeamSection(
 
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=stringer,
-    rib_section=stringer,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=0.45,
-    rib_eccentricity=0.45,
+    e1_section=stringer,
+    e2_section=stringer,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=0.45,
+    e2_axial_eccentricity=0.45,
 )
 
 result = EnergyHomogenizer().compute(

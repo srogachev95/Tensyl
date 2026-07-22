@@ -1,14 +1,16 @@
 {
   "case_name": "local_abd_isogrid_equilateral",
   "command": [
-    "validation/scripts/run_matrix.py",
-    "validation/cases/local_abd/isogrid_equilateral.yml"
+    "validation/scripts/run_case.py",
+    "validation/cases/local_abd/isogrid_equilateral.yml",
+    "--artifacts",
+    "validation/artifacts/committed/local_abd/isogrid_equilateral"
   ],
-  "created_utc": "2026-06-28T19:23:15+00:00",
+  "created_utc": "2026-07-22T16:40:07+00:00",
   "inputs": [
     {
       "path": "validation/cases/local_abd/isogrid_equilateral.yml",
-      "sha256": "3da02f21c338e56cfb4a6805c7c795768a23fb6da471f6940b020aa7c6634698"
+      "sha256": "d6ab0efccbd7fa8c8df85f4381e002963ccbb7c98408b370828afa49afc9b1e0"
     }
   ],
   "metadata": {
@@ -30,9 +32,9 @@
   ],
   "schema_version": "tensyl.validation.artifact-manifest.v1",
   "software": {
-    "git_commit": "20949a1",
-    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "git_commit": "66db5f3",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
     "python": "3.12.13",
-    "tensyl": "0.1.0"
+    "tensyl": "0.2.1"
   }
 }

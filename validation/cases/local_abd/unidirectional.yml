@@ -45,7 +45,7 @@ cell:
   arguments:
     member_section: validation_hat_equivalent
     spacing: 6.0
-    eccentricity: 0.0
+    axial_eccentricity: 0.0
     angle_rad: 0.0
   representative_area: 6.0
   boundary_condition: generalized_strain_periodic

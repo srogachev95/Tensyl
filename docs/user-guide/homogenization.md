@@ -66,12 +66,12 @@ section = BeamSection(
 )
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=section,
-    rib_section=section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=0.45,
-    rib_eccentricity=0.45,
+    e1_section=section,
+    e2_section=section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=0.45,
+    e2_axial_eccentricity=0.45,
 )
 
 result = EnergyHomogenizer().compute(
@@ -98,8 +98,8 @@ Selected output, rounded:
 | Item | Value |
 | --- | --- |
 | `A11`, `A22`, `A66` | `1.485e6`, `1.352e6`, `3.990e5` `lbf/in` |
-| `B11`, `B22`, `B66` | `2.400e5`, `1.800e5`, `-3.609e4` `lbf` |
-| `D11`, `D22`, `D66` | `1.133e5`, `8.559e4`, `1.670e4` `lbf*in` |
+| `B11`, `B22`, `B66` | `2.400e5`, `1.800e5`, `3.609e4` `lbf` |
+| `D11`, `D22`, `D66` | `1.125e5`, `8.451e4`, `1.670e4` `lbf*in` |
 | `As11`, `As22` | `4.157e5`, `3.782e5` `lbf/in` |
 | diagnostics | symmetric, positive-semidefinite, rank `8` |
 | warnings | `p_over_R_exceeds_threshold`, `p_over_L_response_exceeds_threshold`, `membrane_bending_coupling_exceeds_threshold` |
