@@ -6,8 +6,11 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
-## Unreleased
+## 0.3.0 - 2026-07-22
 
+- Correct thin-wall section properties by treating each segment as a rotated
+  rectangular strip and combining centroidal inertia with the parallel-axis
+  theorem.
 - Rename named-cell inputs around local-frame families and coordinate spans:
   `e1`, `e2`, `positive_diagonal`, `negative_diagonal`, `e1_pitch`, and
   `e2_pitch` replace ambiguous stringer/rib and family-spacing names.
@@ -24,6 +27,8 @@ bug fixes that correct clearly wrong behavior.
 - Replace the circular Nemeth comparator with independent scalar `A`, `B`, `D`,
   and `As` assembly from basic-cell tables 4-9, and document the roundoff-level
   verification results.
+- Add Google-style docstrings across the public API with concise input, output,
+  and failure contracts.
 
 ## 0.2.1 - 2026-06-30
 
