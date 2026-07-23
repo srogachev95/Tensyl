@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -262,18 +264,18 @@ def cell_factory(surface, point):
     skin_face = 0.5 * design[&quot;skin_thickness&quot;]
     return orthogrid_cell(
         skin=skin,
-        stringer_section=stringer_section(design),
-        rib_section=rib_section(design),
-        stringer_spacing=design[&quot;stringer_spacing&quot;],
-        rib_spacing=design[&quot;rib_spacing&quot;],
-        stringer_eccentricity=skin_face + stringer_centroid_z,
-        rib_eccentricity=skin_face + rib_centroid_z,
+        e1_section=stringer_section(design),
+        e2_section=rib_section(design),
+        e1_pitch=design[&quot;e1_pitch&quot;],
+        e2_pitch=design[&quot;e2_pitch&quot;],
+        e1_axial_eccentricity=skin_face + stringer_centroid_z,
+        e2_axial_eccentricity=skin_face + rib_centroid_z,
         frame=point.frame,
     )
 
 
 def validity_context(point, cell):
-    pitch = max(cell.metadata[&quot;stringer_spacing&quot;], cell.metadata[&quot;rib_spacing&quot;])
+    pitch = max(cell.metadata[&quot;e1_pitch&quot;], cell.metadata[&quot;e2_pitch&quot;])
     return ValidityContext(
         characteristic_height=1.0,
         pitch=pitch,

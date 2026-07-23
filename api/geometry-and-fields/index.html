@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -430,6 +432,124 @@
         <p>Differential geometry data at a parametric surface point.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First parametric coordinate after validation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second parametric coordinate after validation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>position</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Three-dimensional point on the midsurface.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>tangent_u</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Physical tangent vector for increasing <code>u</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>tangent_v</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Physical tangent vector for increasing <code>v</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metric</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First fundamental form in the <code>(u, v)</code> chart.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>curvature</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second fundamental form in the <code>(u, v)</code> chart.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="../core/#tensyl.core.conventions.Frame2D">Frame2D</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Right-handed local tangent frame used by stiffness values.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>jacobian</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive surface area scale for the parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>principal_curvatures</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The two signed principal curvatures.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>min_radius</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Smallest positive curvature radius, or infinity for flat
+directions.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Read-only provenance for the surface and coordinate names.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
@@ -751,6 +871,35 @@
         <p>Protocol for parametric shell midsurfaces.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>point_at</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Method that evaluates the surface chart at <code>(u, v)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
@@ -781,8 +930,104 @@
 
     <div class="doc doc-contents ">
 
-        <p>Return differential geometry data at parametric coordinates <code>(u, v)</code>.</p>
+        <p>Return differential geometry data at parametric coordinates.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface's parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface's parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>The surface point, local frame, metric, curvature, and metadata</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>needed to embed an ABD stiffness on the shell midsurface.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the coordinates are non-finite or land on a
+singular point of the parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -818,6 +1063,54 @@
 
         <p>Flat plate parameterized by Cartesian coordinates <code>(u, v)</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>origin</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Three-dimensional point where <code>u = v = 0</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>e1</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Unit direction for increasing <code>u</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>e2</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Unit direction for increasing <code>v</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Frame and metadata label attached to sampled points.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -965,6 +1258,103 @@
 
     <div class="doc doc-contents ">
 
+        <p>Return the flat-plate geometry at Cartesian coordinates.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Distance along <code>e1</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Distance along <code>e2</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> with identity metric, zero curvature, and</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>infinite minimum curvature radius.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1002,6 +1392,47 @@
 <p>The local frame has <code>e1</code> in the axial direction, <code>e2</code> in the
 circumferential direction, and <code>n</code> outward.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>radius</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive cylinder radius.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>length</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive axial length used as model metadata by
+callers. The parameterization itself does not clip <code>u</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Frame and metadata label attached to sampled points.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1127,6 +1558,103 @@ circumferential direction, and <code>n</code> outward.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return cylinder geometry at axial station and angle.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Axial coordinate <code>x</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Circumferential angle <code>theta</code> in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> with outward normal and signed curvature</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>-1 / radius</code> in the circumferential direction.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1164,6 +1692,38 @@ circumferential direction, and <code>n</code> outward.</p>
 <p>The single chart excludes both poles. Use <code>SphericalCap</code> when a partial
 spherical domain is a better model for the physical shell.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>radius</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive sphere radius.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Frame and metadata label attached to sampled points.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1268,6 +1828,104 @@ spherical domain is a better model for the physical shell.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return spherical geometry away from the poles.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Polar angle <code>phi</code> in radians.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Azimuth angle <code>theta</code> in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> with equal signed principal curvatures</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>-1 / radius</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is non-finite or <code>u</code> is at a
+polar singularity.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1305,6 +1963,47 @@ spherical domain is a better model for the physical shell.</p>
 <p>The pole and cap boundary are singular for the current coordinate chart and
 are rejected by <code>point_at</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>radius</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive spherical radius.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>half_angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive polar half-angle of the cap, no larger than
+<code>pi</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Frame and metadata label attached to sampled points.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1430,6 +2129,92 @@ are rejected by <code>point_at</code>.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return spherical-cap geometry inside the open cap.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Polar angle <code>phi</code> in radians.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Azimuth angle <code>theta</code> in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> with outward normal and spherical curvature.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is non-finite, at the pole, or at
+the cap boundary.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1469,6 +2254,54 @@ axial station/generator direction, <code>e2</code> opposite the positive <code>t
 tangent, and <code>n</code> outward. The apex is not part of the supported smooth
 midsurface domain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>radius_start</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive radius at <code>u = 0</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>radius_end</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive radius at <code>u = length</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>length</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive axial length.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Frame and metadata label attached to sampled points.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1583,8 +2416,31 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return <code>dr/dx</code> for the linear radius stiffness.</p>
+        <p>Return <code>dr/dx</code> for the linear radius law.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The signed radius change per unit axial distance.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1635,6 +2491,104 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return conical-frustum geometry at axial station and angle.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Axial coordinate <code>x</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Circumferential angle <code>theta</code> in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> with the generator-aligned local frame and</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>signed circumferential curvature.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is non-finite or the local radius
+is singular.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1651,8 +2605,80 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return the local radius at axial coordinate <code>u</code>.</p>
+        <p>Return the local radius at an axial coordinate.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Axial coordinate measured from <code>radius_start</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The positive interpolated radius.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>u</code> is non-finite or the interpolated radius is
+nonpositive, which would put the point at or beyond the cone
+apex.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1686,8 +2712,56 @@ midsurface domain.</p>
 
 
 
-        <p>Triaxial ellipsoid parameterized by polar angle and azimuth <code>(phi, theta)</code>.</p>
+        <p>Triaxial ellipsoid parameterized by polar angle and azimuth.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>a</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive semi-axis along global <code>x</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>b</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive semi-axis along global <code>y</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>c</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive semi-axis along global <code>z</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Frame and metadata label attached to sampled points.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1832,6 +2906,104 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return ellipsoid geometry away from the poles.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Polar angle <code>phi</code> in radians.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Azimuth angle <code>theta</code> in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> with metric, curvature, and principal</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SurfacePoint
+
+
+  
+      dataclass
+   (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
+              –
+              <div class="doc-md-description">
+                <p>curvatures computed from the local ellipsoid chart.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is non-finite or the chart is
+singular at the requested point.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1900,8 +3072,37 @@ midsurface domain.</p>
 
 
 
-        <p>Protocol for objects that provide an ABD stiffness over a surface.</p>
+        <p>Protocol for objects that provide ABD stiffness over a surface.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>stiffness_at</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Method that evaluates the field at surface coordinates.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1933,8 +3134,100 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return the ABD stiffness at parametric coordinates <code>(u, v)</code>.</p>
+        <p>Return the ABD stiffness at parametric coordinates.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Surface that defines the local frame and geometry.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>The linear ABD stiffness bound to the local frame at <code>(u, v)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the field cannot be evaluated on the supplied
+surface or coordinates.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1970,6 +3263,36 @@ midsurface domain.</p>
 
         <p>Uniform ABD stiffness bound pointwise to a surface frame.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>stiffness</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Local stiffness to reuse at every sampled point. Its numeric
+C8 matrix is preserved, then rebound to each surface point frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -2037,6 +3360,111 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return the constant stiffness at a surface point.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Surface that supplies the point frame and metadata.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>A new <code>ABDStiffness</code> with the same numeric law and the sampled</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>surface frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the surface rejects the coordinates.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2070,8 +3498,71 @@ midsurface domain.</p>
 
 
 
-        <p>Stiffness field that builds and homogenizes a local cell at each surface point.</p>
+        <p>Pointwise field built by homogenizing a local cell at each sample.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The only surface on which this field may be evaluated.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>cell_factory</code></b>
+                  (<code><span title="tensyl.fields.stiffness_field.CellFactory">CellFactory</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Callable that builds a local cell from the surface and
+sampled <code>SurfacePoint</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>homogenizer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Homogenizer (tensyl.homogenizers.Homogenizer)" href="../homogenizers/#tensyl.homogenizers.Homogenizer">Homogenizer</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Homogenizer used to compute the pointwise ABD stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>cache</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StiffnessCache
+
+
+  
+      dataclass
+   (tensyl.fields.stiffness_field.StiffnessCache)" href="#tensyl.fields.StiffnessCache">StiffnessCache</a> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional coordinate cache for repeated evaluations.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity_context_factory</code></b>
+                  (<code><span title="tensyl.fields.stiffness_field.ValidityContextFactory">ValidityContextFactory</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional callable that builds local validity
+context for the sampled point and cell.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -2221,6 +3712,110 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return the homogenized stiffness at a surface point.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Surface to evaluate. It must be the field's configured
+surface.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Homogenized ABD stiffness rebound to the sampled surface frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>surface</code> is not the configured surface, the cell
+factory returns a frame-mismatched cell, or the homogenized
+stiffness does not match the sampled frame.</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationInputError (tensyl.homogenizers.HomogenizationInputError)" href="../homogenizers/#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the configured homogenizer rejects the
+generated cell.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2254,8 +3849,33 @@ midsurface domain.</p>
 
 
 
-        <p>Mutable pointwise stiffness cache keyed by rounded parametric coordinates.</p>
+        <p>Mutable pointwise stiffness cache keyed by rounded coordinates.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>precision</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Number of decimal places used when rounding <code>u</code> and <code>v</code>
+into a cache key.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -2310,6 +3930,31 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return the number of cached coordinate samples.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="int">int</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Count of stored stiffness values.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -2360,6 +4005,31 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Remove all cached stiffness values.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>None</code>
+              –
+              <div class="doc-md-description">
+                <p>None.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2376,6 +4046,80 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Return a cached stiffness value if one exists.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | None</code>
+              –
+              <div class="doc-md-description">
+                <p>The cached stiffness for the rounded coordinate key, or <code>None</code></p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | None</code>
+              –
+              <div class="doc-md-description">
+                <p>when the key has not been stored.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2392,6 +4136,86 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Build the rounded cache key for a coordinate pair.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>Rounded <code>(u, v)</code> tuple used as the dictionary key.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2408,6 +4232,53 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Store a stiffness value under the rounded coordinate key.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the surface parameterization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>stiffness</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>ABD stiffness to store.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2443,6 +4314,68 @@ midsurface domain.</p>
 
         <p>Rectangular bilinear atlas of sampled linear ABD stiffnesses.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Surface on which the samples were taken.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>u_values</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="float">float</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Strictly increasing first-coordinate grid values.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v_values</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="float">float</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Strictly increasing second-coordinate grid values.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>stiffnesses</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="tuple">tuple</span>[<a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a>, ...], ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Rectangular <code>(len(u_values), len(v_values))</code> stiffness
+samples bound to the corresponding surface frames.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Read-only provenance, grid, and interpolation metadata.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -2611,6 +4544,120 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Sample a stiffness field onto a rectangular atlas grid.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Surface used for all field evaluations.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>field</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StiffnessField (tensyl.fields.stiffness_field.StiffnessField)" href="#tensyl.fields.StiffnessField">StiffnessField</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Field to sample.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>u_values</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="float">float</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Strictly increasing coordinates in the first parameter
+direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v_values</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="float">float</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Strictly increasing coordinates in the second parameter
+direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional metadata to merge into the atlas provenance.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDAtlas
+
+
+  
+      dataclass
+   (tensyl.fields.stiffness_field.ABDAtlas)" href="#tensyl.fields.ABDAtlas">ABDAtlas</a></code>
+              –
+              <div class="doc-md-description">
+                <p>An <code>ABDAtlas</code> containing all sampled stiffness values.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If either coordinate grid is invalid or a sampled
+stiffness does not match the surface frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2627,6 +4674,112 @@ midsurface domain.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Interpolate atlas stiffness at a surface coordinate.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>surface</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Surface (tensyl.geometry.Surface)" href="#tensyl.geometry.Surface">Surface</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Surface to evaluate. It must be the atlas surface.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>u</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>First coordinate in the atlas domain.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>v</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Second coordinate in the atlas domain.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Bilinearly interpolated <code>ABDStiffness</code> with metadata describing</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>the grid cell, weights, and corner warnings.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>surface</code> is not the atlas surface or the
+coordinate is outside the sampled grid.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 

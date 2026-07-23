@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -223,7 +225,7 @@
 
 
 
-        <p>Raised when a Tensyl external-workflow payload is malformed.</p>
+        <p>Raised when an external-workflow payload is malformed.</p>
 
 
 
@@ -249,8 +251,98 @@
 
     <div class="doc doc-contents ">
 
-        <p>Serialize <code>obj</code> to a safe YAML string.</p>
+        <p>Serialize an object to a safe YAML string.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> to serialize.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>units</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional plain mapping describing the unit system.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Safe-YAML text containing the versioned schema payload.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the object cannot be represented by the schema.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -270,6 +362,87 @@
         <p>Load a Tensyl object from a safe YAML string.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>text</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>YAML text containing a versioned external-workflow mapping.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> described by the payload.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the YAML is invalid, unsafe, not a mapping, or fails
+schema validation.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -285,8 +458,90 @@
 
     <div class="doc doc-contents ">
 
-        <p>Write <code>obj</code> to <code>path</code> as safe YAML.</p>
+        <p>Write an object to a safe YAML file.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> to serialize.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>path</code></b>
+                  (<code><span title="str">str</span> | <span title="os.PathLike">PathLike</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Destination file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>units</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional plain mapping describing the unit system.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the object cannot be represented by the schema.</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="OSError">OSError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the file cannot be written.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -306,6 +561,93 @@
         <p>Read a Tensyl object from a safe YAML file.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><span title="str">str</span> | <span title="os.PathLike">PathLike</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Source YAML file path.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> described by the file.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the file contents fail YAML or schema validation.</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="OSError">OSError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the file cannot be read.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -321,8 +663,99 @@
 
     <div class="doc doc-contents ">
 
-        <p>Serialize <code>obj</code> to a deterministic JSON string.</p>
+        <p>Serialize an object to deterministic JSON text.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> to serialize.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>units</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional plain mapping describing the unit system.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Pretty-printed JSON text with a trailing newline.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the object cannot be represented by the schema or would
+require non-finite JSON constants.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -342,6 +775,87 @@
         <p>Load a Tensyl object from a JSON string.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>text</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>JSON text containing a versioned external-workflow mapping.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> described by the payload.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the JSON is invalid, contains NaN or infinity, is not a
+mapping, or fails schema validation.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -357,8 +871,90 @@
 
     <div class="doc doc-contents ">
 
-        <p>Write <code>obj</code> to <code>path</code> as JSON.</p>
+        <p>Write an object to a JSON file.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>obj</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>)
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> to serialize.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>path</code></b>
+                  (<code><span title="str">str</span> | <span title="os.PathLike">PathLike</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Destination file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>units</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional plain mapping describing the unit system.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the object cannot be represented by the schema.</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="OSError">OSError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the file cannot be written.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -377,6 +973,93 @@
 
         <p>Read a Tensyl object from a JSON file.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><span title="str">str</span> | <span title="os.PathLike">PathLike</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Source JSON file path.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a> | <a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.HomogenizationResult)" href="../homogenizers/#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> or <code>HomogenizationResult</code> described by the file.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="SchemaError (tensyl.io.schema.SchemaError)" href="#tensyl.io.SchemaError">SchemaError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the file contents fail JSON or schema validation.</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="OSError">OSError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the file cannot be read.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 

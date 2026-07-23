@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -171,7 +173,8 @@ illustrative, not allowables.</p>
 <p>Build an orthogrid panel about the skin reference surface. Stringers run along
 local <code>e1</code>; ribs run along local <code>e2</code>. Both stiffener families are external to
 the <code>+n</code> side of the skin reference surface, so positive eccentricity should
-create membrane-bending coupling.</p>
+create membrane-bending coupling. The repeat box is <code>8.0</code> units along <code>e1</code> and
+<code>6.0</code> units along <code>e2</code>, which become <code>e1_pitch</code> and <code>e2_pitch</code> below.</p>
 <pre><code class="language-python">from tensyl import (
     BeamSection,
     EnergyHomogenizer,
@@ -197,12 +200,12 @@ section = BeamSection(
 
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=section,
-    rib_section=section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=0.45,
-    rib_eccentricity=0.45,
+    e1_section=section,
+    e2_section=section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=0.45,
+    e2_axial_eccentricity=0.45,
 )
 
 result = EnergyHomogenizer().compute(
@@ -242,11 +245,11 @@ out the same; that page reads them term by term.</p>
 </tr>
 <tr>
 <td><code>B</code></td>
-<td><code>2.400e5</code>, <code>1.800e5</code>, <code>-3.609e4</code> <code>lbf</code></td>
+<td><code>2.400e5</code>, <code>1.800e5</code>, <code>3.609e4</code> <code>lbf</code></td>
 </tr>
 <tr>
 <td><code>D</code></td>
-<td><code>1.133e5</code>, <code>8.559e4</code>, <code>1.670e4</code> <code>lbf*in</code></td>
+<td><code>1.125e5</code>, <code>8.451e4</code>, <code>1.670e4</code> <code>lbf*in</code></td>
 </tr>
 <tr>
 <td><code>As</code></td>
@@ -276,7 +279,9 @@ assert stiffness_at_midbay.C8.shape == (8, 8)
 assert result.validity.p_over_R == 8.0 / radius
 </code></pre>
 <p>For <code>Cylinder</code>, <code>e1</code> is axial, <code>e2</code> is circumferential, and <code>n</code> points outward.
-The orthogrid constructor maps stringers to <code>e1</code> and ribs to <code>e2</code>.</p>
+The orthogrid constructor names those families <code>e1</code> and <code>e2</code> directly. Because
+the pitch values describe the repeat box, the spacing between <code>e1</code> members is
+<code>e2_pitch</code>.</p>
 <p>The barrel radius enters the validity ratio <code>p_over_R</code>; it does not recalculate
 the local orthogrid stiffness. This is still stiffness-property preparation.
 Loads, boundary conditions, knockdown factors, and buckling margins belong to a

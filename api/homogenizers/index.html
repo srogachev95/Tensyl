@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -312,6 +314,8 @@
 
 
         <p>Base exception for homogenization failures.</p>
+<p>Use this when callers want to catch all Tensyl homogenization errors
+without also catching unrelated <code>ValueError</code> instances.</p>
 
 
 
@@ -381,6 +385,55 @@ the repeated-cell spacing, <code>min_radius</code> is the smallest local curvatu
 radius, and <code>response_length</code> is the intended structural response length
 such as a buckle wavelength or analysis feature size.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>characteristic_height</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive member or wall height scale.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>pitch</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive repeated-cell pitch.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>min_radius</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive curvature radius, or infinity for flat
+geometry.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>response_length</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive structural response length.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -545,8 +598,56 @@ such as a buckle wavelength or analysis feature size.</p>
 
 
 
-        <p>Default warning thresholds for tangent-plane scale-separation checks.</p>
+        <p>Warning thresholds for tangent-plane scale-separation checks.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>h_over_R</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning threshold for height over curvature radius.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>p_over_R</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning threshold for pitch over curvature radius.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>p_over_L_response</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning threshold for pitch over response length.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>coupling_ratio</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning threshold for normalized coupling terms.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -711,8 +812,65 @@ such as a buckle wavelength or analysis feature size.</p>
 
 
 
-        <p>Machine-readable validity diagnostics attached to a homogenized result.</p>
+        <p>Machine-readable validity diagnostics attached to a result.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>h_over_R</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Height-to-radius ratio when both inputs were available.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>p_over_R</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Pitch-to-radius ratio when both inputs were available.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>p_over_L_response</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Pitch-to-response-length ratio when both inputs
+were available.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>coupling_ratios</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="float">float</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Named normalized coupling indicators.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>warnings</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Stable warning identifiers for violated checks.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -898,6 +1056,72 @@ such as a buckle wavelength or analysis feature size.</p>
 when only <code>result.stiffness</code> is passed to fields, exports, or downstream tools.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>stiffness</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Homogenized linear ABD stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityReport
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Validity report attached to the stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>diagnostics</code></b>
+                  (<code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | <span title="types.MappingProxyType">MappingProxyType</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Read-only numerical diagnostics from the homogenizer.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>assumptions</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Modeling assumptions made by the homogenizer.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>source</code></b>
+                  (<code><span title="typing.Literal">Literal</span>[&#39;energy&#39;, &#39;direct_ec&#39;, &#39;rve&#39;, &#39;imported&#39;]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Identifier for the homogenization path that produced the result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
@@ -952,6 +1176,34 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
         <p>Return the homogenized ABD stiffness terms as named scalars.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffnessCoefficients
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffnessCoefficients)" href="../core/#tensyl.core.constitutive.ABDStiffnessCoefficients">ABDStiffnessCoefficients</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Named view of the A, B, D, and transverse-shear coefficients.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1082,8 +1334,63 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
     <div class="doc doc-contents ">
 
-        <p>Return aligned orthotropic shell coefficients for <code>stiffness</code>.</p>
+        <p>Return aligned orthotropic shell coefficients.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>1e-09</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Absolute tolerance used when warning about terms outside
+the aligned orthotropic coefficient set.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="OrthotropicStiffnessCoefficients
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.OrthotropicStiffnessCoefficients)" href="../core/#tensyl.core.constitutive.OrthotropicStiffnessCoefficients">OrthotropicStiffnessCoefficients</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Named orthotropic coefficient view of <code>self.stiffness</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1100,8 +1407,96 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
     <div class="doc doc-contents ">
 
-        <p>Return membrane-equivalent orthotropic properties for <code>stiffness</code>.</p>
+        <p>Return membrane-equivalent orthotropic properties.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>t_eff</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive effective wall thickness used to convert membrane
+stiffnesses into engineering constants.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>1e-09</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Absolute tolerance for warning about discarded off-axis
+or coupling terms.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ReducedOrthotropicProperties
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ReducedOrthotropicProperties)" href="../core/#tensyl.core.constitutive.ReducedOrthotropicProperties">ReducedOrthotropicProperties</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Orthotropic membrane constants reduced from <code>self.stiffness</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>t_eff</code> is not positive or the reduced compliance
+terms are not physically admissible.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1136,6 +1531,35 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
         <p>Protocol for tangent-plane homogenizers.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>compute</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Method that returns an equivalent ABD stiffness result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
@@ -1168,6 +1592,115 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
         <p>Compute an equivalent ABD stiffness for a canonical unit cell.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>cell</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="CanonicalUnitCell
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.CanonicalUnitCell)" href="../cells-and-sections/#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Canonical tangent-plane unit cell to homogenize.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity_context</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityContext
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional scale data used to form validity
+warnings on the result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Homogenized stiffness, diagnostics, assumptions, and validity</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p>report.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationInputError (tensyl.homogenizers.tangent_plane.HomogenizationInputError)" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the cell is malformed or uses an
+unsupported convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1205,6 +1738,36 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 <p>Computes an <code>ABDStiffness</code> by adding skin stiffness and member energy
 contributions over a <code>CanonicalUnitCell</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>thresholds</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityThresholds
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning thresholds used when building the result validity
+report.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1273,6 +1836,118 @@ contributions over a <code>CanonicalUnitCell</code>.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Compute an equivalent ABD stiffness from a canonical cell.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>cell</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="CanonicalUnitCell
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.CanonicalUnitCell)" href="../cells-and-sections/#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Tangent-plane unit cell containing the skin, finite members,
+frame, convention, and repeated area.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity_context</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityContext
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional geometric and response length scales for
+result warnings.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Homogenization result with stiffness, diagnostics, assumptions, and</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p>validity report.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationInputError (tensyl.homogenizers.tangent_plane.HomogenizationInputError)" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the cell uses a strain convention that
+the energy path does not support.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1310,6 +1985,36 @@ contributions over a <code>CanonicalUnitCell</code>.</p>
 <p>Use this path for supported straight-family comparisons or accelerators,
 not as a replacement for the more general energy cell path.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>thresholds</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityThresholds
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning thresholds used when building the result validity
+report.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1378,6 +2083,150 @@ not as a replacement for the more general energy cell path.</p>
 
     <div class="doc doc-contents ">
 
+        <p>Compute direct EC stiffness from repeated straight families.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>skin</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Baseline skin ABD stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>families</code></b>
+                  (<code><span title="tuple">tuple</span>[<a class="autorefs autorefs-internal" title="StiffenerFamily
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.StiffenerFamily)" href="../cells-and-sections/#tensyl.cells.StiffenerFamily">StiffenerFamily</a>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>One or more straight repeated stiffener families.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity_context</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityContext
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional geometric and response length scales for
+result warnings.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="../core/#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="../core/#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Strain convention for the assembled tangent. Only the
+default engineering-shear convention is currently supported.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Homogenization result assembled from skin plus family length-density</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+              –
+              <div class="doc-md-description">
+                <p>contributions.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationInputError (tensyl.homogenizers.tangent_plane.HomogenizationInputError)" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If no families are supplied, or if the
+skin/convention pair is unsupported.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1404,8 +2253,107 @@ not as a replacement for the more general energy cell path.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return tangent-plane validity diagnostics for an existing ABD stiffness.</p>
+        <p>Return tangent-plane validity diagnostics for existing stiffness.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>stiffness</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>ABD stiffness to inspect.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>context</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityContext
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional geometric and response length scales.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>thresholds</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ValidityThresholds
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional warning thresholds. Defaults are used when omitted.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ValidityReport
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Validity report with scale-separation ratios, coupling indicators, and</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ValidityReport
+
+
+  
+      dataclass
+   (tensyl.homogenizers.tangent_plane.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>
+              –
+              <div class="doc-md-description">
+                <p>warning identifiers.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 

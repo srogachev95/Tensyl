@@ -55,8 +55,8 @@ SURFACE_EDGE_WIDTH = 0.25
 VALIDITY_COLOR = colors.to_hex(VALIDITY_CMAP(0.55))
 LINE_COLORS = {
     "skin_thickness": "#1b7837",  # green
-    "stringer_pitch": "#4575b4",  # blue
-    "rib_pitch": "#762a83",  # purple
+    "e1_pitch": "#4575b4",  # blue
+    "e2_pitch": "#762a83",  # purple
     "A11": "#1f78b4",  # blue
     "D11": "#ff7f00",  # orange
     "coupling": "#7f7f7f",  # gray
@@ -118,8 +118,8 @@ def cylinder_design_at(x: float, length: float = 240.0) -> dict[str, float]:
     reinforcement_band = math.exp(-(((station - 0.58) / 0.13) ** 2))
     return {
         "skin_thickness": 0.070 + 0.030 * taper + 0.018 * reinforcement_band,
-        "stringer_spacing": 5.2 + 2.1 * station,
-        "rib_spacing": 8.4 - 1.5 * taper + 0.8 * reinforcement_band,
+        "e1_pitch": 8.4 - 1.5 * taper + 0.8 * reinforcement_band,
+        "e2_pitch": 5.2 + 2.1 * station,
         "stringer_scale": 1.00 + 0.26 * reinforcement_band,
         "rib_scale": 0.92 + 0.18 * taper,
     }
@@ -161,21 +161,21 @@ def build_cylinder_field() -> tuple[Cylinder, HomogenizedStiffnessField]:
         skin_face = 0.5 * design["skin_thickness"]
         return orthogrid_cell(
             skin=skin,
-            stringer_section=scaled_section(
+            e1_section=scaled_section(
                 stringer.section,
                 design["stringer_scale"],
                 label="axial_hat_stringer",
             ),
-            rib_section=scaled_section(rib.section, design["rib_scale"], label="ring_blade_rib"),
-            stringer_spacing=design["stringer_spacing"],
-            rib_spacing=design["rib_spacing"],
-            stringer_eccentricity=skin_face + stringer.properties.centroid_z,
-            rib_eccentricity=skin_face + rib.properties.centroid_z,
+            e2_section=scaled_section(rib.section, design["rib_scale"], label="ring_blade_rib"),
+            e1_pitch=design["e1_pitch"],
+            e2_pitch=design["e2_pitch"],
+            e1_axial_eccentricity=skin_face + stringer.properties.centroid_z,
+            e2_axial_eccentricity=skin_face + rib.properties.centroid_z,
             frame=point.frame,
         )
 
     def validity_context(point: Any, cell: CanonicalUnitCell) -> ValidityContext:
-        pitch = max(cell.metadata["stringer_spacing"], cell.metadata["rib_spacing"])
+        pitch = max(cell.metadata["e1_pitch"], cell.metadata["e2_pitch"])
         return ValidityContext(
             characteristic_height=1.0,
             pitch=pitch,
@@ -213,8 +213,8 @@ def sample_cylinder(x_count: int = 52, theta_count: int = 56) -> dict[str, np.nd
     p_over_r = np.empty(shape)
     p_over_l = np.empty(shape)
     thickness = np.empty(shape)
-    stringer_pitch = np.empty(shape)
-    rib_pitch = np.empty(shape)
+    e1_pitch = np.empty(shape)
+    e2_pitch = np.empty(shape)
     warning_count = np.empty(shape)
 
     for index in np.ndindex(shape):
@@ -231,8 +231,8 @@ def sample_cylinder(x_count: int = 52, theta_count: int = 56) -> dict[str, np.nd
         p_over_r[index] = np.nan if validity is None else validity.p_over_R
         p_over_l[index] = np.nan if validity is None else validity.p_over_L_response
         thickness[index] = design["skin_thickness"]
-        stringer_pitch[index] = design["stringer_spacing"]
-        rib_pitch[index] = design["rib_spacing"]
+        e1_pitch[index] = design["e1_pitch"]
+        e2_pitch[index] = design["e2_pitch"]
         warning_count[index] = 0 if validity is None else len(validity.warnings)
 
     return {
@@ -249,8 +249,8 @@ def sample_cylinder(x_count: int = 52, theta_count: int = 56) -> dict[str, np.nd
         "p_over_R": p_over_r,
         "p_over_L_response": p_over_l,
         "skin_thickness": thickness,
-        "stringer_spacing": stringer_pitch,
-        "rib_spacing": rib_pitch,
+        "e1_pitch": e1_pitch,
+        "e2_pitch": e2_pitch,
         "warning_count": warning_count,
         "radius": np.array(50.0),
         "stiffener_height": np.array(1.0),
@@ -315,8 +315,8 @@ def render_cylinder_map(
 
     station = data["station"][:, 0]
     thickness = data["skin_thickness"][:, 0]
-    stringer_pitch = data["stringer_spacing"][:, 0]
-    rib_pitch = data["rib_spacing"][:, 0]
+    e1_pitch = data["e1_pitch"][:, 0]
+    e2_pitch = data["e2_pitch"][:, 0]
     a11_ratio = data["A11_ratio"][:, 0]
     d11_ratio = data["D11_ratio"][:, 0]
     coupling = data["coupling_B"][:, 0]
@@ -332,17 +332,17 @@ def render_cylinder_map(
     ax_pitch = ax_inputs.twinx()
     ax_pitch.plot(
         station,
-        stringer_pitch,
-        color=LINE_COLORS["stringer_pitch"],
+        e1_pitch,
+        color=LINE_COLORS["e1_pitch"],
         linewidth=2.0,
-        label="stringer pitch",
+        label="e1 cell span",
     )
     ax_pitch.plot(
         station,
-        rib_pitch,
-        color=LINE_COLORS["rib_pitch"],
+        e2_pitch,
+        color=LINE_COLORS["e2_pitch"],
         linewidth=2.0,
-        label="rib pitch",
+        label="e2 cell span",
     )
     ax_inputs.set_title("Wall inputs along the barrel")
     ax_inputs.set_xlabel("axial station, in")
@@ -499,14 +499,14 @@ def build_ellipsoid_field() -> tuple[Ellipsoid, HomogenizedStiffnessField]:
                     section=primary,
                     length=design["secondary_pitch"],
                     angle_rad=design["angle_rad"],
-                    eccentricity=skin_face + hat.properties.centroid_z,
+                    axial_eccentricity=skin_face + hat.properties.centroid_z,
                     label="swept_hat",
                 ),
                 BeamMember(
                     section=secondary,
                     length=design["primary_pitch"],
                     angle_rad=design["angle_rad"] + 0.5 * math.pi,
-                    eccentricity=skin_face + blade.properties.centroid_z,
+                    axial_eccentricity=skin_face + blade.properties.centroid_z,
                     label="cross_blade",
                 ),
             ),

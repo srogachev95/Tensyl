@@ -105,7 +105,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -166,12 +168,14 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="frames-and-conventions">Frames and Conventions</h1>
-<p>An ABD stiffness is expressed in a right-handed local frame:</p>
+<p>Every ABD stiffness belongs to a set of local directions. <code>e1</code> and <code>e2</code> lie in
+the panel, while <code>n</code> points away from the reference surface. For a cylinder,
+for example, <code>e1</code> is axial, <code>e2</code> is circumferential, and <code>n</code> points outward.</p>
+<p>Together they form a right-handed frame:</p>
 <div class="arithmatex">\[
 \{\mathbf e_1,\mathbf e_2,\mathbf n\}.
 \]</div>
-<p><code>e1</code> and <code>e2</code> are tangent directions. <code>n</code> is the positive normal. Tensyl
-validates:</p>
+<p>Tensyl checks that the directions follow this rule:</p>
 <div class="arithmatex">\[
 \mathbf e_1 \times \mathbf e_2 = \mathbf n.
 \]</div>
@@ -221,21 +225,26 @@ stiffener or face centroid, measured along <code>+n</code>.</p>
 </blockquote>
 <p>This applies to:</p>
 <ul>
-<li><code>BeamMember.eccentricity</code>;</li>
-<li><code>StiffenerFamily.eccentricity</code>;</li>
-<li><code>stringer_eccentricity</code>;</li>
-<li><code>rib_eccentricity</code>;</li>
-<li>sandwich <code>bottom_face_offset</code> and <code>top_face_offset</code>.</li>
+<li><code>BeamMember.axial_eccentricity</code> and <code>BeamMember.shear_eccentricity</code>;</li>
+<li>the corresponding <code>StiffenerFamily</code> inputs;</li>
+<li>named-cell family inputs such as <code>e1_axial_eccentricity</code> and
+  <code>diagonal_shear_eccentricity</code>;</li>
+<li>sandwich <code>bottom_face_to_reference</code> and <code>top_face_to_reference</code> shifts.</li>
 </ul>
-<p>For a cylinder whose local normal points outward, an external stringer has
-positive <code>stringer_eccentricity</code>. An internal stringer has negative
-eccentricity.</p>
+<p>For a cylinder whose local normal points outward, an external stiffener has a
+positive eccentricity. An internal stiffener has a negative eccentricity.</p>
+<p>For most stiffeners, set <code>axial_eccentricity</code> to the centroid offset and omit
+<code>shear_eccentricity</code>. Tensyl then uses the same offset for both axial and
+in-plane shear response.</p>
+<p>Nemeth also covers nonhomogeneous members whose axial and shear response act at
+different effective offsets. Tensyl keeps that option through separate
+<code>axial_eccentricity</code> and <code>shear_eccentricity</code> inputs.</p>
 <div class="admonition warning">
 <p class="admonition-title">The eccentricity sign is not cosmetic</p>
-<p>Flip it and you change the membrane-bending coupling block <code>B</code>, which gives
-you a <em>physically different ABD stiffness</em>. Tensyl raises no exception and no
-validation error, and the result looks entirely ordinary. Decide which way
-<code>+n</code> points before you type a sign.</p>
+<p>Reversing the sign changes the membrane-bending coupling block <code>B</code> and
+therefore describes a different structure. Tensyl cannot infer which side
+of the reference surface the stiffener occupies, so establish <code>+n</code> before
+entering the offset.</p>
 </div>
 <p>Positive eccentricity adds membrane-bending coupling according to the chosen
 reference surface. Moving the reference surface also changes <code>B</code>. Equal and

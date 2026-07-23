@@ -95,7 +95,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -156,9 +158,14 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="first-homogenized-cell">First Homogenized Cell</h1>
-<p>Tangent-plane homogenization adds beam-stiffener contributions to a skin
-stiffness. The energy homogenizer is the reference path — the one Tensyl trusts
-by default and measures the other methods against.</p>
+<p>A real panel may contain hundreds of stiffeners. Tensyl starts with one
+repeating patch and replaces that detailed pattern with an equivalent ABD
+stiffness for the whole panel.</p>
+<p>This example uses an orthogrid: one member family runs along local <code>e1</code>, and a
+second runs along local <code>e2</code>. The repeat box is <code>8.0</code> units wide along <code>e1</code> and
+<code>6.0</code> units high along <code>e2</code>. Tensyl calls those dimensions <code>e1_pitch</code> and
+<code>e2_pitch</code>. The <code>e1</code> members are therefore <code>6.0</code> units apart, while the <code>e2</code>
+members are <code>8.0</code> units apart.</p>
 <pre><code class="language-python">from tensyl import (
     BeamSection,
     EnergyHomogenizer,
@@ -173,7 +180,7 @@ skin = isotropic_plate(
     thickness=0.080,
 )
 
-stringer = BeamSection(
+section = BeamSection(
     EA=3.2e6,    # lbf
     EIy=2.4e4,   # lbf*in^2
     EIz=6.5e3,   # lbf*in^2
@@ -184,12 +191,12 @@ stringer = BeamSection(
 
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=stringer,
-    rib_section=stringer,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=0.45,
-    rib_eccentricity=0.45,
+    e1_section=section,
+    e2_section=section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=0.45,
+    e2_axial_eccentricity=0.45,
 )
 
 result = EnergyHomogenizer().compute(
@@ -205,19 +212,20 @@ result = EnergyHomogenizer().compute(
 stiffness = result.stiffness
 print(result.validity.warnings)
 </code></pre>
-<p>The result carries:</p>
+<p>The result keeps more than the four stiffness blocks:</p>
 <ul>
-<li><code>stiffness</code>: an <code>ABDStiffness</code>;</li>
-<li><code>diagnostics</code>: symmetry, rank, and positive-semidefinite checks;</li>
-<li><code>assumptions</code>: modeling assumptions recorded by the homogenizer;</li>
-<li><code>validity</code>: scale-separation and coupling warnings.</li>
+<li><code>stiffness</code> is the equivalent <code>ABDStiffness</code>;</li>
+<li><code>diagnostics</code> reports basic matrix checks, including symmetry and unsupported
+  deformation modes;</li>
+<li><code>assumptions</code> records modeling choices made during the calculation;</li>
+<li><code>validity</code> reports scale-separation and coupling warnings.</li>
 </ul>
 <p>Warnings do not automatically invalidate a result. They mark assumptions that an
 engineering workflow should review before using the ABD stiffness in sizing,
 buckling, or finite-element work.</p>
-<p>In this example the positive eccentricities place both stiffener centroids on
-the <code>+n</code> side of the skin reference surface, so the homogenized stiffness has a
-nonzero membrane-bending coupling block <code>B</code>.</p>
+<p>In this example both stiffener centroids sit on the <code>+n</code> side of the skin
+reference surface. Their positive offsets therefore create a nonzero <code>B</code> block,
+which couples stretching and bending.</p>
 <p>Next: <a href="../../user-guide/homogenization/">Homogenization and Results</a>.</p>
               
             </div>

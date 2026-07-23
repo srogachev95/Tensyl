@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -498,6 +500,190 @@
 example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2, 2]</code>, and <code>As12</code> is
 <code>As[0, 1]</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>A11</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Extensional stiffness in local direction 1.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>A22</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Extensional stiffness in local direction 2.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>A12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Extensional coupling stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>A16</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Extensional-shear coupling stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>A26</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Extensional-shear coupling stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>A66</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>In-plane shear stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B11</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-bending coupling in local direction 1.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B22</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-bending coupling in local direction 2.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-bending coupling cross term.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B16</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-twist coupling term.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B26</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-twist coupling term.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>B66</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-shear/twist coupling term.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D11</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Bending stiffness in local direction 1.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D22</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Bending stiffness in local direction 2.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Bending coupling stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D16</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Bending-twist coupling term.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D26</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Bending-twist coupling term.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>D66</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Twist stiffness coefficient.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>As11</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Transverse-shear stiffness in local direction 1.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>As22</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Transverse-shear stiffness in local direction 2.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>As12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Transverse-shear coupling stiffness.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -996,8 +1182,66 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
 
 
-        <p>Public mechanics contract for a generalized hyperelastic stiffness model.</p>
+        <p>Public mechanics contract for a generalized hyperelastic model.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Local right-handed frame for the model components.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain/resultant ordering.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Provenance metadata.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional validity or warning object attached by builders.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1023,13 +1267,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">convention</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return the generalized strain/resultant convention.</p>
 
     </div>
 
@@ -1043,13 +1289,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">frame</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return the local right-handed frame.</p>
 
     </div>
 
@@ -1063,13 +1311,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">metadata</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return provenance metadata.</p>
 
     </div>
 
@@ -1083,13 +1333,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">validity</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return the attached validity or warning object.</p>
 
     </div>
 
@@ -1109,8 +1361,59 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return strain energy density for generalized strain <code>eta</code>.</p>
+        <p>Return strain energy density for a generalized strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector in the model convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Stored strain energy density in the active unit system.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1127,8 +1430,63 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return generalized resultants for generalized strain <code>eta</code>.</p>
+        <p>Return generalized resultants for a generalized strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector in the model convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="GeneralizedResultant = NewType('GeneralizedResultant', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedResultant)" href="#tensyl.core.typing.GeneralizedResultant">GeneralizedResultant</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Generalized force and moment resultants in the conjugate ordering.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1145,8 +1503,55 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return an equivalent stiffness expressed in a rotated local frame.</p>
+        <p>Return an equivalent model in a rotated local frame.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Counterclockwise rotation angle about the local normal.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HyperelasticModel (tensyl.core.constitutive.HyperelasticModel)" href="#tensyl.core.constitutive.HyperelasticModel">HyperelasticModel</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Model representing the same physical law in the rotated frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1163,8 +1568,59 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return the constitutive tangent at generalized strain <code>eta</code>.</p>
+        <p>Return the constitutive tangent at a generalized strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector in the model convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Tangent matrix mapping generalized strain increments to resultants.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1196,8 +1652,32 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
 
 
-        <p>Refinement for stiffness models whose tangent is independent of strain.</p>
+        <p>Refinement for models whose tangent is independent of strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>constant_tangent</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Strain-independent tangent matrix.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1233,6 +1713,29 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
         <p>Return the strain-independent tangent.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Constant tangent matrix for the linear model.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1245,13 +1748,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">convention</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return the generalized strain/resultant convention.</p>
 
     </div>
 
@@ -1265,13 +1770,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">frame</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return the local right-handed frame.</p>
 
     </div>
 
@@ -1285,13 +1792,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">metadata</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return provenance metadata.</p>
 
     </div>
 
@@ -1305,13 +1814,15 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             <code class="highlight language-python"><span class="n">validity</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 </h3>
 
 
     <div class="doc doc-contents ">
+
+        <p>Return the attached validity or warning object.</p>
 
     </div>
 
@@ -1331,8 +1842,59 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return strain energy density for generalized strain <code>eta</code>.</p>
+        <p>Return strain energy density for a generalized strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector in the model convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Stored strain energy density in the active unit system.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1349,8 +1911,63 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return generalized resultants for generalized strain <code>eta</code>.</p>
+        <p>Return generalized resultants for a generalized strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector in the model convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="GeneralizedResultant = NewType('GeneralizedResultant', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedResultant)" href="#tensyl.core.typing.GeneralizedResultant">GeneralizedResultant</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Generalized force and moment resultants in the conjugate ordering.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1367,8 +1984,55 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return an equivalent stiffness expressed in a rotated local frame.</p>
+        <p>Return an equivalent model in a rotated local frame.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Counterclockwise rotation angle about the local normal.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HyperelasticModel (tensyl.core.constitutive.HyperelasticModel)" href="#tensyl.core.constitutive.HyperelasticModel">HyperelasticModel</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Model representing the same physical law in the rotated frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1385,8 +2049,59 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return the constitutive tangent at generalized strain <code>eta</code>.</p>
+        <p>Return the constitutive tangent at a generalized strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector in the model convention.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Tangent matrix mapping generalized strain increments to resultants.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1430,7 +2145,7 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
   </colgroup>
   <tbody valign="top">
     <tr class="field">
-      <th class="field-name">Parameters:</th>
+      <th class="field-name">Attributes:</th>
       <td class="field-body">
         <ul class="first simple">
             <li>
@@ -1472,13 +2187,7 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
   
       dataclass
-   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>, default:
-                      <code><a class="autorefs autorefs-internal" title="DEFAULT_FRAME = Frame2D.canonical()
-
-  
-      module-attribute
-   (tensyl.core.conventions.DEFAULT_FRAME)" href="#tensyl.core.conventions.DEFAULT_FRAME">DEFAULT_FRAME</a></code>
-)
+   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>)
               –
               <div class="doc-md-description">
                 <p>Local right-handed frame for the matrix components.</p>
@@ -1491,13 +2200,7 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
   
       dataclass
-   (tensyl.core.conventions.StrainConvention)" href="#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
-                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
-
-  
-      module-attribute
-   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
-)
+   (tensyl.core.conventions.StrainConvention)" href="#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>)
               –
               <div class="doc-md-description">
                 <p>Generalized strain ordering and shear convention.</p>
@@ -1505,9 +2208,7 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             </li>
             <li>
               <b><code>areal_mass</code></b>
-                  (<code><span title="float">float</span> | None</code>, default:
-                      <code>None</code>
-)
+                  (<code><span title="float">float</span> | None</code>)
               –
               <div class="doc-md-description">
                 <p>Optional mass per unit reference-surface area.</p>
@@ -1515,9 +2216,7 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             </li>
             <li>
               <b><code>metadata</code></b>
-                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>, default:
-                      <code><span title="dict">dict</span>()</code>
-)
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
               –
               <div class="doc-md-description">
                 <p>Provenance metadata preserved by serialization.</p>
@@ -1525,9 +2224,7 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
             </li>
             <li>
               <b><code>validity</code></b>
-                  (<code><span title="typing.Any">Any</span></code>, default:
-                      <code>None</code>
-)
+                  (<code><span title="typing.Any">Any</span></code>)
               –
               <div class="doc-md-description">
                 <p>Optional validity report attached by homogenization.</p>
@@ -1631,8 +2328,31 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>The canonical 8x8 stiffness tangent.</p>
+        <p>Return the canonical 8x8 stiffness tangent.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only stiffness matrix in the active generalized ordering.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1694,8 +2414,36 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return the independent ABD and transverse-shear terms as named scalars.</p>
+        <p>Return independent stiffness terms as named scalars.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffnessCoefficients
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffnessCoefficients)" href="#tensyl.core.constitutive.ABDStiffnessCoefficients">ABDStiffnessCoefficients</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Named scalar view of the ABD and transverse-shear blocks.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1718,6 +2466,29 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
         <p>Return the strain-independent stiffness tangent.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The same read-only matrix as <code>C8</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1868,8 +2639,79 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 
     <div class="doc doc-contents ">
 
-        <p>Return <code>0.5 * eta @ C8 @ eta</code>.</p>
+        <p>Return linear strain energy density.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><span title="tensyl.core.constitutive.GeneralizedStrainInput">GeneralizedStrainInput</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector with shape <code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p><code>0.5 * eta @ C8 @ eta</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>eta</code> does not have shape <code>(8,)</code> or contains
+non-finite values.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1895,6 +2737,150 @@ example, <code>A16</code> is <code>A[0, 2]</code>, <code>D66</code> is <code>D[2
 <code>[eps11, eps22, gamma12, kappa11, kappa22, kappa12, gamma13,
 gamma23]</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>tangent</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Symmetric 8x8 generalized stiffness matrix.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_FRAME = Frame2D.canonical()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_FRAME)" href="#tensyl.core.conventions.DEFAULT_FRAME">DEFAULT_FRAME</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Local frame for the matrix components.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain/resultant ordering.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>areal_mass</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional nonnegative mass per unit area.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional provenance metadata.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>validity</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional validity report to attach.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>ABDStiffness</code> with readonly block views of the supplied tangent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If the tangent has the wrong shape, is not finite, or
+is not symmetric within tolerance.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1924,6 +2910,83 @@ emits a warning so the caller can decide whether the reduction is
 acceptable for the downstream calculation.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>1e-09</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Nonnegative absolute tolerance for off-axis terms.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="OrthotropicStiffnessCoefficients
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.OrthotropicStiffnessCoefficients)" href="#tensyl.core.constitutive.OrthotropicStiffnessCoefficients">OrthotropicStiffnessCoefficients</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Barred orthotropic coefficient view plus warning metadata.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>tolerance</code> is negative or non-finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -1946,6 +3009,93 @@ is based on <code>A / t_eff</code> and does not preserve the bending, coupling, 
 transverse-shear blocks.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>t_eff</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive effective shell thickness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>1e-09</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Nonnegative absolute tolerance for warning about
+discarded coupling or off-axis terms.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ReducedOrthotropicProperties
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ReducedOrthotropicProperties)" href="#tensyl.core.constitutive.ReducedOrthotropicProperties">ReducedOrthotropicProperties</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Membrane-equivalent orthotropic plane-stress constants.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>t_eff</code> is not positive, <code>tolerance</code> is invalid,
+or the membrane stiffness block cannot be inverted.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -1961,8 +3111,94 @@ transverse-shear blocks.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return generalized resultants <code>[N11, N22, N12, M11, M22, M12, Q13, Q23]</code>.</p>
+        <p>Return generalized resultants for a strain vector.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><span title="tensyl.core.constitutive.GeneralizedStrainInput">GeneralizedStrainInput</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector with shape <code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="GeneralizedResultant = NewType('GeneralizedResultant', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedResultant)" href="#tensyl.core.typing.GeneralizedResultant">GeneralizedResultant</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only generalized resultants in order</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="GeneralizedResultant = NewType('GeneralizedResultant', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedResultant)" href="#tensyl.core.typing.GeneralizedResultant">GeneralizedResultant</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>[N11, N22, N12, M11, M22, M12, Q13, Q23]</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>eta</code> does not have shape <code>(8,)</code> or contains
+non-finite values.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1979,8 +3215,83 @@ transverse-shear blocks.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return this stiffness expressed in a frame rotated about <code>n</code>.</p>
+        <p>Return this stiffness in a frame rotated about <code>n</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Counterclockwise rotation angle in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Equivalent <code>ABDStiffness</code> expressed in the rotated local frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>angle_rad</code> is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -1997,8 +3308,79 @@ transverse-shear blocks.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return the constant stiffness tangent after validating <code>eta</code>.</p>
+        <p>Return the constant stiffness tangent after validating strain.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>eta</code></b>
+                  (<code><span title="tensyl.core.constitutive.GeneralizedStrainInput">GeneralizedStrainInput</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain vector with shape <code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The strain-independent tangent matrix.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>eta</code> does not have shape <code>(8,)</code> or contains
+non-finite values.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2017,6 +3399,58 @@ transverse-shear blocks.</p>
 
         <p>Return an equivalent stiffness with attached validity diagnostics.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>validity</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Validity or warning object to attach to the copy.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>New <code>ABDStiffness</code> with the same numeric tangent and metadata.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2056,6 +3490,126 @@ representation. <code>warnings</code> and <code>unsupported_terms</code> record 
 that were present in the source ABD matrix but are not carried by this
 coefficient set.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>Ebar_x</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective axial membrane coefficient in the x direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Ebar_y</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective axial membrane coefficient in the y direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Ebar_xy</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective membrane coupling coefficient.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Gbar_xy</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective in-plane shear coefficient.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Dbar_x</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective bending coefficient in the x direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Dbar_y</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Effective bending coefficient in the y direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Dbar_xy</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Modified bending-twist coefficient <code>2*D12 + 4*D66</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Cbar_x</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-bending coupling coefficient in the x direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Cbar_y</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-bending coupling coefficient in the y direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Cbar_xy</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-bending coupling cross coefficient.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>Kbar_xy</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane-shear/twist coupling coefficient.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>warnings</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Warning identifiers recorded during reduction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>unsupported_terms</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="float">float</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Off-axis source ABD terms not represented here.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -2408,7 +3962,7 @@ coefficient set.</p>
   </colgroup>
   <tbody valign="top">
     <tr class="field">
-      <th class="field-name">Parameters:</th>
+      <th class="field-name">Attributes:</th>
       <td class="field-body">
         <ul class="first simple">
             <li>
@@ -2461,9 +4015,7 @@ coefficient set.</p>
             </li>
             <li>
               <b><code>warnings</code></b>
-                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>, default:
-                      <code>()</code>
-)
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>)
               –
               <div class="doc-md-description">
                 <p>Machine-readable notices for stiffness terms not represented
@@ -2472,9 +4024,7 @@ by the reduction.</p>
             </li>
             <li>
               <b><code>metadata</code></b>
-                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>, default:
-                      <code><span title="dict">dict</span>()</code>
-)
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
               –
               <div class="doc-md-description">
                 <p>Provenance metadata for the reduced values.</p>
@@ -2726,6 +4276,94 @@ to the new reference surface along <code>+n</code>. Curvatures and transverse-sh
 strains are unchanged.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>stiffness</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Source stiffness about the current reference surface.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>offset</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Signed distance from the current surface to the new surface.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Equivalent stiffness about the shifted reference surface.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>offset</code> is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -2743,6 +4381,124 @@ strains are unchanged.</p>
 
         <p>Return the superposition of compatible ABD stiffnesses.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>*stiffnesses</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>, default:
+                      <code>()</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>One or more stiffnesses using the same frame and strain
+convention.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional metadata to merge into the combined result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Sum of the supplied stiffness tangents. Areal mass is summed only when</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>every input provides it; shared validity is preserved only when all</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>inputs agree.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If no stiffnesses are supplied, or if frames/conventions do
+not match.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -2845,6 +4601,54 @@ strains are unchanged.</p>
 
         <p>Right-handed orthonormal local frame.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>e1</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Unit basis vector for local direction 1.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>e2</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Unit basis vector for local direction 2.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>n</code></b>
+                  (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Unit normal vector satisfying <code>cross(e1, e2) == n</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Human-readable frame label carried into metadata.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -3028,6 +4832,60 @@ strains are unchanged.</p>
         <p>Create the canonical Cartesian local frame.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;local_tangent&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Frame label for the returned object.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Frame with <code>e1 = x</code>, <code>e2 = y</code>, and <code>n = z</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -3043,8 +4901,94 @@ strains are unchanged.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return a frame rotated counterclockwise about <code>n</code> by <code>angle_rad</code>.</p>
+        <p>Return a frame rotated counterclockwise about <code>n</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Rotation angle in radians.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional label for the rotated frame. Defaults to the
+current label.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="#tensyl.core.conventions.Frame2D">Frame2D</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Rotated right-handed local frame.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>angle_rad</code> is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -3078,8 +5022,78 @@ strains are unchanged.</p>
 
 
 
-        <p>Generalized strain/resultant ordering for the Phase 1 ABD stiffness.</p>
+        <p>Generalized strain/resultant ordering for ABD stiffnesses.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>membrane_order</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, <span title="str">str</span>, <span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Membrane strain/resultant names. Current public support
+is <code>("e11", "e22", "g12")</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>bending_order</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, <span title="str">str</span>, <span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Curvature/moment names. Current public support is
+<code>("k11", "k22", "k12")</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>shear_order</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="str">str</span>, <span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Transverse-shear strain/resultant names. Current public
+support is <code>("g13", "g23")</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>engineering_shear</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Whether shear strains are engineering shear strains.
+Current public support requires <code>True</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>reference_surface</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Name of the reference surface for bending and
+coupling terms.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>normal_positive</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive normal convention. Current public support is
+<code>"+n"</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -3361,6 +5375,81 @@ strains are unchanged.</p>
 from resultants for static checkers.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>values</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Array-like generalized strain values with shape <code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedStrain)" href="#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only generalized strain vector.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>values</code> cannot be read as a finite vector with shape
+<code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -3378,6 +5467,81 @@ from resultants for static checkers.</p>
 
         <p>Return a read-only generalized resultant vector.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>values</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Array-like generalized resultant values with shape <code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="GeneralizedResultant = NewType('GeneralizedResultant', np.ndarray[Any, np.dtype[np.float64]])
+
+  
+      module-attribute
+   (tensyl.core.typing.GeneralizedResultant)" href="#tensyl.core.typing.GeneralizedResultant">GeneralizedResultant</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only generalized resultant vector.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>values</code> cannot be read as a finite vector with shape
+<code>(8,)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 

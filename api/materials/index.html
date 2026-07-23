@@ -93,7 +93,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -278,6 +280,47 @@
         <p>Plane-stress isotropic material.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>E</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive Young's modulus.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>nu</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Poisson ratio satisfying <code>-1 &lt; nu &lt; 0.5</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>density</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional nonnegative mass density. When present, plate
+builders can report areal mass.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
@@ -330,8 +373,31 @@
 
     <div class="doc doc-contents ">
 
-        <p>Isotropic shear modulus.</p>
+        <p>Return the isotropic shear modulus.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p><code>E / (2 * (1 + nu))</code> in the same unit system as <code>E</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -423,8 +489,38 @@
 
     <div class="doc doc-contents ">
 
-        <p>Return the 3x3 reduced plane-stress stiffness matrix.</p>
+        <p>Return the reduced plane-stress stiffness matrix.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only 3x3 matrix in engineering shear order</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p><code>(e11, e22, g12)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -458,8 +554,81 @@
 
 
 
-        <p>Orthotropic lamina material in its local 1-2-n axes.</p>
+        <p>Orthotropic lamina material in local <code>1-2-n</code> axes.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>E1</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive Young's modulus in the material 1 direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>E2</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive Young's modulus in the material 2 direction.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>G12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive in-plane shear modulus.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>nu12</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Major Poisson ratio. The reciprocal ratio is inferred from minor
+symmetry.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>G13</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive transverse-shear modulus in the 1-n plane.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>G23</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive transverse-shear modulus in the 2-n plane.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>density</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional nonnegative mass density.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -634,8 +803,31 @@
 
     <div class="doc doc-contents ">
 
-        <p>Reciprocal Poisson ratio from minor symmetry.</p>
+        <p>Return the reciprocal Poisson ratio from minor symmetry.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="float">float</span></code>
+              –
+              <div class="doc-md-description">
+                <p><code>nu12 * E2 / E1</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -686,8 +878,38 @@
 
     <div class="doc doc-contents ">
 
-        <p>Return local lamina reduced stiffness in engineering shear notation.</p>
+        <p>Return local lamina reduced stiffness.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only 3x3 plane-stress stiffness matrix in engineering shear</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>order <code>(e11, e22, g12)</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -704,8 +926,79 @@
 
     <div class="doc doc-contents ">
 
-        <p>Return transformed in-plane reduced stiffness for ply angle <code>angle_rad</code>.</p>
+        <p>Return transformed in-plane reduced stiffness for a ply angle.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Ply angle from the local 1 direction to the laminate
+frame, in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only transformed 3x3 reduced stiffness matrix.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>angle_rad</code> is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -722,8 +1015,79 @@
 
     <div class="doc doc-contents ">
 
-        <p>Return transformed transverse-shear stiffness for ply angle <code>angle_rad</code>.</p>
+        <p>Return transformed transverse-shear stiffness for a ply angle.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Ply angle from the local 1 direction to the laminate
+frame, in radians.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Read-only transformed 2x2 transverse-shear stiffness matrix.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>angle_rad</code> is not finite.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 
@@ -757,8 +1121,57 @@
 
 
 
-        <p>One laminate ply, ordered bottom-to-top in <code>laminate_plate</code>.</p>
+        <p>One laminate ply for <code>laminate_plate</code>.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>material</code></b>
+                  (<code><span title="tensyl.materials.laminates.PlyMaterial">PlyMaterial</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Isotropic or orthotropic ply material.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>thickness</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive ply thickness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>angle_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Ply angle in radians. Isotropic plies ignore the rotation
+numerically but still preserve the input.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional human-readable ply label.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -917,6 +1330,177 @@
         <p>Build a skin-only isotropic plate stiffness about its mid-surface.</p>
 
 
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>material</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="IsotropicMaterial
+
+
+  
+      dataclass
+   (tensyl.materials.base.IsotropicMaterial)" href="#tensyl.materials.IsotropicMaterial">IsotropicMaterial</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Isotropic material for the plate.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>thickness</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive plate thickness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>shear_correction</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>5.0 / 6.0</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Positive transverse-shear correction factor.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="../core/#tensyl.core.conventions.Frame2D">Frame2D</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_FRAME = Frame2D.canonical()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_FRAME)" href="../core/#tensyl.core.conventions.DEFAULT_FRAME">DEFAULT_FRAME</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Local frame attached to the returned stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="../core/#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="../core/#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain convention for the returned stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional provenance metadata. <code>source</code> defaults to
+<code>"isotropic_plate"</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Linear <code>ABDStiffness</code> with zero membrane-bending coupling and</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>transverse shear stiffness. Areal mass is included only when material</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>density is available.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If <code>thickness</code> or <code>shear_correction</code> is not positive.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
     </div>
 
 </div>
@@ -932,8 +1516,173 @@
 
     <div class="doc doc-contents ">
 
-        <p>Build a laminate plate stiffness using bottom-to-top ply order.</p>
+        <p>Build a laminate plate stiffness from bottom-to-top plies.</p>
 
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>plies</code></b>
+                  (<code><span title="collections.abc.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" title="Ply
+
+
+  
+      dataclass
+   (tensyl.materials.laminates.Ply)" href="#tensyl.materials.Ply">Ply</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Iterable of plies ordered from the negative-normal face to the
+positive-normal face.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>shear_correction</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>5.0 / 6.0</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Positive transverse-shear correction factor.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="../core/#tensyl.core.conventions.Frame2D">Frame2D</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_FRAME = Frame2D.canonical()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_FRAME)" href="../core/#tensyl.core.conventions.DEFAULT_FRAME">DEFAULT_FRAME</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Local frame attached to the returned stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="../core/#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
+                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
+
+  
+      module-attribute
+   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="../core/#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Generalized strain convention for the returned stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>metadata</code></b>
+                  (<code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional provenance metadata. <code>source</code> defaults to
+<code>"laminate_plate"</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Linear <code>ABDStiffness</code> integrated about the laminate mid-surface.</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Unsymmetric stacks naturally produce nonzero <code>B</code> coupling. Areal mass</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
+              –
+              <div class="doc-md-description">
+                <p>is included only when every ply material supplies density.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If no plies are supplied or <code>shear_correction</code> is not
+positive.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
     </div>
 

@@ -117,7 +117,9 @@
               </ul>
               <p class="caption"><span class="caption-text">Validation</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Roadmap</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
@@ -248,12 +250,12 @@ skin_face_offset = 0.5 * skin_thickness
 
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=hat.section,
-    rib_section=blade.section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=skin_face_offset + hat.centroid_z,
-    rib_eccentricity=skin_face_offset + blade.centroid_z,
+    e1_section=hat.section,
+    e2_section=blade.section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=skin_face_offset + hat.centroid_z,
+    e2_axial_eccentricity=skin_face_offset + blade.centroid_z,
 )
 
 result = EnergyHomogenizer().compute(cell)
@@ -262,6 +264,36 @@ result = EnergyHomogenizer().compute(cell)
 accepts custom <code>ThinWallSegment</code> layouts in member-local <code>(y, z)</code> coordinates.
 Use this for a stiffener shape that is just ordinary enough to be useful and just
 odd enough to avoid having its own constructor.</p>
+<p>Tensyl computes the section properties as a composite-area problem. Each
+<code>ThinWallSegment</code> becomes a rectangular strip whose midline is the supplied
+segment and whose thickness is measured normal to that line. For strip <code>i</code>,</p>
+<div class="arithmatex">\[
+A_i = l_i t_i .
+\]</div>
+<p>The section centroid is the area-weighted average of the strip centroids:</p>
+<div class="arithmatex">\[
+y_c = \frac{\sum_i A_i y_i}{\sum_i A_i},
+\qquad
+z_c = \frac{\sum_i A_i z_i}{\sum_i A_i}.
+\]</div>
+<p>Each strip first contributes its own centroidal inertia. Tensyl rotates that
+local strip inertia into the member-local <code>(y, z)</code> axes, then shifts it to the
+section centroid with the parallel-axis theorem:</p>
+<div class="arithmatex">\[
+I_y = \sum_i \left(I_{y,i}^{c} + A_i (z_i-z_c)^2\right),
+\]</div>
+<div class="arithmatex">\[
+I_z = \sum_i \left(I_{z,i}^{c} + A_i (y_i-y_c)^2\right),
+\]</div>
+<p>and</p>
+<div class="arithmatex">\[
+I_{yz} = \sum_i \left(I_{yz,i}^{c} + A_i (y_i-y_c)(z_i-z_c)\right).
+\]</div>
+<p>Those are area properties only. For an isotropic section, Tensyl converts them
+to stiffness products afterward with <code>EA = E A</code>, <code>EIy = E Iy</code>, <code>EIz = E Iz</code>, and
+<code>EIyz = E Iyz</code>. This is the standard composite-area and parallel-axis calculation
+for second moments of area; the section-property reference is listed in
+<a href="../../references/">References</a>.</p>
 <h3 id="blade-section">Blade Section</h3>
 <p><img alt="Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness." src="../../assets/sections/blade-section.svg" /></p>
 <p><code>blade_section</code> creates one vertical web rooted at <code>z = 0</code>.</p>
@@ -449,25 +481,65 @@ instead.</p>
 <li>cell dimensions use <code>in</code>.</li>
 </ul>
 <h2 id="named-cells">Named Cells</h2>
-<p>Tensyl provides constructors for common tangent-plane patterns:</p>
-<ul>
-<li><code>unidirectional_cell</code>;</li>
-<li><code>orthogrid_cell</code>;</li>
-<li><code>braced_orthogrid_cell</code>;</li>
-<li><code>equilateral_isogrid_cell</code>;</li>
-<li><code>isosceles_triangle_grid_cell</code>;</li>
-<li><code>kagome_cell</code>;</li>
-<li><code>hexagonal_grid_cell</code>;</li>
-<li><code>star_cell</code>;</li>
-<li>sandwich-core variants.</li>
-</ul>
-<p>Named constructors are convenience layers over canonical <code>BeamMember</code>
-contributions. They do not model joint details, intersection stresses, or local
-crippling.</p>
-<p>The treatise figures below show the kind of repeated cell each named constructor
-is reducing to member contributions. They are topology references, not a promise
-that the constructor reproduces every label, dimension convention, or special
-case in the original report.</p>
+<p>Use a named constructor when the panel follows one of Tensyl's built-in repeat
+patterns. The constructor creates both the member data used for stiffness and
+the coordinates needed to draw the cell.</p>
+<table>
+<thead>
+<tr>
+<th>Constructor</th>
+<th>Pattern in plain terms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unidirectional_cell</code></td>
+<td>One family of parallel stiffeners at any angle</td>
+</tr>
+<tr>
+<td><code>orthogrid_cell</code></td>
+<td>Crossing members along <code>e1</code> and <code>e2</code></td>
+</tr>
+<tr>
+<td><code>braced_orthogrid_cell</code></td>
+<td>An orthogrid with one or two diagonal braces</td>
+</tr>
+<tr>
+<td><code>diamond_cell</code></td>
+<td><code>e1</code> members with crossing diagonals and no <code>e2</code> members</td>
+</tr>
+<tr>
+<td><code>equilateral_isogrid_cell</code></td>
+<td>Equal members at <code>0</code>, <code>+60</code>, and <code>-60</code> degrees</td>
+</tr>
+<tr>
+<td><code>isosceles_triangle_grid_cell</code></td>
+<td><code>e1</code> members joined by mirrored diagonals</td>
+</tr>
+<tr>
+<td><code>kagome_cell</code></td>
+<td>Short <code>e1</code> members joined by longer diagonals</td>
+</tr>
+<tr>
+<td><code>hexagonal_grid_cell</code></td>
+<td>Vertical members joined by mirrored diagonals</td>
+</tr>
+<tr>
+<td><code>star_cell</code></td>
+<td>A repeating six-point star pattern</td>
+</tr>
+<tr>
+<td><code>sandwich_*_core_cell</code></td>
+<td>A named grid core between two shifted faces</td>
+</tr>
+</tbody>
+</table>
+<p>Named cells represent the repeating grid, not the joint details. They do not
+calculate intersection stress, fastener behavior, local crippling, or weld
+effects.</p>
+<p>The figures below show the source patterns for the less familiar grids. The
+same shapes are checked numerically in
+<a href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>.</p>
 <table>
 <thead>
 <tr>
@@ -479,6 +551,10 @@ case in the original report.</p>
 <tr>
 <td><code>braced_orthogrid_cell</code></td>
 <td><img alt="Orthogonal stiffener pattern with two diagonal braces per bay and a basic cell." src="../../assets/nemeth-treatise/fig-14-braced-orthogrid-cell.jpg" /></td>
+</tr>
+<tr>
+<td><code>diamond_cell</code></td>
+<td>Nemeth figure 15, represented as the figure-14 cell without an <code>e2</code> family.</td>
 </tr>
 <tr>
 <td><code>isosceles_triangle_grid_cell</code></td>
@@ -498,31 +574,41 @@ case in the original report.</p>
 </tr>
 </tbody>
 </table>
-<p><em>Source for topology figures: Nemeth, NASA/TP-2011-216882, figures 14, 17, 18,
-21, and 23; full citation in <a href="../../references/">References</a>.</em></p>
+<p><em>Source for topology definitions: Nemeth, NASA/TP-2011-216882, figures 14-18,
+21, and 23 and tables 4-9; full citation in <a href="../../references/">References</a>.</em></p>
+<div class="admonition tip">
+<p class="admonition-title">Read pitch as a repeat-box dimension</p>
+<p><code>e1_pitch</code> is measured along <code>e1</code>, and <code>e2_pitch</code> is measured along <code>e2</code>.
+An <code>e1</code> member is therefore spaced by <code>e2_pitch</code>. See the coordinate sketch
+in <a href="../../validation/nemeth-cells/#how-cell-dimensions-are-named">Nemeth Cell Verification</a>.</p>
+</div>
 <h2 id="angles-and-eccentricity">Angles and Eccentricity</h2>
 <p>Angles are measured in the local frame. <code>0</code> points along <code>e1</code>, <code>pi/2</code>
 points along <code>e2</code>, and positive angles follow the positive rotation convention
 about <code>n</code>.</p>
-<p>Every eccentricity is signed along <code>+n</code> from the reference surface to the
-member centroid. For an outward-normal cylinder, an external stringer has
-positive <code>stringer_eccentricity</code>; an internal stringer has negative
-eccentricity.</p>
+<p>Every eccentricity is signed along <code>+n</code> from the reference surface. For an
+ordinary homogeneous stiffener, set <code>axial_eccentricity</code> to the centroid offset
+and leave <code>shear_eccentricity</code> unset. Tensyl then uses the same value for both.
+For an outward-normal cylinder, an external member has a positive offset and an
+internal member has a negative offset.</p>
+<p>Nemeth allows axial and in-plane shear response to use different effective
+offsets for a nonhomogeneous member. Use <code>shear_eccentricity</code> only when that
+distinction belongs to the section model.</p>
 <p>For a geometry-derived stiffener, <code>centroid_z</code> is measured from the section's own
 construction datum. If that datum is not the wall reference surface, shift the
 value before passing it to the cell constructor. A skin mid-surface reference and
 an outer-face stiffener datum differ by half the skin thickness. Tensyl cannot
 infer that offset for you; set it explicitly.</p>
 <div class="admonition warning">
-<p class="admonition-title">Get the eccentricity sign right</p>
-<p>The sign changes the coupling block <code>B</code>, so flipping it produces a different
-physical ABD stiffness, and no validation error will catch the mistake. See
+<p class="admonition-title">Check the eccentricity sign</p>
+<p>Reversing the sign changes the physical <code>B</code> coupling block. Tensyl cannot
+infer which side of the reference surface the stiffener occupies. See
 <a href="../../theory/conventions/">Frames and Conventions</a> for the full sign rule.</p>
 </div>
 <h2 id="graph-cells">Graph Cells</h2>
-<p>Use <code>graph_unit_cell</code> when a named constructor is not enough. It converts local
-tangent-plane nodes and edges into canonical beam members.</p>
-<pre><code class="language-python">from tensyl import CellEdge, CellNode, graph_unit_cell
+<p>Use <code>graph_unit_cell</code> when a named pattern is not enough. It turns local node
+coordinates and beam edges into a repeating cell that the homogenizer can use.</p>
+<pre><code class="language-python">from tensyl import CellEdge, CellNode, CellVector, graph_unit_cell
 
 cell = graph_unit_cell(
     area=48.0,
@@ -533,12 +619,18 @@ cell = graph_unit_cell(
         CellNode(0.0, 8.0),
     ),
     edges=(
-        CellEdge(0, 1, section, eccentricity=0.45),
-        CellEdge(0, 2, section, eccentricity=0.45),
+        CellEdge(0, 1, section, axial_eccentricity=0.45, family=&quot;e1&quot;),
+        CellEdge(0, 2, section, axial_eccentricity=0.45, family=&quot;e2&quot;),
     ),
+    repeat_vectors=(CellVector(6.0, 0.0), CellVector(0.0, 8.0)),
+    boundary=(0, 1, 2),
 )
 </code></pre>
-<p>Node coordinates and area must use the same length unit.</p>
+<p>Node coordinates and area must use the same length unit. With repeat vectors,
+<code>cell.geometry.segments(repeat_a=2, repeat_b=2)</code> returns ordinary line segments
+for Matplotlib, Plotly, a CAD export, or another renderer. A complete plotting
+helper is shown in
+<a href="../../validation/nemeth-cells/#viewing-any-named-cell">Nemeth Cell Verification</a>.</p>
 <p>Next: <a href="../../theory/conventions/">Frames and Conventions</a>.</p>
               
             </div>
