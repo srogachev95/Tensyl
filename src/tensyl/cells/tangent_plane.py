@@ -1207,6 +1207,8 @@ def isosceles_triangle_grid_cell(
         ),
         frame=cell_frame,
         convention=cell_convention,
+        # Table 6 cuts each diagonal halfway between stringer rows. A staggered
+        # lattice reconnects those pieces into the continuous grid in figure 17.
         geometry=_geometry(
             nodes=(
                 (-0.5 * b, 0.0),
@@ -1215,18 +1217,20 @@ def isosceles_triangle_grid_cell(
                 (0.25 * b, 0.5 * h),
                 (0.25 * b, -0.5 * h),
                 (-0.25 * b, 0.5 * h),
-                (-0.5 * b, -0.5 * h),
-                (0.5 * b, -0.5 * h),
-                (0.5 * b, 0.5 * h),
-                (-0.5 * b, 0.5 * h),
+                (-0.5 * b, -h / 3.0),
+                (0.0, -2.0 * h / 3.0),
+                (0.5 * b, -h / 3.0),
+                (0.5 * b, h / 3.0),
+                (0.0, 2.0 * h / 3.0),
+                (-0.5 * b, h / 3.0),
             ),
             edges=(
                 (0, 1, "e1", "1-2"),
                 (2, 3, "positive_diagonal", "3-4"),
                 (4, 5, "negative_diagonal", "5-6"),
             ),
-            repeat_vectors=((b, 0.0), (0.0, h)),
-            boundary=(6, 7, 8, 9),
+            repeat_vectors=((b, 0.0), (0.5 * b, h)),
+            boundary=(6, 7, 8, 9, 10, 11),
         ),
         metadata={"source": "isosceles_triangle_grid", "e1_pitch": b, "e2_pitch": h},
     )

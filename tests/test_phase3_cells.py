@@ -473,6 +473,63 @@ def test_named_cell_geometry_can_be_tiled_for_visualization(cell) -> None:
     assert np.all(np.isfinite(coordinates))
 
 
+def test_isosceles_triangle_geometry_uses_staggered_hexagonal_cell() -> None:
+    width = 1.6
+    height = 0.9
+    cell = isosceles_triangle_grid_cell(
+        skin=_zero_skin(),
+        e1_section=_section(),
+        positive_diagonal_section=_section(),
+        e1_pitch=width,
+        e2_pitch=height,
+        e1_axial_eccentricity=0.01,
+        diagonal_axial_eccentricity=0.02,
+    )
+
+    geometry = cell.geometry
+    assert geometry is not None
+    assert geometry.repeat_vectors == (
+        CellVector(width, 0.0),
+        CellVector(0.5 * width, height),
+    )
+    boundary = np.array(
+        [[geometry.nodes[index].e1, geometry.nodes[index].e2] for index in geometry.boundary]
+    )
+    np.testing.assert_allclose(
+        boundary,
+        np.array(
+            [
+                [-0.5 * width, -height / 3.0],
+                [0.0, -2.0 * height / 3.0],
+                [0.5 * width, -height / 3.0],
+                [0.5 * width, height / 3.0],
+                [0.0, 2.0 * height / 3.0],
+                [-0.5 * width, height / 3.0],
+            ]
+        ),
+    )
+    next_boundary = np.roll(boundary, -1, axis=0)
+    boundary_area = 0.5 * abs(
+        np.dot(boundary[:, 0], next_boundary[:, 1]) - np.dot(boundary[:, 1], next_boundary[:, 0])
+    )
+    assert boundary_area == pytest.approx(width * height)
+
+    positive = geometry.edges[1]
+    positive_start = geometry.nodes[positive.start]
+    positive_end = geometry.nodes[positive.end]
+    negative = geometry.edges[2]
+    negative_start = geometry.nodes[negative.start]
+    negative_end = geometry.nodes[negative.end]
+    np.testing.assert_allclose(
+        [positive_end.e1 - positive_start.e1, positive_end.e2 - positive_start.e2],
+        [0.5 * width, height],
+    )
+    np.testing.assert_allclose(
+        [negative_end.e1 - negative_start.e1, negative_end.e2 - negative_start.e2],
+        [-0.5 * width, height],
+    )
+
+
 def test_equilateral_triangle_constructor_matches_existing_isogrid() -> None:
     section = _section()
     pitch = 2.0
