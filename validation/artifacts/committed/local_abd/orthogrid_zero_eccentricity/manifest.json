@@ -6,7 +6,7 @@
     "--artifacts",
     "validation/artifacts/committed/local_abd/orthogrid_zero_eccentricity"
   ],
-  "created_utc": "2026-07-22T16:40:07+00:00",
+  "created_utc": "2026-07-23T03:43:13+00:00",
   "inputs": [
     {
       "path": "validation/cases/local_abd/orthogrid_zero_eccentricity.yml",
@@ -32,9 +32,9 @@
   ],
   "schema_version": "tensyl.validation.artifact-manifest.v1",
   "software": {
-    "git_commit": "66db5f3",
+    "git_commit": "680d158",
     "platform": "macOS-26.5.2-arm64-arm-64bit",
     "python": "3.12.13",
-    "tensyl": "0.2.1"
+    "tensyl": "0.3.0"
   }
 }
