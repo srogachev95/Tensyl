@@ -72,11 +72,13 @@ strain map. Some SP-8007 elastic-constant expressions omit beam contributions
 that Tensyl includes. When those numbers disagree, inspect section inertia,
 torsion constant, reference-surface choice, and eccentricity.
 
-For orthogrids, the main known reduction is cross-family in-plane bending.
-Tensyl includes rib `EIz` in `Dbar_x` and stringer `EIz` in `Dbar_y`. SP-8007
-ring/stringer Eqs. 89-91 do not expose those terms, so a handoff that keeps only
-the barred constants can hide bending stiffness from wide, flanged, capped, or
-closed stiffeners.
+For orthogrids, the main model choice is whether a member may bend within the
+panel plane. Tensyl leaves that effect out by default to follow Nemeth. The
+[SP-8007 reconciliation](../validation/sp8007-reconciliation.md) turns it back
+on with `include_in_plane_bending=True` to study the difference. SP-8007
+ring/stringer Eqs. 89-91 do not expose the added `EIz` and `EIyz` terms, so a
+handoff based only on the barred coefficients can miss that optional stiffness
+for wide, flanged, capped, or closed stiffeners.
 
 For isogrids with eccentric members, use corrected bending terms:
 
@@ -147,12 +149,12 @@ skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickn
 section = BeamSection(EA=3.2e6, EIy=2.4e4, EIz=6.5e3, GJ=4.0e3, kGAy=1.1e6, kGAz=0.9e6)
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=section,
-    rib_section=section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=0.45,
-    rib_eccentricity=0.45,
+    e1_section=section,
+    e2_section=section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=0.45,
+    e2_axial_eccentricity=0.45,
 )
 result = EnergyHomogenizer().compute(
     cell,
@@ -222,8 +224,8 @@ isogrid_section = BeamSection(
 isogrid_cell = equilateral_isogrid_cell(
     skin=isogrid_skin,
     member_section=isogrid_section,
-    pitch=6.0,
-    eccentricity=0.35,
+    side_length=6.0,
+    axial_eccentricity=0.35,
 )
 isogrid_result = EnergyHomogenizer().compute(
     isogrid_cell,

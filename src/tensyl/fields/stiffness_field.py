@@ -19,10 +19,27 @@ from tensyl.homogenizers import HomogenizationResult, Homogenizer, ValidityConte
 
 
 class StiffnessField(Protocol):
-    """Protocol for objects that provide an ABD stiffness over a surface."""
+    """Protocol for objects that provide ABD stiffness over a surface.
+
+    Attributes:
+        stiffness_at: Method that evaluates the field at surface coordinates.
+    """
 
     def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
-        """Return the ABD stiffness at parametric coordinates ``(u, v)``."""
+        """Return the ABD stiffness at parametric coordinates.
+
+        Args:
+            surface: Surface that defines the local frame and geometry.
+            u: First coordinate in the surface parameterization.
+            v: Second coordinate in the surface parameterization.
+
+        Returns:
+            The linear ABD stiffness bound to the local frame at ``(u, v)``.
+
+        Raises:
+            ValueError: If the field cannot be evaluated on the supplied
+                surface or coordinates.
+        """
 
 
 CellFactory = Callable[[Surface, SurfacePoint], CanonicalUnitCell]
@@ -82,18 +99,43 @@ def _bind_stiffness_to_point(
 
 @dataclass(frozen=True, slots=True)
 class ConstantStiffnessField:
-    """Uniform ABD stiffness bound pointwise to a surface frame."""
+    """Uniform ABD stiffness bound pointwise to a surface frame.
+
+    Attributes:
+        stiffness: Local stiffness to reuse at every sampled point. Its numeric
+            C8 matrix is preserved, then rebound to each surface point frame.
+    """
 
     stiffness: ABDStiffness
 
     def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
+        """Return the constant stiffness at a surface point.
+
+        Args:
+            surface: Surface that supplies the point frame and metadata.
+            u: First coordinate in the surface parameterization.
+            v: Second coordinate in the surface parameterization.
+
+        Returns:
+            A new ``ABDStiffness`` with the same numeric law and the sampled
+            surface frame.
+
+        Raises:
+            ValueError: If the surface rejects the coordinates.
+        """
+
         point = surface.point_at(u, v)
         return _bind_stiffness_to_point(self.stiffness, point, source="constant_stiffness_field")
 
 
 @dataclass(slots=True)
 class StiffnessCache:
-    """Mutable pointwise stiffness cache keyed by rounded parametric coordinates."""
+    """Mutable pointwise stiffness cache keyed by rounded coordinates.
+
+    Attributes:
+        precision: Number of decimal places used when rounding ``u`` and ``v``
+            into a cache key.
+    """
 
     precision: int = 12
     _items: dict[tuple[float, float], ABDStiffness] = field(default_factory=dict)
@@ -104,28 +146,82 @@ class StiffnessCache:
             raise ValueError(msg)
 
     def key(self, u: float, v: float) -> tuple[float, float]:
+        """Build the rounded cache key for a coordinate pair.
+
+        Args:
+            u: First coordinate in the surface parameterization.
+            v: Second coordinate in the surface parameterization.
+
+        Returns:
+            Rounded ``(u, v)`` tuple used as the dictionary key.
+
+        Raises:
+            ValueError: If either coordinate is not finite.
+        """
+
         return (
             round(finite_number(u, name="u"), self.precision),
             round(finite_number(v, name="v"), self.precision),
         )
 
     def get(self, u: float, v: float) -> ABDStiffness | None:
+        """Return a cached stiffness value if one exists.
+
+        Args:
+            u: First coordinate in the surface parameterization.
+            v: Second coordinate in the surface parameterization.
+
+        Returns:
+            The cached stiffness for the rounded coordinate key, or ``None``
+            when the key has not been stored.
+        """
+
         return self._items.get(self.key(u, v))
 
     def set(self, u: float, v: float, stiffness: ABDStiffness) -> None:
+        """Store a stiffness value under the rounded coordinate key.
+
+        Args:
+            u: First coordinate in the surface parameterization.
+            v: Second coordinate in the surface parameterization.
+            stiffness: ABD stiffness to store.
+        """
+
         self._items[self.key(u, v)] = stiffness
 
     def clear(self) -> None:
+        """Remove all cached stiffness values.
+
+        Returns:
+            None.
+        """
+
         self._items.clear()
 
     @property
     def size(self) -> int:
+        """Return the number of cached coordinate samples.
+
+        Returns:
+            Count of stored stiffness values.
+        """
+
         return len(self._items)
 
 
 @dataclass(frozen=True, slots=True)
 class HomogenizedStiffnessField:
-    """Stiffness field that builds and homogenizes a local cell at each surface point."""
+    """Pointwise field built by homogenizing a local cell at each sample.
+
+    Attributes:
+        surface: The only surface on which this field may be evaluated.
+        cell_factory: Callable that builds a local cell from the surface and
+            sampled ``SurfacePoint``.
+        homogenizer: Homogenizer used to compute the pointwise ABD stiffness.
+        cache: Optional coordinate cache for repeated evaluations.
+        validity_context_factory: Optional callable that builds local validity
+            context for the sampled point and cell.
+    """
 
     surface: Surface
     cell_factory: CellFactory
@@ -134,6 +230,25 @@ class HomogenizedStiffnessField:
     validity_context_factory: ValidityContextFactory | None = None
 
     def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
+        """Return the homogenized stiffness at a surface point.
+
+        Args:
+            surface: Surface to evaluate. It must be the field's configured
+                surface.
+            u: First coordinate in the surface parameterization.
+            v: Second coordinate in the surface parameterization.
+
+        Returns:
+            Homogenized ABD stiffness rebound to the sampled surface frame.
+
+        Raises:
+            ValueError: If ``surface`` is not the configured surface, the cell
+                factory returns a frame-mismatched cell, or the homogenized
+                stiffness does not match the sampled frame.
+            HomogenizationInputError: If the configured homogenizer rejects the
+                generated cell.
+        """
+
         if surface != self.surface:
             msg = "HomogenizedStiffnessField can only be evaluated on its configured surface."
             raise ValueError(msg)
@@ -288,7 +403,16 @@ def _validate_atlas_samples(
 
 @dataclass(frozen=True, slots=True)
 class ABDAtlas:
-    """Rectangular bilinear atlas of sampled linear ABD stiffnesses."""
+    """Rectangular bilinear atlas of sampled linear ABD stiffnesses.
+
+    Attributes:
+        surface: Surface on which the samples were taken.
+        u_values: Strictly increasing first-coordinate grid values.
+        v_values: Strictly increasing second-coordinate grid values.
+        stiffnesses: Rectangular ``(len(u_values), len(v_values))`` stiffness
+            samples bound to the corresponding surface frames.
+        metadata: Read-only provenance, grid, and interpolation metadata.
+    """
 
     surface: Surface
     u_values: tuple[float, ...]
@@ -341,6 +465,25 @@ class ABDAtlas:
         v_values: tuple[float, ...],
         metadata: Mapping[str, Any] | None = None,
     ) -> ABDAtlas:
+        """Sample a stiffness field onto a rectangular atlas grid.
+
+        Args:
+            surface: Surface used for all field evaluations.
+            field: Field to sample.
+            u_values: Strictly increasing coordinates in the first parameter
+                direction.
+            v_values: Strictly increasing coordinates in the second parameter
+                direction.
+            metadata: Optional metadata to merge into the atlas provenance.
+
+        Returns:
+            An ``ABDAtlas`` containing all sampled stiffness values.
+
+        Raises:
+            ValueError: If either coordinate grid is invalid or a sampled
+                stiffness does not match the surface frame.
+        """
+
         checked_u = _increasing(tuple(u_values), name="u_values")
         checked_v = _increasing(tuple(v_values), name="v_values")
         stiffnesses = tuple(
@@ -358,6 +501,22 @@ class ABDAtlas:
         )
 
     def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
+        """Interpolate atlas stiffness at a surface coordinate.
+
+        Args:
+            surface: Surface to evaluate. It must be the atlas surface.
+            u: First coordinate in the atlas domain.
+            v: Second coordinate in the atlas domain.
+
+        Returns:
+            Bilinearly interpolated ``ABDStiffness`` with metadata describing
+            the grid cell, weights, and corner warnings.
+
+        Raises:
+            ValueError: If ``surface`` is not the atlas surface or the
+                coordinate is outside the sampled grid.
+        """
+
         if surface != self.surface:
             msg = "ABDAtlas can only be evaluated on its configured surface."
             raise ValueError(msg)

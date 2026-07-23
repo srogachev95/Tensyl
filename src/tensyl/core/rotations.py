@@ -14,7 +14,17 @@ def _finite_angle(angle_rad: float) -> float:
 
 
 def engineering_strain_transform(angle_rad: float) -> FloatArray:
-    """Transform ``[e11, e22, g12]`` into a frame rotated by ``angle_rad``."""
+    """Return the engineering-strain rotation matrix.
+
+    Args:
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Read-only 3x3 transform for ``[e11, e22, g12]``.
+
+    Raises:
+        ValueError: If ``angle_rad`` is not finite.
+    """
 
     angle = _finite_angle(angle_rad)
     # This matrix is for engineering shear gamma12, not tensor shear e12.
@@ -38,7 +48,18 @@ def engineering_strain_transform(angle_rad: float) -> FloatArray:
 
 
 def resultant_transform(angle_rad: float) -> FloatArray:
-    """Transform ``[N11, N22, N12]`` into a frame rotated by ``angle_rad``."""
+    """Return the in-plane resultant rotation matrix.
+
+    Args:
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Read-only 3x3 transform for ``[N11, N22, N12]`` that preserves power
+        pairing with engineering strains.
+
+    Raises:
+        ValueError: If ``angle_rad`` is not finite.
+    """
 
     # Resultants use the energy-conjugate dual of the strain transform so that
     # r.dot(eta) is invariant under a change of local in-plane frame.
@@ -48,7 +69,17 @@ def resultant_transform(angle_rad: float) -> FloatArray:
 
 
 def transverse_shear_transform(angle_rad: float) -> FloatArray:
-    """Transform ``[g13, g23]`` or ``[Q13, Q23]`` into a rotated frame."""
+    """Return the transverse-shear rotation matrix.
+
+    Args:
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Read-only 2x2 transform for ``[g13, g23]`` or ``[Q13, Q23]``.
+
+    Raises:
+        ValueError: If ``angle_rad`` is not finite.
+    """
 
     angle = _finite_angle(angle_rad)
     c = float(np.cos(angle))
@@ -59,7 +90,18 @@ def transverse_shear_transform(angle_rad: float) -> FloatArray:
 
 
 def generalized_strain_transform(angle_rad: float) -> FloatArray:
-    """Return the 8x8 generalized strain transform for ``eta``."""
+    """Return the generalized strain rotation matrix.
+
+    Args:
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Read-only 8x8 transform for membrane strain, curvature, and transverse
+        shear strain.
+
+    Raises:
+        ValueError: If ``angle_rad`` is not finite.
+    """
 
     membrane = engineering_strain_transform(angle_rad)
     shear = transverse_shear_transform(angle_rad)
@@ -72,7 +114,18 @@ def generalized_strain_transform(angle_rad: float) -> FloatArray:
 
 
 def generalized_resultant_transform(angle_rad: float) -> FloatArray:
-    """Return the 8x8 generalized resultant transform."""
+    """Return the generalized resultant rotation matrix.
+
+    Args:
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Read-only 8x8 transform for force, moment, and transverse-shear
+        resultants.
+
+    Raises:
+        ValueError: If ``angle_rad`` is not finite.
+    """
 
     in_plane = resultant_transform(angle_rad)
     shear = transverse_shear_transform(angle_rad)
@@ -85,7 +138,19 @@ def generalized_resultant_transform(angle_rad: float) -> FloatArray:
 
 
 def rotate_tangent(tangent: FloatArray, angle_rad: float) -> FloatArray:
-    """Rotate an 8x8 stiffness tangent into a rotated local frame."""
+    """Rotate an 8x8 stiffness tangent into a new local frame.
+
+    Args:
+        tangent: Symmetric 8x8 generalized stiffness matrix.
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Read-only rotated tangent matrix.
+
+    Raises:
+        ValueError: If ``tangent`` does not have shape ``(8, 8)`` or
+            ``angle_rad`` is not finite.
+    """
 
     matrix = readonly_array(tangent, shape=(8, 8), name="tangent")
     strain_transform = generalized_strain_transform(angle_rad)
@@ -99,7 +164,18 @@ def rotate_tangent(tangent: FloatArray, angle_rad: float) -> FloatArray:
 
 
 def rotate_abd_stiffness(stiffness: ABDStiffness, angle_rad: float) -> ABDStiffness:
-    """Rotate an ``ABDStiffness`` into a new local frame."""
+    """Rotate an ``ABDStiffness`` into a new local frame.
+
+    Args:
+        stiffness: Source stiffness to rotate.
+        angle_rad: Counterclockwise rotation angle about the local normal.
+
+    Returns:
+        Equivalent ``ABDStiffness`` with rotated blocks and frame.
+
+    Raises:
+        ValueError: If ``angle_rad`` is not finite.
+    """
 
     tangent = rotate_tangent(stiffness.C8, angle_rad)
     return ABDStiffness(

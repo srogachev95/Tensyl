@@ -18,7 +18,14 @@ def _readonly_vector(values: FloatArray, *, name: str) -> FloatArray:
 
 @dataclass(frozen=True, slots=True)
 class Frame2D:
-    """Right-handed orthonormal local frame."""
+    """Right-handed orthonormal local frame.
+
+    Attributes:
+        e1: Unit basis vector for local direction 1.
+        e2: Unit basis vector for local direction 2.
+        n: Unit normal vector satisfying ``cross(e1, e2) == n``.
+        label: Human-readable frame label carried into metadata.
+    """
 
     e1: FloatArray
     e2: FloatArray
@@ -81,7 +88,14 @@ class Frame2D:
 
     @classmethod
     def canonical(cls, *, label: str = "local_tangent") -> Frame2D:
-        """Create the canonical Cartesian local frame."""
+        """Create the canonical Cartesian local frame.
+
+        Args:
+            label: Frame label for the returned object.
+
+        Returns:
+            Frame with ``e1 = x``, ``e2 = y``, and ``n = z``.
+        """
 
         return cls(
             e1=np.array([1.0, 0.0, 0.0]),
@@ -91,7 +105,19 @@ class Frame2D:
         )
 
     def rotate(self, angle_rad: float, *, label: str | None = None) -> Frame2D:
-        """Return a frame rotated counterclockwise about ``n`` by ``angle_rad``."""
+        """Return a frame rotated counterclockwise about ``n``.
+
+        Args:
+            angle_rad: Rotation angle in radians.
+            label: Optional label for the rotated frame. Defaults to the
+                current label.
+
+        Returns:
+            Rotated right-handed local frame.
+
+        Raises:
+            ValueError: If ``angle_rad`` is not finite.
+        """
 
         angle = float(angle_rad)
         if not np.isfinite(angle):
@@ -109,7 +135,22 @@ class Frame2D:
 
 @dataclass(frozen=True, slots=True)
 class StrainConvention:
-    """Generalized strain/resultant ordering for the Phase 1 ABD stiffness."""
+    """Generalized strain/resultant ordering for ABD stiffnesses.
+
+    Attributes:
+        membrane_order: Membrane strain/resultant names. Current public support
+            is ``("e11", "e22", "g12")``.
+        bending_order: Curvature/moment names. Current public support is
+            ``("k11", "k22", "k12")``.
+        shear_order: Transverse-shear strain/resultant names. Current public
+            support is ``("g13", "g23")``.
+        engineering_shear: Whether shear strains are engineering shear strains.
+            Current public support requires ``True``.
+        reference_surface: Name of the reference surface for bending and
+            coupling terms.
+        normal_positive: Positive normal convention. Current public support is
+            ``"+n"``.
+    """
 
     membrane_order: tuple[str, str, str] = ("e11", "e22", "g12")
     bending_order: tuple[str, str, str] = ("k11", "k22", "k12")

@@ -187,19 +187,21 @@ def tensyl_coefficients(case: SP8007ComparisonCase) -> dict[CoefficientName, flo
     if case.model == "orthogrid":
         cell = orthogrid_cell(
             skin=skin,
-            stringer_section=section,
-            rib_section=section,
-            stringer_spacing=case.stringer_spacing,
-            rib_spacing=case.rib_spacing,
-            stringer_eccentricity=case.eccentricity,
-            rib_eccentricity=case.eccentricity,
+            e1_section=section,
+            e2_section=section,
+            e1_pitch=case.rib_spacing,
+            e2_pitch=case.stringer_spacing,
+            e1_axial_eccentricity=case.eccentricity,
+            e2_axial_eccentricity=case.eccentricity,
+            include_in_plane_bending=True,
         )
     else:
         cell = equilateral_isogrid_cell(
             skin=skin,
             member_section=section,
-            pitch=case.pitch,
-            eccentricity=case.eccentricity,
+            side_length=case.pitch,
+            axial_eccentricity=case.eccentricity,
+            include_in_plane_bending=True,
         )
     stiffness = EnergyHomogenizer().compute(cell).stiffness
     return sp8007_coefficients_from_abd(stiffness)

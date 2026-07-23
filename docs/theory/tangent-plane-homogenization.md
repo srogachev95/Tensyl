@@ -1,10 +1,15 @@
 # Tangent-Plane Homogenization
 
-Tangent-plane homogenization computes a local equivalent ABD stiffness for a
-repeating stiffened cell that is treated as flat in the local tangent plane.
-The cell is assembled in the local `e1`-`e2` plane. Surface curvature is handled
-later by geometry embedding and validity checks, not by the first local cell
-stiffness assembly.
+Tensyl begins with one small patch of a repeating stiffener pattern. It
+calculates the skin and member stiffness in that patch, then spreads the member
+contributions over the patch area. The result is one equivalent ABD stiffness
+that a larger plate or shell model can use without drawing every stiffener.
+
+The patch is treated as flat in the local `e1`-`e2` plane. Surface curvature is
+handled later, when the stiffness is placed on a barrel, dome, or another shell
+surface.
+
+The member contribution follows one compact energy equation:
 
 For a cell with area $A_\text{cell}$, a beam member contributes:
 
@@ -14,16 +19,14 @@ $$
 \mathbf T_m^T\mathbf K_m\mathbf T_m.
 $$
 
-Here:
+In this equation:
 
-- $\mu_m$ is multiplicity;
-- $L_m$ is member length;
-- $\mathbf K_m$ is the member stiffness matrix;
-- $\mathbf T_m$ is the *member strain map*: it projects the stiffness's generalized
-  strain onto each member's beam strain. This map is the hinge of the whole
-  method, and it is referenced by name in the diagnostics below.
+- $\mu_m$ says how many identical members the cell represents;
+- $L_m$ is the length of that member inside the cell;
+- $\mathbf K_m$ contains the member's beam stiffnesses;
+- $\mathbf T_m$ converts panel deformation into deformation along the member.
 
-The equivalent tangent is:
+Adding every member contribution to the skin gives the equivalent stiffness:
 
 $$
 \mathbf C_\text{stiffness}
@@ -33,11 +36,10 @@ $$
 \sum_m \Delta\mathbf C_m.
 $$
 
-The energy method is Tensyl's reference homogenizer because the assembled
-member contribution is symmetric by construction and works for graph-like
-canonical cells. Direct equilibrium-compatibility formulas are available for
-supported straight stiffener-family cases and are tested against the energy
-path.
+The energy method is Tensyl's reference calculation. It works for both named
+patterns and custom graph cells, and its assembled stiffness is symmetric by
+construction. A direct formula is also available for supported families of
+straight, parallel stiffeners and is tested against the energy calculation.
 
 This follows the equivalent-plate idea used by Nemeth for stiffened laminated
 plates and plate-like lattices. Tensyl treats those formulas as mechanics
@@ -45,50 +47,43 @@ guidance and keeps the energy path as the executable reference.
 
 ## How Geometry Enters the ABD Law
 
-The tangent-plane homogenizer computes a local constitutive law. At a surface
-point, the shell or plate generalized strains and resultants are interpreted in
-the point's local right-handed frame:
+The homogenizer answers a local question: how stiff is this repeating patch in
+its own directions? At any point on a plate or shell, those directions are the
+local right-handed frame:
 
 $$
 \{\mathbf e_1,\mathbf e_2,\mathbf n\}.
 $$
 
-The local law remains the same kind of object everywhere:
+The same ABD relationship is used at every point:
 
 $$
 \mathbf r = \mathbf C_\text{stiffness}\boldsymbol\eta.
 $$
 
-Defining a barrel, dome, cone, or ellipsoid does not by itself bend the
-stiffener cell or insert curvature terms into the matrix above. Geometry enters
-through three separate mechanisms:
+Defining a barrel, dome, cone, or ellipsoid does not change the local cell
+matrix by itself. Geometry enters later in three ways:
 
-- the surface supplies the local frame, metric, curvature, Jacobian, and
-  positive minimum radius used to interpret and audit the law;
-- a stiffness field decides which ABD stiffness is present at each surface
-  point;
-- a later shell, buckling, or sizing workflow uses the surface geometry to
-  form equilibrium, loads, boundary conditions, and failure checks.
+- the surface supplies local directions and curvature;
+- a stiffness field selects the ABD stiffness at each point;
+- a shell, buckling, or sizing model combines that stiffness with loads,
+  boundary conditions, and the full structure.
 
-That separation is deliberate. The homogenizer answers a local constitutive
-question: "what resultants follow from these generalized strains in this tangent
-plane?" The surface answers a geometric question: "where is that tangent plane,
-which directions are local 1/2/n, and how curved is the midsurface?" A solver
-answers the global equilibrium question. Mixing those jobs would only make the
-numbers harder to trust.
+Keeping these jobs separate makes the result easier to inspect. The cell says
+how the local material responds, the surface says where that local patch sits,
+and the solver handles the response of the complete structure.
 
 The public stiffness-field helpers implement this separation directly:
 
-- `ConstantStiffnessField` returns the same canonical `C8` tangent at each
-  point and rebinds it to `surface.point_at(u, v).frame`. The numeric matrix is
-  unchanged; the metadata and local frame describe where and how to read it.
+- `ConstantStiffnessField` returns the same `C8` stiffness at each point and
+  attaches the local frame from `surface.point_at(u, v)`. The numeric matrix is
+  unchanged.
 - `HomogenizedStiffnessField` calls a user-supplied cell factory at each surface
   point. The ABD stiffness can change pointwise if the factory changes pitch,
   member angle, eccentricity, section, material, or laminate with the local
   geometry.
-- `ABDAtlas` stores sampled linear ABD stiffnesses and interpolates the
-  canonical `C8` payload. The interpolated tangent is then bound to the target
-  surface-point frame.
+- `ABDAtlas` stores sampled ABD stiffnesses, interpolates between them, and
+  attaches the result to the target point's local frame.
 
 For a cylinder, `e1` is axial, `e2` is circumferential, and `n` is outward. A
 longitudinal stringer therefore has angle `0`, and a ring rib has angle
@@ -112,15 +107,17 @@ homogenization sources listed in [References](../references.md).
 
 ## Inputs
 
-- `skin` is an `ABDStiffness` for the unstiffened skin or laminate.
-- `BeamSection` supplies centroidal beam stiffness products. Those products may
-  be entered directly or produced from isotropic thin-wall section geometry.
-- `BeamMember` supplies member length, angle, eccentricity, and multiplicity
-  inside a finite canonical cell.
-- `StiffenerFamily` supplies angle, spacing, eccentricity, and multiplicity for
-  the direct equilibrium-compatibility path.
-- `CanonicalUnitCell.area` is the tangent-plane area represented by one
-  repeated cell.
+The calculation needs a skin, one or more stiffener sections, and the repeating
+cell that places those stiffeners:
+
+- `skin` is the unstiffened skin or laminate ABD stiffness.
+- `BeamSection` holds the stiffness of one member cross-section.
+- `BeamMember` places a section in a cell with a length, angle, and offset.
+- `CanonicalUnitCell.area` is the panel area represented by that repeat.
+- `CanonicalUnitCell.geometry` holds the coordinates needed to draw the cell.
+
+The direct calculation uses `StiffenerFamily` instead of individual members.
+Each family supplies a section, direction, spacing, and offset.
 
 ## Beam Section Quantities
 
@@ -135,8 +132,28 @@ homogenization sources listed in [References](../references.md).
 | `kGAy` | in-plane shear stiffness | `lbf` |
 | `kGAz` | transverse shear stiffness | `lbf` |
 
-Omitted shear stiffnesses contribute zero in the current homogenizer and are
-recorded as assumptions in the result.
+If a transverse-shear stiffness is omitted, Tensyl treats its contribution as
+zero and records that assumption in the result.
+
+By default, Tensyl follows Nemeth and leaves out member bending within the panel
+plane. `BeamSection` still stores `EIz` and `EIyz` for section completeness, but
+the cell does not use them unless `include_in_plane_bending=True` is set on the
+member or named constructor. That option is an extension beyond the default
+Nemeth model, and the result records when it is enabled.
+
+In Nemeth's notation, this default is the first-approximation condition
+$\chi_Z=0$.
+
+For the member-frame in-plane shear term, the two effective offsets enter as
+
+$$
+\Gamma_{XY}
+=
+\frac{1}{2}\left(\gamma_{XY}^0+\bar{\bar z}\kappa_{XY}\right).
+$$
+
+In plain terms, a positive shear offset produces positive `B66` coupling under
+the documented `+n` convention.
 
 `BeamSection` still asks for stiffness products (`EA`, `EIy`, `EIz`, `GJ`,
 `kGAy`, `kGAz`) because the homogenizer consumes centroidal beam stiffnesses.

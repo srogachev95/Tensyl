@@ -12,7 +12,14 @@ from tensyl.core.typing import FloatArray
 
 @dataclass(frozen=True, slots=True)
 class IsotropicMaterial:
-    """Plane-stress isotropic material."""
+    """Plane-stress isotropic material.
+
+    Attributes:
+        E: Positive Young's modulus.
+        nu: Poisson ratio satisfying ``-1 < nu < 0.5``.
+        density: Optional nonnegative mass density. When present, plate
+            builders can report areal mass.
+    """
 
     E: float
     nu: float
@@ -34,12 +41,21 @@ class IsotropicMaterial:
 
     @property
     def G(self) -> float:
-        """Isotropic shear modulus."""
+        """Return the isotropic shear modulus.
+
+        Returns:
+            ``E / (2 * (1 + nu))`` in the same unit system as ``E``.
+        """
 
         return self.E / (2.0 * (1.0 + self.nu))
 
     def plane_stress_stiffness(self) -> FloatArray:
-        """Return the 3x3 reduced plane-stress stiffness matrix."""
+        """Return the reduced plane-stress stiffness matrix.
+
+        Returns:
+            Read-only 3x3 matrix in engineering shear order
+            ``(e11, e22, g12)``.
+        """
 
         factor = self.E / (1.0 - self.nu**2)
         Q = factor * np.array(
@@ -56,7 +72,18 @@ class IsotropicMaterial:
 
 @dataclass(frozen=True, slots=True)
 class OrthotropicPlyMaterial:
-    """Orthotropic lamina material in its local 1-2-n axes."""
+    """Orthotropic lamina material in local ``1-2-n`` axes.
+
+    Attributes:
+        E1: Positive Young's modulus in the material 1 direction.
+        E2: Positive Young's modulus in the material 2 direction.
+        G12: Positive in-plane shear modulus.
+        nu12: Major Poisson ratio. The reciprocal ratio is inferred from minor
+            symmetry.
+        G13: Positive transverse-shear modulus in the 1-n plane.
+        G23: Positive transverse-shear modulus in the 2-n plane.
+        density: Optional nonnegative mass density.
+    """
 
     E1: float
     E2: float
@@ -94,12 +121,21 @@ class OrthotropicPlyMaterial:
 
     @property
     def nu21(self) -> float:
-        """Reciprocal Poisson ratio from minor symmetry."""
+        """Return the reciprocal Poisson ratio from minor symmetry.
+
+        Returns:
+            ``nu12 * E2 / E1``.
+        """
 
         return self.nu12 * self.E2 / self.E1
 
     def reduced_stiffness(self) -> FloatArray:
-        """Return local lamina reduced stiffness in engineering shear notation."""
+        """Return local lamina reduced stiffness.
+
+        Returns:
+            Read-only 3x3 plane-stress stiffness matrix in engineering shear
+            order ``(e11, e22, g12)``.
+        """
 
         denom = 1.0 - self.nu12 * self.nu21
         Q = np.array(
@@ -114,7 +150,18 @@ class OrthotropicPlyMaterial:
         return Q
 
     def transformed_reduced_stiffness(self, angle_rad: float) -> FloatArray:
-        """Return transformed in-plane reduced stiffness for ply angle ``angle_rad``."""
+        """Return transformed in-plane reduced stiffness for a ply angle.
+
+        Args:
+            angle_rad: Ply angle from the local 1 direction to the laminate
+                frame, in radians.
+
+        Returns:
+            Read-only transformed 3x3 reduced stiffness matrix.
+
+        Raises:
+            ValueError: If ``angle_rad`` is not finite.
+        """
 
         angle = float(angle_rad)
         if not np.isfinite(angle):
@@ -159,7 +206,18 @@ class OrthotropicPlyMaterial:
         return Qbar
 
     def transformed_shear_stiffness(self, angle_rad: float) -> FloatArray:
-        """Return transformed transverse-shear stiffness for ply angle ``angle_rad``."""
+        """Return transformed transverse-shear stiffness for a ply angle.
+
+        Args:
+            angle_rad: Ply angle from the local 1 direction to the laminate
+                frame, in radians.
+
+        Returns:
+            Read-only transformed 2x2 transverse-shear stiffness matrix.
+
+        Raises:
+            ValueError: If ``angle_rad`` is not finite.
+        """
 
         angle = float(angle_rad)
         if not np.isfinite(angle):

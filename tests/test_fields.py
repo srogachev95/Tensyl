@@ -108,7 +108,14 @@ def test_homogenized_stiffness_field_uses_cache_and_surface_point() -> None:
         return CanonicalUnitCell(
             area=1.0,
             skin=skin,
-            members=(BeamMember(_section(), length=1.0, angle_rad=0.0, eccentricity=0.0),),
+            members=(
+                BeamMember(
+                    _section(),
+                    length=1.0,
+                    angle_rad=0.0,
+                    axial_eccentricity=0.0,
+                ),
+            ),
             frame=point.frame,
         )
 
@@ -134,7 +141,14 @@ def test_homogenized_stiffness_field_rejects_frame_mismatch() -> None:
         return CanonicalUnitCell(
             area=1.0,
             skin=_stiffness(),
-            members=(BeamMember(_section(), length=1.0, angle_rad=0.0, eccentricity=0.0),),
+            members=(
+                BeamMember(
+                    _section(),
+                    length=1.0,
+                    angle_rad=0.0,
+                    axial_eccentricity=0.0,
+                ),
+            ),
         )
 
     class CountingHomogenizer:
@@ -164,7 +178,14 @@ def test_homogenized_stiffness_field_can_use_surface_min_radius_for_validity() -
         return CanonicalUnitCell(
             area=1.0,
             skin=_stiffness(scale=1.0, frame=point.frame),
-            members=(BeamMember(_section(), length=1.0, angle_rad=0.0, eccentricity=0.0),),
+            members=(
+                BeamMember(
+                    _section(),
+                    length=1.0,
+                    angle_rad=0.0,
+                    axial_eccentricity=0.0,
+                ),
+            ),
             frame=point.frame,
         )
 

@@ -9,7 +9,8 @@ illustrative, not allowables.
 Build an orthogrid panel about the skin reference surface. Stringers run along
 local `e1`; ribs run along local `e2`. Both stiffener families are external to
 the `+n` side of the skin reference surface, so positive eccentricity should
-create membrane-bending coupling.
+create membrane-bending coupling. The repeat box is `8.0` units along `e1` and
+`6.0` units along `e2`, which become `e1_pitch` and `e2_pitch` below.
 
 ```python
 from tensyl import (
@@ -37,12 +38,12 @@ section = BeamSection(
 
 cell = orthogrid_cell(
     skin=skin,
-    stringer_section=section,
-    rib_section=section,
-    stringer_spacing=6.0,
-    rib_spacing=8.0,
-    stringer_eccentricity=0.45,
-    rib_eccentricity=0.45,
+    e1_section=section,
+    e2_section=section,
+    e1_pitch=8.0,
+    e2_pitch=6.0,
+    e1_axial_eccentricity=0.45,
+    e2_axial_eccentricity=0.45,
 )
 
 result = EnergyHomogenizer().compute(
@@ -76,8 +77,8 @@ Rounded diagonal values:
 | Block | Diagonal values |
 | --- | --- |
 | `A` | `1.485e6`, `1.352e6`, `3.990e5` `lbf/in` |
-| `B` | `2.400e5`, `1.800e5`, `-3.609e4` `lbf` |
-| `D` | `1.133e5`, `8.559e4`, `1.670e4` `lbf*in` |
+| `B` | `2.400e5`, `1.800e5`, `3.609e4` `lbf` |
+| `D` | `1.125e5`, `8.451e4`, `1.670e4` `lbf*in` |
 | `As` | `4.157e5`, `3.782e5` `lbf/in` |
 
 ## Interpretation
@@ -108,7 +109,9 @@ assert result.validity.p_over_R == 8.0 / radius
 ```
 
 For `Cylinder`, `e1` is axial, `e2` is circumferential, and `n` points outward.
-The orthogrid constructor maps stringers to `e1` and ribs to `e2`.
+The orthogrid constructor names those families `e1` and `e2` directly. Because
+the pitch values describe the repeat box, the spacing between `e1` members is
+`e2_pitch`.
 
 The barrel radius enters the validity ratio `p_over_R`; it does not recalculate
 the local orthogrid stiffness. This is still stiffness-property preparation.

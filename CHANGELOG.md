@@ -6,6 +6,25 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
+## Unreleased
+
+- Rename named-cell inputs around local-frame families and coordinate spans:
+  `e1`, `e2`, `positive_diagonal`, `negative_diagonal`, `e1_pitch`, and
+  `e2_pitch` replace ambiguous stringer/rib and family-spacing names.
+- Add `diamond_cell` for Nemeth's figure-15 pattern.
+- Retain plot-agnostic nodes, member-family edges, repeat vectors, and optional
+  boundaries on every named cell through `CanonicalUnitCell.geometry` and
+  `CellGeometry.segments()`; node coordinates are named `e1` and `e2`.
+- Support separate extension-weighted `axial_eccentricity` and shear-weighted
+  `shear_eccentricity` inputs, defaulting the latter to the former.
+- Correct the eccentric in-plane shear sign so positive shear eccentricity
+  produces positive `B66` coupling under the documented `+n` convention.
+- Make Nemeth's `chi_Z = 0` assumption the default; retaining member `EIz` and
+  `EIyz` is now an explicit `include_in_plane_bending=True` extension.
+- Replace the circular Nemeth comparator with independent scalar `A`, `B`, `D`,
+  and `As` assembly from basic-cell tables 4-9, and document the roundoff-level
+  verification results.
+
 ## 0.2.1 - 2026-06-30
 
 - Tighten public README and documentation prose, including solver handoff,

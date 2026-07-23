@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 import numpy as np
 
@@ -41,8 +41,8 @@ class LocalABDCase:
     units: dict[str, str] = field(default_factory=dict)
     shear_correction: float = 5.0 / 6.0
     section: BeamSection | None = None
-    stringer_section: BeamSection | None = None
-    rib_section: BeamSection | None = None
+    e1_section: BeamSection | None = None
+    e2_section: BeamSection | None = None
     geometry: dict[str, float] = field(default_factory=dict)
     validity_context: ValidityContext | None = None
     expected_status: str = "confirmation"
@@ -146,32 +146,32 @@ def _load_periodic_cell_case(data: Mapping[str, Any]) -> LocalABDCase:
     if constructor == "unidirectional_cell":
         model: LocalABDModel = "unidirectional"
         section = _section_from_library(library, str(arguments["member_section"]))
-        stringer_section = section
-        rib_section = section
+        e1_section = section
+        e2_section = section
         geometry = {
             "spacing": float(arguments["spacing"]),
-            "eccentricity": float(arguments.get("eccentricity", 0.0)),
+            "axial_eccentricity": float(arguments.get("axial_eccentricity", 0.0)),
             "angle_rad": float(arguments.get("angle_rad", 0.0)),
         }
     elif constructor == "orthogrid_cell":
         model = "orthogrid"
         section = None
-        stringer_section = _section_from_library(library, str(arguments["stringer_section"]))
-        rib_section = _section_from_library(library, str(arguments["rib_section"]))
+        e1_section = _section_from_library(library, str(arguments["e1_section"]))
+        e2_section = _section_from_library(library, str(arguments["e2_section"]))
         geometry = {
-            "stringer_spacing": float(arguments["stringer_spacing"]),
-            "rib_spacing": float(arguments["rib_spacing"]),
-            "stringer_eccentricity": float(arguments.get("stringer_eccentricity", 0.0)),
-            "rib_eccentricity": float(arguments.get("rib_eccentricity", 0.0)),
+            "e1_pitch": float(arguments["e1_pitch"]),
+            "e2_pitch": float(arguments["e2_pitch"]),
+            "e1_axial_eccentricity": float(arguments.get("e1_axial_eccentricity", 0.0)),
+            "e2_axial_eccentricity": float(arguments.get("e2_axial_eccentricity", 0.0)),
         }
     elif constructor == "equilateral_isogrid_cell":
         model = "equilateral_isogrid"
         section = _section_from_library(library, str(arguments["member_section"]))
-        stringer_section = section
-        rib_section = section
+        e1_section = section
+        e2_section = section
         geometry = {
-            "pitch": float(arguments["pitch"]),
-            "eccentricity": float(arguments.get("eccentricity", 0.0)),
+            "side_length": float(arguments["side_length"]),
+            "axial_eccentricity": float(arguments.get("axial_eccentricity", 0.0)),
         }
     else:
         msg = f"unsupported local ABD cell constructor: {constructor!r}"
@@ -191,8 +191,8 @@ def _load_periodic_cell_case(data: Mapping[str, Any]) -> LocalABDCase:
         shear_correction=float(skin.get("shear_correction", 5.0 / 6.0)),
         units={str(key): str(value) for key, value in data.get("units", {}).items()},
         section=section,
-        stringer_section=stringer_section,
-        rib_section=rib_section,
+        e1_section=e1_section,
+        e2_section=e2_section,
         geometry=geometry,
         validity_context=_validity_context(data.get("validity_context")),
         expected_status=str(artifact_status),
@@ -226,28 +226,28 @@ def load_local_abd_case(data: dict[str, Any]) -> LocalABDCase:
         return _load_periodic_cell_case(data)
 
     raw_model = str(data["model"])
-    allowed_models: set[LocalABDModel] = {
-        "skin_only",
-        "unidirectional",
-        "orthogrid",
-        "equilateral_isogrid",
+    models: dict[str, LocalABDModel] = {
+        "skin_only": "skin_only",
+        "unidirectional": "unidirectional",
+        "orthogrid": "orthogrid",
+        "equilateral_isogrid": "equilateral_isogrid",
     }
-    if raw_model not in allowed_models:
+    if raw_model not in models:
         msg = f"unsupported local ABD model: {raw_model!r}"
         raise ValueError(msg)
-    model = cast(LocalABDModel, raw_model)
+    model = models[raw_model]
     geometry = {str(key): float(value) for key, value in data.get("geometry", {}).items()}
     section = _beam_section(data.get("section"))
     return LocalABDCase(
         name=str(data["name"]),
-        model=model,  # type: ignore[arg-type]
+        model=model,
         material=_material(data["material"]),
         skin_thickness=float(data["skin_thickness"]),
         shear_correction=float(data.get("shear_correction", 5.0 / 6.0)),
         units={str(key): str(value) for key, value in data.get("units", {}).items()},
         section=section,
-        stringer_section=_beam_section(data.get("stringer_section")) or section,
-        rib_section=_beam_section(data.get("rib_section")) or section,
+        e1_section=_beam_section(data.get("e1_section")) or section,
+        e2_section=_beam_section(data.get("e2_section")) or section,
         geometry=geometry,
         validity_context=_validity_context(data.get("validity_context")),
         expected_status=str(data.get("expected_status", "confirmation")),
@@ -279,21 +279,21 @@ def target_stiffness(case: LocalABDCase) -> ABDStiffness:
             skin=skin,
             member_section=case.section,
             spacing=_required_float(geometry, "spacing"),
-            eccentricity=float(geometry.get("eccentricity", 0.0)),
+            axial_eccentricity=float(geometry.get("axial_eccentricity", 0.0)),
             angle_rad=float(geometry.get("angle_rad", 0.0)),
         )
     elif case.model == "orthogrid":
-        if case.stringer_section is None or case.rib_section is None:
-            msg = "orthogrid local ABD cases require stringer and rib sections."
+        if case.e1_section is None or case.e2_section is None:
+            msg = "orthogrid local ABD cases require e1 and e2 sections."
             raise ValueError(msg)
         cell = orthogrid_cell(
             skin=skin,
-            stringer_section=case.stringer_section,
-            rib_section=case.rib_section,
-            stringer_spacing=_required_float(geometry, "stringer_spacing"),
-            rib_spacing=_required_float(geometry, "rib_spacing"),
-            stringer_eccentricity=float(geometry.get("stringer_eccentricity", 0.0)),
-            rib_eccentricity=float(geometry.get("rib_eccentricity", 0.0)),
+            e1_section=case.e1_section,
+            e2_section=case.e2_section,
+            e1_pitch=_required_float(geometry, "e1_pitch"),
+            e2_pitch=_required_float(geometry, "e2_pitch"),
+            e1_axial_eccentricity=float(geometry.get("e1_axial_eccentricity", 0.0)),
+            e2_axial_eccentricity=float(geometry.get("e2_axial_eccentricity", 0.0)),
         )
     elif case.model == "equilateral_isogrid":
         if case.section is None:
@@ -302,8 +302,8 @@ def target_stiffness(case: LocalABDCase) -> ABDStiffness:
         cell = equilateral_isogrid_cell(
             skin=skin,
             member_section=case.section,
-            pitch=_required_float(geometry, "pitch"),
-            eccentricity=float(geometry.get("eccentricity", 0.0)),
+            side_length=_required_float(geometry, "side_length"),
+            axial_eccentricity=float(geometry.get("axial_eccentricity", 0.0)),
         )
     else:  # pragma: no cover - guarded during loading.
         msg = f"unsupported local ABD model: {case.model!r}"

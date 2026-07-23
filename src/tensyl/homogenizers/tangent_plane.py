@@ -27,7 +27,11 @@ _PSD_TOLERANCE = 1.0e-8
 
 
 class HomogenizationFailure(Exception):
-    """Base exception for homogenization failures."""
+    """Base exception for homogenization failures.
+
+    Use this when callers want to catch all Tensyl homogenization errors
+    without also catching unrelated ``ValueError`` instances.
+    """
 
 
 class HomogenizationInputError(HomogenizationFailure, ValueError):
@@ -55,6 +59,13 @@ class ValidityContext:
     the repeated-cell spacing, ``min_radius`` is the smallest local curvature
     radius, and ``response_length`` is the intended structural response length
     such as a buckle wavelength or analysis feature size.
+
+    Attributes:
+        characteristic_height: Optional positive member or wall height scale.
+        pitch: Optional positive repeated-cell pitch.
+        min_radius: Optional positive curvature radius, or infinity for flat
+            geometry.
+        response_length: Optional positive structural response length.
     """
 
     characteristic_height: float | None = None
@@ -83,7 +94,14 @@ class ValidityContext:
 
 @dataclass(frozen=True, slots=True)
 class ValidityThresholds:
-    """Default warning thresholds for tangent-plane scale-separation checks."""
+    """Warning thresholds for tangent-plane scale-separation checks.
+
+    Attributes:
+        h_over_R: Warning threshold for height over curvature radius.
+        p_over_R: Warning threshold for pitch over curvature radius.
+        p_over_L_response: Warning threshold for pitch over response length.
+        coupling_ratio: Warning threshold for normalized coupling terms.
+    """
 
     h_over_R: float = 0.05
     p_over_R: float = 0.05
@@ -107,7 +125,16 @@ class ValidityThresholds:
 
 @dataclass(frozen=True, slots=True)
 class ValidityReport:
-    """Machine-readable validity diagnostics attached to a homogenized result."""
+    """Machine-readable validity diagnostics attached to a result.
+
+    Attributes:
+        h_over_R: Height-to-radius ratio when both inputs were available.
+        p_over_R: Pitch-to-radius ratio when both inputs were available.
+        p_over_L_response: Pitch-to-response-length ratio when both inputs
+            were available.
+        coupling_ratios: Named normalized coupling indicators.
+        warnings: Stable warning identifiers for violated checks.
+    """
 
     h_over_R: float | None
     p_over_R: float | None
@@ -131,6 +158,13 @@ class HomogenizationResult:
 
     The stiffness is returned with ``validity`` attached so warnings remain available
     when only ``result.stiffness`` is passed to fields, exports, or downstream tools.
+
+    Attributes:
+        stiffness: Homogenized linear ABD stiffness.
+        validity: Validity report attached to the stiffness.
+        diagnostics: Read-only numerical diagnostics from the homogenizer.
+        assumptions: Modeling assumptions made by the homogenizer.
+        source: Identifier for the homogenization path that produced the result.
     """
 
     stiffness: ABDStiffness
@@ -153,7 +187,21 @@ class HomogenizationResult:
         *,
         tolerance: float = 1.0e-9,
     ) -> ReducedOrthotropicProperties:
-        """Return membrane-equivalent orthotropic properties for ``stiffness``."""
+        """Return membrane-equivalent orthotropic properties.
+
+        Args:
+            t_eff: Positive effective wall thickness used to convert membrane
+                stiffnesses into engineering constants.
+            tolerance: Absolute tolerance for warning about discarded off-axis
+                or coupling terms.
+
+        Returns:
+            Orthotropic membrane constants reduced from ``self.stiffness``.
+
+        Raises:
+            ValueError: If ``t_eff`` is not positive or the reduced compliance
+                terms are not physically admissible.
+        """
 
         return self.stiffness.reduced_orthotropic_properties(
             t_eff,
@@ -162,7 +210,11 @@ class HomogenizationResult:
 
     @property
     def coefficients(self) -> ABDStiffnessCoefficients:
-        """Return the homogenized ABD stiffness terms as named scalars."""
+        """Return the homogenized ABD stiffness terms as named scalars.
+
+        Returns:
+            Named view of the A, B, D, and transverse-shear coefficients.
+        """
 
         return self.stiffness.coefficients
 
@@ -171,13 +223,25 @@ class HomogenizationResult:
         *,
         tolerance: float = 1.0e-9,
     ) -> OrthotropicStiffnessCoefficients:
-        """Return aligned orthotropic shell coefficients for ``stiffness``."""
+        """Return aligned orthotropic shell coefficients.
+
+        Args:
+            tolerance: Absolute tolerance used when warning about terms outside
+                the aligned orthotropic coefficient set.
+
+        Returns:
+            Named orthotropic coefficient view of ``self.stiffness``.
+        """
 
         return self.stiffness.orthotropic_coefficients(tolerance=tolerance)
 
 
 class Homogenizer(Protocol):
-    """Protocol for tangent-plane homogenizers."""
+    """Protocol for tangent-plane homogenizers.
+
+    Attributes:
+        compute: Method that returns an equivalent ABD stiffness result.
+    """
 
     def compute(
         self,
@@ -185,30 +249,56 @@ class Homogenizer(Protocol):
         *,
         validity_context: ValidityContext | None = None,
     ) -> HomogenizationResult:
-        """Compute an equivalent ABD stiffness for a canonical unit cell."""
+        """Compute an equivalent ABD stiffness for a canonical unit cell.
+
+        Args:
+            cell: Canonical tangent-plane unit cell to homogenize.
+            validity_context: Optional scale data used to form validity
+                warnings on the result.
+
+        Returns:
+            Homogenized stiffness, diagnostics, assumptions, and validity
+            report.
+
+        Raises:
+            HomogenizationInputError: If the cell is malformed or uses an
+                unsupported convention.
+        """
 
 
-def _beam_strain_map(eccentricity: float) -> FloatArray:
-    """Map member-frame generalized strains into simplified beam strains."""
+def _beam_strain_map(
+    axial_eccentricity: float,
+    shear_eccentricity: float,
+    *,
+    include_in_plane_bending: bool,
+) -> FloatArray:
+    """Map wall strains to Nemeth beam strains, with one explicit extension."""
 
-    z = float(eccentricity)
+    axial_z = float(axial_eccentricity)
+    shear_z = float(shear_eccentricity)
     # This is the shared first-approximation member kinematics used by both the
     # energy and direct EC paths. Agreement between those paths checks assembly,
     # not the truth of this strain map.
     transform = np.zeros((6, 8), dtype=np.float64)
     transform[0, 0] = 1.0
-    transform[0, 3] = z
+    transform[0, 3] = axial_z
     transform[1, 2] = 0.5
-    transform[1, 5] = -0.5 * z
+    # Nemeth Eqs. 10c, 12b, and 13b use gamma_xy(z) = gamma_xy^0 + z*kappa_xy.
+    # The positive sign is required for a positive shear-weighted eccentricity
+    # to produce positive B66 coupling under Tensyl's +n convention.
+    transform[1, 5] = 0.5 * shear_z
     transform[2, 6] = 1.0
-    transform[3, 4] = 1.0
+    if include_in_plane_bending:
+        # Nemeth sets chi_Z = 0 in Eq. 11b. This row is Tensyl's explicit
+        # beyond-Nemeth extension for users who choose to retain member EIz.
+        transform[3, 4] = 1.0
     transform[4, 3] = 1.0
     transform[5, 5] = -0.5
     transform.setflags(write=False)
     return transform
 
 
-def _beam_stiffness(section: BeamSection) -> FloatArray:
+def _beam_stiffness(section: BeamSection, *, include_in_plane_bending: bool) -> FloatArray:
     # Optional shear stiffnesses are intentionally zeroed when omitted. The
     # result assumptions report that modeling choice instead of silently
     # inventing a shear correction.
@@ -218,9 +308,10 @@ def _beam_stiffness(section: BeamSection) -> FloatArray:
         stiffness[1, 1] = section.kGAy
     if section.kGAz is not None:
         stiffness[2, 2] = section.kGAz
-    stiffness[3, 3] = section.EIz
-    stiffness[3, 4] = section.EIyz
-    stiffness[4, 3] = section.EIyz
+    if include_in_plane_bending:
+        stiffness[3, 3] = section.EIz
+        stiffness[3, 4] = section.EIyz
+        stiffness[4, 3] = section.EIyz
     stiffness[4, 4] = section.EIy
     stiffness[5, 5] = section.GJ
     stiffness.setflags(write=False)
@@ -228,14 +319,33 @@ def _beam_stiffness(section: BeamSection) -> FloatArray:
 
 
 def _member_transform(member: BeamMember | StiffenerFamily) -> FloatArray:
-    return _beam_strain_map(member.eccentricity) @ generalized_strain_transform(member.angle_rad)
+    if member.shear_eccentricity is None:  # normalized by the value object
+        msg = "member shear_eccentricity was not normalized."
+        raise HomogenizationInputError(msg)
+    return _beam_strain_map(
+        member.axial_eccentricity,
+        member.shear_eccentricity,
+        include_in_plane_bending=member.include_in_plane_bending,
+    ) @ generalized_strain_transform(member.angle_rad)
 
 
 def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
-    """Return a member tangent contribution per unit member length density."""
+    """Return a member tangent contribution per unit length density.
+
+    Args:
+        member: Beam member or repeated stiffener family in tangent-plane
+            coordinates.
+
+    Returns:
+        Read-only 8x8 stiffness contribution before multiplying by member
+        length density.
+    """
 
     transform = _member_transform(member)
-    stiffness = _beam_stiffness(member.section)
+    stiffness = _beam_stiffness(
+        member.section,
+        include_in_plane_bending=member.include_in_plane_bending,
+    )
     # The transform maps ABD generalized strain to member generalized strain,
     # so the equivalent stiffness contribution is T.T K T.
     tangent = transform.T @ stiffness @ transform
@@ -245,7 +355,16 @@ def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
 
 
 def member_tangent_contribution(member: BeamMember, *, cell_area: float) -> FloatArray:
-    """Return one canonical member contribution to the stiffness tangent."""
+    """Return one canonical member contribution to the stiffness tangent.
+
+    Args:
+        member: Finite beam member in a canonical unit cell.
+        cell_area: Positive repeated-cell area used to convert member energy
+            into wall stiffness.
+
+    Returns:
+        Read-only 8x8 stiffness contribution for the member.
+    """
 
     # Energy is accumulated over member length, then normalized by repeated cell
     # area so the result has wall-stiffness units rather than beam-stiffness
@@ -257,7 +376,18 @@ def member_tangent_contribution(member: BeamMember, *, cell_area: float) -> Floa
 
 
 def member_energy(member: BeamMember, eta: FloatArray) -> float:
-    """Return explicit member strain energy for generalized strain ``eta``."""
+    """Return explicit member strain energy for a generalized strain.
+
+    Args:
+        member: Finite beam member in a canonical unit cell.
+        eta: Generalized strain vector with shape ``(8,)``.
+
+    Returns:
+        Member strain energy before division by cell area.
+
+    Raises:
+        ValueError: If ``eta`` does not have shape ``(8,)``.
+    """
 
     vector = np.array(eta, dtype=np.float64, copy=True)
     if vector.shape != (8,):
@@ -268,15 +398,22 @@ def member_energy(member: BeamMember, eta: FloatArray) -> float:
         0.5
         * member.multiplicity
         * member.length
-        * float(strain @ _beam_stiffness(member.section) @ strain)
+        * float(
+            strain
+            @ _beam_stiffness(
+                member.section,
+                include_in_plane_bending=member.include_in_plane_bending,
+            )
+            @ strain
+        )
     )
 
 
 def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
     assumptions = [
         "Local tangent-plane equivalent-stiffness homogenization.",
-        "Centroidal beam-section stiffnesses with member eccentricity measured along +n.",
-        "Beam members use first-approximation generalized strain kinematics.",
+        "Extension- and shear-weighted member eccentricities are measured along +n.",
+        "Beam members use Nemeth first-approximation generalized strain kinematics.",
     ]
     if any(member.section.kGAy is None for member in members):
         assumptions.append(
@@ -285,6 +422,11 @@ def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) 
     if any(member.section.kGAz is None for member in members):
         assumptions.append(
             "Omitted member kGAz values contribute no transverse stiffener shear stiffness."
+        )
+    if any(member.include_in_plane_bending for member in members):
+        assumptions.append(
+            "Selected members retain the explicit beyond-Nemeth EIz/EIyz "
+            "in-plane-bending extension."
         )
     return tuple(assumptions)
 
@@ -383,7 +525,17 @@ def validity_report_for_stiffness(
     context: ValidityContext | None = None,
     thresholds: ValidityThresholds | None = None,
 ) -> ValidityReport:
-    """Return tangent-plane validity diagnostics for an existing ABD stiffness."""
+    """Return tangent-plane validity diagnostics for existing stiffness.
+
+    Args:
+        stiffness: ABD stiffness to inspect.
+        context: Optional geometric and response length scales.
+        thresholds: Optional warning thresholds. Defaults are used when omitted.
+
+    Returns:
+        Validity report with scale-separation ratios, coupling indicators, and
+        warning identifiers.
+    """
 
     return _validity_report(
         stiffness,
@@ -416,6 +568,10 @@ class EnergyHomogenizer:
 
     Computes an ``ABDStiffness`` by adding skin stiffness and member energy
     contributions over a ``CanonicalUnitCell``.
+
+    Attributes:
+        thresholds: Warning thresholds used when building the result validity
+            report.
     """
 
     thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
@@ -426,6 +582,23 @@ class EnergyHomogenizer:
         *,
         validity_context: ValidityContext | None = None,
     ) -> HomogenizationResult:
+        """Compute an equivalent ABD stiffness from a canonical cell.
+
+        Args:
+            cell: Tangent-plane unit cell containing the skin, finite members,
+                frame, convention, and repeated area.
+            validity_context: Optional geometric and response length scales for
+                result warnings.
+
+        Returns:
+            Homogenization result with stiffness, diagnostics, assumptions, and
+            validity report.
+
+        Raises:
+            HomogenizationInputError: If the cell uses a strain convention that
+                the energy path does not support.
+        """
+
         if cell.convention != DEFAULT_STRAIN_CONVENTION:
             msg = (
                 "EnergyHomogenizer currently supports Tensyl's default engineering-shear "
@@ -461,6 +634,10 @@ class DirectECHomogenizer:
 
     Use this path for supported straight-family comparisons or accelerators,
     not as a replacement for the more general energy cell path.
+
+    Attributes:
+        thresholds: Warning thresholds used when building the result validity
+            report.
     """
 
     thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
@@ -473,6 +650,25 @@ class DirectECHomogenizer:
         validity_context: ValidityContext | None = None,
         convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
     ) -> HomogenizationResult:
+        """Compute direct EC stiffness from repeated straight families.
+
+        Args:
+            skin: Baseline skin ABD stiffness.
+            families: One or more straight repeated stiffener families.
+            validity_context: Optional geometric and response length scales for
+                result warnings.
+            convention: Strain convention for the assembled tangent. Only the
+                default engineering-shear convention is currently supported.
+
+        Returns:
+            Homogenization result assembled from skin plus family length-density
+            contributions.
+
+        Raises:
+            HomogenizationInputError: If no families are supplied, or if the
+                skin/convention pair is unsupported.
+        """
+
         family_tuple = tuple(families)
         if not family_tuple:
             msg = "DirectECHomogenizer requires at least one stiffener family."

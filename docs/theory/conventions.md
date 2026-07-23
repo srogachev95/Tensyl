@@ -1,13 +1,16 @@
 # Frames and Conventions
 
-An ABD stiffness is expressed in a right-handed local frame:
+Every ABD stiffness belongs to a set of local directions. `e1` and `e2` lie in
+the panel, while `n` points away from the reference surface. For a cylinder,
+for example, `e1` is axial, `e2` is circumferential, and `n` points outward.
+
+Together they form a right-handed frame:
 
 $$
 \{\mathbf e_1,\mathbf e_2,\mathbf n\}.
 $$
 
-`e1` and `e2` are tangent directions. `n` is the positive normal. Tensyl
-validates:
+Tensyl checks that the directions follow this rule:
 
 $$
 \mathbf e_1 \times \mathbf e_2 = \mathbf n.
@@ -75,21 +78,28 @@ Every eccentricity input follows the same sign rule:
 
 This applies to:
 
-- `BeamMember.eccentricity`;
-- `StiffenerFamily.eccentricity`;
-- `stringer_eccentricity`;
-- `rib_eccentricity`;
-- sandwich `bottom_face_offset` and `top_face_offset`.
+- `BeamMember.axial_eccentricity` and `BeamMember.shear_eccentricity`;
+- the corresponding `StiffenerFamily` inputs;
+- named-cell family inputs such as `e1_axial_eccentricity` and
+  `diagonal_shear_eccentricity`;
+- sandwich `bottom_face_to_reference` and `top_face_to_reference` shifts.
 
-For a cylinder whose local normal points outward, an external stringer has
-positive `stringer_eccentricity`. An internal stringer has negative
-eccentricity.
+For a cylinder whose local normal points outward, an external stiffener has a
+positive eccentricity. An internal stiffener has a negative eccentricity.
+
+For most stiffeners, set `axial_eccentricity` to the centroid offset and omit
+`shear_eccentricity`. Tensyl then uses the same offset for both axial and
+in-plane shear response.
+
+Nemeth also covers nonhomogeneous members whose axial and shear response act at
+different effective offsets. Tensyl keeps that option through separate
+`axial_eccentricity` and `shear_eccentricity` inputs.
 
 !!! warning "The eccentricity sign is not cosmetic"
-    Flip it and you change the membrane-bending coupling block `B`, which gives
-    you a *physically different ABD stiffness*. Tensyl raises no exception and no
-    validation error, and the result looks entirely ordinary. Decide which way
-    `+n` points before you type a sign.
+    Reversing the sign changes the membrane-bending coupling block `B` and
+    therefore describes a different structure. Tensyl cannot infer which side
+    of the reference surface the stiffener occupies, so establish `+n` before
+    entering the offset.
 
 Positive eccentricity adds membrane-bending coupling according to the chosen
 reference surface. Moving the reference surface also changes `B`. Equal and

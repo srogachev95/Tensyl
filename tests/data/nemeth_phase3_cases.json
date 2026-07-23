@@ -12,6 +12,12 @@
     "regression": "single brace is represented by two diagonal families at half density"
   },
   {
+    "id": "diamond",
+    "source": "Nemeth 2011 Figure 15",
+    "constructor": "diamond_cell",
+    "regression": "horizontal and mirrored diagonal families are retained without an e2 family"
+  },
+  {
     "id": "isosceles_triangle",
     "source": "Nemeth 2011 Appendix C and Appendix E IGRID=6/7, Figure 17",
     "constructor": "isosceles_triangle_grid_cell",

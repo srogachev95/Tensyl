@@ -6,7 +6,12 @@ from importlib.metadata import PackageNotFoundError, version
 
 
 def tensyl_version() -> str:
-    """Return the installed Tensyl version or a local editable-tree fallback."""
+    """Return the installed Tensyl version.
+
+    Returns:
+        Installed package version, or ``"0.0.0"`` when running from a local
+        tree before package metadata is available.
+    """
 
     try:
         return version("tensyl")

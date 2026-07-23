@@ -51,7 +51,15 @@ def _transformed_shear(material: PlyMaterial, angle_rad: float) -> FloatArray:
 
 @dataclass(frozen=True, slots=True)
 class Ply:
-    """One laminate ply, ordered bottom-to-top in ``laminate_plate``."""
+    """One laminate ply for ``laminate_plate``.
+
+    Attributes:
+        material: Isotropic or orthotropic ply material.
+        thickness: Positive ply thickness.
+        angle_rad: Ply angle in radians. Isotropic plies ignore the rotation
+            numerically but still preserve the input.
+        label: Optional human-readable ply label.
+    """
 
     material: PlyMaterial
     thickness: float
@@ -76,7 +84,25 @@ def isotropic_plate(
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
     metadata: dict[str, Any] | None = None,
 ) -> ABDStiffness:
-    """Build a skin-only isotropic plate stiffness about its mid-surface."""
+    """Build a skin-only isotropic plate stiffness about its mid-surface.
+
+    Args:
+        material: Isotropic material for the plate.
+        thickness: Positive plate thickness.
+        shear_correction: Positive transverse-shear correction factor.
+        frame: Local frame attached to the returned stiffness.
+        convention: Generalized strain convention for the returned stiffness.
+        metadata: Optional provenance metadata. ``source`` defaults to
+            ``"isotropic_plate"``.
+
+    Returns:
+        Linear ``ABDStiffness`` with zero membrane-bending coupling and
+        transverse shear stiffness. Areal mass is included only when material
+        density is available.
+
+    Raises:
+        ValueError: If ``thickness`` or ``shear_correction`` is not positive.
+    """
 
     h = positive_number(thickness, name="thickness")
     kappa = positive_number(shear_correction, name="shear_correction")
@@ -106,7 +132,26 @@ def laminate_plate(
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
     metadata: dict[str, Any] | None = None,
 ) -> ABDStiffness:
-    """Build a laminate plate stiffness using bottom-to-top ply order."""
+    """Build a laminate plate stiffness from bottom-to-top plies.
+
+    Args:
+        plies: Iterable of plies ordered from the negative-normal face to the
+            positive-normal face.
+        shear_correction: Positive transverse-shear correction factor.
+        frame: Local frame attached to the returned stiffness.
+        convention: Generalized strain convention for the returned stiffness.
+        metadata: Optional provenance metadata. ``source`` defaults to
+            ``"laminate_plate"``.
+
+    Returns:
+        Linear ``ABDStiffness`` integrated about the laminate mid-surface.
+        Unsymmetric stacks naturally produce nonzero ``B`` coupling. Areal mass
+        is included only when every ply material supplies density.
+
+    Raises:
+        ValueError: If no plies are supplied or ``shear_correction`` is not
+            positive.
+    """
 
     ply_tuple = tuple(plies)
     if not ply_tuple:

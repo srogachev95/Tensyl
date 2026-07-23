@@ -114,18 +114,18 @@ def cell_factory(surface, point):
     skin_face = 0.5 * design["skin_thickness"]
     return orthogrid_cell(
         skin=skin,
-        stringer_section=stringer_section(design),
-        rib_section=rib_section(design),
-        stringer_spacing=design["stringer_spacing"],
-        rib_spacing=design["rib_spacing"],
-        stringer_eccentricity=skin_face + stringer_centroid_z,
-        rib_eccentricity=skin_face + rib_centroid_z,
+        e1_section=stringer_section(design),
+        e2_section=rib_section(design),
+        e1_pitch=design["e1_pitch"],
+        e2_pitch=design["e2_pitch"],
+        e1_axial_eccentricity=skin_face + stringer_centroid_z,
+        e2_axial_eccentricity=skin_face + rib_centroid_z,
         frame=point.frame,
     )
 
 
 def validity_context(point, cell):
-    pitch = max(cell.metadata["stringer_spacing"], cell.metadata["rib_spacing"])
+    pitch = max(cell.metadata["e1_pitch"], cell.metadata["e2_pitch"])
     return ValidityContext(
         characteristic_height=1.0,
         pitch=pitch,

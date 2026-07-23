@@ -44,8 +44,8 @@ cell:
   constructor: equilateral_isogrid_cell
   arguments:
     member_section: validation_isogrid_member
-    pitch: 6.0
-    eccentricity: 0.0
+    side_length: 6.0
+    axial_eccentricity: 0.0
   member_angles_rad:
     - 0.0
     - 1.0471975511965976

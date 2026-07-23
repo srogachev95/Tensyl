@@ -26,6 +26,14 @@ class ThinWallSegment:
     ``(y, z)`` coordinates. ``thickness`` is measured normal to that midline in
     the same coordinate plane. For section constructors, ``z = 0`` is a
     construction datum, not automatically the skin mid-surface.
+
+    Attributes:
+        start_y: Segment start coordinate in the member-local ``y`` direction.
+        start_z: Segment start coordinate in the member-local ``z`` direction.
+        end_y: Segment end coordinate in the member-local ``y`` direction.
+        end_z: Segment end coordinate in the member-local ``z`` direction.
+        thickness: Positive wall thickness normal to the segment midline.
+        label: Optional segment label used for caller provenance.
     """
 
     start_y: float
@@ -47,14 +55,30 @@ class ThinWallSegment:
 
     @property
     def length(self) -> float:
-        """Segment midline length."""
+        """Return the segment midline length.
+
+        Returns:
+            Euclidean distance between the segment endpoints in the section
+            plane.
+        """
 
         return float(np.hypot(self.end_y - self.start_y, self.end_z - self.start_z))
 
 
 @dataclass(frozen=True, slots=True)
 class SectionProperties:
-    """Centroidal geometric properties of a thin-wall section."""
+    """Centroidal geometric properties of a thin-wall section.
+
+    Attributes:
+        area: Positive section area.
+        centroid_y: Centroid coordinate in the member-local ``y`` direction.
+        centroid_z: Centroid coordinate in the member-local ``z`` direction.
+        Iy: Positive centroidal second moment about the ``y`` axis.
+        Iz: Positive centroidal second moment about the ``z`` axis.
+        Iyz: Centroidal product of inertia. Sign follows the supplied
+            ``(y, z)`` coordinate system.
+        J: Positive open-section St Venant torsion approximation.
+    """
 
     area: float
     centroid_y: float
@@ -162,7 +186,19 @@ class _RectangularStrip:
 
 @dataclass(frozen=True, slots=True)
 class ThinWallSection:
-    """A geometry-derived isotropic thin-wall stiffener section."""
+    """Geometry-derived isotropic thin-wall stiffener section.
+
+    Attributes:
+        material: Isotropic material used to convert properties to stiffness.
+        segments: Rectangular wall segments in member-local coordinates.
+        shear_correction_y: Optional positive shear correction in the
+            member-local ``y`` direction.
+        shear_correction_z: Optional positive shear correction in the
+            member-local ``z`` direction.
+        metadata: Read-only provenance metadata.
+        properties: Centroidal geometric section properties.
+        section: ``BeamSection`` stiffness object consumed by cell builders.
+    """
 
     material: IsotropicMaterial
     segments: tuple[ThinWallSegment, ...]
@@ -220,13 +256,22 @@ class ThinWallSection:
 
     @property
     def centroid_y(self) -> float:
-        """Centroid ``y`` coordinate."""
+        """Return the centroid ``y`` coordinate.
+
+        Returns:
+            Centroid location measured from the section construction datum.
+        """
 
         return self.properties.centroid_y
 
     @property
     def centroid_z(self) -> float:
-        """Centroid ``z`` coordinate, commonly used as member eccentricity."""
+        """Return the centroid ``z`` coordinate.
+
+        Returns:
+            Centroid location measured from the section construction datum.
+            This is often shifted and used as member eccentricity.
+        """
 
         return self.properties.centroid_z
 
@@ -296,6 +341,21 @@ def thin_wall_section(
     returned ``centroid_z`` is measured from the same ``z = 0`` construction
     datum used by the supplied segments; shift it before using it as a member
     eccentricity when the wall reference surface is somewhere else.
+
+    Args:
+        material: Isotropic material for all wall segments.
+        segments: One or more rectangular wall segments.
+        shear_correction_y: Optional positive shear correction for ``kGAy``.
+        shear_correction_z: Optional positive shear correction for ``kGAz``.
+        metadata: Optional provenance metadata.
+
+    Returns:
+        Thin-wall section with geometric properties and a derived
+        ``BeamSection``.
+
+    Raises:
+        ValueError: If no segments are supplied or any geometry value is
+            invalid.
     """
 
     return ThinWallSection(
@@ -321,6 +381,20 @@ def blade_section(
     The blade web rises in ``+z`` from the construction datum. If that datum is
     the skin outer face and the wall reference surface is the skin mid-surface,
     use ``0.5 * skin_thickness + section.centroid_z`` as member eccentricity.
+
+    Args:
+        material: Isotropic material for the web.
+        height: Positive web height.
+        thickness: Positive web thickness.
+        shear_correction_y: Optional positive shear correction for ``kGAy``.
+        shear_correction_z: Optional positive shear correction for ``kGAz``.
+        metadata: Optional provenance metadata.
+
+    Returns:
+        Thin-wall section for the blade stiffener.
+
+    Raises:
+        ValueError: If any supplied dimension or correction is invalid.
     """
 
     return thin_wall_section(
@@ -348,6 +422,22 @@ def tee_section(
     """Build a tee stiffener with a vertical web and top flange.
 
     The web root is at ``z = 0`` and the flange sits above the web in ``+z``.
+
+    Args:
+        material: Isotropic material for all segments.
+        web_height: Positive web height.
+        web_thickness: Positive web thickness.
+        flange_width: Positive flange width.
+        flange_thickness: Positive flange thickness.
+        shear_correction_y: Optional positive shear correction for ``kGAy``.
+        shear_correction_z: Optional positive shear correction for ``kGAz``.
+        metadata: Optional provenance metadata.
+
+    Returns:
+        Thin-wall section for the tee stiffener.
+
+    Raises:
+        ValueError: If any supplied dimension or correction is invalid.
     """
 
     web_height = positive_number(web_height, name="web_height")
@@ -389,6 +479,23 @@ def zee_section(
     The lower flange sits at the ``z = 0`` datum and extends toward negative
     ``y``. The upper flange sits above the web and extends toward positive
     ``y``.
+
+    Args:
+        material: Isotropic material for all segments.
+        web_height: Positive web height.
+        web_thickness: Positive web thickness.
+        top_flange_width: Positive upper flange width.
+        bottom_flange_width: Positive lower flange width.
+        flange_thickness: Positive flange thickness.
+        shear_correction_y: Optional positive shear correction for ``kGAy``.
+        shear_correction_z: Optional positive shear correction for ``kGAz``.
+        metadata: Optional provenance metadata.
+
+    Returns:
+        Thin-wall section for the zee stiffener.
+
+    Raises:
+        ValueError: If any supplied dimension or correction is invalid.
     """
 
     web_height = positive_number(web_height, name="web_height")
@@ -444,6 +551,22 @@ def channel_section(
 
     Both flanges extend toward positive ``y``. The lower flange sits at the
     ``z = 0`` construction datum.
+
+    Args:
+        material: Isotropic material for all segments.
+        web_height: Positive web height.
+        web_thickness: Positive web thickness.
+        flange_width: Positive flange width.
+        flange_thickness: Positive flange thickness.
+        shear_correction_y: Optional positive shear correction for ``kGAy``.
+        shear_correction_z: Optional positive shear correction for ``kGAz``.
+        metadata: Optional provenance metadata.
+
+    Returns:
+        Thin-wall section for the channel stiffener.
+
+    Raises:
+        ValueError: If any supplied dimension or correction is invalid.
     """
 
     web_height = positive_number(web_height, name="web_height")
@@ -501,6 +624,24 @@ def hat_section(
     The open hat rises in ``+z``. The mounting flanges sit on the ``z = 0``
     construction datum, so this is the usual external hat orientation rather
     than a hat flipped down into the skin.
+
+    Args:
+        material: Isotropic material for all segments.
+        web_height: Positive web height.
+        web_thickness: Positive web thickness.
+        crown_width: Positive crown width.
+        crown_thickness: Positive crown thickness.
+        flange_width: Positive mounting flange width.
+        flange_thickness: Positive mounting flange thickness.
+        shear_correction_y: Optional positive shear correction for ``kGAy``.
+        shear_correction_z: Optional positive shear correction for ``kGAz``.
+        metadata: Optional provenance metadata.
+
+    Returns:
+        Thin-wall section for the open hat stiffener.
+
+    Raises:
+        ValueError: If any supplied dimension or correction is invalid.
     """
 
     web_height = positive_number(web_height, name="web_height")

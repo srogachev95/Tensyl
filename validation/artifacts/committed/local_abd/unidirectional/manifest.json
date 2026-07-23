@@ -1,14 +1,16 @@
 {
   "case_name": "local_abd_unidirectional",
   "command": [
-    "validation/scripts/run_matrix.py",
-    "validation/cases/local_abd/unidirectional.yml"
+    "validation/scripts/run_case.py",
+    "validation/cases/local_abd/unidirectional.yml",
+    "--artifacts",
+    "validation/artifacts/committed/local_abd/unidirectional"
   ],
-  "created_utc": "2026-06-28T19:23:15+00:00",
+  "created_utc": "2026-07-22T16:40:06+00:00",
   "inputs": [
     {
       "path": "validation/cases/local_abd/unidirectional.yml",
-      "sha256": "4b8ed4ef7d0a45e54c551b920a4a63143ba70b067540d6c1c10f5232be34acea"
+      "sha256": "fab1c5c6bef3d1ff55335d2ecf1b9d69933fe74516353c09eba946b5479611a1"
     }
   ],
   "metadata": {
@@ -30,9 +32,9 @@
   ],
   "schema_version": "tensyl.validation.artifact-manifest.v1",
   "software": {
-    "git_commit": "20949a1",
-    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "git_commit": "66db5f3",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
     "python": "3.12.13",
-    "tensyl": "0.1.0"
+    "tensyl": "0.2.1"
   }
 }

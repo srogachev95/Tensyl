@@ -68,7 +68,7 @@ def _result() -> HomogenizationResult:
         skin=skin,
         member_section=section,
         spacing=0.8,
-        eccentricity=0.04,
+        axial_eccentricity=0.04,
     )
     return EnergyHomogenizer().compute(
         cell,
