@@ -11,8 +11,7 @@ Laminated-Composite Plates and Plate-Like Lattices*.
 
 !!! success "Result"
     All eight source cases agree with an independent calculation to floating-point
-    rounding. The largest relative matrix difference is less than
-    `4e-16`, or about four parts in ten quadrillion.
+    rounding.
 
 ## What Was Checked
 
