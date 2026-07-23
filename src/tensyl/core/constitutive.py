@@ -111,10 +111,21 @@ class HyperelasticModel(Protocol):
         validity: Optional validity or warning object attached by builders.
     """
 
-    frame: Frame2D
-    convention: StrainConvention
-    metadata: Mapping[str, Any]
-    validity: Any
+    @property
+    def frame(self) -> Frame2D:
+        """Return the local right-handed frame."""
+
+    @property
+    def convention(self) -> StrainConvention:
+        """Return the generalized strain/resultant convention."""
+
+    @property
+    def metadata(self) -> Mapping[str, Any]:
+        """Return provenance metadata."""
+
+    @property
+    def validity(self) -> Any:
+        """Return the attached validity or warning object."""
 
     def energy(self, eta: GeneralizedStrain) -> float:
         """Return strain energy density for a generalized strain.

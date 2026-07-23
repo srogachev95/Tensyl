@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 import numpy as np
 
@@ -226,21 +226,21 @@ def load_local_abd_case(data: dict[str, Any]) -> LocalABDCase:
         return _load_periodic_cell_case(data)
 
     raw_model = str(data["model"])
-    allowed_models: set[LocalABDModel] = {
-        "skin_only",
-        "unidirectional",
-        "orthogrid",
-        "equilateral_isogrid",
+    models: dict[str, LocalABDModel] = {
+        "skin_only": "skin_only",
+        "unidirectional": "unidirectional",
+        "orthogrid": "orthogrid",
+        "equilateral_isogrid": "equilateral_isogrid",
     }
-    if raw_model not in allowed_models:
+    if raw_model not in models:
         msg = f"unsupported local ABD model: {raw_model!r}"
         raise ValueError(msg)
-    model = cast(LocalABDModel, raw_model)
+    model = models[raw_model]
     geometry = {str(key): float(value) for key, value in data.get("geometry", {}).items()}
     section = _beam_section(data.get("section"))
     return LocalABDCase(
         name=str(data["name"]),
-        model=model,  # type: ignore[arg-type]
+        model=model,
         material=_material(data["material"]),
         skin_thickness=float(data["skin_thickness"]),
         shear_correction=float(data.get("shear_correction", 5.0 / 6.0)),
