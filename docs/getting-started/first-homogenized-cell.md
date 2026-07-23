@@ -1,8 +1,14 @@
 # First Homogenized Cell
 
-Tangent-plane homogenization adds beam-stiffener contributions to a skin
-stiffness. The energy homogenizer is the reference path — the one Tensyl trusts
-by default and measures the other methods against.
+A real panel may contain hundreds of stiffeners. Tensyl starts with one
+repeating patch and replaces that detailed pattern with an equivalent ABD
+stiffness for the whole panel.
+
+This example uses an orthogrid: one member family runs along local `e1`, and a
+second runs along local `e2`. The repeat box is `8.0` units wide along `e1` and
+`6.0` units high along `e2`. Tensyl calls those dimensions `e1_pitch` and
+`e2_pitch`. The `e1` members are therefore `6.0` units apart, while the `e2`
+members are `8.0` units apart.
 
 ```python
 from tensyl import (
@@ -19,7 +25,7 @@ skin = isotropic_plate(
     thickness=0.080,
 )
 
-stringer = BeamSection(
+section = BeamSection(
     EA=3.2e6,    # lbf
     EIy=2.4e4,   # lbf*in^2
     EIz=6.5e3,   # lbf*in^2
@@ -30,8 +36,8 @@ stringer = BeamSection(
 
 cell = orthogrid_cell(
     skin=skin,
-    e1_section=stringer,
-    e2_section=stringer,
+    e1_section=section,
+    e2_section=section,
     e1_pitch=8.0,
     e2_pitch=6.0,
     e1_axial_eccentricity=0.45,
@@ -52,19 +58,20 @@ stiffness = result.stiffness
 print(result.validity.warnings)
 ```
 
-The result carries:
+The result keeps more than the four stiffness blocks:
 
-- `stiffness`: an `ABDStiffness`;
-- `diagnostics`: symmetry, rank, and positive-semidefinite checks;
-- `assumptions`: modeling assumptions recorded by the homogenizer;
-- `validity`: scale-separation and coupling warnings.
+- `stiffness` is the equivalent `ABDStiffness`;
+- `diagnostics` reports basic matrix checks, including symmetry and unsupported
+  deformation modes;
+- `assumptions` records modeling choices made during the calculation;
+- `validity` reports scale-separation and coupling warnings.
 
 Warnings do not automatically invalidate a result. They mark assumptions that an
 engineering workflow should review before using the ABD stiffness in sizing,
 buckling, or finite-element work.
 
-In this example the positive eccentricities place both stiffener centroids on
-the `+n` side of the skin reference surface, so the homogenized stiffness has a
-nonzero membrane-bending coupling block `B`.
+In this example both stiffener centroids sit on the `+n` side of the skin
+reference surface. Their positive offsets therefore create a nonzero `B` block,
+which couples stretching and bending.
 
 Next: [Homogenization and Results](../user-guide/homogenization.md).

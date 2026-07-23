@@ -1,4 +1,4 @@
-"""Canonical tangent-plane stiffener-cell value objects and constructors."""
+"""Repeating stiffener-cell value objects and constructors."""
 
 from __future__ import annotations
 
@@ -27,21 +27,21 @@ from tensyl.sections.beam import BeamSection
 class BeamMember:
     """A straight stiffener member in a local tangent-plane unit cell.
 
-    ``angle_rad`` is measured from local ``e1`` toward ``e2``.
-    ``axial_eccentricity`` is Nemeth's extension-weighted effective offset, and
-    ``shear_eccentricity`` is the shear-weighted effective offset. Both are
-    signed from the reference surface along ``+n``. For a homogeneous member,
-    omit ``shear_eccentricity`` and it defaults to ``axial_eccentricity``.
+    ``angle_rad`` is measured from local ``e1`` toward ``e2``. Both offset
+    inputs are signed from the reference surface along ``+n``. Most homogeneous
+    members need only ``axial_eccentricity``; when ``shear_eccentricity`` is
+    omitted, Tensyl uses the axial value for both effects.
 
     Attributes:
         section: Centroidal beam stiffness for the member.
         length: Positive member length inside the repeated cell.
         angle_rad: Member angle measured from local ``e1`` toward ``e2``.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        axial_eccentricity: Signed effective offset for axial response along ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear
+            response.
             Defaults to ``axial_eccentricity``.
-        include_in_plane_bending: Whether to retain the member ``EIz`` and
-            ``EIyz`` extension beyond Nemeth's ``chi_Z = 0`` assumption.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         multiplicity: Positive count or density multiplier for identical
             members represented by this object.
         label: Optional member label for diagnostics and metadata.
@@ -96,7 +96,7 @@ class CellNode:
 
 @dataclass(frozen=True, slots=True)
 class CellVector:
-    """A translation vector for repeating a drawable cell geometry.
+    """A translation that moves one cell drawing to the next repeat.
 
     Attributes:
         e1: Vector component along local ``e1``.
@@ -113,7 +113,7 @@ class CellVector:
 
 @dataclass(frozen=True, slots=True)
 class CellGeometryEdge:
-    """A drawable edge between two nodes in a retained cell geometry.
+    """A line between two nodes in a cell drawing.
 
     Attributes:
         start: Index of the start node.
@@ -135,7 +135,7 @@ class CellGeometryEdge:
 
 @dataclass(frozen=True, slots=True)
 class CellSegment:
-    """One plot-agnostic line segment emitted by ``CellGeometry.segments``.
+    """One drawable line returned by ``CellGeometry.segments``.
 
     Attributes:
         start_e1: Start coordinate along local ``e1``.
@@ -156,18 +156,18 @@ class CellSegment:
 
 @dataclass(frozen=True, slots=True)
 class CellGeometry:
-    """Retained topology sufficient to draw and tile a named unit cell.
+    """Coordinates and connections used to draw and repeat a unit cell.
 
-    Geometry is deliberately separate from the homogenized ``members`` list.
-    The latter may aggregate shared or repeated members by multiplicity, while
-    this object preserves the source topology used for visualization.
+    Geometry is separate from the ``members`` list used in the stiffness
+    calculation. A drawing may show a shared boundary member twice, while the
+    calculation counts only the amount that belongs to one repeat area.
 
     Attributes:
         nodes: Cell nodes in local tangent-plane coordinates.
         edges: Drawable edges between nodes.
         repeat_vectors: Two independent translations that tile the pattern.
-        boundary: Optional ordered node indices describing the basic-cell
-            perimeter. The perimeter is a visualization aid, not a beam family.
+        boundary: Optional ordered node indices around the basic-cell outline.
+            The outline is a drawing aid, not a beam family.
     """
 
     nodes: tuple[CellNode, ...]
@@ -228,7 +228,7 @@ class CellGeometry:
             repeat_b: Positive number of repeats along the second repeat vector.
 
         Returns:
-            Immutable plot-agnostic line segments with family metadata.
+            Immutable line segments with member-family metadata.
 
         Raises:
             ValueError: If either repeat count is not a positive integer.
@@ -264,16 +264,18 @@ class CellGeometry:
 
 @dataclass(frozen=True, slots=True)
 class CellEdge:
-    """A beam edge in a local tangent-plane graph cell.
+    """A stiffener between two nodes in a custom graph cell.
 
     Attributes:
         start: Index of the start node in the node tuple.
         end: Index of the end node in the node tuple.
         section: Centroidal beam stiffness for the edge.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        axial_eccentricity: Signed effective offset for axial response along
+            ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear
+            response.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         multiplicity: Positive count or density multiplier.
         label: Optional edge label for diagnostics and metadata.
         family: Optional stable family name retained in drawable geometry.
@@ -308,7 +310,7 @@ class CellEdge:
 
 @dataclass(frozen=True, slots=True)
 class CanonicalUnitCell:
-    """Canonical tangent-plane cell consumed by tangent-plane homogenizers.
+    """A complete repeating cell ready for tangent-plane homogenization.
 
     ``area`` is the repeated tangent-plane area represented by ``members``.
     The cell frame and strain convention must match the skin ABD stiffness.
@@ -319,7 +321,7 @@ class CanonicalUnitCell:
         members: One or more straight beam members in the local tangent plane.
         frame: Local frame shared by the skin and members.
         convention: Generalized strain convention shared by the skin and cell.
-        geometry: Optional retained topology and repeat vectors for plotting.
+        geometry: Optional coordinates and repeat vectors for drawing the cell.
         metadata: Read-only cell provenance.
     """
 
@@ -357,7 +359,7 @@ class CanonicalUnitCell:
 
 @dataclass(frozen=True, slots=True)
 class StiffenerFamily:
-    """Continuous straight stiffener-family input for direct EC homogenization.
+    """A repeating family of parallel stiffeners for the direct calculation.
 
     ``spacing`` is the family pitch normal to the member direction.
     Eccentricities use the same signed ``+n`` convention as ``BeamMember``.
@@ -366,10 +368,12 @@ class StiffenerFamily:
         section: Centroidal beam stiffness for the family.
         spacing: Positive family pitch normal to the member direction.
         angle_rad: Family angle measured from local ``e1`` toward ``e2``.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        axial_eccentricity: Signed effective offset for axial response along
+            ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear
+            response.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         multiplicity: Positive family multiplier.
         label: Optional family label for diagnostics and metadata.
     """
@@ -501,7 +505,7 @@ def graph_unit_cell(
     convention: StrainConvention | None = None,
     metadata: dict[str, Any] | MappingProxyType[str, Any] | None = None,
 ) -> CanonicalUnitCell:
-    """Convert a local graph cell into the canonical member representation.
+    """Build a repeating cell from local node coordinates and beam edges.
 
     Node coordinates are local tangent-plane coordinates in the same length
     unit used by ``area``.
@@ -520,7 +524,7 @@ def graph_unit_cell(
         metadata: Optional metadata merged into the cell provenance.
 
     Returns:
-        Canonical unit cell with graph edges converted to length and angle.
+        Repeating cell with each graph edge converted to a member.
 
     Raises:
         ValueError: If the graph is underspecified, an edge index is invalid,
@@ -604,17 +608,17 @@ def unidirectional_cell(
     convention: StrainConvention | None = None,
     label: str = "unidirectional",
 ) -> CanonicalUnitCell:
-    """Create a one-family canonical strip cell.
+    """Create a repeating strip with one family of parallel stiffeners.
 
     Args:
         skin: Baseline skin stiffness.
         member_section: Section stiffness for the repeated family.
         spacing: Positive pitch normal to the family direction.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
+        axial_eccentricity: Signed effective offset for axial response along ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear.
         angle_rad: Family angle measured from local ``e1``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -631,7 +635,7 @@ def unidirectional_cell(
     d = positive_number(spacing, name="spacing")
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
     # A unit-length strip gives length / area = 1 / spacing, matching the
-    # continuous family density used by the direct EC path.
+    # continuous family density used by the direct calculation.
     member = BeamMember(
         section=member_section,
         length=1.0,
@@ -676,9 +680,9 @@ def orthogrid_cell(
 ) -> CanonicalUnitCell:
     """Create an orthogrid with members aligned to local ``e1`` and ``e2``.
 
-    ``e1_pitch`` and ``e2_pitch`` are coordinate spans along those axes. They
-    are not family spacings: the spacing normal to the ``e1`` family is
-    ``e2_pitch``, and vice versa.
+    ``e1_pitch`` and ``e2_pitch`` are the repeat-box dimensions measured along
+    those axes. The distance between ``e1`` members is therefore ``e2_pitch``,
+    and vice versa.
 
     Args:
         skin: Baseline skin stiffness.
@@ -686,12 +690,12 @@ def orthogrid_cell(
         e2_section: Section stiffness for members running along local ``e2``.
         e1_pitch: Positive basic-cell span along local ``e1``.
         e2_pitch: Positive basic-cell span along local ``e2``.
-        e1_axial_eccentricity: ``e1`` family extension-weighted offset.
-        e2_axial_eccentricity: ``e2`` family extension-weighted offset.
-        e1_shear_eccentricity: Optional ``e1`` family shear-weighted offset.
-        e2_shear_eccentricity: Optional ``e2`` family shear-weighted offset.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        e1_axial_eccentricity: Signed ``e1`` family offset for axial response.
+        e2_axial_eccentricity: Signed ``e2`` family offset for axial response.
+        e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
+        e2_shear_eccentricity: Optional ``e2`` offset for in-plane shear.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -775,10 +779,10 @@ def equilateral_isogrid_cell(
         skin: Baseline skin stiffness.
         member_section: Section stiffness for all three families.
         side_length: Positive equilateral-triangle side length.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        axial_eccentricity: Signed effective offset for axial response along ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -877,11 +881,12 @@ def braced_orthogrid_cell(
         positive_diagonal_section: Section stiffness for the positive diagonal.
         e1_pitch: Basic-bay span along local ``e1``; Nemeth's ``Lx``.
         e2_pitch: Basic-bay span along local ``e2``; Nemeth's ``Ly``.
-        e1_axial_eccentricity: ``e1`` family extension-weighted offset.
-        e2_axial_eccentricity: ``e2`` family extension-weighted offset.
-        diagonal_axial_eccentricity: Positive-diagonal extension-weighted offset.
-        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
-        e2_shear_eccentricity: Optional ``e2`` shear-weighted offset.
+        e1_axial_eccentricity: Signed ``e1`` family offset for axial response.
+        e2_axial_eccentricity: Signed ``e2`` family offset for axial response.
+        diagonal_axial_eccentricity: Signed positive-diagonal offset for axial
+            response.
+        e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
+        e2_shear_eccentricity: Optional ``e2`` offset for in-plane shear.
         diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
         negative_diagonal_section: Optional negative-diagonal section.
         negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
@@ -890,8 +895,8 @@ def braced_orthogrid_cell(
             offset.
         diagonal_pattern: ``"double"`` for Nemeth figure 14 or ``"single"``
             for the alternating figure-16 pattern.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1040,17 +1045,17 @@ def diamond_cell(
         positive_diagonal_section: Section for the positive diagonal family.
         e1_pitch: Rectangular repeat span along local ``e1``.
         e2_pitch: Rectangular repeat span along local ``e2``.
-        e1_axial_eccentricity: ``e1`` family extension-weighted offset.
+        e1_axial_eccentricity: Signed ``e1`` family offset for axial response.
         diagonal_axial_eccentricity: Positive-diagonal axial offset.
-        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
         diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
         negative_diagonal_section: Optional negative-diagonal section.
         negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1143,17 +1148,17 @@ def isosceles_triangle_grid_cell(
         positive_diagonal_section: Section stiffness for the positive diagonal.
         e1_pitch: Triangle base along local ``e1``; Nemeth's ``Lx``.
         e2_pitch: Triangle height along local ``e2``; Nemeth's ``Ly``.
-        e1_axial_eccentricity: ``e1`` extension-weighted offset.
+        e1_axial_eccentricity: Signed ``e1`` family offset for axial response.
         diagonal_axial_eccentricity: Positive-diagonal axial offset.
-        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
         diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
         negative_diagonal_section: Optional negative-diagonal section.
         negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1253,17 +1258,17 @@ def kagome_cell(
         positive_diagonal_section: Section stiffness for the positive diagonal.
         e1_pitch: Kagome repeat width; Nemeth's ``Lx``.
         e2_pitch: Half of the Kagome repeat height; Nemeth's ``Ly``.
-        e1_axial_eccentricity: ``e1`` extension-weighted offset.
+        e1_axial_eccentricity: Signed ``e1`` family offset for axial response.
         diagonal_axial_eccentricity: Positive-diagonal axial offset.
-        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
         diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
         negative_diagonal_section: Optional negative-diagonal section.
         negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1365,17 +1370,17 @@ def hexagonal_grid_cell(
         e1_half_pitch: Nemeth's horizontal construction dimension ``a``.
         diagonal_e2_rise: Nemeth's diagonal rise ``b``.
         e2_member_length: Nemeth's vertical member length ``c``.
-        e2_axial_eccentricity: ``e2`` extension-weighted offset.
+        e2_axial_eccentricity: Signed ``e2`` family offset for axial response.
         diagonal_axial_eccentricity: Positive-diagonal axial offset.
-        e2_shear_eccentricity: Optional ``e2`` shear-weighted offset.
+        e2_shear_eccentricity: Optional ``e2`` offset for in-plane shear.
         diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
         negative_diagonal_section: Optional negative-diagonal section.
         negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1470,10 +1475,10 @@ def regular_hexagonal_grid_cell(
         skin: Baseline skin stiffness.
         member_section: Section stiffness for all grid members.
         side_length: Positive regular-hexagon side length.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        axial_eccentricity: Signed effective offset for axial response along ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1531,17 +1536,17 @@ def star_cell(
         positive_diagonal_section: Section stiffness for positive diagonals.
         e1_pitch: Nemeth's star base dimension ``B``.
         e2_pitch: Nemeth's star height dimension ``H``.
-        e1_axial_eccentricity: ``e1`` extension-weighted offset.
+        e1_axial_eccentricity: Signed ``e1`` family offset for axial response.
         diagonal_axial_eccentricity: Positive-diagonal axial offset.
-        e1_shear_eccentricity: Optional ``e1`` shear-weighted offset.
+        e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
         diagonal_shear_eccentricity: Optional positive-diagonal shear offset.
         negative_diagonal_section: Optional negative-diagonal section.
         negative_diagonal_axial_eccentricity: Optional negative-diagonal axial
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1733,10 +1738,10 @@ def equilateral_star_cell(
         skin: Baseline skin stiffness.
         member_section: Section stiffness for all star-cell members.
         side_length: Positive equilateral-triangle side length.
-        axial_eccentricity: Signed extension-weighted offset along ``+n``.
-        shear_eccentricity: Optional signed shear-weighted offset along ``+n``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        axial_eccentricity: Signed effective offset for axial response along ``+n``.
+        shear_eccentricity: Optional signed effective offset for in-plane shear.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1816,8 +1821,8 @@ def sandwich_orthogrid_core_cell(
         e2_section: Section stiffness for core members along local ``e2``.
         e1_pitch: Core repeat span along local ``e1``.
         e2_pitch: Core repeat span along local ``e2``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1880,8 +1885,8 @@ def sandwich_hexagonal_core_cell(
         e1_half_pitch: Nemeth's horizontal construction dimension ``a``.
         diagonal_e2_rise: Nemeth's diagonal rise ``b``.
         e2_member_length: Nemeth's vertical member length ``c``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1943,8 +1948,8 @@ def sandwich_star_core_cell(
         diagonal_section: Section stiffness for core diagonal members.
         e1_pitch: Nemeth's star base dimension ``B``.
         e2_pitch: Nemeth's star height dimension ``H``.
-        include_in_plane_bending: Whether to retain the ``EIz``/``EIyz``
-            extension beyond Nemeth's kinematics.
+        include_in_plane_bending: Whether to include member bending within the
+            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face

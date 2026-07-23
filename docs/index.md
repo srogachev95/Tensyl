@@ -62,6 +62,8 @@ postbuckling, and final allowables.
   engineering workflows.
 - [Examples](examples/skin-only.md) provides worked examples and
   executable snippets.
+- [Validation](validation/index.md) explains the available source checks and the
+  independent FEM work still planned.
 - [API reference](api/core.md) exposes the public Python interfaces.
 - [References](references.md) lists the external sources used by the
   documentation.

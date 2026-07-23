@@ -161,6 +161,8 @@ not coupled by the chosen reference surface.
 
 Thin-wall section helpers compute centroidal beam-section stiffnesses from
 section geometry. Those sections can be used directly in cell constructors.
+Here the hat stiffener runs along `e1`, the blade rib runs along `e2`, and the
+two pitch values give the repeat-box dimensions along those same directions.
 
 ```python
 from tensyl import (
@@ -260,9 +262,9 @@ custom = graph_unit_cell(
 custom_result = EnergyHomogenizer().compute(custom)
 ```
 
-The graph constructor converts the node and edge layout into canonical beam
-members before homogenization. Supplying repeat vectors also retains
-plot-agnostic geometry in `custom.geometry`.
+The graph constructor converts the node and edge layout into beam members before
+homogenization. Supplying repeat vectors also keeps the coordinates needed to
+draw the cell in `custom.geometry`.
 
 ## Example 5: Stiffness on a Shell Surface
 
@@ -339,6 +341,8 @@ The formal documentation is built with MkDocs from `docs/`.
   cells, sections, geometry, fields, and external handoff.
 - [Examples](docs/examples/skin-only.md) provides worked examples and executable
   snippets.
+- [Validation](docs/validation/index.md) separates completed source checks from
+  the planned independent FEM program.
 - [API reference](docs/api/core.md) exposes the public Python interfaces.
 - [References](docs/references.md) lists the external sources used by the
   mechanics documentation.

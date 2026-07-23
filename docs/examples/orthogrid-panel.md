@@ -9,7 +9,8 @@ illustrative, not allowables.
 Build an orthogrid panel about the skin reference surface. Stringers run along
 local `e1`; ribs run along local `e2`. Both stiffener families are external to
 the `+n` side of the skin reference surface, so positive eccentricity should
-create membrane-bending coupling.
+create membrane-bending coupling. The repeat box is `8.0` units along `e1` and
+`6.0` units along `e2`, which become `e1_pitch` and `e2_pitch` below.
 
 ```python
 from tensyl import (
@@ -108,9 +109,9 @@ assert result.validity.p_over_R == 8.0 / radius
 ```
 
 For `Cylinder`, `e1` is axial, `e2` is circumferential, and `n` points outward.
-The orthogrid constructor names those families `e1` and `e2` directly. Its
-`e1_pitch` and `e2_pitch` are coordinate spans, so the spacing normal to the
-`e1` family is `e2_pitch`.
+The orthogrid constructor names those families `e1` and `e2` directly. Because
+the pitch values describe the repeat box, the spacing between `e1` members is
+`e2_pitch`.
 
 The barrel radius enters the validity ratio `p_over_R`; it does not recalculate
 the local orthogrid stiffness. This is still stiffness-property preparation.

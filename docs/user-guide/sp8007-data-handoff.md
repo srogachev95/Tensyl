@@ -72,13 +72,13 @@ strain map. Some SP-8007 elastic-constant expressions omit beam contributions
 that Tensyl includes. When those numbers disagree, inspect section inertia,
 torsion constant, reference-surface choice, and eccentricity.
 
-For orthogrids, the main known reduction is cross-family in-plane bending.
-Strict Nemeth homogenization sets this member strain to zero, so Tensyl now
-omits `EIz` and `EIyz` by default. The SP-8007 reconciliation study enables
-`include_in_plane_bending=True` explicitly to quantify the older extended path.
-SP-8007 ring/stringer Eqs. 89-91 do not expose those terms, so an extended
-handoff that keeps only the barred constants can hide bending stiffness from
-wide, flanged, capped, or closed stiffeners.
+For orthogrids, the main model choice is whether a member may bend within the
+panel plane. Tensyl leaves that effect out by default to follow Nemeth. The
+[SP-8007 reconciliation](../validation/sp8007-reconciliation.md) turns it back
+on with `include_in_plane_bending=True` to study the difference. SP-8007
+ring/stringer Eqs. 89-91 do not expose the added `EIz` and `EIyz` terms, so a
+handoff based only on the barred coefficients can miss that optional stiffness
+for wide, flanged, capped, or closed stiffeners.
 
 For isogrids with eccentric members, use corrected bending terms:
 

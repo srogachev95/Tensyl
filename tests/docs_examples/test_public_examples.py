@@ -2,6 +2,7 @@ import importlib.util
 from pathlib import Path
 
 import numpy as np
+from matplotlib.figure import Figure
 
 from tensyl import (
     ABDAtlas,
@@ -51,10 +52,10 @@ def _section() -> BeamSection:
     )
 
 
-def _orthogrid_result():
+def _orthogrid_cell():
     skin = isotropic_plate(_material(), thickness=0.080)
     section = _section()
-    cell = orthogrid_cell(
+    return orthogrid_cell(
         skin=skin,
         e1_section=section,
         e2_section=section,
@@ -63,6 +64,10 @@ def _orthogrid_result():
         e1_axial_eccentricity=0.45,
         e2_axial_eccentricity=0.45,
     )
+
+
+def _orthogrid_result():
+    cell = _orthogrid_cell()
     return EnergyHomogenizer().compute(
         cell,
         validity_context=ValidityContext(
@@ -118,6 +123,39 @@ def test_orthogrid_panel_example() -> None:
     assert np.isclose(result.stiffness.A[0, 0], 1.4849661467100587e6)
     assert np.isclose(result.stiffness.B[0, 0], 2.4e5)
     assert "membrane_bending_coupling_exceeds_threshold" in result.validity.warnings
+
+
+def test_cell_geometry_visualization_example() -> None:
+    cell = _orthogrid_cell()
+    geometry = cell.geometry
+
+    assert geometry is not None
+    segments = geometry.segments(repeat_a=2, repeat_b=2)
+    assert len(segments) == 4 * len(geometry.edges)
+    assert {segment.family for segment in segments} == {"e1", "e2"}
+    assert all(
+        np.isfinite(
+            (
+                segment.start_e1,
+                segment.start_e2,
+                segment.end_e1,
+                segment.end_e2,
+            )
+        ).all()
+        for segment in segments
+    )
+
+    figure = Figure()
+    axes = figure.subplots()
+    for segment in segments:
+        axes.plot(
+            [segment.start_e1, segment.end_e1],
+            [segment.start_e2, segment.end_e2],
+            color="black",
+        )
+    axes.set_aspect("equal")
+
+    assert len(axes.lines) == len(segments)
 
 
 def test_geometry_derived_stiffener_section_example() -> None:

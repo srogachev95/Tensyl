@@ -1,120 +1,153 @@
-# Nemeth Cell Definitions and Verification
+# Nemeth Cell Verification
 
-Tensyl's named cells reproduce the basic-cell member layouts in Michael P.
-Nemeth's *A Treatise on Equivalent-Plate Stiffnesses for Stiffened
-Laminated-Composite Plates and Plate-Like Lattices*. The implementation keeps
-two representations of each pattern:
+A named cell is a recipe for one repeating piece of a stiffener grid. The
+recipe says which members are present, which way they run, and how much panel
+area they represent. A missing member or a wrong repeat area changes the
+equivalent stiffness even when the calculation itself runs without complaint.
 
-- `members` is the density-equivalent list used by the homogenizer;
-- `geometry` retains nodes, drawable edges, family names, a boundary when one
-  is meaningful, and two repeat vectors.
+We checked Tensyl's named cells against the layouts and basic-cell tables in
+Michael P. Nemeth's *A Treatise on Equivalent-Plate Stiffnesses for Stiffened
+Laminated-Composite Plates and Plate-Like Lattices*.
 
-Keeping these separate matters. A shared boundary member may appear twice in a
-drawing but contribute once to the repeated-cell energy.
+!!! success "Result"
+    All eight source cases agree with an independent calculation to floating-point
+    rounding. The largest relative matrix difference is less than
+    `4e-16`, or about four parts in ten quadrillion.
 
-## Naming and Coordinates
+## What Was Checked
 
-All named constructors use the local right-handed frame `e1`, `e2`, `n`.
-Member families are named `e1`, `e2`, `positive_diagonal`, and
-`negative_diagonal` according to their direction, not according to a
-vehicle-specific role such as stringer or rib.
+The review covered two parts of every pattern:
 
-`e1_pitch` is a coordinate span along `e1`; `e2_pitch` is a coordinate span
-along `e2`. Consequently, an `e1` family is spaced by `e2_pitch`, and an `e2`
-family is spaced by `e1_pitch`. For a rectangular bay, the positive diagonal
-angle is therefore
+1. **The shape:** nodes, member connections, directions, repeat dimensions,
+   and basic-cell area were checked against Nemeth's figures and tables.
+2. **The stiffness:** each named constructor was compared with a separate
+   calculation written directly from Nemeth's table entries and equations.
 
-$$
-\phi=\operatorname{atan2}(e2\_pitch,e1\_pitch).
-$$
+Tensyl keeps those two jobs separate. `cell.geometry` holds the coordinates and
+connections needed to draw the pattern. `cell.members` holds the member lengths
+and counts used in the stiffness calculation. This distinction prevents a
+shared edge from being counted twice simply because it appears on both sides of
+a drawing.
 
-This convention removes the previous ambiguity between a family's direction
-and the spacing normal to that family.
+## How Cell Dimensions Are Named
 
-Nemeth defines two effective offsets for a nonhomogeneous member:
+Every cell uses the local directions `e1`, `e2`, and `n`. The first two lie in
+the panel; `n` points away from its reference surface.
 
-- `axial_eccentricity` is the extension-weighted offset $\bar z$;
-- `shear_eccentricity` is the shear-weighted offset $\bar{\bar z}$.
-
-Both are signed along `+n`. Omitting the shear-weighted value makes it equal to
-the axial value, which is the usual homogeneous-member specialization.
-
-## Pattern Coverage
-
-| Constructor | Retained families | Nemeth definition |
-| --- | --- | --- |
-| `unidirectional_cell` | one arbitrary-angle family | Figures 4-6 |
-| `orthogrid_cell` | `e1`, `e2` | orthogonal-grid specialization |
-| `braced_orthogrid_cell(diagonal_pattern="double")` | `e1`, `e2`, both diagonals | Figure 14 and table 4 |
-| `braced_orthogrid_cell(diagonal_pattern="single")` | `e1`, `e2`, alternating diagonals | Figure 16 and table 5 |
-| `diamond_cell` | `e1`, both diagonals; no `e2` family | Figure 15 |
-| `equilateral_isogrid_cell` | identical `0`, `+60`, `-60` degree families | equilateral limit of table 6 |
-| `isosceles_triangle_grid_cell` | `e1`, both diagonals | Figure 17 and table 6 |
-| `kagome_cell` | two `e1` members and both long diagonals | Figure 18 and table 7 |
-| `hexagonal_grid_cell` | `e2`, both diagonals | Figure 21 and table 8 |
-| `regular_hexagonal_grid_cell` | identical regular-hexagon members | Appendix F specialization |
-| `star_cell` | four members from each of three families | Figure 23 and table 9 |
-| `equilateral_star_cell` | identical equilateral-star members | Appendix G specialization |
-| `sandwich_*_core_cell` | named core plus two shifted faces | Appendices H-J |
-
-The single-brace cell uses Nemeth's $4L_xL_y$ basic-cell area and the six
-members in table 5. Its diagonal density is half the crossed-brace case. The
-Kagome cell uses twice the isosceles-triangle area and correspondingly doubled
-member lengths or multiplicities, reproducing Nemeth's density equivalence.
-
-## Strict Nemeth Kinematics
-
-The default homogenizer follows Nemeth's first approximation, including
-$\chi_Z=0$. Member `EIz` and `EIyz` therefore do not contribute by default.
-Set `include_in_plane_bending=True` only when the deliberate beyond-Nemeth
-extension is wanted; the result records that choice in its assumptions.
-
-For positive effective offsets, Tensyl uses Nemeth's
-
-$$
-\gamma_{XY}(z)=\gamma_{XY}^0+z\kappa_{XY}.
-$$
-
-The shear contribution to `B66` is therefore positive for positive
-`shear_eccentricity` under Tensyl's `+n` convention.
-
-## Visualization Path
-
-Every named constructor returns a non-`None` `cell.geometry`. No plotting
-package is required by Tensyl. A renderer consumes ordinary segment records:
-
-```python
-geometry = cell.geometry
-assert geometry is not None
-segments = geometry.segments(repeat_a=3, repeat_b=2)
-
-for segment in segments:
-    axes.plot(
-        [segment.start_e1, segment.end_e1],
-        [segment.start_e2, segment.end_e2],
-        label=segment.family,
-    )
+```text
+               e2
+               ^
+               |  e2_pitch
+               |
+               +------------> e1
+                    e1_pitch
 ```
 
-`geometry.repeat_vectors` exposes the translations directly, while
-`geometry.boundary` identifies the ordered basic-cell perimeter when the source
-defines one. This is sufficient for Matplotlib, Plotly, CAD, mesh-preview, or
-custom SVG adapters without coupling the mechanics package to a renderer.
+The pitch names describe the width and height of the repeat box:
 
-## Independent Numerical Verification
+| Input | Physical meaning |
+| --- | --- |
+| `e1_pitch` | Repeat distance measured along `e1` |
+| `e2_pitch` | Repeat distance measured along `e2` |
+| `e1_section` | Members that point along `e1` |
+| `e2_section` | Members that point along `e2` |
+| `positive_diagonal` | A diagonal that rises as `e1` increases |
+| `negative_diagonal` | A diagonal that falls as `e1` increases |
 
-The validation comparator does not inspect `cell.members` and does not call the
-production beam strain transform. Tests transcribe each table's member length,
-direction cosines, multiplicity, section, and two effective eccentricities,
-then assemble scalar `A`, `B`, `D`, and `As` terms from Nemeth's equations
-30-39. This makes the comparison sensitive to a wrong cell area, member count,
-angle, eccentricity, half-shear factor, or coupling sign.
+This means an `e1` member repeats across the panel by `e2_pitch`, while an
+`e2` member repeats by `e1_pitch`. Thinking of the pitches as repeat-box
+dimensions is usually clearer than trying to name them after a stiffener
+family.
 
-The following results use deliberately unequal sections and unequal positive
-and negative diagonal eccentricities. Errors are against the independently
-assembled full `C8` tangent.
+!!! tip "The usual eccentricity input"
+    For an ordinary homogeneous stiffener, provide its signed
+    `axial_eccentricity` and omit `shear_eccentricity`. Tensyl then uses the
+    same offset for both effects. Separate values are available for the less
+    common nonhomogeneous-member case.
 
-| Source case | Maximum absolute entry error | Relative Frobenius error |
+## Available Patterns
+
+| Constructor | What the repeating pattern contains | Nemeth source |
+| --- | --- | --- |
+| `unidirectional_cell` | One family of parallel members at any angle | Figures 4-6 |
+| `orthogrid_cell` | Crossing `e1` and `e2` members | Orthogonal-grid specialization |
+| `braced_orthogrid_cell(diagonal_pattern="double")` | An orthogrid with both diagonals in each bay | Figure 14 and table 4 |
+| `braced_orthogrid_cell(diagonal_pattern="single")` | An orthogrid with one alternating diagonal per bay | Figure 16 and table 5 |
+| `diamond_cell` | `e1` members and both diagonals, with no `e2` members | Figure 15 |
+| `equilateral_isogrid_cell` | Equal members at `0`, `+60`, and `-60` degrees | Equilateral limit of table 6 |
+| `isosceles_triangle_grid_cell` | `e1` members with two mirrored diagonals | Figure 17 and table 6 |
+| `kagome_cell` | Short `e1` members joined by longer mirrored diagonals | Figure 18 and table 7 |
+| `hexagonal_grid_cell` | `e2` members joined by mirrored diagonals | Figure 21 and table 8 |
+| `regular_hexagonal_grid_cell` | Equal members forming a regular hexagonal grid | Appendix F |
+| `star_cell` | Four short members in each of three directions | Figure 23 and table 9 |
+| `equilateral_star_cell` | Equal members forming an equilateral star grid | Appendix G |
+| `sandwich_*_core_cell` | A named grid core between two shifted faces | Appendices H-J |
+
+The source figures are reproduced alongside the constructor guide in
+[Beam Sections and Cells](../user-guide/beam-sections-and-cells.md#named-cells).
+
+## Viewing Any Named Cell
+
+Every named constructor returns a cell with drawable geometry. Tensyl does not
+depend on a plotting library, but it returns ordinary line segments that a
+plotter, CAD preview, or SVG writer can use.
+
+This optional Matplotlib helper works with any named cell:
+
+```python
+from matplotlib import pyplot as plt
+
+
+def plot_cell(cell, *, repeat_a=2, repeat_b=2):
+    geometry = cell.geometry
+    if geometry is None:
+        raise ValueError("This cell does not include drawable geometry.")
+
+    _, axes = plt.subplots()
+    for segment in geometry.segments(repeat_a=repeat_a, repeat_b=repeat_b):
+        axes.plot(
+            [segment.start_e1, segment.end_e1],
+            [segment.start_e2, segment.end_e2],
+            color="black",
+        )
+
+    axes.set_aspect("equal")
+    axes.set_xlabel("e1")
+    axes.set_ylabel("e2")
+    return axes
+```
+
+After building a named cell, call `plot_cell(cell)` to draw two repeats in each
+direction.
+
+`segment.family` identifies the member family when a renderer needs separate
+colors or line styles. `geometry.repeat_vectors` gives the two translations
+that tile the pattern, and `geometry.boundary` gives the basic-cell outline when
+the source defines one.
+
+## How the Numerical Check Works
+
+The comparison is intentionally independent of the production calculation:
+
+1. Each test case gives different properties to the member families so that a
+   swapped or missing family cannot hide behind symmetry.
+2. The reference calculation uses member lengths, directions, counts, sections,
+   and offsets transcribed directly from Nemeth's tables.
+3. It calculates every `A`, `B`, `D`, and `As` entry without reading
+   `cell.members` or calling Tensyl's production member transformation.
+4. The test compares every entry in the resulting stiffness matrices.
+
+This check is sensitive to the mistakes that matter here: the wrong cell area,
+member count, angle, offset, shear factor, or coupling sign.
+
+## Results
+
+The largest entry difference reports the biggest numerical gap anywhere in the
+matrix. The relative matrix difference compares the size of all differences
+with the size of the reference matrix. Its formal name is the relative
+Frobenius-norm error.
+
+| Source case | Largest entry difference | Relative matrix difference |
 | --- | ---: | ---: |
 | Table 4, crossed braced orthogrid | `1.137e-13` | `1.099e-19` |
 | Table 5, alternating single brace | `2.842e-14` | `3.658e-20` |
@@ -125,11 +158,44 @@ assembled full `C8` tangent.
 | Table 8, hexagonal | `5.684e-14` | `1.573e-16` |
 | Table 9, star | `4.547e-13` | `2.434e-16` |
 
-These are floating-point roundoff-level differences, not fitted tolerances.
-The tests also verify the corrected rectangular-diagonal angle, the table-5
-half-density relation, the sign and independent weighting of `B11` and `B66`,
-the opt-in `EIz` extension, repeat-cell areas, family labels, and tiled segment
-generation.
+These differences are floating-point rounding, not fitted tolerances.
+
+## What This Result Means
+
+The comparison supports the following claims:
+
+- Tensyl represents the cited Nemeth cell shapes and repeat areas correctly.
+- The production stiffness calculation agrees with a separately written
+  source calculation for the tested cases.
+- The corrected diagonal angle, single-brace member count, offset signs, and
+  default member-bending behavior are covered by regression tests.
+
+It is not a physical test campaign. It does not validate joints, local stress,
+crippling, buckling, manufacturing details, or the accuracy of a homogenized
+model when the grid is too coarse for the structural response of interest.
+
+## Advanced Mechanics Notes
+
+Nemeth defines separate effective offsets for axial and in-plane shear response.
+Tensyl exposes them as `axial_eccentricity` and `shear_eccentricity`. Both are
+signed along `+n`; when the shear value is omitted, it defaults to the axial
+value.
+
+By default, Tensyl also follows Nemeth's first approximation and leaves out
+member bending within the panel plane. `BeamSection` still stores `EIz` and
+`EIyz`, but the cell uses them only when
+`include_in_plane_bending=True` is requested explicitly. The result records
+that extension in its assumptions.
+
+Positive shear eccentricity produces positive `B66` coupling under Tensyl's
+documented `+n` convention. The equations and sign definitions are given in
+[Tangent-Plane Homogenization](../theory/tangent-plane-homogenization.md) and
+[Frames and Conventions](../theory/conventions.md).
+
+The single-brace pattern uses the larger basic cell from Nemeth's table 5, so
+its diagonal amount per unit area is half that of the crossed-brace pattern.
+The Kagome cell similarly uses a larger repeat area and the corresponding
+member counts from table 7.
 
 The source is Nemeth, NASA/TP-2011-216882; see the complete citation in
 [References](../references.md).

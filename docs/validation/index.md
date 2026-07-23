@@ -1,58 +1,57 @@
-# Validation Roadmap
+# Validation Overview
 
-Tensyl's independent FEM validation program is **TBD** for the first official
-release. The library exposes mechanics models, examples, and documented
-assumptions, but this release does not claim a completed finite-element
-validation campaign.
+Tensyl separates checks against published equations from comparisons with
+physical tests or detailed finite-element models. Both matter, but they answer
+different questions.
 
-That is deliberate. Validation should be boring in the best way: repeatable
-cases, plain comparison tables, reviewable plots, solver versions, input decks,
-and enough provenance that another engineer can rerun the evidence without
-guessing which button was pressed.
+## Evidence Available Now
 
-## What We Want To Build
+The [Nemeth cell verification](nemeth-cells.md) checks the named stiffener-cell
+layouts and stiffness calculations against NASA/TP-2011-216882. Eight source
+cases agree with a separately written calculation to floating-point rounding.
+This is strong evidence that the source equations and cell definitions were
+translated correctly.
 
-The goal is a public evidence base that compares Tensyl's equivalent-stiffness
-predictions against independent finite-element models. The planned validation
-work will focus on:
+The [SP-8007 reconciliation](sp8007-reconciliation.md) compares selected
+orthogrid and isogrid stiffness terms with the elastic-constant formulas in
+NASA SP-8007. It identifies which terms agree directly, one printed isogrid
+term that needs correction, and the effect of an optional in-plane
+member-bending extension.
 
-- local ABD extraction for skin-only, unidirectional, orthogrid, eccentric
-  orthogrid, and isogrid cells;
-- flat-panel and barrel response comparisons using equivalent stiffnesses;
-- limitation cases that show where the homogenized model should not be trusted;
-- compact artifacts: manifests, metrics, plots, and comparison tables that can
-  be reviewed without digging through raw solver output.
+These are literature checks. They do not replace a physical test campaign or
+an independently meshed finite-element comparison.
 
-Until those artifacts are promoted, validation status should be read as planned
-work rather than product evidence.
+## Evidence Still Planned
 
-The first literature-facing audit is the
-[SP-8007 reconciliation](sp8007-reconciliation.md). It compares Tensyl's
-orthogrid and equilateral-isogrid stiffnesses with the SP-8007 elastic-constant
-formulas, without treating either source as ground truth. The important result
-is not a single pass/fail number. It is a map of which terms agree by convention
-and which terms diverge because the models retain different bending physics,
-after first correcting the missing `EA z^2` terms in SP-8007 isogrid Eqs. 97-98.
+The independent FEM program remains planned work. It will compare Tensyl with
+detailed models for:
 
-## Why This Is LLM-Led
+- skin-only, unidirectional, orthogrid, eccentric-orthogrid, and isogrid cells;
+- flat-panel and barrel response;
+- cases near the limits of the repeating-cell approximation;
+- sensitivity to joints, boundary conditions, and local effects that an
+  equivalent stiffness cannot represent directly.
 
-This is a good LLM-led project because most of the work is mechanical, exacting,
-and repetitive: generate cases, write solver decks, run solvers, parse output,
-compute residuals, make plots, record manifests, and keep the documentation
-honest. None of that removes the need for engineering review. It moves the
-human effort to the part where judgment matters.
+Each promoted case should include the input deck, solver version, extracted
+results, comparison metrics, plots, and a manifest sufficient for another
+engineer to repeat the work.
 
-The expected benefits are practical:
+## How To Read the Evidence
 
-- hundreds of hours of repetitive setup and bookkeeping can be automated;
-- every run can produce verifiable evidence instead of a hand-waved conclusion;
-- comparison data becomes a durable asset for users, maintainers, and future
-  regression tests;
-- provenance and limitations can be written down as the evidence is generated,
-  not reconstructed later from memory;
-- reviewers can focus on mechanics, assumptions, and failure modes rather than
-  manually shepherding solver files.
+A close literature comparison means the implementation follows the stated
+source under the same assumptions. It does not prove that either model captures
+every feature of a real structure.
 
-In short: let the machine do the clerical lifting, then make the evidence easy
-for humans to distrust productively. That is usually where good validation
-starts.
+Before using a result, check:
+
+- whether the stiffener pattern and section idealization match the structure;
+- whether pitch and stiffener height are small enough for the response being
+  studied;
+- whether joints, cutouts, local buckling, crippling, or load introduction need
+  a more detailed model;
+- whether the local frame, reference surface, and eccentricity signs match the
+  downstream analysis.
+
+That distinction keeps the claim proportional to the evidence: the current
+source checks are useful and repeatable, while independent FEM correlation is
+still to come.
