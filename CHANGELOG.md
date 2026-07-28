@@ -6,7 +6,7 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
-## Unreleased
+## 0.3.1 - 2026-07-28
 
 - Project roundoff-level assembled tangents onto Tensyl's symmetric
   ABD-plus-transverse-shear form while rejecting material block asymmetry and
