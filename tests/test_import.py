@@ -19,7 +19,7 @@ def test_public_package_imports_remain_available() -> None:
         isotropic_plate,
     )
     from tensyl.cells import CanonicalUnitCell
-    from tensyl.homogenizers import EnergyHomogenizer
+    from tensyl.homogenizers import EnergyHomogenizer, HomogenizationNumericalError
     from tensyl.materials import IsotropicMaterial
     from tensyl.sections import BeamSection, ThinWallSegment, blade_section
 
@@ -28,6 +28,7 @@ def test_public_package_imports_remain_available() -> None:
     assert blade_section
     assert CanonicalUnitCell
     assert EnergyHomogenizer
+    assert HomogenizationNumericalError
     assert IsotropicMaterial
     assert ABDStiffness
     assert ABDStiffnessCoefficients

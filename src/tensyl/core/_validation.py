@@ -69,8 +69,6 @@ def readonly_array(
     *,
     shape: tuple[int, ...],
     name: str,
-    symmetric: bool = False,
-    symmetry_tolerance: float = 1.0e-10,
 ) -> Float64Array:
     """Return a finite read-only float64 array with the requested shape."""
 
@@ -80,9 +78,6 @@ def readonly_array(
         raise ValueError(msg)
     if not np.all(np.isfinite(array)):
         msg = f"{name} must contain only finite values."
-        raise ValueError(msg)
-    if symmetric and not np.allclose(array, array.T, atol=symmetry_tolerance, rtol=0.0):
-        msg = f"{name} must be symmetric."
         raise ValueError(msg)
     array.setflags(write=False)
     return array

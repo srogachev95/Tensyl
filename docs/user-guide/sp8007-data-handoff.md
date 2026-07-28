@@ -127,6 +127,12 @@ print(coefficients.unsupported_terms)
     is a prompt to decide whether the off-axis terms matter, not a command to
     ignore them.
 
+    The default filter combines the absolute `tolerance` with a dimensionless
+    `relative_tolerance` applied to the corresponding `A`, `B`, or `D` block.
+    The relative term suppresses coordinate-transformation roundoff as the
+    stiffness scale changes. Set `relative_tolerance=0.0` when an external
+    procedure requires a purely absolute cutoff.
+
 ## Orthogrid Handoff
 
 This worked handoff prepares an orthogrid equivalent stiffness for a separate

@@ -16,6 +16,7 @@ from tensyl.core.constitutive import (
     ABDStiffnessCoefficients,
     OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
+    _ABDTangentReductionError,
 )
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
 from tensyl.core.rotations import generalized_strain_transform
@@ -23,7 +24,8 @@ from tensyl.core.typing import FloatArray
 from tensyl.sections.beam import BeamSection
 
 _SYMMETRY_TOLERANCE = 1.0e-9
-_PSD_TOLERANCE = 1.0e-8
+_ROUNDOFF_RELATIVE_TOLERANCE = float(64.0 * np.finfo(np.float64).eps)
+_SPECTRAL_RELATIVE_TOLERANCE = _ROUNDOFF_RELATIVE_TOLERANCE
 
 
 class HomogenizationFailure(Exception):
@@ -36,6 +38,10 @@ class HomogenizationFailure(Exception):
 
 class HomogenizationInputError(HomogenizationFailure, ValueError):
     """Raised when a homogenizer receives malformed or unsupported input."""
+
+
+class HomogenizationNumericalError(HomogenizationFailure, ArithmeticError):
+    """Raised when an assembled tangent violates the homogenizer's numeric contract."""
 
 
 def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
@@ -186,14 +192,16 @@ class HomogenizationResult:
         t_eff: float,
         *,
         tolerance: float = 1.0e-9,
+        relative_tolerance: float = _ROUNDOFF_RELATIVE_TOLERANCE,
     ) -> ReducedOrthotropicProperties:
         """Return membrane-equivalent orthotropic properties.
 
         Args:
             t_eff: Positive effective wall thickness used to convert membrane
                 stiffnesses into engineering constants.
-            tolerance: Absolute tolerance for warning about discarded off-axis
-                or coupling terms.
+            tolerance: Absolute tolerance for discarded off-axis or coupling terms.
+            relative_tolerance: Dimensionless tolerance relative to the applicable
+                stiffness block scale.
 
         Returns:
             Orthotropic membrane constants reduced from ``self.stiffness``.
@@ -206,6 +214,7 @@ class HomogenizationResult:
         return self.stiffness.reduced_orthotropic_properties(
             t_eff,
             tolerance=tolerance,
+            relative_tolerance=relative_tolerance,
         )
 
     @property
@@ -222,18 +231,24 @@ class HomogenizationResult:
         self,
         *,
         tolerance: float = 1.0e-9,
+        relative_tolerance: float = _ROUNDOFF_RELATIVE_TOLERANCE,
     ) -> OrthotropicStiffnessCoefficients:
         """Return aligned orthotropic shell coefficients.
 
         Args:
-            tolerance: Absolute tolerance used when warning about terms outside
-                the aligned orthotropic coefficient set.
+            tolerance: Absolute tolerance for terms outside the aligned
+                orthotropic coefficient set.
+            relative_tolerance: Dimensionless tolerance relative to the applicable
+                stiffness block scale.
 
         Returns:
             Named orthotropic coefficient view of ``self.stiffness``.
         """
 
-        return self.stiffness.orthotropic_coefficients(tolerance=tolerance)
+        return self.stiffness.orthotropic_coefficients(
+            tolerance=tolerance,
+            relative_tolerance=relative_tolerance,
+        )
 
 
 class Homogenizer(Protocol):
@@ -442,10 +457,9 @@ def _diagnostics(
     # context so callers can decide whether it is acceptable.
     matrix = _readonly_matrix(tangent, shape=(8, 8), name="tangent")
     symmetric = bool(np.allclose(matrix, matrix.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0))
-    eigenvalues = np.linalg.eigvalsh(0.5 * (matrix + matrix.T))
+    eigenvalues, spectral_tolerance, rank = _spectral_properties(matrix)
     min_eigenvalue = float(eigenvalues[0])
-    psd = bool(min_eigenvalue >= -_PSD_TOLERANCE)
-    rank = int(np.linalg.matrix_rank(matrix, tol=_PSD_TOLERANCE))
+    psd = bool(min_eigenvalue >= -spectral_tolerance)
     return {
         "symmetric": symmetric,
         "positive_semidefinite": psd,
@@ -455,6 +469,15 @@ def _diagnostics(
         "cell_area": cell_area,
         "source_equations": ("Nemeth 2011 eqs. 30-39",),
     }
+
+
+def _spectral_properties(matrix: FloatArray) -> tuple[FloatArray, float, int]:
+    symmetric = 0.5 * (matrix + matrix.T)
+    eigenvalues = np.linalg.eigvalsh(symmetric)
+    scale = float(np.max(np.abs(eigenvalues)))
+    tolerance = _SPECTRAL_RELATIVE_TOLERANCE * scale
+    rank = 0 if scale == 0.0 else int(np.linalg.matrix_rank(symmetric, tol=tolerance))
+    return eigenvalues, tolerance, rank
 
 
 def _coupling_ratio(stiffness: ABDStiffness) -> float:
@@ -506,9 +529,10 @@ def _validity_report(
     if coupling >= thresholds.coupling_ratio:
         warnings.append("membrane_bending_coupling_exceeds_threshold")
     matrix = stiffness.C8
-    if np.linalg.matrix_rank(matrix, tol=_PSD_TOLERANCE) < matrix.shape[0]:
+    eigenvalues, spectral_tolerance, rank = _spectral_properties(matrix)
+    if rank < matrix.shape[0]:
         warnings.append("rank_deficient_tangent")
-    if float(np.linalg.eigvalsh(0.5 * (matrix + matrix.T))[0]) < -_PSD_TOLERANCE:
+    if float(eigenvalues[0]) < -spectral_tolerance:
         warnings.append("negative_energy_mode")
     return ValidityReport(
         h_over_R=h_over_R,
@@ -550,16 +574,17 @@ def _stiffness_from_tangent(
     skin: ABDStiffness,
     metadata: dict[str, Any],
 ) -> ABDStiffness:
-    # Homogenizer assembly should already be symmetric, but symmetrizing the
-    # numerical copy keeps roundoff from becoming a false mechanics failure.
-    matrix = 0.5 * (np.array(tangent, dtype=np.float64, copy=True) + np.array(tangent).T)
-    return ABDStiffness.from_tangent(
-        matrix,
-        frame=skin.frame,
-        convention=skin.convention,
-        areal_mass=skin.areal_mass,
-        metadata=metadata,
-    )
+    try:
+        return ABDStiffness.from_tangent(
+            tangent,
+            frame=skin.frame,
+            convention=skin.convention,
+            areal_mass=skin.areal_mass,
+            metadata=metadata,
+        )
+    except _ABDTangentReductionError as exc:
+        msg = f"assembled tangent is not reducible to ABD form: {exc}"
+        raise HomogenizationNumericalError(msg) from exc
 
 
 @dataclass(frozen=True, slots=True)
@@ -597,6 +622,8 @@ class EnergyHomogenizer:
         Raises:
             HomogenizationInputError: If the cell uses a strain convention that
                 the energy path does not support.
+            HomogenizationNumericalError: If the assembled tangent materially
+                violates Tensyl's ABD block contract.
         """
 
         if cell.convention != DEFAULT_STRAIN_CONVENTION:
@@ -667,6 +694,8 @@ class DirectECHomogenizer:
         Raises:
             HomogenizationInputError: If no families are supplied, or if the
                 skin/convention pair is unsupported.
+            HomogenizationNumericalError: If the assembled tangent materially
+                violates Tensyl's ABD block contract.
         """
 
         family_tuple = tuple(families)
@@ -711,6 +740,7 @@ __all__ = [
     "EnergyHomogenizer",
     "HomogenizationFailure",
     "HomogenizationInputError",
+    "HomogenizationNumericalError",
     "HomogenizationResult",
     "Homogenizer",
     "ValidityContext",

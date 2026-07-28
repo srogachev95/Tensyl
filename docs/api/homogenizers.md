@@ -6,6 +6,7 @@
       members:
         - HomogenizationFailure
         - HomogenizationInputError
+        - HomogenizationNumericalError
         - ValidityContext
         - ValidityThresholds
         - ValidityReport

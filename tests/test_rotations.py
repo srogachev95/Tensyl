@@ -2,7 +2,14 @@ from __future__ import annotations
 
 import numpy as np
 
-from tensyl import IsotropicMaterial, OrthotropicPlyMaterial, Ply, isotropic_plate, laminate_plate
+from tensyl import (
+    ABDStiffness,
+    IsotropicMaterial,
+    OrthotropicPlyMaterial,
+    Ply,
+    isotropic_plate,
+    laminate_plate,
+)
 from tensyl.core.rotations import (
     generalized_resultant_transform,
     generalized_strain_transform,
@@ -63,3 +70,35 @@ def test_ninety_degree_orthotropic_rotation_swaps_principal_membrane_terms() -> 
     np.testing.assert_allclose(rotated.A[1, 1], stiffness.A[0, 0], rtol=1.0e-12)
     np.testing.assert_allclose(rotated.As[0, 0], stiffness.As[1, 1], rtol=1.0e-12)
     np.testing.assert_allclose(rotated.As[1, 1], stiffness.As[0, 0], rtol=1.0e-12)
+
+
+def test_large_coupled_stiffness_rotation_projects_block_roundoff() -> None:
+    stiffness = ABDStiffness(
+        A=np.array(
+            [
+                [1.0e12, 2.0e11, 0.0],
+                [2.0e11, 8.0e11, 0.0],
+                [0.0, 0.0, 3.0e11],
+            ]
+        ),
+        B=np.array(
+            [
+                [3.0e10, 1.0e10, 0.0],
+                [1.0e10, 2.0e10, 0.0],
+                [0.0, 0.0, 8.0e9],
+            ]
+        ),
+        D=np.array(
+            [
+                [5.0e8, 1.0e8, 0.0],
+                [1.0e8, 4.0e8, 0.0],
+                [0.0, 0.0, 2.0e8],
+            ]
+        ),
+        As=np.diag([1.0e10, 8.0e9]),
+    )
+
+    rotated = stiffness.rotate(np.pi / 250.0)
+
+    np.testing.assert_array_equal(rotated.C8, rotated.C8.T)
+    np.testing.assert_array_equal(rotated.B, rotated.B.T)
