@@ -6,6 +6,18 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
+## Unreleased
+
+- Project roundoff-level assembled tangents onto Tensyl's symmetric
+  ABD-plus-transverse-shear form while rejecting material block asymmetry and
+  unsupported coupling through a typed `HomogenizationNumericalError`.
+- Make tangent rank, positive-semidefinite diagnostics, and orthotropic
+  reduction warnings relative to stiffness scale so floating-point
+  interpretation remains stable across practical unit scales.
+- Route rotated ABD stiffnesses through the same canonical tangent boundary,
+  preventing large valid coupling blocks from failing fixed absolute symmetry
+  checks.
+
 ## 0.3.0 - 2026-07-22
 
 - Correct thin-wall section properties by treating each segment as a rotated

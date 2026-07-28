@@ -10,11 +10,14 @@ from tensyl import (
     GeneralizedStrain,
     HomogenizationResult,
     IsotropicMaterial,
+    OrthotropicPlyMaterial,
     OrthotropicStiffnessCoefficients,
+    Ply,
     ReducedOrthotropicProperties,
     ValidityReport,
     generalized_strain,
     isotropic_plate,
+    laminate_plate,
 )
 from tensyl.verification import assert_hyperelastic_consistency
 
@@ -91,6 +94,71 @@ def test_abd_stiffness_rejects_bad_shapes_and_nonsymmetric_blocks() -> None:
             D=np.eye(3),
             As=np.eye(2),
         )
+
+
+@pytest.mark.parametrize("scale", [1.0e-12, 1.0, 1.0e12])
+def test_abd_block_constructor_projects_only_relative_roundoff_asymmetry(
+    scale: float,
+) -> None:
+    B = scale * np.eye(3)
+    B[0, 1] = 4.0 * np.finfo(np.float64).eps * scale
+
+    stiffness = ABDStiffness(
+        A=scale * np.eye(3),
+        B=B,
+        D=scale * np.eye(3),
+        As=scale * np.eye(2),
+    )
+
+    np.testing.assert_array_equal(stiffness.C8, stiffness.C8.T)
+    np.testing.assert_array_equal(stiffness.B, stiffness.B.T)
+
+    B[0, 1] = 1.0e-6 * scale
+    with pytest.raises(ValueError, match="B must be symmetric"):
+        ABDStiffness(
+            A=scale * np.eye(3),
+            B=B,
+            D=scale * np.eye(3),
+            As=scale * np.eye(2),
+        )
+
+
+@pytest.mark.parametrize("scale", [1.0e-12, 1.0, 1.0e12])
+def test_abd_from_tangent_projects_only_relative_roundoff_block_asymmetry(
+    scale: float,
+) -> None:
+    tangent = np.zeros((8, 8))
+    tangent[0:3, 0:3] = scale * np.diag([10.0, 8.0, 3.0])
+    tangent[3:6, 3:6] = scale * np.diag([5.0, 4.0, 2.0])
+    tangent[6:8, 6:8] = scale * np.diag([10.0, 8.0])
+    B = scale * np.array(
+        [
+            [3.0, 1.0, 0.0],
+            [1.0, 2.0, 0.0],
+            [0.0, 0.0, 0.8],
+        ]
+    )
+    B[0, 1] += 4.0 * np.finfo(np.float64).eps * scale
+    tangent[0:3, 3:6] = B
+    tangent[3:6, 0:3] = B.T
+
+    stiffness = ABDStiffness.from_tangent(tangent)
+
+    np.testing.assert_array_equal(stiffness.B, stiffness.B.T)
+
+    tangent[0, 4] += 1.0e-6 * scale
+    tangent[4, 0] = tangent[0, 4]
+    with pytest.raises(ValueError, match="tangent B block"):
+        ABDStiffness.from_tangent(tangent)
+
+
+def test_abd_from_tangent_rejects_unsupported_transverse_shear_coupling() -> None:
+    tangent = np.eye(8)
+    tangent[0, 6] = 1.0e-3
+    tangent[6, 0] = 1.0e-3
+
+    with pytest.raises(ValueError, match="transverse-shear coupling"):
+        ABDStiffness.from_tangent(tangent)
 
 
 def test_abd_stiffness_rejects_bad_eta_shape() -> None:
@@ -192,6 +260,28 @@ def test_orthotropic_coefficients_warn_about_off_axis_terms_without_failing() ->
     }
 
 
+def test_orthotropic_reduction_ignores_unit_scaled_rotation_roundoff() -> None:
+    material = OrthotropicPlyMaterial(
+        E1=30.0e12,
+        E2=3.0e12,
+        G12=2.0e12,
+        nu12=0.2,
+        G13=1.7e12,
+        G23=1.1e12,
+    )
+    stiffness = laminate_plate([Ply(material=material, thickness=0.1)]).rotate(np.pi / 2.0)
+
+    coefficients = stiffness.orthotropic_coefficients()
+
+    assert coefficients.warnings == ()
+    assert coefficients.unsupported_terms == {}
+    with pytest.warns(UserWarning, match="off-axis ABD terms"):
+        stiffness.orthotropic_coefficients(
+            tolerance=1.0e-9,
+            relative_tolerance=0.0,
+        )
+
+
 def test_reduced_orthotropic_properties_recover_isotropic_plate_constants() -> None:
     material = IsotropicMaterial(E=70.0e9, nu=0.3)
     thickness = 0.012
@@ -286,6 +376,13 @@ def test_reduced_orthotropic_properties_reject_invalid_inputs() -> None:
         stiffness.reduced_orthotropic_properties(t_eff=0.0)
     with pytest.raises(ValueError, match="tolerance must be finite and nonnegative"):
         stiffness.reduced_orthotropic_properties(t_eff=1.0, tolerance=-1.0)
+    with pytest.raises(ValueError, match="relative_tolerance must be finite and nonnegative"):
+        stiffness.reduced_orthotropic_properties(
+            t_eff=1.0,
+            relative_tolerance=-1.0,
+        )
+    with pytest.raises(ValueError, match="relative_tolerance must be finite and nonnegative"):
+        stiffness.orthotropic_coefficients(relative_tolerance=-1.0)
 
     singular = ABDStiffness(
         A=np.diag([1.0, 0.0, 1.0]),

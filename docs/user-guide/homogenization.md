@@ -137,6 +137,16 @@ Malformed or unsupported inputs raise typed homogenization exceptions. Finite
 rank-deficient assemblies are returned with diagnostics and warnings so the
 caller can decide whether the mechanism is acceptable.
 
+The energy assembly is a floating-point sum, so mathematically identical block
+entries can differ in their last few bits when stiffnesses are large. Tensyl
+checks those residuals against a dimensionless, scale-aware roundoff limit and
+projects qualifying `A`, `B`, `D`, and `As` blocks onto exact symmetry. A
+material asymmetry or coupling term outside the supported
+ABD-plus-transverse-shear form raises `HomogenizationNumericalError`; it is not
+silently discarded. Rank and positive-semidefinite diagnostics use the same
+scale-aware principle, which keeps them independent of the chosen consistent
+unit system.
+
 !!! note "A clean diagnostics report is a floor, not a finish line"
     Symmetry and positive stiffness are basic consistency checks. They do not
     prove local strength, joint behavior, finite-element correlation, a shell

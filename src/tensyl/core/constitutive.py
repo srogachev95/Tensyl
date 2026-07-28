@@ -30,7 +30,7 @@ from tensyl.core.typing import (
     generalized_strain,
 )
 
-_SYMMETRY_TOLERANCE = 1.0e-10
+_ROUNDOFF_RELATIVE_TOLERANCE = float(64.0 * np.finfo(np.float64).eps)
 GeneralizedStrainInput = GeneralizedStrain | FloatArray
 _REDUCTION_WARNING_B = "membrane_bending_coupling_discarded"
 _REDUCTION_WARNING_A16_A26 = "off_axis_membrane_coupling_discarded"
@@ -39,19 +39,17 @@ _REDUCTION_WARNING_VALIDITY_B = "validity_membrane_bending_coupling_exceeds_thre
 _ORTHOTROPIC_WARNING_OFF_AXIS = "orthotropic_reduction_off_axis_terms_present"
 
 
+class _ABDTangentReductionError(ValueError):
+    """Raised when a tangent cannot be reduced to Tensyl's ABD block form."""
+
+
 def _checked_finite_fields(obj: object, names: tuple[str, ...]) -> None:
     for name in names:
         object.__setattr__(obj, name, finite_number(getattr(obj, name), name=name))
 
 
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
-    return readonly_array(
-        values,
-        shape=shape,
-        name=name,
-        symmetric=True,
-        symmetry_tolerance=_SYMMETRY_TOLERANCE,
-    )
+    return readonly_array(values, shape=shape, name=name)
 
 
 def _build_tangent(A: FloatArray, B: FloatArray, D: FloatArray, As: FloatArray) -> FloatArray:
@@ -67,14 +65,64 @@ def _build_tangent(A: FloatArray, B: FloatArray, D: FloatArray, As: FloatArray) 
     return tangent
 
 
-def _readonly_tangent(values: FloatArray, *, name: str) -> FloatArray:
-    return readonly_array(
-        values,
-        shape=(8, 8),
-        name=name,
-        symmetric=True,
-        symmetry_tolerance=_SYMMETRY_TOLERANCE,
+def _roundoff_limit(*values: FloatArray) -> float:
+    scale = max((float(np.max(np.abs(value))) for value in values if value.size), default=0.0)
+    return _ROUNDOFF_RELATIVE_TOLERANCE * scale
+
+
+def _symmetrized_roundoff_block(values: FloatArray, *, name: str) -> FloatArray:
+    residual = float(np.max(np.abs(values - values.T)))
+    limit = _roundoff_limit(values)
+    if residual > limit:
+        msg = (
+            f"{name} must be symmetric within numerical roundoff "
+            f"(residual {residual:.6g}, limit {limit:.6g})."
+        )
+        raise _ABDTangentReductionError(msg)
+    return 0.5 * (values + values.T)
+
+
+def _canonical_abd_tangent(values: FloatArray) -> FloatArray:
+    """Project roundoff onto Tensyl's symmetric ABD-plus-shear block form."""
+    A = _symmetrized_roundoff_block(values[0:3, 0:3], name="tangent A block")
+    D = _symmetrized_roundoff_block(values[3:6, 3:6], name="tangent D block")
+    As = _symmetrized_roundoff_block(values[6:8, 6:8], name="tangent As block")
+
+    B_upper = values[0:3, 3:6]
+    B_lower_transpose = values[3:6, 0:3].T
+    cross_residual = float(np.max(np.abs(B_upper - B_lower_transpose)))
+    cross_limit = _roundoff_limit(B_upper, B_lower_transpose)
+    if cross_residual > cross_limit:
+        msg = (
+            "tangent membrane-bending cross-blocks must be transposes within "
+            f"numerical roundoff (residual {cross_residual:.6g}, "
+            f"limit {cross_limit:.6g})."
+        )
+        raise _ABDTangentReductionError(msg)
+    B = _symmetrized_roundoff_block(
+        0.5 * (B_upper + B_lower_transpose),
+        name="tangent B block",
     )
+
+    unsupported = np.concatenate(
+        (
+            values[0:6, 6:8].reshape(-1),
+            values[6:8, 0:6].reshape(-1),
+        )
+    )
+    unsupported_residual = float(np.max(np.abs(unsupported)))
+    if unsupported_residual > 0.0:
+        msg = (
+            "tangent contains membrane/bending-to-transverse-shear coupling "
+            "outside Tensyl's ABD-plus-shear representation "
+            f"(maximum magnitude {unsupported_residual:.6g})."
+        )
+        raise _ABDTangentReductionError(msg)
+    return _build_tangent(A, B, D, As)
+
+
+def _readonly_tangent(values: FloatArray, *, name: str) -> FloatArray:
+    return readonly_array(values, shape=(8, 8), name=name)
 
 
 def _hash_array(values: FloatArray) -> int:
@@ -394,17 +442,27 @@ class ABDStiffness:
     _c8: FloatArray = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        # Validate the user-facing blocks first, then rebuild all block
-        # attributes as readonly views of one symmetric C8 matrix. That avoids
-        # the familiar bug where A/B/D/As and C8 drift apart after construction.
-        A = _readonly_matrix(self.A, shape=(3, 3), name="A")
-        B = _readonly_matrix(self.B, shape=(3, 3), name="B")
-        D = _readonly_matrix(self.D, shape=(3, 3), name="D")
-        As = _readonly_matrix(self.As, shape=(2, 2), name="As")
+        # Validate and project roundoff in the user-facing blocks first, then
+        # rebuild every attribute as a readonly view of one exactly symmetric
+        # C8 matrix. That avoids the familiar bug where A/B/D/As and C8 drift
+        # apart after construction.
+        A = _symmetrized_roundoff_block(
+            _readonly_matrix(self.A, shape=(3, 3), name="A"),
+            name="A",
+        )
+        B = _symmetrized_roundoff_block(
+            _readonly_matrix(self.B, shape=(3, 3), name="B"),
+            name="B",
+        )
+        D = _symmetrized_roundoff_block(
+            _readonly_matrix(self.D, shape=(3, 3), name="D"),
+            name="D",
+        )
+        As = _symmetrized_roundoff_block(
+            _readonly_matrix(self.As, shape=(2, 2), name="As"),
+            name="As",
+        )
         c8 = _build_tangent(A, B, D, As)
-        if not np.allclose(c8, c8.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0):
-            msg = "assembled stiffness tangent must be symmetric."
-            raise ValueError(msg)
         if self.areal_mass is not None:
             object.__setattr__(
                 self,
@@ -449,10 +507,11 @@ class ABDStiffness:
 
         Raises:
             ValueError: If the tangent has the wrong shape, is not finite, or
-                is not symmetric within tolerance.
+                cannot be reduced to Tensyl's symmetric
+                ABD-plus-transverse-shear block form within roundoff.
         """
 
-        c8 = _readonly_tangent(tangent, name="tangent")
+        c8 = _canonical_abd_tangent(_readonly_tangent(tangent, name="tangent"))
         # Route through the block constructor so all stiffnesses, whether they
         # start as blocks or as C8, receive identical symmetry and readonly
         # treatment.
@@ -628,6 +687,7 @@ class ABDStiffness:
         self,
         *,
         tolerance: float = 1.0e-9,
+        relative_tolerance: float = _ROUNDOFF_RELATIVE_TOLERANCE,
     ) -> OrthotropicStiffnessCoefficients:
         """Return barred coefficients for aligned orthotropic shell equations.
 
@@ -638,26 +698,37 @@ class ABDStiffness:
         handed off in the form those equations expect.
 
         Off-axis terms such as ``A16`` and ``D26`` are not represented by this
-        coefficient set. When they exceed ``tolerance``, the method still returns
-        the reduced coefficients, records the terms in ``unsupported_terms``, and
-        emits a warning so the caller can decide whether the reduction is
-        acceptable for the downstream calculation.
+        coefficient set. A term is retained when it exceeds ``tolerance`` plus
+        ``relative_tolerance`` times the scale of its parent stiffness block.
+        The relative term prevents roundoff from becoming a finding merely
+        because the stiffness scale is large, while ``tolerance`` preserves an
+        explicit caller-controlled absolute floor. The method still returns
+        the reduced coefficients, records retained terms in
+        ``unsupported_terms``, and emits a warning so the caller can decide
+        whether the reduction is acceptable for the downstream calculation.
 
         Args:
             tolerance: Nonnegative absolute tolerance for off-axis terms.
+            relative_tolerance: Nonnegative dimensionless tolerance relative to
+                the applicable ``A``, ``B``, or ``D`` block scale.
 
         Returns:
             Barred orthotropic coefficient view plus warning metadata.
 
         Raises:
-            ValueError: If ``tolerance`` is negative or non-finite.
+            ValueError: If either tolerance is negative or non-finite.
         """
 
         checked_tolerance = nonnegative_number(tolerance, name="tolerance")
+        checked_relative_tolerance = nonnegative_number(
+            relative_tolerance,
+            name="relative_tolerance",
+        )
         coefficients = self.coefficients
         unsupported_terms = _orthotropic_unsupported_terms(
-            coefficients,
+            self,
             tolerance=checked_tolerance,
+            relative_tolerance=checked_relative_tolerance,
         )
         warning_codes = ()
         if unsupported_terms:
@@ -689,6 +760,7 @@ class ABDStiffness:
         t_eff: float,
         *,
         tolerance: float = 1.0e-9,
+        relative_tolerance: float = _ROUNDOFF_RELATIVE_TOLERANCE,
     ) -> ReducedOrthotropicProperties:
         """Return membrane-equivalent orthotropic plane-stress properties.
 
@@ -701,17 +773,23 @@ class ABDStiffness:
             t_eff: Positive effective shell thickness.
             tolerance: Nonnegative absolute tolerance for warning about
                 discarded coupling or off-axis terms.
+            relative_tolerance: Nonnegative dimensionless tolerance relative to
+                the applicable stiffness scale.
 
         Returns:
             Membrane-equivalent orthotropic plane-stress constants.
 
         Raises:
-            ValueError: If ``t_eff`` is not positive, ``tolerance`` is invalid,
-                or the membrane stiffness block cannot be inverted.
+            ValueError: If ``t_eff`` is not positive, either tolerance is
+                invalid, or the membrane stiffness block cannot be inverted.
         """
 
         checked_t_eff = positive_number(t_eff, name="t_eff")
         checked_tolerance = nonnegative_number(tolerance, name="tolerance")
+        checked_relative_tolerance = nonnegative_number(
+            relative_tolerance,
+            name="relative_tolerance",
+        )
         q_eff = self.A / checked_t_eff
         try:
             s_eff = np.linalg.inv(q_eff)
@@ -725,12 +803,17 @@ class ABDStiffness:
             "nu12": -s_eff[0, 1] / s_eff[0, 0],
             "nu21": -s_eff[0, 1] / s_eff[1, 1],
         }
-        warnings = _reduced_orthotropic_warnings(self, tolerance=checked_tolerance)
+        warnings = _reduced_orthotropic_warnings(
+            self,
+            tolerance=checked_tolerance,
+            relative_tolerance=checked_relative_tolerance,
+        )
         metadata = {
             "source": "reduced_orthotropic_properties",
             "reduction": "membrane_compliance_from_A",
             "t_eff": checked_t_eff,
             "tolerance": checked_tolerance,
+            "relative_tolerance": checked_relative_tolerance,
         }
         return ReducedOrthotropicProperties(
             t_eff=checked_t_eff,
@@ -740,39 +823,104 @@ class ABDStiffness:
         )
 
 
-def _has_nonzero(values: FloatArray, *, tolerance: float) -> bool:
-    return bool(np.any(np.abs(values) > tolerance))
+def _scaled_tolerance(
+    reference: FloatArray,
+    *,
+    tolerance: float,
+    relative_tolerance: float,
+) -> float:
+    scale = float(np.max(np.abs(reference)))
+    return tolerance + relative_tolerance * scale
+
+
+def _has_nonzero(
+    values: FloatArray,
+    *,
+    reference: FloatArray,
+    tolerance: float,
+    relative_tolerance: float,
+) -> bool:
+    limit = _scaled_tolerance(
+        reference,
+        tolerance=tolerance,
+        relative_tolerance=relative_tolerance,
+    )
+    return bool(np.any(np.abs(values) > limit))
 
 
 def _orthotropic_unsupported_terms(
-    coefficients: ABDStiffnessCoefficients,
+    stiffness: ABDStiffness,
     *,
     tolerance: float,
+    relative_tolerance: float,
 ) -> dict[str, float]:
-    terms = {
-        "A16": coefficients.A16,
-        "A26": coefficients.A26,
-        "B16": coefficients.B16,
-        "B26": coefficients.B26,
-        "B61": coefficients.B16,
-        "B62": coefficients.B26,
-        "D16": coefficients.D16,
-        "D26": coefficients.D26,
-    }
-    return {name: value for name, value in terms.items() if abs(value) > tolerance}
+    coefficients = stiffness.coefficients
+    grouped_terms = (
+        (
+            stiffness.A,
+            {
+                "A16": coefficients.A16,
+                "A26": coefficients.A26,
+            },
+        ),
+        (
+            stiffness.B,
+            {
+                "B16": coefficients.B16,
+                "B26": coefficients.B26,
+                "B61": coefficients.B16,
+                "B62": coefficients.B26,
+            },
+        ),
+        (
+            stiffness.D,
+            {
+                "D16": coefficients.D16,
+                "D26": coefficients.D26,
+            },
+        ),
+    )
+    unsupported: dict[str, float] = {}
+    for block, terms in grouped_terms:
+        limit = _scaled_tolerance(
+            block,
+            tolerance=tolerance,
+            relative_tolerance=relative_tolerance,
+        )
+        unsupported.update({name: value for name, value in terms.items() if abs(value) > limit})
+    return unsupported
 
 
 def _reduced_orthotropic_warnings(
     stiffness: ABDStiffness,
     *,
     tolerance: float,
+    relative_tolerance: float,
 ) -> tuple[str, ...]:
     warnings: list[str] = []
-    if _has_nonzero(stiffness.B, tolerance=tolerance):
+    coupling_scale = np.sqrt(
+        float(np.max(np.abs(stiffness.A))) * float(np.max(np.abs(stiffness.D)))
+    )
+    if _has_nonzero(
+        stiffness.B,
+        reference=np.asarray([coupling_scale]),
+        tolerance=tolerance,
+        relative_tolerance=relative_tolerance,
+    ):
         warnings.append(_REDUCTION_WARNING_B)
-    if _has_nonzero(stiffness.A[[0, 1], 2], tolerance=tolerance):
+    if _has_nonzero(
+        stiffness.A[[0, 1], 2],
+        reference=stiffness.A,
+        tolerance=tolerance,
+        relative_tolerance=relative_tolerance,
+    ):
         warnings.append(_REDUCTION_WARNING_A16_A26)
-    if _has_nonzero(stiffness.D[[0, 1], 2], tolerance=tolerance):
+    if _has_nonzero(
+        stiffness.D[[0, 1], 2],
+        reference=stiffness.D,
+        tolerance=tolerance,
+        relative_tolerance=relative_tolerance,
+    ):
         warnings.append(_REDUCTION_WARNING_D16_D26)
     validity_warnings = tuple(getattr(stiffness.validity, "warnings", ()))
     if "membrane_bending_coupling_exceeds_threshold" in validity_warnings:

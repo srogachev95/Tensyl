@@ -3,14 +3,18 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+import tensyl.homogenizers.tangent_plane as tangent_plane
 from tensyl import (
+    ABDStiffness,
     BeamSection,
     DirectECHomogenizer,
     EnergyHomogenizer,
     HomogenizationInputError,
+    HomogenizationNumericalError,
     IsotropicMaterial,
     StiffenerFamily,
     ValidityContext,
+    blade_section,
     equilateral_isogrid_cell,
     isotropic_plate,
     orthogrid_cell,
@@ -136,6 +140,60 @@ def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
     assert result.diagnostics["symmetric"] is True
     assert result.diagnostics["positive_semidefinite"] is True
     np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
+
+
+def test_energy_homogenizer_projects_isogrid_block_roundoff_without_changing_energy() -> None:
+    material = IsotropicMaterial(E=1.06e7, nu=0.33)
+    skin_thickness = 0.3876504890620709
+    total_height = 2.469107758812606
+    section = blade_section(
+        material=material,
+        height=total_height - skin_thickness,
+        thickness=0.9634947882965207,
+    )
+    cell = equilateral_isogrid_cell(
+        skin=isotropic_plate(material, thickness=skin_thickness),
+        member_section=section.section,
+        side_length=11.653170097619295,
+        axial_eccentricity=-(0.5 * skin_thickness + section.centroid_z),
+    )
+    eta = np.array([0.003, -0.002, 0.001, 0.02, -0.01, 0.04, 0.005, -0.006])
+
+    result = EnergyHomogenizer().compute(cell)
+    stiffness_energy = 0.5 * cell.area * float(eta @ result.stiffness.C8 @ eta)
+    explicit_energy = cell.area * cell.skin.energy(eta) + sum(
+        member_energy(member, eta) for member in cell.members
+    )
+
+    np.testing.assert_array_equal(result.stiffness.B, result.stiffness.B.T)
+    np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
+
+
+def test_energy_homogenizer_raises_typed_error_for_material_block_asymmetry(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    cell = unidirectional_cell(
+        skin=_zero_skin(),
+        member_section=_section(),
+        spacing=1.0,
+        axial_eccentricity=0.0,
+    )
+    bad_contribution = np.zeros((8, 8))
+    bad_contribution[0, 4] = 1.0
+    bad_contribution[4, 0] = 1.0
+
+    def materially_asymmetric_contribution(*args, **kwargs):
+        del args, kwargs
+        return bad_contribution
+
+    monkeypatch.setattr(
+        tangent_plane,
+        "member_tangent_contribution",
+        materially_asymmetric_contribution,
+    )
+
+    with pytest.raises(HomogenizationNumericalError, match="tangent B block"):
+        EnergyHomogenizer().compute(cell)
 
 
 def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
@@ -264,6 +322,28 @@ def test_rank_deficient_tangent_is_reported_not_raised() -> None:
 
     assert result.diagnostics["rank"] < 8
     assert "rank_deficient_tangent" in result.validity.warnings
+
+
+def test_validity_rank_diagnostic_is_invariant_to_stiffness_scale() -> None:
+    stiffness = ABDStiffness.from_tangent(1.0e-12 * np.eye(8))
+
+    report = tangent_plane.validity_report_for_stiffness(stiffness)
+
+    assert "rank_deficient_tangent" not in report.warnings
+    assert "negative_energy_mode" not in report.warnings
+
+
+@pytest.mark.parametrize("scale", [1.0e-12, 1.0, 1.0e12])
+def test_validity_negative_energy_diagnostic_is_invariant_to_stiffness_scale(
+    scale: float,
+) -> None:
+    tangent = scale * np.eye(8)
+    tangent[7, 7] = -0.1 * scale
+    stiffness = ABDStiffness.from_tangent(tangent)
+
+    report = tangent_plane.validity_report_for_stiffness(stiffness)
+
+    assert "negative_energy_mode" in report.warnings
 
 
 def test_direct_homogenizer_uses_typed_input_error() -> None:

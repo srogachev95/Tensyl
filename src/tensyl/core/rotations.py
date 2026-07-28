@@ -178,11 +178,8 @@ def rotate_abd_stiffness(stiffness: ABDStiffness, angle_rad: float) -> ABDStiffn
     """
 
     tangent = rotate_tangent(stiffness.C8, angle_rad)
-    return ABDStiffness(
-        A=tangent[0:3, 0:3],
-        B=tangent[0:3, 3:6],
-        D=tangent[3:6, 3:6],
-        As=tangent[6:8, 6:8],
+    return ABDStiffness.from_tangent(
+        tangent,
         frame=stiffness.frame.rotate(angle_rad),
         convention=stiffness.convention,
         areal_mass=stiffness.areal_mass,
