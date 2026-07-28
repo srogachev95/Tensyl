@@ -2873,7 +2873,8 @@ gamma23]</code>.</p>
               –
               <div class="doc-md-description">
                 <p>If the tangent has the wrong shape, is not finite, or
-is not symmetric within tolerance.</p>
+cannot be reduced to Tensyl's symmetric
+ABD-plus-transverse-shear block form within roundoff.</p>
               </div>
             </li>
         </ul>
@@ -2890,7 +2891,7 @@ is not symmetric within tolerance.</p>
 
 
 <h3 id="tensyl.core.constitutive.ABDStiffness.orthotropic_coefficients" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">orthotropic_coefficients</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">orthotropic_coefficients</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="n">_ROUNDOFF_RELATIVE_TOLERANCE</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2904,10 +2905,14 @@ equations. It is not the raw ABD <code>D66</code> term. Tensyl computes
 <code>Dbar_xy = 2*D12 + 4*D66</code> so the combined bending-twist input is
 handed off in the form those equations expect.</p>
 <p>Off-axis terms such as <code>A16</code> and <code>D26</code> are not represented by this
-coefficient set. When they exceed <code>tolerance</code>, the method still returns
-the reduced coefficients, records the terms in <code>unsupported_terms</code>, and
-emits a warning so the caller can decide whether the reduction is
-acceptable for the downstream calculation.</p>
+coefficient set. A term is retained when it exceeds <code>tolerance</code> plus
+<code>relative_tolerance</code> times the scale of its parent stiffness block.
+The relative term prevents roundoff from becoming a finding merely
+because the stiffness scale is large, while <code>tolerance</code> preserves an
+explicit caller-controlled absolute floor. The method still returns
+the reduced coefficients, records retained terms in
+<code>unsupported_terms</code>, and emits a warning so the caller can decide
+whether the reduction is acceptable for the downstream calculation.</p>
 
 
 <table class="field-list">
@@ -2928,6 +2933,17 @@ acceptable for the downstream calculation.</p>
               –
               <div class="doc-md-description">
                 <p>Nonnegative absolute tolerance for off-axis terms.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>relative_tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code><span title="tensyl.core.constitutive._ROUNDOFF_RELATIVE_TOLERANCE">_ROUNDOFF_RELATIVE_TOLERANCE</span></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Nonnegative dimensionless tolerance relative to
+the applicable <code>A</code>, <code>B</code>, or <code>D</code> block scale.</p>
               </div>
             </li>
         </ul>
@@ -2978,7 +2994,7 @@ acceptable for the downstream calculation.</p>
                   <code><span title="ValueError">ValueError</span></code>
               –
               <div class="doc-md-description">
-                <p>If <code>tolerance</code> is negative or non-finite.</p>
+                <p>If either tolerance is negative or non-finite.</p>
               </div>
             </li>
         </ul>
@@ -2995,7 +3011,7 @@ acceptable for the downstream calculation.</p>
 
 
 <h3 id="tensyl.core.constitutive.ABDStiffness.reduced_orthotropic_properties" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">reduced_orthotropic_properties</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">reduced_orthotropic_properties</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="n">_ROUNDOFF_RELATIVE_TOLERANCE</span><span class="p">)</span></code>
 
 </h3>
 
@@ -3036,6 +3052,17 @@ transverse-shear blocks.</p>
               <div class="doc-md-description">
                 <p>Nonnegative absolute tolerance for warning about
 discarded coupling or off-axis terms.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>relative_tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code><span title="tensyl.core.constitutive._ROUNDOFF_RELATIVE_TOLERANCE">_ROUNDOFF_RELATIVE_TOLERANCE</span></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Nonnegative dimensionless tolerance relative to
+the applicable stiffness scale.</p>
               </div>
             </li>
         </ul>
@@ -3086,8 +3113,8 @@ discarded coupling or off-axis terms.</p>
                   <code><span title="ValueError">ValueError</span></code>
               –
               <div class="doc-md-description">
-                <p>If <code>t_eff</code> is not positive, <code>tolerance</code> is invalid,
-or the membrane stiffness block cannot be inverted.</p>
+                <p>If <code>t_eff</code> is not positive, either tolerance is
+invalid, or the membrane stiffness block cannot be inverted.</p>
               </div>
             </li>
         </ul>

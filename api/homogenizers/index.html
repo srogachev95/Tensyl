@@ -127,6 +127,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationNumericalError">HomogenizationNumericalError</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.characteristic_height">characteristic_height</a>
@@ -347,6 +349,37 @@ without also catching unrelated <code>ValueError</code> instances.</p>
 
 
         <p>Raised when a homogenizer receives malformed or unsupported input.</p>
+
+
+
+
+
+
+
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.homogenizers.HomogenizationNumericalError" class="doc doc-heading">
+            <code>HomogenizationNumericalError</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="HomogenizationFailure (tensyl.homogenizers.tangent_plane.HomogenizationFailure)" href="#tensyl.homogenizers.HomogenizationFailure">HomogenizationFailure</a></code>, <code><span title="ArithmeticError">ArithmeticError</span></code></p>
+
+
+
+        <p>Raised when an assembled tangent violates the homogenizer's numeric contract.</p>
 
 
 
@@ -1327,7 +1360,7 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
 
 <h3 id="tensyl.homogenizers.HomogenizationResult.orthotropic_coefficients" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">orthotropic_coefficients</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">orthotropic_coefficients</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="n">_ROUNDOFF_RELATIVE_TOLERANCE</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1354,8 +1387,19 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 )
               –
               <div class="doc-md-description">
-                <p>Absolute tolerance used when warning about terms outside
-the aligned orthotropic coefficient set.</p>
+                <p>Absolute tolerance for terms outside the aligned
+orthotropic coefficient set.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>relative_tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code><span title="tensyl.homogenizers.tangent_plane._ROUNDOFF_RELATIVE_TOLERANCE">_ROUNDOFF_RELATIVE_TOLERANCE</span></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Dimensionless tolerance relative to the applicable
+stiffness block scale.</p>
               </div>
             </li>
         </ul>
@@ -1400,7 +1444,7 @@ the aligned orthotropic coefficient set.</p>
 
 
 <h3 id="tensyl.homogenizers.HomogenizationResult.reduced_orthotropic_properties" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">reduced_orthotropic_properties</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">reduced_orthotropic_properties</span><span class="p">(</span><span class="n">t_eff</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-09</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="n">_ROUNDOFF_RELATIVE_TOLERANCE</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1436,8 +1480,18 @@ stiffnesses into engineering constants.</p>
 )
               –
               <div class="doc-md-description">
-                <p>Absolute tolerance for warning about discarded off-axis
-or coupling terms.</p>
+                <p>Absolute tolerance for discarded off-axis or coupling terms.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>relative_tolerance</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code><span title="tensyl.homogenizers.tangent_plane._ROUNDOFF_RELATIVE_TOLERANCE">_ROUNDOFF_RELATIVE_TOLERANCE</span></code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Dimensionless tolerance relative to the applicable
+stiffness block scale.</p>
               </div>
             </li>
         </ul>
@@ -1943,6 +1997,14 @@ result warnings.</p>
 the energy path does not support.</p>
               </div>
             </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationNumericalError (tensyl.homogenizers.tangent_plane.HomogenizationNumericalError)" href="#tensyl.homogenizers.HomogenizationNumericalError">HomogenizationNumericalError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the assembled tangent materially
+violates Tensyl's ABD block contract.</p>
+              </div>
+            </li>
         </ul>
       </td>
     </tr>
@@ -2220,6 +2282,14 @@ default engineering-shear convention is currently supported.</p>
               <div class="doc-md-description">
                 <p>If no families are supplied, or if the
 skin/convention pair is unsupported.</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="HomogenizationNumericalError (tensyl.homogenizers.tangent_plane.HomogenizationNumericalError)" href="#tensyl.homogenizers.HomogenizationNumericalError">HomogenizationNumericalError</a></code>
+              –
+              <div class="doc-md-description">
+                <p>If the assembled tangent materially
+violates Tensyl's ABD block contract.</p>
               </div>
             </li>
         </ul>

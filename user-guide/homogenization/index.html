@@ -311,6 +311,15 @@ downstream adapter.</p>
 <p>Malformed or unsupported inputs raise typed homogenization exceptions. Finite
 rank-deficient assemblies are returned with diagnostics and warnings so the
 caller can decide whether the mechanism is acceptable.</p>
+<p>The energy assembly is a floating-point sum, so mathematically identical block
+entries can differ in their last few bits when stiffnesses are large. Tensyl
+checks those residuals against a dimensionless, scale-aware roundoff limit and
+projects qualifying <code>A</code>, <code>B</code>, <code>D</code>, and <code>As</code> blocks onto exact symmetry. A
+material asymmetry or coupling term outside the supported
+ABD-plus-transverse-shear form raises <code>HomogenizationNumericalError</code>; it is not
+silently discarded. Rank and positive-semidefinite diagnostics use the same
+scale-aware principle, which keeps them independent of the chosen consistent
+unit system.</p>
 <div class="admonition note">
 <p class="admonition-title">A clean diagnostics report is a floor, not a finish line</p>
 <p>Symmetry and positive stiffness are basic consistency checks. They do not

@@ -317,6 +317,11 @@ print(coefficients.unsupported_terms)
 in <code>warnings</code> and <code>unsupported_terms</code>, and also emits a Python warning. That
 is a prompt to decide whether the off-axis terms matter, not a command to
 ignore them.</p>
+<p>The default filter combines the absolute <code>tolerance</code> with a dimensionless
+<code>relative_tolerance</code> applied to the corresponding <code>A</code>, <code>B</code>, or <code>D</code> block.
+The relative term suppresses coordinate-transformation roundoff as the
+stiffness scale changes. Set <code>relative_tolerance=0.0</code> when an external
+procedure requires a purely absolute cutoff.</p>
 </div>
 <h2 id="orthogrid-handoff">Orthogrid Handoff</h2>
 <p>This worked handoff prepares an orthogrid equivalent stiffness for a separate
