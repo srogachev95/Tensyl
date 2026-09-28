@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import inspect
+from dataclasses import fields
+
 import numpy as np
 import pytest
 
+import tensyl.cells.tangent_plane as tangent_plane_cells
 import tensyl.homogenizers.tangent_plane as tangent_plane
 from tensyl import (
     ABDStiffness,
@@ -153,24 +157,19 @@ def test_member_in_plane_bending_inertia_does_not_stiffen_the_panel() -> None:
 
 
 def test_in_plane_bending_extension_flag_is_gone() -> None:
-    # The removed keyword is passed on purpose, so the type checker is told to
-    # expect the unknown argument.
-    with pytest.raises(TypeError, match="include_in_plane_bending"):
-        BeamMember(
-            section=_section(),
-            length=1.0,
-            angle_rad=0.0,
-            axial_eccentricity=0.0,
-            include_in_plane_bending=True,  # ty: ignore[unknown-argument]
-        )
-    with pytest.raises(TypeError, match="include_in_plane_bending"):
-        unidirectional_cell(
-            skin=_zero_skin(),
-            member_section=_section(),
-            spacing=2.0,
-            axial_eccentricity=0.0,
-            include_in_plane_bending=True,  # ty: ignore[unknown-argument]
-        )
+    constructors = (
+        tangent_plane_cells.unidirectional_cell,
+        tangent_plane_cells.orthogrid_cell,
+        tangent_plane_cells.equilateral_isogrid_cell,
+        tangent_plane_cells.graph_unit_cell,
+        tangent_plane_cells.sandwich_orthogrid_core_cell,
+    )
+    value_objects = (BeamMember, tangent_plane_cells.CellEdge, tangent_plane_cells.StiffenerFamily)
+
+    for constructor in constructors:
+        assert "include_in_plane_bending" not in inspect.signature(constructor).parameters
+    for value_object in value_objects:
+        assert "include_in_plane_bending" not in {field.name for field in fields(value_object)}
 
 
 def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
