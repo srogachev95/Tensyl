@@ -24,6 +24,11 @@ def test_flat_plate_has_cartesian_geometry() -> None:
     _assert_right_handed(point)
 
 
+def test_flat_plate_rejects_axes_that_are_not_orthogonal() -> None:
+    with pytest.raises(ValueError, match="orthogonal"):
+        FlatPlate(e1=np.array([1.0, 0.0, 0.0]), e2=np.array([0.1, 1.0, 0.0]))
+
+
 def test_flat_plates_compare_by_value_and_hash() -> None:
     assert FlatPlate() == FlatPlate()
     assert hash(FlatPlate()) == hash(FlatPlate())

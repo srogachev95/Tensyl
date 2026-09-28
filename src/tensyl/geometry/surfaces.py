@@ -181,8 +181,9 @@ class FlatPlate:
 
     Attributes:
         origin: Three-dimensional point where ``u = v = 0``.
-        e1: Unit direction for increasing ``u``.
-        e2: Unit direction for increasing ``v``.
+        e1: Direction for increasing ``u``; normalized on construction.
+        e2: Direction for increasing ``v``; normalized on construction and
+            required to be orthogonal to ``e1``.
         label: Frame and metadata label attached to sampled points.
     """
 
@@ -200,9 +201,9 @@ class FlatPlate:
             msg = "e1 and e2 must not be parallel."
             raise ValueError(msg)
         normal /= norm
-        # Frame2D re-orthonormalizes e2 against e1 and n, so downstream code
-        # sees a right-handed local basis even when the input axes are only
-        # approximately orthogonal.
+        # Frame2D validates the basis rather than repairing it: axes that are
+        # not orthogonal within its tolerance raise instead of being bent into
+        # shape behind the caller's back.
         frame = Frame2D(e1=e1, e2=e2, n=normal, label=self.label)
         object.__setattr__(self, "origin", _readonly_vector(self.origin, name="origin"))
         object.__setattr__(self, "e1", frame.e1)
