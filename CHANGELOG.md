@@ -8,6 +8,10 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `check_cell_geometry` to compare the drawn periodic length density with
+  the member density used by homogenization, accounting for shared boundaries
+  and overlapping pieces. Unlabeled graph members now retain their edge's
+  family name, falling back to `"member"` when both are omitted.
 - Add `ConstantStiffnessField.orientation_rad`, measured counterclockwise
   from surface e1 to stiffness e1 about +n. Fields now support a constant
   material angle relative to each sampled surface frame.

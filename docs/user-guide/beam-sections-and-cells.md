@@ -365,4 +365,38 @@ for Matplotlib, Plotly, a CAD export, or another renderer. A complete plotting
 helper is shown in
 [Nemeth Cell Verification](../validation/nemeth-cells.md#viewing-any-named-cell).
 
+## Check the Drawn Member Density
+
+Two ribs on opposite repeat boundaries are copies of the same periodic rib.
+Counting both at full multiplicity doubles its stiffness. Use the drawing as
+an independent accounting check before homogenizing a custom cell:
+
+```python
+from tensyl import check_cell_geometry
+
+for family, (drawn, modeled) in check_cell_geometry(cell).items():
+    print(f"{family}: drawn {drawn:.6g}, modeled {modeled:.6g}")
+```
+
+Both numbers are member length per panel area, so their units are inverse
+length. The audit tiles the drawing 3x3, clips it to one repeat parallelogram,
+and merges overlapping collinear pieces within each family. A rib on the
+upper boundary is represented by its copy on the lower boundary. The modeled
+number is `sum(member.multiplicity * member.length) / cell.area` for that
+family. Two complete opposite-boundary ribs should therefore each have
+multiplicity `0.5`, or be represented by one complete member.
+
+Named patterns, including the half-members in hexagonal cells, are checked in
+the test suite. In graph cells, give edges a stable `family`. An omitted member
+label falls back to that family, then to `"member"`; explicit edge labels are
+preserved. Manually assembled cells need labels matching drawing families or
+uniquely labeled drawing edges. Ambiguous mappings and absent geometry raise
+`ValueError`, as do drawings that extend outside the surrounding 3x3 repeats.
+
+Unequal densities are returned for review. The function does not change
+multiplicity or certify connectivity, section properties, eccentricities, or
+member angles. Overlapping segments in different families count separately;
+represent one physical family with one name. The optional plotting workflow
+above remains useful for inspecting the drawing behind these numbers.
+
 Next: [Frames and Conventions](../theory/conventions.md).
