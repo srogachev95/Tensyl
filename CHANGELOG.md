@@ -8,6 +8,9 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `Ply.from_degrees` and `layup` for degree-based laminate inputs, paired
+  angles, repeated plies/groups, and symmetric stacks in explicit bottom-to-top
+  order. Unsupported notation raises `ValueError`.
 - Add `ABDStiffness.from_published_blocks` for explicitly importing matrices
   rounded to printed precision. It checks each block's relative asymmetry,
   averages qualifying entries, and records the corrections. Strict symmetry

@@ -9,3 +9,4 @@
         - Ply
         - isotropic_plate
         - laminate_plate
+        - layup

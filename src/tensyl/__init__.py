@@ -85,6 +85,7 @@ from tensyl.materials import (
     Ply,
     isotropic_plate,
     laminate_plate,
+    layup,
 )
 from tensyl.sections import (
     BeamSection,
@@ -168,6 +169,7 @@ __all__ = [
     "isosceles_triangle_grid_cell",
     "kagome_cell",
     "laminate_plate",
+    "layup",
     "orthogrid_cell",
     "regular_hexagonal_grid_cell",
     "sandwich_hexagonal_core_cell",

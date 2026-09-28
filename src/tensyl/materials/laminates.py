@@ -66,6 +66,18 @@ class Ply:
     angle_rad: float = 0.0
     label: str = ""
 
+    @classmethod
+    def from_degrees(
+        cls, material: PlyMaterial, thickness: float, angle_deg: float, label: str = ""
+    ) -> Ply:
+        """Create a ply with an angle in degrees, preserving its label.
+
+        Angles follow the same positive rotation about the local normal as
+        ``angle_rad``. Thickness must be positive and the angle finite.
+        """
+
+        return cls(material, thickness, float(np.deg2rad(angle_deg)), label)
+
     def __post_init__(self) -> None:
         object.__setattr__(self, "thickness", positive_number(self.thickness, name="thickness"))
         angle = float(self.angle_rad)
