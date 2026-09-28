@@ -8,6 +8,11 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Infer missing validity pitch from the longest cell repeat vector or largest
+  family spacing while preserving caller-supplied scales. Add
+  `ValidityContext.from_surface_point` for local curvature context. Reports
+  distinguish unavailable checks from exceeded thresholds, and assumptions now
+  state that cell-scale deformation relaxation is not solved.
 - Base the membrane-bending coupling warning on `B_residual`, measured in
   Mandel components after the best common reference shift. Rotating the axes
   or moving the reference surface no longer changes this indicator. Keep

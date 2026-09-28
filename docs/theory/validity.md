@@ -90,10 +90,31 @@ these diagnostics do not recover digits already lost in an imported matrix.
 
 ## Interpreting Warnings
 
-Warnings are not pass/fail certification criteria. They are prompts for
-engineering review. A warning means the ABD stiffness should not be used blindly for
-the intended response without checking assumptions, comparing against a detailed
-model, or changing the model family.
+Warnings distinguish missing evidence from a computed concern:
+
+| Code | Meaning |
+| --- | --- |
+| `validity_context_missing` | No scale context was supplied or inferred; scale checks did not run. |
+| `h_over_R_unavailable`, `p_over_R_unavailable`, `p_over_L_response_unavailable` | Context exists, but inputs for that particular check are missing. |
+| `*_exceeds_threshold` | The ratio was computed and reached its warning threshold. |
+| `rank_deficient_tangent` | At least one generalized mode has no resolved stiffness at the numerical rank tolerance. |
+| `negative_energy_mode` | The tangent has a negative eigenvalue beyond roundoff. |
+
+`EnergyHomogenizer` fills an omitted pitch from the longest repeat vector in
+`cell.geometry`. For `stiffener_family_cell`, it uses the largest family
+spacing. This is a conservative cell-size estimate, not a mode-dependent
+wavelength. An explicit `ValidityContext.pitch` always wins. Height, curvature,
+and response length still need context; an inferred pitch alone cannot run any
+of the scale-separation checks.
+
+Use `ValidityContext.from_surface_point(point, characteristic_height=...,
+response_length=...)` in a field's validity factory to take the minimum radius
+from its `SurfacePoint`. Flat points supply infinity, giving zero height/radius
+and pitch/radius ratios when those lengths are known.
+
+These warnings are prompts for engineering review, not certification criteria.
+An unavailable check is not a failed check, and absence of a warning does not
+prove the assumptions hold.
 
 So a warning fired — now what? In practice:
 
@@ -104,9 +125,42 @@ So a warning fired — now what? In practice:
 - or change the model family entirely if the separation of scales simply does
   not hold.
 
-None of these steps is optional. They are how you find out whether the
-approximation actually holds for your geometry. This is the boundary drawn in
+Those checks establish whether the approximation holds for your geometry.
+This is the boundary drawn in
 ["What Tensyl Is Not"](../index.md).
+
+## The Affine Assumption
+
+The homogenizer makes every rib follow the smeared panel strain through
+Nemeth's first-approximation member map. It adds the resulting skin and member
+energies without solving for cell-scale displacements. See
+[Nemeth, equations 30–39](https://ntrs.nasa.gov/citations/20110004039) and the
+[implemented strain map](tangent-plane-homogenization.md).
+
+That constraint can make a panel too stiff. In a beam/skin model where the
+affine deformation is admissible, allowing internal displacements to relax
+can only lower the minimum energy at fixed macroscopic strain:
+
+$$
+W_\mathrm{relaxed}(\boldsymbol\eta)
+=\min_{\mathbf q} W(\boldsymbol\eta,\mathbf q)
+\le W(\boldsymbol\eta,\mathbf 0)=W_\mathrm{affine}(\boldsymbol\eta).
+$$
+
+This is the Voigt-like upper-bound interpretation of the affine model. It is
+not a certified bound against every shell or solid model: that comparison
+also depends on compatible kinematics, member assumptions, joints, and how
+skin and ribs connect. Hexagonal and star patterns with thin skins deserve
+particular care because member bending and cell rearrangement can make their
+in-plane response much softer than the affine prediction. A small pitch ratio
+does not test this limitation; compare the relevant modes with a model that
+allows that relaxation.
+
+Section assumptions matter too. Tensyl's thin-wall helpers supply open-section
+torsion. A hat closed by its attached skin forms a closed cell and can have a
+very different torsional stiffness. Read
+[Which J Should Be Used?](../validation/sp8007-reconciliation.md#which-j-should-be-used)
+before using an open hat section for that panel.
 
 ## Out of Scope for the First Model Family
 

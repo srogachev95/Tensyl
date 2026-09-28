@@ -42,7 +42,8 @@ def test_residual_coupling_is_invariant_to_reference_and_rotation() -> None:
             stiffness = shift_reference_surface(result.stiffness.rotate(angle), offset)
             report = validity_report_for_stiffness(stiffness)
             assert report.coupling_ratios["B_residual"] == pytest.approx(residual, rel=1e-11)
-            assert report.warnings == result.validity.warnings
+            warning = "membrane_bending_coupling_exceeds_threshold"
+            assert (warning in report.warnings) == (warning in result.validity.warnings)
 
 
 def test_symmetric_laminate_only_has_reference_surface_coupling() -> None:
@@ -92,3 +93,91 @@ def test_zero_stiffness_has_finite_zero_coupling() -> None:
     report = validity_report_for_stiffness(zero_skin())
     assert report.coupling_ratios == {"B_fro": 0.0, "B_residual": 0.0}
     assert "rank_deficient_tangent" in report.warnings
+
+
+def test_cell_pitch_fills_missing_context_without_overriding_the_caller() -> None:
+    from tensyl import ValidityContext
+
+    cell = _eccentric_grid()
+    partial = ValidityContext(characteristic_height=0.5, min_radius=100.0, response_length=200.0)
+    report = EnergyHomogenizer().compute(cell, validity_context=partial).validity
+    assert partial.pitch is None
+    assert report.h_over_R == pytest.approx(0.005)
+    assert report.p_over_R == pytest.approx(5.0 / 100.0)
+    assert report.p_over_L_response == pytest.approx(5.0 / 200.0)
+
+    explicit = ValidityContext(pitch=2.0, min_radius=100.0, response_length=200.0)
+    report = EnergyHomogenizer().compute(cell, validity_context=explicit).validity
+    assert report.p_over_R == pytest.approx(2.0 / 100.0)
+    assert report.p_over_L_response == pytest.approx(2.0 / 200.0)
+
+
+def test_pitch_from_oblique_repeat_vectors_uses_their_lengths() -> None:
+    from tensyl import CellEdge, CellNode, CellVector, ValidityContext, graph_unit_cell
+
+    cell = graph_unit_cell(
+        skin=zero_skin(),
+        area=6.0,
+        nodes=(CellNode(0.0, 0.0), CellNode(3.0, 4.0)),
+        edges=(CellEdge(0, 1, beam_section(), axial_eccentricity=0.0),),
+        repeat_vectors=(CellVector(3.0, 4.0), CellVector(0.0, 2.0)),
+    )
+    report = (
+        EnergyHomogenizer()
+        .compute(cell, validity_context=ValidityContext(min_radius=100.0))
+        .validity
+    )
+    assert report.p_over_R == pytest.approx(0.05)
+
+
+def test_family_pitch_uses_largest_spacing() -> None:
+    from tensyl import StiffenerFamily, ValidityContext, stiffener_family_cell
+
+    cell = stiffener_family_cell(
+        skin=zero_skin(),
+        families=(
+            StiffenerFamily(beam_section(), 2.0, 0.0, 0.0),
+            StiffenerFamily(beam_section(), 7.0, 0.4, 0.0),
+        ),
+    )
+    report = (
+        EnergyHomogenizer()
+        .compute(cell, validity_context=ValidityContext(min_radius=100.0))
+        .validity
+    )
+    assert report.p_over_R == pytest.approx(0.07)
+
+
+def test_missing_context_and_unavailable_checks_remain_distinct() -> None:
+    from tensyl import BeamMember, CanonicalUnitCell, ValidityContext
+
+    no_geometry = CanonicalUnitCell(
+        area=1.0, skin=zero_skin(), members=(BeamMember(beam_section(), 1.0, 0.0, 0.0),)
+    )
+    missing = EnergyHomogenizer().compute(no_geometry).validity
+    assert "validity_context_missing" in missing.warnings
+    partial = EnergyHomogenizer().compute(no_geometry, validity_context=ValidityContext()).validity
+    assert "validity_context_missing" not in partial.warnings
+    assert "p_over_R_unavailable" in partial.warnings
+    inferred = EnergyHomogenizer().compute(_eccentric_grid()).validity
+    assert "validity_context_missing" not in inferred.warnings
+    assert "h_over_R_unavailable" in inferred.warnings
+    assert "p_over_R_unavailable" in inferred.warnings
+    assert "p_over_L_response_unavailable" in inferred.warnings
+
+
+def test_validity_context_from_surface_point_supports_flat_and_curved_geometry() -> None:
+    from tensyl import Cylinder, FlatPlate, ValidityContext
+
+    flat = ValidityContext.from_surface_point(FlatPlate().point_at(0.0, 0.0))
+    assert flat.min_radius == np.inf
+    assert flat.pitch is None
+    curved = ValidityContext.from_surface_point(
+        Cylinder(radius=12.0).point_at(0.2, 0.4),
+        characteristic_height=0.2,
+        pitch=1.5,
+        response_length=20.0,
+    )
+    assert curved == ValidityContext(
+        min_radius=12.0, characteristic_height=0.2, pitch=1.5, response_length=20.0
+    )

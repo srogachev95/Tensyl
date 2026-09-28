@@ -123,6 +123,22 @@ print(result.assumptions)
 print(result.validity.warnings)
 ```
 
+When pitch is omitted from `ValidityContext`, the homogenizer uses the longest
+cell repeat vector, or the largest spacing supplied to `stiffener_family_cell`.
+It preserves every scale the caller supplies. For a curved surface, use
+`ValidityContext.from_surface_point(point, characteristic_height=...,
+response_length=...)` to include local curvature.
+
+| Warning kind | What it tells you |
+| --- | --- |
+| `validity_context_missing` | No scale context could be supplied or inferred. |
+| `*_unavailable` | That check did not run because an input is missing. |
+| `*_exceeds_threshold` | A computed ratio reached its threshold. |
+
+The [validity limits](../theory/validity.md) explain the remaining affine
+deformation assumption. It can overestimate stiffness in patterns that soften
+by bending and rearranging within a cell, even when pitch is small.
+
 Selected output, rounded:
 
 | Item | Value |
