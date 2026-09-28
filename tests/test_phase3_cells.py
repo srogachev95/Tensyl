@@ -735,3 +735,58 @@ def test_sandwich_orthogrid_core_cell_uses_shifted_faces() -> None:
 
     np.testing.assert_allclose(cell.skin.B, np.zeros((3, 3)), atol=1.0e-12)
     np.testing.assert_allclose(cell.skin.D, 6.0 * np.eye(3), atol=1.0e-12)
+
+
+@pytest.mark.parametrize(
+    ("constructor", "section_arguments", "dimensions"),
+    [
+        (
+            sandwich_orthogrid_core_cell,
+            ("e1_section", "e2_section"),
+            {"e1_pitch": 1.0, "e2_pitch": 1.2},
+        ),
+        (
+            sandwich_hexagonal_core_cell,
+            ("e2_section", "diagonal_section"),
+            {"e1_half_pitch": 0.8, "diagonal_e2_rise": 0.4, "e2_member_length": 0.9},
+        ),
+        (
+            sandwich_star_core_cell,
+            ("e1_section", "diagonal_section"),
+            {"e1_pitch": 1.0, "e2_pitch": 0.9},
+        ),
+    ],
+)
+def test_sandwich_core_offset_lets_the_reference_surface_sit_anywhere(
+    constructor, section_arguments, dimensions
+) -> None:
+    # Nemeth puts the reference at the core midplane. Moving it to the bottom
+    # face must give the same panel, just expressed about a different surface.
+    face = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.02)
+    sections = {name: _section() for name in section_arguments}
+    about_core = EnergyHomogenizer().compute(
+        constructor(
+            bottom_face=face,
+            top_face=face,
+            bottom_face_to_reference=0.51,
+            top_face_to_reference=-0.51,
+            **sections,
+            **dimensions,
+        )
+    )
+    about_bottom_face = EnergyHomogenizer().compute(
+        constructor(
+            bottom_face=face,
+            top_face=face,
+            bottom_face_to_reference=0.0,
+            top_face_to_reference=-1.02,
+            core_axial_eccentricity=0.51,
+            **sections,
+            **dimensions,
+        )
+    )
+    expected = shift_reference_surface(about_core.stiffness, -0.51)
+
+    np.testing.assert_allclose(
+        about_bottom_face.stiffness.C8, expected.C8, rtol=1.0e-12, atol=1.0e-6
+    )

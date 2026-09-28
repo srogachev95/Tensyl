@@ -278,6 +278,14 @@ Named cells represent the repeating grid, not the joint details. They do not
 calculate intersection stress, fastener behavior, local crippling, or weld
 effects.
 
+The sandwich cells follow Nemeth in putting the reference surface at the core
+midplane, so by default the core members sit on it with zero offset. You can
+put the reference somewhere else, such as the bottom face, but then say where
+the core is: pass `core_axial_eccentricity`, the signed distance from the
+reference surface to the core centroid along `+n`. The face shifts and the core
+offset must all point at the same reference surface, or the bending stiffness
+will describe a panel you did not build.
+
 The figures below show the source patterns for the less familiar grids. The
 same shapes are checked numerically in
 [Nemeth Cell Verification](../validation/nemeth-cells.md).

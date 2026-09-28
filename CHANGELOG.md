@@ -21,6 +21,9 @@ bug fixes that correct clearly wrong behavior.
   density, and a result now reports `areal_mass=None` with an assumption when
   the skin or any member has no mass data. It used to report the skin's mass
   alone, which understated a stiffened panel.
+- Add `core_axial_eccentricity` to the sandwich core cells. The core used to be
+  pinned to the reference surface, which is right only when that surface is the
+  core midplane; any other choice of face shifts gave the wrong `D` block.
 
 ## 0.3.1 - 2026-07-28
 

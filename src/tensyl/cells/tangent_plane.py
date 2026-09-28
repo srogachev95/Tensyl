@@ -1805,6 +1805,7 @@ def sandwich_orthogrid_core_cell(
     e2_section: BeamSection,
     e1_pitch: float,
     e2_pitch: float,
+    core_axial_eccentricity: float = 0.0,
     include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
@@ -1825,6 +1826,11 @@ def sandwich_orthogrid_core_cell(
         e2_section: Section stiffness for core members along local ``e2``.
         e1_pitch: Core repeat span along local ``e1``.
         e2_pitch: Core repeat span along local ``e2``.
+        core_axial_eccentricity: Signed offset from the sandwich reference
+            surface to the core centroid along ``+n``. The default ``0.0``
+            is Nemeth's choice: the reference surface sits at the core
+            midplane. Set it whenever the face shifts above point at a
+            different reference surface, or the core is not centered on it.
         include_in_plane_bending: Whether to include member bending within the
             panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
@@ -1853,8 +1859,8 @@ def sandwich_orthogrid_core_cell(
         e2_section=e2_section,
         e1_pitch=e1_pitch,
         e2_pitch=e2_pitch,
-        e1_axial_eccentricity=0.0,
-        e2_axial_eccentricity=0.0,
+        e1_axial_eccentricity=core_axial_eccentricity,
+        e2_axial_eccentricity=core_axial_eccentricity,
         include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
@@ -1872,6 +1878,7 @@ def sandwich_hexagonal_core_cell(
     e1_half_pitch: float,
     diagonal_e2_rise: float,
     e2_member_length: float,
+    core_axial_eccentricity: float = 0.0,
     include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
@@ -1889,6 +1896,11 @@ def sandwich_hexagonal_core_cell(
         e1_half_pitch: Nemeth's horizontal construction dimension ``a``.
         diagonal_e2_rise: Nemeth's diagonal rise ``b``.
         e2_member_length: Nemeth's vertical member length ``c``.
+        core_axial_eccentricity: Signed offset from the sandwich reference
+            surface to the core centroid along ``+n``. The default ``0.0``
+            is Nemeth's choice: the reference surface sits at the core
+            midplane. Set it whenever the face shifts above point at a
+            different reference surface, or the core is not centered on it.
         include_in_plane_bending: Whether to include member bending within the
             panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
@@ -1918,8 +1930,8 @@ def sandwich_hexagonal_core_cell(
         e1_half_pitch=e1_half_pitch,
         diagonal_e2_rise=diagonal_e2_rise,
         e2_member_length=e2_member_length,
-        e2_axial_eccentricity=0.0,
-        diagonal_axial_eccentricity=0.0,
+        e2_axial_eccentricity=core_axial_eccentricity,
+        diagonal_axial_eccentricity=core_axial_eccentricity,
         include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
@@ -1936,6 +1948,7 @@ def sandwich_star_core_cell(
     diagonal_section: BeamSection,
     e1_pitch: float,
     e2_pitch: float,
+    core_axial_eccentricity: float = 0.0,
     include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
@@ -1952,6 +1965,11 @@ def sandwich_star_core_cell(
         diagonal_section: Section stiffness for core diagonal members.
         e1_pitch: Nemeth's star base dimension ``B``.
         e2_pitch: Nemeth's star height dimension ``H``.
+        core_axial_eccentricity: Signed offset from the sandwich reference
+            surface to the core centroid along ``+n``. The default ``0.0``
+            is Nemeth's choice: the reference surface sits at the core
+            midplane. Set it whenever the face shifts above point at a
+            different reference surface, or the core is not centered on it.
         include_in_plane_bending: Whether to include member bending within the
             panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
@@ -1980,8 +1998,8 @@ def sandwich_star_core_cell(
         positive_diagonal_section=diagonal_section,
         e1_pitch=e1_pitch,
         e2_pitch=e2_pitch,
-        e1_axial_eccentricity=0.0,
-        diagonal_axial_eccentricity=0.0,
+        e1_axial_eccentricity=core_axial_eccentricity,
+        diagonal_axial_eccentricity=core_axial_eccentricity,
         include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
