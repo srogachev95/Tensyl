@@ -287,6 +287,44 @@ The transverse shear line is separate. Abaqus documents
 `*TRANSVERSE SHEAR STIFFNESS` as a shell-compatible option with first-direction
 stiffness, second-direction stiffness, and coupling term fields.
 
+Use the adapter to write those numbers without hand-packing them:
+
+```python
+from tensyl.adapters import abaqus_shell_general_section
+
+deck_fragment = abaqus_shell_general_section(
+    stiffness, elset="panel", orientation="tensyl_axes"
+)
+```
+
+Here `stiffness` is the local `ABDStiffness`; the element set and orientation
+must already exist in the solver model. Align its section axes and positive
+normal with the Tensyl frame, and place the shell reference surface where the
+stiffness was calculated. The adapter applies no second offset or rotation.
+
+The [Abaqus laminated-panel derivation](https://docs.software.vt.edu/abaqusv2025/English/SIMACAEEXARefMap/simaexa-c-laminpanel.htm)
+defines moments as the thickness integral of stress times positive `z`, and
+uses the same positive first thickness moment for `B` as Tensyl. Its generalized
+section strains therefore match Tensyl's `epsilon(z) = epsilon0 + z*kappa`,
+including engineering shear and twist. No sign reversal or factor of two is
+needed when axes and normal agree.
+
+The [general-section keyword reference](https://docs.software.vt.edu/abaqusv2025/English/SIMACAEKEYRefMap/simakey-r-shellgeneralsection.htm)
+specifies the 21-entry order above and defines `DENSITY` as **mass per surface
+area**. The exporter copies `areal_mass` directly and omits density when it is
+unknown. Pass `explicit=True` to require positive known mass for Abaqus/Explicit.
+This density does not provide rotary inertia; see
+[Using a General Shell Section](https://docs.software.vt.edu/abaqusv2025/English/SIMACAEELMRefMap/simaelm-c-usingshellgensect.htm).
+
+The exporter requires positive definite `As`: the
+[shear keyword](https://docs.software.vt.edu/abaqusv2025/English/SIMACAEKEYRefMap/simakey-r-transverseshearstiffness.htm)
+silently replaces a zero shear diagonal with the other diagonal, so a mechanism
+cannot be handed over faithfully through this path. Abaqus's element-dependent
+shear treatment still applies. Inspect Tensyl's validity report before export.
+Tests verify packing, signs, and density against these documented contracts;
+an Abaqus execution has not been qualified. Run the patch check below for the
+element and analysis procedure you intend to use.
+
 For a reduced workflow, define an engineering-constants material and use
 `*SHELL SECTION` or a material-based `*SHELL GENERAL SECTION`. That is convenient
 when `B = 0` and the ABD stiffness behaves like a conventional orthotropic

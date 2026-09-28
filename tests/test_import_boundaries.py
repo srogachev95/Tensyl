@@ -76,6 +76,7 @@ def test_public_package_does_not_depend_on_validation_tooling() -> None:
 
 def test_core_does_not_depend_on_higher_layers() -> None:
     forbidden_prefixes = (
+        "tensyl.adapters",
         "tensyl.cells",
         "tensyl.fields",
         "tensyl.geometry",
