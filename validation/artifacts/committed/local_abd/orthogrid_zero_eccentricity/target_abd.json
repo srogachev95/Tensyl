@@ -1,5 +1,5 @@
 {
-  "areal_mass": 0.008,
+  "areal_mass": null,
   "blocks": {
     "A": [
       [
@@ -168,13 +168,16 @@
   "schema_version": "tensyl.validation.local-abd-target.v1",
   "validity": {
     "coupling_ratios": {
-      "B_fro": 0.0
+      "B_fro": 0.0,
+      "B_residual": 0.0
     },
     "h_over_R": null,
     "p_over_L_response": null,
     "p_over_R": null,
     "warnings": [
-      "validity_context_missing"
+      "h_over_R_unavailable",
+      "p_over_R_unavailable",
+      "p_over_L_response_unavailable"
     ]
   }
 }
