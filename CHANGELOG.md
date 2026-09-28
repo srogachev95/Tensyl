@@ -12,6 +12,8 @@ bug fixes that correct clearly wrong behavior.
   `FlatPlate` by value. Equal stiffnesses now work as dictionary keys instead
   of raising NumPy's array truth-value error, and signed zeros no longer split
   the hashes of equal values.
+- Keep the attached validity report when rotating an `ABDStiffness`; rotation
+  used to drop it silently.
 
 ## 0.3.1 - 2026-07-28
 

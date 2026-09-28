@@ -171,7 +171,9 @@ def rotate_abd_stiffness(stiffness: ABDStiffness, angle_rad: float) -> ABDStiffn
         angle_rad: Counterclockwise rotation angle about the local normal.
 
     Returns:
-        Equivalent ``ABDStiffness`` with rotated blocks and frame.
+        Equivalent ``ABDStiffness`` with rotated blocks and frame. Metadata
+        and the attached validity report carry over, because rotation changes
+        the components, not the panel they describe.
 
     Raises:
         ValueError: If ``angle_rad`` is not finite.
@@ -184,6 +186,7 @@ def rotate_abd_stiffness(stiffness: ABDStiffness, angle_rad: float) -> ABDStiffn
         convention=stiffness.convention,
         areal_mass=stiffness.areal_mass,
         metadata=dict(stiffness.metadata),
+        validity=stiffness.validity,
     )
 
 

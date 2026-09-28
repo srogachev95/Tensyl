@@ -281,6 +281,21 @@ def test_identical_homogenization_results_compare_equal_and_hash() -> None:
     assert hash(first) == hash(second)
 
 
+def test_rotating_a_homogenized_stiffness_keeps_its_validity_report() -> None:
+    skin = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.002)
+    cell = unidirectional_cell(
+        skin=skin,
+        member_section=_section(),
+        spacing=0.1,
+        axial_eccentricity=0.01,
+    )
+    result = EnergyHomogenizer().compute(cell)
+
+    rotated = result.stiffness.rotate(0.4)
+
+    assert rotated.validity == result.validity
+
+
 def test_equilateral_isogrid_has_expected_membrane_symmetry() -> None:
     section = _section(shear=False)
     cell = equilateral_isogrid_cell(
