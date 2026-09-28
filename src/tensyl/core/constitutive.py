@@ -11,6 +11,7 @@ import numpy as np
 
 from tensyl.core._validation import (
     finite_number,
+    frozen_value,
     nonnegative_number,
     positive_number,
     readonly_array,
@@ -126,26 +127,7 @@ def _readonly_tangent(values: FloatArray, *, name: str) -> FloatArray:
 
 
 def _hash_array(values: FloatArray) -> int:
-    array = np.ascontiguousarray(values)
-    return hash((array.shape, array.dtype.str, array.tobytes()))
-
-
-def _freeze_for_hash(value: Any) -> Any:
-    # Metadata can contain nested NumPy arrays from verification or import
-    # paths. Hash the semantic payload instead of falling back to object ids.
-    if isinstance(value, Mapping):
-        return tuple(sorted((key, _freeze_for_hash(item)) for key, item in value.items()))
-    if isinstance(value, np.ndarray):
-        return ("ndarray", value.shape, value.dtype.str, value.tobytes())
-    if isinstance(value, (list, tuple)):
-        return tuple(_freeze_for_hash(item) for item in value)
-    if isinstance(value, (set, frozenset)):
-        return tuple(sorted(_freeze_for_hash(item) for item in value))
-    try:
-        hash(value)
-    except TypeError:
-        return repr(value)
-    return value
+    return hash(frozen_value(values))
 
 
 @runtime_checkable
@@ -555,9 +537,23 @@ class ABDStiffness:
                 self.frame,
                 self.convention,
                 self.areal_mass,
-                _freeze_for_hash(self.metadata),
-                _freeze_for_hash(self.validity),
+                frozen_value(self.metadata),
+                frozen_value(self.validity),
             )
+        )
+
+    def __eq__(self, other: object) -> bool:
+        # The generated dataclass __eq__ would compare NumPy arrays and raise.
+        # Compare the same payload that __hash__ fingerprints.
+        if not isinstance(other, ABDStiffness):
+            return NotImplemented
+        return (
+            np.array_equal(self.C8, other.C8)
+            and self.frame == other.frame
+            and self.convention == other.convention
+            and self.areal_mass == other.areal_mass
+            and frozen_value(self.metadata) == frozen_value(other.metadata)
+            and frozen_value(self.validity) == frozen_value(other.validity)
         )
 
     @property

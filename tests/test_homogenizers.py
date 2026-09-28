@@ -34,6 +34,47 @@ def test_beam_section_rejects_invalid_stiffness() -> None:
         BeamSection(EA=1.0, EIy=1.0, EIz=1.0, GJ=1.0, EIyz=1.0)
 
 
+def test_beam_section_rejects_negative_mass_per_length() -> None:
+    with pytest.raises(ValueError, match="mass_per_length must be finite and nonnegative"):
+        BeamSection(EA=1.0, EIy=1.0, EIz=1.0, GJ=1.0, mass_per_length=-1.0)
+
+
+def test_stiffened_panel_areal_mass_includes_the_stiffeners() -> None:
+    aluminum = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
+    skin = isotropic_plate(aluminum, thickness=0.08)
+    blade = blade_section(material=aluminum, height=0.5, thickness=0.05)
+    cell = orthogrid_cell(
+        skin=skin,
+        e1_section=blade.section,
+        e2_section=blade.section,
+        e1_pitch=4.0,
+        e2_pitch=5.0,
+        e1_axial_eccentricity=0.29,
+        e2_axial_eccentricity=0.29,
+    )
+
+    result = EnergyHomogenizer().compute(cell)
+
+    blade_mass_per_length = 0.1 * 0.5 * 0.05
+    expected = 0.1 * 0.08 + blade_mass_per_length / 5.0 + blade_mass_per_length / 4.0
+    assert result.stiffness.areal_mass == pytest.approx(expected)
+
+
+def test_areal_mass_is_omitted_when_a_member_has_no_mass() -> None:
+    skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickness=0.08)
+    cell = unidirectional_cell(
+        skin=skin,
+        member_section=_section(),
+        spacing=4.0,
+        axial_eccentricity=0.3,
+    )
+
+    result = EnergyHomogenizer().compute(cell)
+
+    assert result.stiffness.areal_mass is None
+    assert any("areal mass" in assumption.lower() for assumption in result.assumptions)
+
+
 def test_canonical_cell_rejects_invalid_area_and_empty_members() -> None:
     with pytest.raises(ValueError, match="area must be finite and positive"):
         CanonicalUnitCell(
@@ -225,6 +266,24 @@ def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
     np.testing.assert_allclose(direct.stiffness.C8, energy.stiffness.C8, rtol=1.0e-12, atol=1.0e-12)
 
 
+def test_direct_and_energy_paths_agree_on_areal_mass() -> None:
+    skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickness=0.08)
+    section = BeamSection(EA=1.0e5, EIy=10.0, EIz=5.0, GJ=2.0, mass_per_length=0.004)
+
+    energy = EnergyHomogenizer().compute(
+        unidirectional_cell(skin=skin, member_section=section, spacing=3.0, axial_eccentricity=0.2)
+    )
+    direct = DirectECHomogenizer().compute(
+        skin=skin,
+        families=(
+            StiffenerFamily(section=section, spacing=3.0, angle_rad=0.0, axial_eccentricity=0.2),
+        ),
+    )
+
+    assert energy.stiffness.areal_mass == pytest.approx(0.1 * 0.08 + 0.004 / 3.0)
+    assert direct.stiffness.areal_mass == pytest.approx(energy.stiffness.areal_mass)
+
+
 def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
     section = _section()
     angle = 0.41
@@ -264,6 +323,36 @@ def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
         rtol=1.0e-12,
         atol=1.0e-10,
     )
+
+
+def test_identical_homogenization_results_compare_equal_and_hash() -> None:
+    skin = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.002)
+    cell = unidirectional_cell(
+        skin=skin,
+        member_section=_section(),
+        spacing=0.1,
+        axial_eccentricity=0.01,
+    )
+    first = EnergyHomogenizer().compute(cell)
+    second = EnergyHomogenizer().compute(cell)
+
+    assert first == second
+    assert hash(first) == hash(second)
+
+
+def test_rotating_a_homogenized_stiffness_keeps_its_validity_report() -> None:
+    skin = isotropic_plate(IsotropicMaterial(E=70.0e9, nu=0.33), thickness=0.002)
+    cell = unidirectional_cell(
+        skin=skin,
+        member_section=_section(),
+        spacing=0.1,
+        axial_eccentricity=0.01,
+    )
+    result = EnergyHomogenizer().compute(cell)
+
+    rotated = result.stiffness.rotate(0.4)
+
+    assert rotated.validity == result.validity
 
 
 def test_equilateral_isogrid_has_expected_membrane_symmetry() -> None:

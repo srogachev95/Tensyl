@@ -82,7 +82,9 @@ This applies to:
 - the corresponding `StiffenerFamily` inputs;
 - named-cell family inputs such as `e1_axial_eccentricity` and
   `diagonal_shear_eccentricity`;
-- sandwich `bottom_face_to_reference` and `top_face_to_reference` shifts.
+- sandwich `bottom_face_to_reference` and `top_face_to_reference` shifts;
+- sandwich `core_axial_eccentricity`, which defaults to `0` because Nemeth
+  places the reference surface at the core midplane.
 
 For a cylinder whose local normal points outward, an external stiffener has a
 positive eccentricity. An internal stiffener has a negative eccentricity.

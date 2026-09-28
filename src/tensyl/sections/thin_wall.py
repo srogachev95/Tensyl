@@ -245,6 +245,9 @@ class ThinWallSection:
                 else None
             ),
             EIyz=self.material.E * properties.Iyz,
+            mass_per_length=(
+                None if self.material.density is None else self.material.density * properties.area
+            ),
             metadata=metadata,
         )
         object.__setattr__(self, "segments", segments)

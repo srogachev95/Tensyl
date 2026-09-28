@@ -10,6 +10,7 @@ import numpy as np
 
 from tensyl.core._validation import (
     finite_number,
+    frozen_value,
     normalized_vector3,
     positive_number,
     readonly_array,
@@ -123,6 +124,32 @@ class SurfacePoint:
         object.__setattr__(self, "min_radius", min_radius)
         object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
+    def _key(self) -> tuple[Any, ...]:
+        return (
+            self.u,
+            self.v,
+            frozen_value(self.position),
+            frozen_value(self.tangent_u),
+            frozen_value(self.tangent_v),
+            frozen_value(self.metric),
+            frozen_value(self.curvature),
+            self.frame,
+            self.jacobian,
+            self.principal_curvatures,
+            self.min_radius,
+            frozen_value(self.metadata),
+        )
+
+    def __eq__(self, other: object) -> bool:
+        # Array fields make the generated dataclass __eq__ raise; compare the
+        # frozen payload instead.
+        if not isinstance(other, SurfacePoint):
+            return NotImplemented
+        return self._key() == other._key()
+
+    def __hash__(self) -> int:
+        return hash(self._key())
+
 
 class Surface(Protocol):
     """Protocol for parametric shell midsurfaces.
@@ -154,8 +181,9 @@ class FlatPlate:
 
     Attributes:
         origin: Three-dimensional point where ``u = v = 0``.
-        e1: Unit direction for increasing ``u``.
-        e2: Unit direction for increasing ``v``.
+        e1: Direction for increasing ``u``; normalized on construction.
+        e2: Direction for increasing ``v``; normalized on construction and
+            required to be orthogonal to ``e1``.
         label: Frame and metadata label attached to sampled points.
     """
 
@@ -173,13 +201,31 @@ class FlatPlate:
             msg = "e1 and e2 must not be parallel."
             raise ValueError(msg)
         normal /= norm
-        # Frame2D re-orthonormalizes e2 against e1 and n, so downstream code
-        # sees a right-handed local basis even when the input axes are only
-        # approximately orthogonal.
+        # Frame2D validates the basis rather than repairing it: axes that are
+        # not orthogonal within its tolerance raise instead of being bent into
+        # shape behind the caller's back.
         frame = Frame2D(e1=e1, e2=e2, n=normal, label=self.label)
         object.__setattr__(self, "origin", _readonly_vector(self.origin, name="origin"))
         object.__setattr__(self, "e1", frame.e1)
         object.__setattr__(self, "e2", frame.e2)
+
+    def _key(self) -> tuple[Any, ...]:
+        return (
+            frozen_value(self.origin),
+            frozen_value(self.e1),
+            frozen_value(self.e2),
+            self.label,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        # Fields compare surfaces by value, so equal plates must not raise on
+        # array truth values.
+        if not isinstance(other, FlatPlate):
+            return NotImplemented
+        return self._key() == other._key()
+
+    def __hash__(self) -> int:
+        return hash(self._key())
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
         """Return the flat-plate geometry at Cartesian coordinates.
@@ -598,24 +644,28 @@ class Ellipsoid:
         """Return ellipsoid geometry away from the poles.
 
         Args:
-            u: Polar angle ``phi`` in radians.
+            u: Polar angle ``phi`` in radians, strictly between ``0`` and
+                ``pi``.
             v: Azimuth angle ``theta`` in radians.
 
         Returns:
-            A ``SurfacePoint`` with metric, curvature, and principal
-            curvatures computed from the local ellipsoid chart.
+            A ``SurfacePoint`` with outward normal, metric, curvature, and
+            principal curvatures computed from the local ellipsoid chart.
 
         Raises:
-            ValueError: If either coordinate is non-finite or the chart is
-                singular at the requested point.
+            ValueError: If either coordinate is non-finite, ``phi`` is outside
+                ``(0, pi)``, or the chart is singular at the requested point.
         """
 
         phi = finite_number(u, name="u")
         theta = finite_number(v, name="v")
-        sp = float(np.sin(phi))
-        if abs(sp) <= _TOLERANCE:
-            msg = "ellipsoid coordinates are singular at the poles."
+        if phi <= _TOLERANCE or phi >= np.pi - _TOLERANCE:
+            # Outside (0, pi) the chart folds back on itself and the cross
+            # product of the tangents points inward, which would silently flip
+            # every eccentricity sign. The poles themselves are singular.
+            msg = "ellipsoid coordinates are singular at the poles; phi must lie in (0, pi)."
             raise ValueError(msg)
+        sp = float(np.sin(phi))
         cp = float(np.cos(phi))
         st = float(np.sin(theta))
         ct = float(np.cos(theta))

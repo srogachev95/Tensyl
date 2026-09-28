@@ -10,7 +10,12 @@ from typing import Any, Literal, Protocol
 import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
-from tensyl.core._validation import optional_positive_number, positive_number, readonly_array
+from tensyl.core._validation import (
+    frozen_value,
+    optional_positive_number,
+    positive_number,
+    readonly_array,
+)
 from tensyl.core.constitutive import (
     ABDStiffness,
     ABDStiffnessCoefficients,
@@ -157,6 +162,19 @@ class ValidityReport:
         object.__setattr__(self, "coupling_ratios", MappingProxyType(dict(self.coupling_ratios)))
         object.__setattr__(self, "warnings", tuple(self.warnings))
 
+    def __hash__(self) -> int:
+        # MappingProxyType is not hashable; hash the sorted ratios instead so
+        # reports can sit inside hashed stiffness values.
+        return hash(
+            (
+                self.h_over_R,
+                self.p_over_R,
+                self.p_over_L_response,
+                frozen_value(self.coupling_ratios),
+                self.warnings,
+            )
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class HomogenizationResult:
@@ -186,6 +204,28 @@ class HomogenizationResult:
         object.__setattr__(self, "stiffness", stiffness)
         object.__setattr__(self, "diagnostics", MappingProxyType(dict(self.diagnostics)))
         object.__setattr__(self, "assumptions", tuple(self.assumptions))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, HomogenizationResult):
+            return NotImplemented
+        return (
+            self.stiffness == other.stiffness
+            and self.validity == other.validity
+            and frozen_value(self.diagnostics) == frozen_value(other.diagnostics)
+            and self.assumptions == other.assumptions
+            and self.source == other.source
+        )
+
+    def __hash__(self) -> int:
+        return hash(
+            (
+                self.stiffness,
+                self.validity,
+                frozen_value(self.diagnostics),
+                self.assumptions,
+                self.source,
+            )
+        )
 
     def reduced_orthotropic_properties(
         self,
@@ -424,6 +464,42 @@ def member_energy(member: BeamMember, eta: FloatArray) -> float:
     )
 
 
+def _cell_areal_mass(cell: CanonicalUnitCell) -> float | None:
+    # Areal mass is only meaningful when the skin and every member know their
+    # mass. Reporting skin-only mass for a stiffened panel would understate it.
+    if cell.skin.areal_mass is None:
+        return None
+    member_mass = 0.0
+    for member in cell.members:
+        if member.section.mass_per_length is None:
+            return None
+        member_mass += member.multiplicity * member.length * member.section.mass_per_length
+    return cell.skin.areal_mass + member_mass / cell.area
+
+
+def _family_areal_mass(
+    skin: ABDStiffness,
+    families: tuple[StiffenerFamily, ...],
+) -> float | None:
+    if skin.areal_mass is None:
+        return None
+    family_mass = 0.0
+    for family in families:
+        if family.section.mass_per_length is None:
+            return None
+        family_mass += family.multiplicity * family.section.mass_per_length / family.spacing
+    return skin.areal_mass + family_mass
+
+
+def _mass_assumptions(areal_mass: float | None) -> tuple[str, ...]:
+    if areal_mass is not None:
+        return ()
+    return (
+        "Areal mass is not reported because the skin or at least one member "
+        "section has no mass data.",
+    )
+
+
 def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
     assumptions = [
         "Local tangent-plane equivalent-stiffness homogenization.",
@@ -572,6 +648,7 @@ def _stiffness_from_tangent(
     tangent: FloatArray,
     *,
     skin: ABDStiffness,
+    areal_mass: float | None,
     metadata: dict[str, Any],
 ) -> ABDStiffness:
     try:
@@ -579,7 +656,7 @@ def _stiffness_from_tangent(
             tangent,
             frame=skin.frame,
             convention=skin.convention,
-            areal_mass=skin.areal_mass,
+            areal_mass=areal_mass,
             metadata=metadata,
         )
     except _ABDTangentReductionError as exc:
@@ -639,7 +716,10 @@ class EnergyHomogenizer:
             tangent += member_tangent_contribution(member, cell_area=cell.area)
         metadata = dict(cell.skin.metadata)
         metadata.update({"source": "energy_homogenizer", "cell": dict(cell.metadata)})
-        stiffness = _stiffness_from_tangent(tangent, skin=cell.skin, metadata=metadata)
+        areal_mass = _cell_areal_mass(cell)
+        stiffness = _stiffness_from_tangent(
+            tangent, skin=cell.skin, areal_mass=areal_mass, metadata=metadata
+        )
         diagnostics = _diagnostics(
             stiffness.C8, member_count=len(cell.members), cell_area=cell.area
         )
@@ -650,7 +730,7 @@ class EnergyHomogenizer:
                 stiffness, context=validity_context, thresholds=self.thresholds
             ),
             diagnostics=diagnostics,
-            assumptions=_assumptions_for_members(cell.members),
+            assumptions=_assumptions_for_members(cell.members) + _mass_assumptions(areal_mass),
             source="energy",
         )
 
@@ -720,7 +800,10 @@ class DirectECHomogenizer:
                 "family_count": len(family_tuple),
             }
         )
-        stiffness = _stiffness_from_tangent(tangent, skin=skin, metadata=metadata)
+        areal_mass = _family_areal_mass(skin, family_tuple)
+        stiffness = _stiffness_from_tangent(
+            tangent, skin=skin, areal_mass=areal_mass, metadata=metadata
+        )
         diagnostics = _diagnostics(stiffness.C8, member_count=len(family_tuple), cell_area=None)
         diagnostics["energy_consistent"] = True
         return HomogenizationResult(
@@ -730,7 +813,8 @@ class DirectECHomogenizer:
             ),
             diagnostics=diagnostics,
             assumptions=_assumptions_for_members(family_tuple)
-            + ("Direct EC families use member length density multiplicity / spacing.",),
+            + ("Direct EC families use member length density multiplicity / spacing.",)
+            + _mass_assumptions(areal_mass),
             source="direct_ec",
         )
 

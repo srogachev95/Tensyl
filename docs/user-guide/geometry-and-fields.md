@@ -49,8 +49,11 @@ and second fundamental form treatment of parametric surfaces listed in
 Their single chart excludes poles. `Ellipsoid` uses the same latitude-longitude
 style chart; for a triaxial ellipsoid the coordinate tangent directions are not
 generally orthogonal, so `e1` follows the meridional coordinate direction and
-`e2` is the right-handed orthonormal tangent completion. `ConicalFrustum` uses
-`(x, theta)` and excludes apex singularities.
+`e2` is the right-handed orthonormal tangent completion. Keep `phi` strictly
+between `0` and `pi` on all three: past `pi` the chart folds back on itself and
+its normal would point inward, so Tensyl rejects those angles rather than
+quietly reversing every eccentricity sign. `ConicalFrustum` uses `(x, theta)`
+and excludes apex singularities.
 
 ## What Changes When You Choose a Surface
 

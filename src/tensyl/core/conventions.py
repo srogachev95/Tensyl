@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from tensyl.core._validation import readonly_array
+from tensyl.core._validation import frozen_value, readonly_array
 from tensyl.core.typing import FloatArray
 
 _DEFAULT_TOLERANCE = 1.0e-10
@@ -63,15 +63,9 @@ class Frame2D:
     def __hash__(self) -> int:
         return hash(
             (
-                self.e1.shape,
-                self.e1.dtype.str,
-                self.e1.tobytes(),
-                self.e2.shape,
-                self.e2.dtype.str,
-                self.e2.tobytes(),
-                self.n.shape,
-                self.n.dtype.str,
-                self.n.tobytes(),
+                frozen_value(self.e1),
+                frozen_value(self.e2),
+                frozen_value(self.n),
                 self.label,
             )
         )

@@ -6,6 +6,25 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
+## Unreleased
+
+- Compare `ABDStiffness`, `HomogenizationResult`, `SurfacePoint`, and
+  `FlatPlate` by value. Equal stiffnesses now work as dictionary keys instead
+  of raising NumPy's array truth-value error, and signed zeros no longer split
+  the hashes of equal values.
+- Keep the attached validity report when rotating an `ABDStiffness`; rotation
+  used to drop it silently.
+- Reject `Ellipsoid` polar angles outside `(0, pi)`. Those angles used to return
+  an inward normal, which silently reversed every eccentricity sign.
+- Count stiffener mass in homogenized `areal_mass`. `BeamSection` gains an
+  optional `mass_per_length`, thin-wall sections fill it from material
+  density, and a result now reports `areal_mass=None` with an assumption when
+  the skin or any member has no mass data. It used to report the skin's mass
+  alone, which understated a stiffened panel.
+- Add `core_axial_eccentricity` to the sandwich core cells. The core used to be
+  pinned to the reference surface, which is right only when that surface is the
+  core midplane; any other choice of face shifts gave the wrong `D` block.
+
 ## 0.3.1 - 2026-07-28
 
 - Project roundoff-level assembled tangents onto Tensyl's symmetric

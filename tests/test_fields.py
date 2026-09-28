@@ -363,3 +363,23 @@ def test_abd_atlas_rejects_mixed_conventions() -> None:
             v_values=(0.0, 1.0),
             stiffnesses=stiffnesses,
         )
+
+
+def test_homogenized_field_accepts_an_equal_surface_instance() -> None:
+    def factory(surface: Surface, point: SurfacePoint) -> CanonicalUnitCell:
+        return CanonicalUnitCell(
+            area=1.0,
+            skin=_stiffness(frame=point.frame),
+            members=(
+                BeamMember(section=_section(), length=1.0, angle_rad=0.0, axial_eccentricity=0.0),
+            ),
+            frame=point.frame,
+        )
+
+    field = HomogenizedStiffnessField(
+        surface=FlatPlate(),
+        cell_factory=factory,
+        homogenizer=EnergyHomogenizer(),
+    )
+
+    assert field.stiffness_at(FlatPlate(), 0.0, 0.0).C8.shape == (8, 8)

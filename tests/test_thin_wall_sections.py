@@ -248,3 +248,15 @@ def test_thin_wall_section_rejects_invalid_inputs() -> None:
             thickness=0.1,
             shear_correction_y=0.0,
         )
+
+
+def test_thin_wall_section_carries_mass_per_length_from_density() -> None:
+    dense = blade_section(
+        material=IsotropicMaterial(E=100.0, nu=0.25, density=2.5),
+        height=4.0,
+        thickness=0.5,
+    )
+    massless = blade_section(material=_material(), height=4.0, thickness=0.5)
+
+    assert dense.section.mass_per_length == pytest.approx(2.5 * 2.0)
+    assert massless.section.mass_per_length is None

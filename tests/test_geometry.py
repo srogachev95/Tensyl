@@ -24,6 +24,24 @@ def test_flat_plate_has_cartesian_geometry() -> None:
     _assert_right_handed(point)
 
 
+def test_flat_plate_rejects_axes_that_are_not_orthogonal() -> None:
+    with pytest.raises(ValueError, match="orthogonal"):
+        FlatPlate(e1=np.array([1.0, 0.0, 0.0]), e2=np.array([0.1, 1.0, 0.0]))
+
+
+def test_flat_plates_compare_by_value_and_hash() -> None:
+    assert FlatPlate() == FlatPlate()
+    assert hash(FlatPlate()) == hash(FlatPlate())
+    assert FlatPlate() != FlatPlate(origin=np.array([1.0, 0.0, 0.0]))
+
+
+def test_surface_points_compare_by_value() -> None:
+    plate = FlatPlate()
+
+    assert plate.point_at(1.0, 2.0) == plate.point_at(1.0, 2.0)
+    assert plate.point_at(1.0, 2.0) != plate.point_at(1.0, 3.0)
+
+
 def test_cylinder_uses_outward_normal_and_signed_curvature() -> None:
     cylinder = Cylinder(radius=2.0, length=5.0)
     point = cylinder.point_at(1.0, np.pi / 2.0)
@@ -85,6 +103,23 @@ def test_ellipsoid_computes_finite_geometry_and_sphere_special_case() -> None:
 
     with pytest.raises(ValueError, match="singular"):
         ellipsoid.point_at(0.0, 0.0)
+
+
+def test_ellipsoid_rejects_polar_angles_that_would_flip_the_normal_inward() -> None:
+    ellipsoid = Ellipsoid(a=2.0, b=3.0, c=4.0)
+
+    with pytest.raises(ValueError, match="poles"):
+        ellipsoid.point_at(1.5 * np.pi, 0.0)
+    with pytest.raises(ValueError, match="poles"):
+        ellipsoid.point_at(-0.5, 0.0)
+
+
+@pytest.mark.parametrize("phi", [0.1, 0.8, 1.5, 2.4, 3.0])
+@pytest.mark.parametrize("theta", [-2.0, 0.0, 1.0, 4.0])
+def test_ellipsoid_normals_point_outward_across_the_chart(phi: float, theta: float) -> None:
+    point = Ellipsoid(a=2.0, b=3.0, c=4.0).point_at(phi, theta)
+
+    assert float(point.position @ point.frame.n) > 0.0
 
 
 def test_sphere_matches_ellipsoid_sphere_special_case() -> None:
