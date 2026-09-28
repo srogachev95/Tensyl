@@ -715,6 +715,31 @@ class ABDStiffness:
         generalized_strain(eta)
         return self.constant_tangent
 
+    def strains(self, resultants: GeneralizedResultant | FloatArray) -> GeneralizedStrain:
+        """Solve the full coupled stiffness for strains under given resultants.
+
+        Args:
+            resultants: Finite vector in order N11, N22, N12, M11, M22, M12,
+                Q13, Q23, expressed in this stiffness's frame and units.
+
+        Returns:
+            Read-only strain vector in the canonical engineering ordering.
+
+        Raises:
+            ValueError: If the load vector is invalid, the tangent is singular,
+                or the solve produces non-finite strains. No pseudoinverse or
+                regularization is applied to a singular tangent.
+        """
+
+        loads = generalized_resultant(resultants)
+        try:
+            solution = np.linalg.solve(self.C8, loads)
+        except np.linalg.LinAlgError as exc:
+            raise ValueError(
+                "stiffness tangent is singular; strains are not uniquely determined."
+            ) from exc
+        return generalized_strain(solution)
+
     def resultants(self, eta: GeneralizedStrainInput) -> GeneralizedResultant:
         """Return generalized resultants for a strain vector.
 

@@ -7,16 +7,20 @@ from tensyl.homogenizers.tangent_plane import (
     HomogenizationNumericalError,
     HomogenizationResult,
     Homogenizer,
+    MemberLoads,
     ValidityContext,
     ValidityReport,
     ValidityThresholds,
     member_energy,
+    member_loads,
     member_tangent_contribution,
     member_tangent_density,
     validity_report_for_stiffness,
 )
 
 __all__ = [
+    "MemberLoads",
+    "member_loads",
     "EnergyHomogenizer",
     "HomogenizationFailure",
     "HomogenizationInputError",
