@@ -353,7 +353,7 @@ class CanonicalUnitCell:
 
 @dataclass(frozen=True, slots=True)
 class StiffenerFamily:
-    """A repeating family of parallel stiffeners for the direct calculation.
+    """A repeating family of parallel stiffeners for ``stiffener_family_cell``.
 
     ``spacing`` is the family pitch normal to the member direction.
     Eccentricities use the same signed ``+n`` convention as ``BeamMember``.
@@ -643,6 +643,71 @@ def unidirectional_cell(
             repeat_vectors=(direction, normal),
         ),
         metadata={"source": label, "spacing": d},
+    )
+
+
+def stiffener_family_cell(
+    *,
+    skin: ABDStiffness,
+    families: tuple[StiffenerFamily, ...],
+    frame: Frame2D | None = None,
+    convention: StrainConvention | None = None,
+) -> CanonicalUnitCell:
+    """Create a cell from repeating families of parallel stiffeners.
+
+    Use this when the stiffeners are best described family by family, each with
+    its own spacing and angle, rather than as a drawn repeat cell. The families
+    need not share a common repeat box: each one contributes a member length of
+    ``multiplicity / spacing`` per unit panel area, which is all the
+    homogenizer needs. The returned cell therefore has unit area and no
+    drawable geometry.
+
+    Args:
+        skin: Baseline skin stiffness.
+        families: One or more repeating stiffener families.
+        frame: Optional cell frame. Defaults to ``skin.frame``.
+        convention: Optional strain convention. Defaults to
+            ``skin.convention``.
+
+    Returns:
+        Canonical unit cell with one member per family, ready for
+        ``EnergyHomogenizer``.
+
+    Raises:
+        ValueError: If no families are supplied, or frame or convention
+            validation fails.
+    """
+
+    family_tuple = tuple(families)
+    if not family_tuple:
+        msg = "stiffener_family_cell requires at least one stiffener family."
+        raise ValueError(msg)
+    cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
+    # With unit area, a member of length 1 / spacing gives exactly the family's
+    # length per unit panel area; multiplicity carries through unchanged.
+    members = tuple(
+        BeamMember(
+            section=family.section,
+            length=1.0 / family.spacing,
+            angle_rad=family.angle_rad,
+            axial_eccentricity=family.axial_eccentricity,
+            shear_eccentricity=family.shear_eccentricity,
+            multiplicity=family.multiplicity,
+            label=family.label or f"family_{index}",
+        )
+        for index, family in enumerate(family_tuple)
+    )
+    return CanonicalUnitCell(
+        area=1.0,
+        skin=skin,
+        members=members,
+        frame=cell_frame,
+        convention=cell_convention,
+        metadata={
+            "source": "stiffener_family_cell",
+            "family_count": len(family_tuple),
+            "spacings": tuple(family.spacing for family in family_tuple),
+        },
     )
 
 
@@ -1941,5 +2006,6 @@ __all__ = [
     "sandwich_orthogrid_core_cell",
     "sandwich_star_core_cell",
     "star_cell",
+    "stiffener_family_cell",
     "unidirectional_cell",
 ]

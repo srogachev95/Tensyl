@@ -33,6 +33,11 @@ bug fixes that correct clearly wrong behavior.
   coefficient in every case now agrees with the corrected SP-8007 formulas to
   roundoff, so the report drops the low-`EIz` cases, the in-plane inertia
   sweep, and the bending-ratio plot.
+- Replace `DirectECHomogenizer` with `stiffener_family_cell`, which turns
+  `StiffenerFamily` inputs into a cell for `EnergyHomogenizer`. The direct path
+  ran the same strain map through the same assembly, so it was never an
+  independent check; the tests now compare family stiffnesses with the
+  classical smeared-stiffener terms written out by hand.
 
 ## 0.3.1 - 2026-07-28
 

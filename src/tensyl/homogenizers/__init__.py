@@ -1,7 +1,6 @@
 """Tangent-plane equivalent-stiffness homogenizers."""
 
 from tensyl.homogenizers.tangent_plane import (
-    DirectECHomogenizer,
     EnergyHomogenizer,
     HomogenizationFailure,
     HomogenizationInputError,
@@ -18,7 +17,6 @@ from tensyl.homogenizers.tangent_plane import (
 )
 
 __all__ = [
-    "DirectECHomogenizer",
     "EnergyHomogenizer",
     "HomogenizationFailure",
     "HomogenizationInputError",

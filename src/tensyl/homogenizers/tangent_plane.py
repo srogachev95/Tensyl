@@ -9,7 +9,7 @@ from typing import Any, Literal, Protocol
 
 import numpy as np
 
-from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
+from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell
 from tensyl.core._validation import (
     frozen_value,
     optional_positive_number,
@@ -23,7 +23,7 @@ from tensyl.core.constitutive import (
     ReducedOrthotropicProperties,
     _ABDTangentReductionError,
 )
-from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
+from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION
 from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
 from tensyl.sections.beam import BeamSection
@@ -326,10 +326,6 @@ def _beam_strain_map(axial_eccentricity: float, shear_eccentricity: float) -> Fl
 
     axial_z = float(axial_eccentricity)
     shear_z = float(shear_eccentricity)
-    # This is the shared first-approximation member kinematics used by both the
-    # energy and direct EC paths. Agreement between those paths checks assembly,
-    # not the truth of this strain map.
-    #
     # Rows: axial strain, in-plane shear, transverse shear, out-of-plane
     # bending curvature, and twist rate. There is no in-plane bending row:
     # under uniform wall strain and curvature a member's axis stays straight
@@ -366,7 +362,7 @@ def _beam_stiffness(section: BeamSection) -> FloatArray:
     return stiffness
 
 
-def _member_transform(member: BeamMember | StiffenerFamily) -> FloatArray:
+def _member_transform(member: BeamMember) -> FloatArray:
     if member.shear_eccentricity is None:  # normalized by the value object
         msg = "member shear_eccentricity was not normalized."
         raise HomogenizationInputError(msg)
@@ -376,12 +372,11 @@ def _member_transform(member: BeamMember | StiffenerFamily) -> FloatArray:
     ) @ generalized_strain_transform(member.angle_rad)
 
 
-def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
+def member_tangent_density(member: BeamMember) -> FloatArray:
     """Return a member tangent contribution per unit length density.
 
     Args:
-        member: Beam member or repeated stiffener family in tangent-plane
-            coordinates.
+        member: Beam member in tangent-plane coordinates.
 
     Returns:
         Read-only 8x8 stiffness contribution before multiplying by member
@@ -459,20 +454,6 @@ def _cell_areal_mass(cell: CanonicalUnitCell) -> float | None:
     return cell.skin.areal_mass + member_mass / cell.area
 
 
-def _family_areal_mass(
-    skin: ABDStiffness,
-    families: tuple[StiffenerFamily, ...],
-) -> float | None:
-    if skin.areal_mass is None:
-        return None
-    family_mass = 0.0
-    for family in families:
-        if family.section.mass_per_length is None:
-            return None
-        family_mass += family.multiplicity * family.section.mass_per_length / family.spacing
-    return skin.areal_mass + family_mass
-
-
 def _mass_assumptions(areal_mass: float | None) -> tuple[str, ...]:
     if areal_mass is not None:
         return ()
@@ -482,7 +463,7 @@ def _mass_assumptions(areal_mass: float | None) -> tuple[str, ...]:
     )
 
 
-def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
+def _assumptions_for_members(members: tuple[BeamMember, ...]) -> tuple[str, ...]:
     assumptions = [
         "Local tangent-plane equivalent-stiffness homogenization.",
         "Extension- and shear-weighted member eccentricities are measured along +n.",
@@ -712,92 +693,7 @@ class EnergyHomogenizer:
         )
 
 
-@dataclass(frozen=True, slots=True)
-class DirectECHomogenizer:
-    """Direct equilibrium-compatibility homogenizer for straight member families.
-
-    Use this path for supported straight-family comparisons or accelerators,
-    not as a replacement for the more general energy cell path.
-
-    Attributes:
-        thresholds: Warning thresholds used when building the result validity
-            report.
-    """
-
-    thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
-
-    def compute(
-        self,
-        *,
-        skin: ABDStiffness,
-        families: tuple[StiffenerFamily, ...],
-        validity_context: ValidityContext | None = None,
-        convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
-    ) -> HomogenizationResult:
-        """Compute direct EC stiffness from repeated straight families.
-
-        Args:
-            skin: Baseline skin ABD stiffness.
-            families: One or more straight repeated stiffener families.
-            validity_context: Optional geometric and response length scales for
-                result warnings.
-            convention: Strain convention for the assembled tangent. Only the
-                default engineering-shear convention is currently supported.
-
-        Returns:
-            Homogenization result assembled from skin plus family length-density
-            contributions.
-
-        Raises:
-            HomogenizationInputError: If no families are supplied, or if the
-                skin/convention pair is unsupported.
-            HomogenizationNumericalError: If the assembled tangent materially
-                violates Tensyl's ABD block contract.
-        """
-
-        family_tuple = tuple(families)
-        if not family_tuple:
-            msg = "DirectECHomogenizer requires at least one stiffener family."
-            raise HomogenizationInputError(msg)
-        if skin.convention != convention or convention != DEFAULT_STRAIN_CONVENTION:
-            msg = (
-                "DirectECHomogenizer currently supports Tensyl's default engineering-shear "
-                "convention only."
-            )
-            raise HomogenizationInputError(msg)
-        tangent = np.array(skin.C8, dtype=np.float64, copy=True)
-        # The direct family path uses length density multiplicity / spacing in
-        # place of finite member length divided by finite cell area.
-        for family in family_tuple:
-            tangent += (family.multiplicity / family.spacing) * member_tangent_density(family)
-        metadata = dict(skin.metadata)
-        metadata.update(
-            {
-                "source": "direct_ec_homogenizer",
-                "family_count": len(family_tuple),
-            }
-        )
-        areal_mass = _family_areal_mass(skin, family_tuple)
-        stiffness = _stiffness_from_tangent(
-            tangent, skin=skin, areal_mass=areal_mass, metadata=metadata
-        )
-        diagnostics = _diagnostics(stiffness.C8, member_count=len(family_tuple), cell_area=None)
-        diagnostics["energy_consistent"] = True
-        return HomogenizationResult(
-            stiffness=stiffness,
-            validity=_validity_report(
-                stiffness, context=validity_context, thresholds=self.thresholds
-            ),
-            diagnostics=diagnostics,
-            assumptions=_assumptions_for_members(family_tuple)
-            + ("Direct EC families use member length density multiplicity / spacing.",)
-            + _mass_assumptions(areal_mass),
-            source="direct_ec",
-        )
-
-
 __all__ = [
-    "DirectECHomogenizer",
     "EnergyHomogenizer",
     "HomogenizationFailure",
     "HomogenizationInputError",

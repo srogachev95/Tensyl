@@ -25,6 +25,7 @@ from tensyl.cells import (
     sandwich_orthogrid_core_cell,
     sandwich_star_core_cell,
     star_cell,
+    stiffener_family_cell,
     unidirectional_cell,
 )
 from tensyl.core.constitutive import (
@@ -68,7 +69,6 @@ from tensyl.geometry import (
     SurfacePoint,
 )
 from tensyl.homogenizers import (
-    DirectECHomogenizer,
     EnergyHomogenizer,
     HomogenizationFailure,
     HomogenizationInputError,
@@ -118,7 +118,6 @@ __all__ = [
     "ConicalFrustum",
     "ConstantStiffnessField",
     "Cylinder",
-    "DirectECHomogenizer",
     "EnergyHomogenizer",
     "Ellipsoid",
     "FlatPlate",
@@ -178,6 +177,7 @@ __all__ = [
     "sandwich_star_core_cell",
     "shift_reference_surface",
     "star_cell",
+    "stiffener_family_cell",
     "superpose_abd_stiffnesses",
     "tee_section",
     "thin_wall_section",

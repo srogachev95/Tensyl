@@ -23,19 +23,44 @@ stiffness and the information needed to judge the calculation:
 - `result.assumptions` records modeling assumptions;
 - `result.validity.warnings` reports scale-separation and coupling warnings.
 
-## Direct Equilibrium-Compatibility
+## Stiffener Families
 
-`DirectECHomogenizer` supports straight stiffener-family inputs where the direct
-method is applicable.
+Some panels are easier to describe family by family than as a drawn repeat
+cell: stringers every 6 in, rings every 20 in, and a set of diagonals at 30
+degrees whose spacing shares no common box with either. Build those with
+`stiffener_family_cell` and homogenize them the same way:
 
 ```python
-from tensyl import DirectECHomogenizer
+import math
 
-result = DirectECHomogenizer().compute(cell)
+from tensyl import BeamSection, IsotropicMaterial, StiffenerFamily, isotropic_plate
+from tensyl import EnergyHomogenizer, stiffener_family_cell
+
+skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33), thickness=0.08)
+stringer = BeamSection(EA=3.2e5, EIy=2.4e3, EIz=6.5e2, GJ=4.0e2)
+
+cell = stiffener_family_cell(
+    skin=skin,
+    families=(
+        StiffenerFamily(section=stringer, spacing=6.0, angle_rad=0.0, axial_eccentricity=0.3),
+        StiffenerFamily(
+            section=stringer, spacing=20.0, angle_rad=0.5 * math.pi, axial_eccentricity=0.3
+        ),
+    ),
+)
+result = EnergyHomogenizer().compute(cell)
 ```
 
-The direct method is useful as a supported comparison or a faster route for
-simple families. It does not replace the more general energy method.
+Each family adds `multiplicity / spacing` of member length per unit panel area,
+so the families never need to fit one repeat box. The cell has no drawable
+geometry for the same reason.
+
+Earlier releases had a separate `DirectECHomogenizer` for this input. It ran
+the same member strain map through the same assembly, so its agreement with the
+energy path checked nothing, and it has been folded into this one path. The
+test suite now checks family stiffnesses against the classical smeared-stiffener
+formulas written out term by term, which is an independent check of the
+assembly.
 
 ## Reading the Result
 

@@ -36,10 +36,11 @@ $$
 \sum_m \Delta\mathbf C_m.
 $$
 
-The energy method is Tensyl's reference calculation. It works for both named
-patterns and custom graph cells, and its assembled stiffness is symmetric by
-construction. A direct formula is also available for supported families of
-straight, parallel stiffeners and is tested against the energy calculation.
+The energy method is Tensyl's only homogenization path. It works for named
+patterns, custom graph cells, and families of parallel stiffeners, and its
+assembled stiffness is symmetric by construction. For straight families the
+test suite checks it against the classical smeared-stiffener terms written out
+by hand, such as $EA\cos^4\theta/b$ in $A_{11}$.
 
 This follows the equivalent-plate idea used by Nemeth for stiffened laminated
 plates and plate-like lattices. Tensyl treats those formulas as mechanics
@@ -116,8 +117,9 @@ cell that places those stiffeners:
 - `CanonicalUnitCell.area` is the panel area represented by that repeat.
 - `CanonicalUnitCell.geometry` holds the coordinates needed to draw the cell.
 
-The direct calculation uses `StiffenerFamily` instead of individual members.
-Each family supplies a section, direction, spacing, and offset.
+`stiffener_family_cell` takes `StiffenerFamily` inputs instead of individual
+members. Each family supplies a section, direction, spacing, and offset, and
+becomes one member with `multiplicity / spacing` of length per unit area.
 
 ## Beam Section Quantities
 
@@ -236,11 +238,12 @@ records:
 - assumptions attached to the member strain map and section inputs;
 - a `ValidityReport` with scale-separation ratios and warning codes.
 
-!!! note "Two methods agreeing is necessary, not sufficient"
-    Energy-vs-direct agreement is a good sign, but it is not proof. Both paths
-    share the same member strain map, so they can agree and still be wrong
-    together. For high-consequence use, you still need independent literature,
-    test, or finite-element evidence.
+!!! note "Agreeing with hand formulas is necessary, not sufficient"
+    Matching the closed-form smeared-stiffener terms, Nemeth's tables, and the
+    corrected SP-8007 formulas is a good sign, but it is not proof. They all
+    share the same first-approximation member kinematics, so they can agree and
+    still be wrong together. For high-consequence use, you still need test or
+    finite-element evidence.
 
 ## Limits
 
