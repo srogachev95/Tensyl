@@ -78,6 +78,35 @@ def test_abd_stiffness_is_hashable_and_readonly() -> None:
         stiffness.A[0, 0] = 99.0
 
 
+def test_abd_stiffness_equality_compares_values_not_identity() -> None:
+    first = _stiffness()
+    same = _stiffness()
+    stiffer = ABDStiffness(A=2.0 * first.A, B=first.B, D=first.D, As=first.As)
+
+    assert first == same
+    assert first != stiffer
+    assert hash(first) == hash(same)
+
+
+def test_signed_zero_does_not_split_equal_stiffness_hashes() -> None:
+    positive = _stiffness()
+    negative_zero_b = ABDStiffness(
+        A=positive.A,
+        B=np.where(positive.B == 0.0, -0.0, positive.B),
+        D=positive.D,
+        As=positive.As,
+    )
+
+    assert negative_zero_b == positive
+    assert hash(negative_zero_b) == hash(positive)
+
+
+def test_equal_abd_stiffnesses_work_as_dictionary_keys() -> None:
+    cache = {_stiffness(): "cached"}
+
+    assert cache[_stiffness()] == "cached"
+
+
 def test_abd_stiffness_rejects_bad_shapes_and_nonsymmetric_blocks() -> None:
     with pytest.raises(ValueError, match="A must have shape"):
         ABDStiffness(

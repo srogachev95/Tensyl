@@ -24,6 +24,19 @@ def test_flat_plate_has_cartesian_geometry() -> None:
     _assert_right_handed(point)
 
 
+def test_flat_plates_compare_by_value_and_hash() -> None:
+    assert FlatPlate() == FlatPlate()
+    assert hash(FlatPlate()) == hash(FlatPlate())
+    assert FlatPlate() != FlatPlate(origin=np.array([1.0, 0.0, 0.0]))
+
+
+def test_surface_points_compare_by_value() -> None:
+    plate = FlatPlate()
+
+    assert plate.point_at(1.0, 2.0) == plate.point_at(1.0, 2.0)
+    assert plate.point_at(1.0, 2.0) != plate.point_at(1.0, 3.0)
+
+
 def test_cylinder_uses_outward_normal_and_signed_curvature() -> None:
     cylinder = Cylinder(radius=2.0, length=5.0)
     point = cylinder.point_at(1.0, np.pi / 2.0)

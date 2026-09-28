@@ -10,6 +10,7 @@ import numpy as np
 
 from tensyl.core._validation import (
     finite_number,
+    frozen_value,
     normalized_vector3,
     positive_number,
     readonly_array,
@@ -123,6 +124,32 @@ class SurfacePoint:
         object.__setattr__(self, "min_radius", min_radius)
         object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
+    def _key(self) -> tuple[Any, ...]:
+        return (
+            self.u,
+            self.v,
+            frozen_value(self.position),
+            frozen_value(self.tangent_u),
+            frozen_value(self.tangent_v),
+            frozen_value(self.metric),
+            frozen_value(self.curvature),
+            self.frame,
+            self.jacobian,
+            self.principal_curvatures,
+            self.min_radius,
+            frozen_value(self.metadata),
+        )
+
+    def __eq__(self, other: object) -> bool:
+        # Array fields make the generated dataclass __eq__ raise; compare the
+        # frozen payload instead.
+        if not isinstance(other, SurfacePoint):
+            return NotImplemented
+        return self._key() == other._key()
+
+    def __hash__(self) -> int:
+        return hash(self._key())
+
 
 class Surface(Protocol):
     """Protocol for parametric shell midsurfaces.
@@ -180,6 +207,24 @@ class FlatPlate:
         object.__setattr__(self, "origin", _readonly_vector(self.origin, name="origin"))
         object.__setattr__(self, "e1", frame.e1)
         object.__setattr__(self, "e2", frame.e2)
+
+    def _key(self) -> tuple[Any, ...]:
+        return (
+            frozen_value(self.origin),
+            frozen_value(self.e1),
+            frozen_value(self.e2),
+            self.label,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        # Fields compare surfaces by value, so equal plates must not raise on
+        # array truth values.
+        if not isinstance(other, FlatPlate):
+            return NotImplemented
+        return self._key() == other._key()
+
+    def __hash__(self) -> int:
+        return hash(self._key())
 
     def point_at(self, u: float, v: float) -> SurfacePoint:
         """Return the flat-plate geometry at Cartesian coordinates.

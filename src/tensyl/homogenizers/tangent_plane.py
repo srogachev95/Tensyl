@@ -10,7 +10,12 @@ from typing import Any, Literal, Protocol
 import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
-from tensyl.core._validation import optional_positive_number, positive_number, readonly_array
+from tensyl.core._validation import (
+    frozen_value,
+    optional_positive_number,
+    positive_number,
+    readonly_array,
+)
 from tensyl.core.constitutive import (
     ABDStiffness,
     ABDStiffnessCoefficients,
@@ -157,6 +162,19 @@ class ValidityReport:
         object.__setattr__(self, "coupling_ratios", MappingProxyType(dict(self.coupling_ratios)))
         object.__setattr__(self, "warnings", tuple(self.warnings))
 
+    def __hash__(self) -> int:
+        # MappingProxyType is not hashable; hash the sorted ratios instead so
+        # reports can sit inside hashed stiffness values.
+        return hash(
+            (
+                self.h_over_R,
+                self.p_over_R,
+                self.p_over_L_response,
+                frozen_value(self.coupling_ratios),
+                self.warnings,
+            )
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class HomogenizationResult:
@@ -186,6 +204,28 @@ class HomogenizationResult:
         object.__setattr__(self, "stiffness", stiffness)
         object.__setattr__(self, "diagnostics", MappingProxyType(dict(self.diagnostics)))
         object.__setattr__(self, "assumptions", tuple(self.assumptions))
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, HomogenizationResult):
+            return NotImplemented
+        return (
+            self.stiffness == other.stiffness
+            and self.validity == other.validity
+            and frozen_value(self.diagnostics) == frozen_value(other.diagnostics)
+            and self.assumptions == other.assumptions
+            and self.source == other.source
+        )
+
+    def __hash__(self) -> int:
+        return hash(
+            (
+                self.stiffness,
+                self.validity,
+                frozen_value(self.diagnostics),
+                self.assumptions,
+                self.source,
+            )
+        )
 
     def reduced_orthotropic_properties(
         self,

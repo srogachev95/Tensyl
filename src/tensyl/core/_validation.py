@@ -102,8 +102,35 @@ def readonly_mapping(mapping: Mapping[str, Any]) -> MappingProxyType[str, Any]:
     return MappingProxyType(dict(mapping))
 
 
+def frozen_value(value: Any) -> Any:
+    """Return a hashable, comparable stand-in for nested metadata values."""
+
+    # Metadata can contain nested NumPy arrays from verification or import
+    # paths. Freeze the semantic payload instead of falling back to object ids,
+    # so equal values hash equally and compare without array truth-value errors.
+    if isinstance(value, Mapping):
+        return tuple(sorted((key, frozen_value(item)) for key, item in value.items()))
+    if isinstance(value, np.ndarray):
+        array = np.ascontiguousarray(value)
+        if np.issubdtype(array.dtype, np.floating):
+            # -0.0 == 0.0 but their bytes differ; normalize so equal values
+            # always hash equally.
+            array = array + 0.0
+        return ("ndarray", array.shape, array.dtype.str, array.tobytes())
+    if isinstance(value, (list, tuple)):
+        return tuple(frozen_value(item) for item in value)
+    if isinstance(value, (set, frozenset)):
+        return tuple(sorted(frozen_value(item) for item in value))
+    try:
+        hash(value)
+    except TypeError:
+        return repr(value)
+    return value
+
+
 __all__ = [
     "finite_number",
+    "frozen_value",
     "nonnegative_number",
     "normalized_vector3",
     "optional_nonnegative_number",

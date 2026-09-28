@@ -6,6 +6,13 @@ Tensyl follows pre-1.0 semantic versioning: public APIs may still change between
 minor versions, while patch releases should stay backward compatible except for
 bug fixes that correct clearly wrong behavior.
 
+## Unreleased
+
+- Compare `ABDStiffness`, `HomogenizationResult`, `SurfacePoint`, and
+  `FlatPlate` by value. Equal stiffnesses now work as dictionary keys instead
+  of raising NumPy's array truth-value error, and signed zeros no longer split
+  the hashes of equal values.
+
 ## 0.3.1 - 2026-07-28
 
 - Project roundoff-level assembled tangents onto Tensyl's symmetric
