@@ -107,6 +107,19 @@ def test_equal_abd_stiffnesses_work_as_dictionary_keys() -> None:
     assert cache[_stiffness()] == "cached"
 
 
+def test_abd_stiffness_validity_must_be_a_validity_report() -> None:
+    stiffness = _stiffness()
+
+    with pytest.raises(TypeError, match="ValidityReport"):
+        ABDStiffness(
+            A=stiffness.A,
+            B=stiffness.B,
+            D=stiffness.D,
+            As=stiffness.As,
+            validity="looks fine",  # ty: ignore[invalid-argument-type]
+        )
+
+
 def test_abd_stiffness_rejects_bad_shapes_and_nonsymmetric_blocks() -> None:
     with pytest.raises(ValueError, match="A must have shape"):
         ABDStiffness(

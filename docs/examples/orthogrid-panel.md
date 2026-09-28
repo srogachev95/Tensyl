@@ -59,7 +59,7 @@ result = EnergyHomogenizer().compute(
 stiffness = result.stiffness
 
 assert stiffness.C8.shape == (8, 8)
-assert result.diagnostics["symmetric"]
+assert result.diagnostics["positive_semidefinite"]
 assert result.diagnostics["positive_semidefinite"]
 assert stiffness.B[0, 0] > 0.0
 ```

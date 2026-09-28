@@ -30,6 +30,7 @@ from tensyl.core.typing import (
     generalized_resultant,
     generalized_strain,
 )
+from tensyl.core.validity import ValidityReport
 
 _ROUNDOFF_RELATIVE_TOLERANCE = float(64.0 * np.finfo(np.float64).eps)
 GeneralizedStrainInput = GeneralizedStrain | FloatArray
@@ -138,7 +139,7 @@ class HyperelasticModel(Protocol):
         frame: Local right-handed frame for the model components.
         convention: Generalized strain/resultant ordering.
         metadata: Provenance metadata.
-        validity: Optional validity or warning object attached by builders.
+        validity: Optional validity report attached by builders.
     """
 
     @property
@@ -154,8 +155,8 @@ class HyperelasticModel(Protocol):
         """Return provenance metadata."""
 
     @property
-    def validity(self) -> Any:
-        """Return the attached validity or warning object."""
+    def validity(self) -> ValidityReport | None:
+        """Return the attached validity report, if any."""
 
     def energy(self, eta: GeneralizedStrain) -> float:
         """Return strain energy density for a generalized strain.
@@ -196,26 +197,6 @@ class HyperelasticModel(Protocol):
         Returns:
             Model representing the same physical law in the rotated frame.
         """
-
-
-@runtime_checkable
-class LinearModel(HyperelasticModel, Protocol):
-    """Refinement for models whose tangent is independent of strain.
-
-    Attributes:
-        constant_tangent: Strain-independent tangent matrix.
-    """
-
-    @property
-    def constant_tangent(self) -> FloatArray:
-        """Return the strain-independent tangent.
-
-        Returns:
-            Constant tangent matrix for the linear model.
-        """
-
-
-ConstitutiveModel = HyperelasticModel
 
 
 @dataclass(frozen=True, slots=True)
@@ -420,7 +401,7 @@ class ABDStiffness:
     convention: StrainConvention = DEFAULT_STRAIN_CONVENTION
     areal_mass: float | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
-    validity: Any = None
+    validity: ValidityReport | None = None
     _c8: FloatArray = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -445,6 +426,9 @@ class ABDStiffness:
             name="As",
         )
         c8 = _build_tangent(A, B, D, As)
+        if self.validity is not None and not isinstance(self.validity, ValidityReport):
+            msg = f"validity must be a ValidityReport or None, got {type(self.validity).__name__}."
+            raise TypeError(msg)
         if self.areal_mass is not None:
             object.__setattr__(
                 self,
@@ -468,7 +452,7 @@ class ABDStiffness:
         convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
         areal_mass: float | None = None,
         metadata: Mapping[str, Any] | None = None,
-        validity: Any = None,
+        validity: ValidityReport | None = None,
     ) -> ABDStiffness:
         """Build a linear ABD stiffness from the canonical ``8x8`` tangent.
 
@@ -509,11 +493,11 @@ class ABDStiffness:
             validity=validity,
         )
 
-    def with_validity(self, validity: Any) -> ABDStiffness:
+    def with_validity(self, validity: ValidityReport | None) -> ABDStiffness:
         """Return an equivalent stiffness with attached validity diagnostics.
 
         Args:
-            validity: Validity or warning object to attach to the copy.
+            validity: Validity report to attach to the copy.
 
         Returns:
             New ``ABDStiffness`` with the same numeric tangent and metadata.
@@ -918,7 +902,7 @@ def _reduced_orthotropic_warnings(
         relative_tolerance=relative_tolerance,
     ):
         warnings.append(_REDUCTION_WARNING_D16_D26)
-    validity_warnings = tuple(getattr(stiffness.validity, "warnings", ()))
+    validity_warnings = () if stiffness.validity is None else stiffness.validity.warnings
     if "membrane_bending_coupling_exceeds_threshold" in validity_warnings:
         warnings.append(_REDUCTION_WARNING_VALIDITY_B)
     return tuple(dict.fromkeys(warnings))
@@ -1026,10 +1010,8 @@ def superpose_abd_stiffnesses(
 
 __all__ = [
     "ABDStiffnessCoefficients",
-    "ConstitutiveModel",
     "HyperelasticModel",
     "ABDStiffness",
-    "LinearModel",
     "OrthotropicStiffnessCoefficients",
     "ReducedOrthotropicProperties",
     "shift_reference_surface",

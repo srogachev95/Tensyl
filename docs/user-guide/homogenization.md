@@ -126,7 +126,7 @@ Selected output, rounded:
 | `B11`, `B22`, `B66` | `2.400e5`, `1.800e5`, `3.609e4` `lbf` |
 | `D11`, `D22`, `D66` | `1.125e5`, `8.451e4`, `1.670e4` `lbf*in` |
 | `As11`, `As22` | `4.157e5`, `3.782e5` `lbf/in` |
-| diagnostics | symmetric, positive-semidefinite, rank `8` |
+| diagnostics | positive-semidefinite, rank `8` |
 | warnings | `p_over_R_exceeds_threshold`, `p_over_L_response_exceeds_threshold`, `membrane_bending_coupling_exceeds_threshold` |
 
 For SI inputs the same blocks have units `N/m`, `N`, `N*m`, and `N/m`,
@@ -173,10 +173,13 @@ empty instead.
 
 Homogenization results include:
 
-- `diagnostics["symmetric"]`;
-- `diagnostics["positive_semidefinite"]`;
+- `diagnostics["positive_semidefinite"]` and `diagnostics["minimum_eigenvalue"]`;
 - `diagnostics["rank"]`;
 - member and cell metadata where available.
+
+Symmetry is not on the list because it is not a finding: every tangent is
+projected onto exact symmetry when it is built, and a material asymmetry raises
+instead of being reported. A check that cannot fail tells you nothing.
 
 Malformed or unsupported inputs raise typed homogenization exceptions. Finite
 rank-deficient assemblies are returned with diagnostics and warnings so the

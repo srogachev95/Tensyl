@@ -227,7 +227,7 @@ def test_geometry_derived_section_can_drive_homogenizer() -> None:
     )
     result = EnergyHomogenizer().compute(cell)
 
-    assert result.diagnostics["symmetric"] is True
+    assert result.diagnostics["positive_semidefinite"] is True
     assert result.diagnostics["positive_semidefinite"] is True
     assert result.stiffness.C8.shape == (8, 8)
     assert np.linalg.matrix_rank(result.stiffness.C8) == 8

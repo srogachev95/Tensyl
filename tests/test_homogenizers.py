@@ -190,7 +190,6 @@ def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
         member_energy(member, eta) for member in cell.members
     )
 
-    assert result.diagnostics["symmetric"] is True
     assert result.diagnostics["positive_semidefinite"] is True
     np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
 
@@ -433,6 +432,20 @@ def test_rotating_a_homogenized_stiffness_keeps_its_validity_report() -> None:
     rotated = result.stiffness.rotate(0.4)
 
     assert rotated.validity == result.validity
+
+
+def test_diagnostics_report_only_checks_that_can_fail() -> None:
+    cell = unidirectional_cell(
+        skin=_zero_skin(), member_section=_section(), spacing=2.0, axial_eccentricity=0.1
+    )
+
+    diagnostics = EnergyHomogenizer().compute(cell).diagnostics
+
+    # Symmetry is enforced by construction and energy consistency was a
+    # constant, so neither tells the caller anything.
+    assert "symmetric" not in diagnostics
+    assert "energy_consistent" not in diagnostics
+    assert {"positive_semidefinite", "minimum_eigenvalue", "rank"} <= set(diagnostics)
 
 
 def test_equilateral_isogrid_has_expected_membrane_symmetry() -> None:

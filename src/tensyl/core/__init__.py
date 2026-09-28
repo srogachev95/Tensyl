@@ -3,9 +3,7 @@
 from tensyl.core.constitutive import (
     ABDStiffness,
     ABDStiffnessCoefficients,
-    ConstitutiveModel,
     HyperelasticModel,
-    LinearModel,
     OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
     shift_reference_surface,
@@ -33,11 +31,16 @@ from tensyl.core.typing import (
     generalized_resultant,
     generalized_strain,
 )
+from tensyl.core.validity import (
+    ValidityContext,
+    ValidityReport,
+    ValidityThresholds,
+    validity_report_for_stiffness,
+)
 
 __all__ = [
     "DEFAULT_FRAME",
     "DEFAULT_STRAIN_CONVENTION",
-    "ConstitutiveModel",
     "FloatArray",
     "Frame2D",
     "GeneralizedResultant",
@@ -45,7 +48,6 @@ __all__ = [
     "HyperelasticModel",
     "ABDStiffness",
     "ABDStiffnessCoefficients",
-    "LinearModel",
     "OrthotropicStiffnessCoefficients",
     "ReducedOrthotropicProperties",
     "StrainConvention",
@@ -60,4 +62,8 @@ __all__ = [
     "shift_reference_surface",
     "superpose_abd_stiffnesses",
     "transverse_shear_transform",
+    "validity_report_for_stiffness",
+    "ValidityContext",
+    "ValidityReport",
+    "ValidityThresholds",
 ]

@@ -117,7 +117,7 @@ def test_orthogrid_panel_example() -> None:
 
     assert result.stiffness.C8.shape == (8, 8)
     assert result.stiffness.validity == result.validity
-    assert result.diagnostics["symmetric"]
+    assert result.diagnostics["positive_semidefinite"]
     assert result.diagnostics["positive_semidefinite"]
     assert result.diagnostics["rank"] == 8
     assert np.isclose(result.stiffness.A[0, 0], 1.4849661467100587e6)
@@ -191,7 +191,7 @@ def test_geometry_derived_stiffener_section_example() -> None:
     result = EnergyHomogenizer().compute(cell)
 
     assert result.stiffness.C8.shape == (8, 8)
-    assert result.diagnostics["symmetric"]
+    assert result.diagnostics["positive_semidefinite"]
     assert hat.section.metadata["section_geometry"] == "hat"
 
 

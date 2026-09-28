@@ -101,7 +101,7 @@ def _assert_result_matches(
     assert loaded.stiffness.validity == loaded.validity
     assert loaded.source == expected.source
     assert loaded.assumptions == expected.assumptions
-    assert loaded.diagnostics["symmetric"] is True
+    assert loaded.diagnostics["positive_semidefinite"] is True
     assert loaded.diagnostics["source_equations"] == ["Nemeth 2011 eqs. 30-39"]
 
 

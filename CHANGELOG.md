@@ -38,6 +38,14 @@ bug fixes that correct clearly wrong behavior.
   ran the same strain map through the same assembly, so it was never an
   independent check; the tests now compare family stiffnesses with the
   classical smeared-stiffener terms written out by hand.
+- Drop the `symmetric` and `energy_consistent` diagnostics. Both were always
+  `True` by construction, so they looked like checks without being any.
+- Move `ValidityContext`, `ValidityThresholds`, `ValidityReport`, and
+  `validity_report_for_stiffness` into `tensyl.core.validity` (still exported
+  from `tensyl` and `tensyl.homogenizers`), and type `ABDStiffness.validity` as
+  `ValidityReport | None`. Anything else now raises `TypeError`.
+- Remove the unused `LinearModel` protocol and the `ConstitutiveModel` alias;
+  `HyperelasticModel` remains the stored-energy contract.
 
 ## 0.3.1 - 2026-07-28
 
