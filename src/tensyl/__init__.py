@@ -102,10 +102,13 @@ from tensyl.sections import (
     thin_wall_section,
     zee_section,
 )
+from tensyl.sections.laminated import LaminatedThinWallSection, LaminatedWallSegment
 
 __version__ = tensyl_version()
 
 __all__ = [
+    "LaminatedThinWallSection",
+    "LaminatedWallSegment",
     "MemberLoads",
     "member_loads",
     "StiffnessSymmetryError",

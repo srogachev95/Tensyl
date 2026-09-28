@@ -8,6 +8,9 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add membrane-equivalent laminated wall sections with stiffness-weighted
+  centroids, and optional single-cell Bredt torsion for a hat closed by an
+  isotropic skin. Couplings that the beam model cannot retain are refused.
 - Add `tensyl.adapters.abaqus_shell_general_section` for full ABD and transverse
   shear keyword output, with surface density and explicit checks for unsupported
   shear laws and missing Abaqus/Explicit mass.
