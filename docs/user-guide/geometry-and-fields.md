@@ -90,7 +90,34 @@ field = ConstantStiffnessField(stiffness)
 local_stiffness = field.stiffness_at(surface, 10.0, 0.25)
 ```
 
-The stiffness tangent is unchanged. The stiffness is rebound to the surface-point frame.
+At the default `orientation_rad=0.0`, the stiffness tangent is unchanged and is
+rebound to the surface-point frame. To turn the material or rib direction
+relative to that frame, pass `orientation_rad`:
+
+```python
+import math
+
+field = ConstantStiffnessField(stiffness, orientation_rad=math.pi / 2)
+```
+
+The angle runs counterclockwise from the surface's `e1` to the stiffness's
+`e1`, viewed looking toward the surface from `+n`:
+
+```text
+      surface e2
+          ^       stiffness e1
+          |      /
+          |     /  positive angle
+          |    /
+          +--------------------> surface e1
+```
+
+A positive 90-degree angle swaps A11 and A22. A positive 45-degree angle
+puts an axial rib along `(e1 + e2) / sqrt(2)` and gives positive A16 for that
+rib's axial contribution. Internally, expressing the stiffness in surface
+axes uses `rotate_tangent(C8, -orientation_rad)`. The angle stays the same
+relative to the local surface axes at every point; it does not prescribe a
+fixed global direction over a curved shell.
 
 !!! note "A constant matrix still reads differently at each point"
     A constant field reuses the same numeric `C8` tangent, but each surface point

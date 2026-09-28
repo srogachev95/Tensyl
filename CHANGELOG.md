@@ -8,6 +8,9 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `ConstantStiffnessField.orientation_rad`, measured counterclockwise
+  from surface e1 to stiffness e1 about +n. Fields now support a constant
+  material angle relative to each sampled surface frame.
 - Give `ABDStiffness` a compact representation and add `summary()` strings on
   stiffnesses and homogenization results, with labeled engineering blocks,
   optional unit labels, warnings, and result assumptions.

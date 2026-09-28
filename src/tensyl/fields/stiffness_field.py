@@ -13,6 +13,7 @@ from tensyl._version import tensyl_version
 from tensyl.cells import CanonicalUnitCell
 from tensyl.core._validation import finite_number, readonly_mapping
 from tensyl.core.constitutive import ABDStiffness
+from tensyl.core.rotations import rotate_tangent
 from tensyl.core.typing import FloatArray
 from tensyl.geometry import Surface, SurfacePoint
 from tensyl.homogenizers import HomogenizationResult, Homogenizer, ValidityContext
@@ -102,11 +103,18 @@ class ConstantStiffnessField:
     """Uniform ABD stiffness bound pointwise to a surface frame.
 
     Attributes:
-        stiffness: Local stiffness to reuse at every sampled point. Its numeric
-            C8 matrix is preserved, then rebound to each surface point frame.
+        stiffness: Local stiffness to reuse at every sampled point.
+        orientation_rad: Counterclockwise angle from the surface's e1 to the
+            stiffness's e1 about +n. Zero preserves the original components.
     """
 
     stiffness: ABDStiffness
+    orientation_rad: float = 0.0
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self, "orientation_rad", finite_number(self.orientation_rad, name="orientation_rad")
+        )
 
     def stiffness_at(self, surface: Surface, u: float, v: float) -> ABDStiffness:
         """Return the constant stiffness at a surface point.
@@ -117,15 +125,29 @@ class ConstantStiffnessField:
             v: Second coordinate in the surface parameterization.
 
         Returns:
-            A new ``ABDStiffness`` with the same numeric law and the sampled
-            surface frame.
+            A new ``ABDStiffness`` expressed in the sampled surface frame,
+            with the supplied material orientation.
 
         Raises:
             ValueError: If the surface rejects the coordinates.
         """
 
         point = surface.point_at(u, v)
-        return _bind_stiffness_to_point(self.stiffness, point, source="constant_stiffness_field")
+        metadata = _metadata_for_surface(self.stiffness.metadata, point)
+        metadata.update(source="constant_stiffness_field", orientation_rad=self.orientation_rad)
+        tangent = self.stiffness.C8
+        if self.orientation_rad != 0.0:
+            # The angle locates material axes in surface axes. Expressing the
+            # material law in surface components uses the opposite frame turn.
+            tangent = rotate_tangent(tangent, -self.orientation_rad)
+        return ABDStiffness.from_tangent(
+            tangent,
+            frame=point.frame,
+            convention=self.stiffness.convention,
+            areal_mass=self.stiffness.areal_mass,
+            metadata=metadata,
+            validity=self.stiffness.validity,
+        )
 
 
 @dataclass(slots=True)
