@@ -13,4 +13,6 @@
         - HomogenizationResult
         - Homogenizer
         - EnergyHomogenizer
+        - MemberLoads
+        - member_loads
         - validity_report_for_stiffness

@@ -11,6 +11,7 @@ import numpy as np
 
 from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell
 from tensyl.core._validation import (
+    finite_number,
     frozen_value,
     readonly_array,
 )
@@ -23,7 +24,7 @@ from tensyl.core.constitutive import (
 )
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION
 from tensyl.core.rotations import generalized_strain_transform
-from tensyl.core.typing import FloatArray
+from tensyl.core.typing import FloatArray, GeneralizedStrain, generalized_strain
 from tensyl.core.validity import ValidityContext, ValidityReport, ValidityThresholds
 from tensyl.core.validity_checks import (
     _neutral_surface_offset,
@@ -338,6 +339,77 @@ def member_energy(member: BeamMember, eta: FloatArray) -> float:
     )
 
 
+@dataclass(frozen=True, slots=True)
+class MemberLoads:
+    """First-approximation beam resultants for one physical member.
+
+    Forces are per member, independent of its represented length/multiplicity.
+    They are conjugate to the five member strains documented by ``member_loads``.
+
+    Attributes:
+        member_index: Index in ``cell.members``.
+        label: Member label, which need not be unique.
+        axial_force: Force along the member, positive in extension.
+        in_plane_shear_force: Force conjugate to the in-plane member shear.
+        transverse_shear_force: Force conjugate to member transverse shear.
+        bending_moment: Moment conjugate to local kappa11.
+        torque: Torque conjugate to the member twist rate, -kappa12/2.
+    """
+
+    member_index: int
+    label: str
+    axial_force: float
+    in_plane_shear_force: float
+    transverse_shear_force: float
+    bending_moment: float
+    torque: float
+
+    def __post_init__(self) -> None:
+        for name in (
+            "axial_force",
+            "in_plane_shear_force",
+            "transverse_shear_force",
+            "bending_moment",
+            "torque",
+        ):
+            object.__setattr__(self, name, finite_number(getattr(self, name), name=name))
+
+
+def member_loads(
+    cell: CanonicalUnitCell, eta: GeneralizedStrain | FloatArray
+) -> tuple[MemberLoads, ...]:
+    """Recover first-approximation member forces and moments from wall strain.
+
+    In member axes the five strains are eps11 + za*kappa11,
+    (gamma12 + zs*kappa12)/2, gamma13, kappa11, and -kappa12/2.
+    Multiplying by EA, kGAy, kGAz, EIy, and GJ gives the conjugate loads.
+    Omitted shear stiffnesses give zero shear force, as in homogenization.
+
+    Args:
+        cell: Cell whose members and convention define the recovery model.
+        eta: Finite generalized strain in the cell frame, shape (8,).
+
+    Returns:
+        Loads in ``cell.members`` order, per physical member. These are the
+        affine model's beam resultants, not local stresses or joint loads.
+
+    Raises:
+        HomogenizationInputError: If the cell convention is unsupported.
+        ValueError: If strains or recovered loads are invalid or non-finite.
+    """
+
+    if cell.convention != DEFAULT_STRAIN_CONVENTION:
+        raise HomogenizationInputError(
+            "member_loads supports the default engineering convention only."
+        )
+    strain = generalized_strain(eta)
+    recovered = []
+    for index, member in enumerate(cell.members):
+        loads = _beam_stiffness(member.section) @ (_member_transform(member) @ strain)
+        recovered.append(MemberLoads(index, member.label, *(float(value) for value in loads)))
+    return tuple(recovered)
+
+
 def _cell_areal_mass(cell: CanonicalUnitCell) -> float | None:
     # Areal mass is only meaningful when the skin and every member know their
     # mass. Reporting skin-only mass for a stiffened panel would understate it.
@@ -513,6 +585,8 @@ class EnergyHomogenizer:
 
 
 __all__ = [
+    "MemberLoads",
+    "member_loads",
     "EnergyHomogenizer",
     "HomogenizationFailure",
     "HomogenizationInputError",

@@ -221,6 +221,59 @@ unit system.
     prove local strength, joint behavior, finite-element correlation, a shell
     buckling margin, or manufacturing suitability.
 
+## Strains and Member Loads
+
+Given membrane forces, bending moments, and transverse shear resultants, solve
+the full coupled law before reading a rib load:
+
+```python
+import numpy as np
+from tensyl import member_loads
+
+# N11, N22, N12, M11, M22, M12, Q13, Q23 in the cell frame.
+loads = np.array([100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+eta = result.stiffness.strains(loads)
+for load in member_loads(cell, eta):
+    print(load.label, load.axial_force, load.bending_moment)
+```
+
+`strains` solves `C8 @ eta = loads`; the returned vector is read-only. A
+singular tangent raises `ValueError` because it does not define a unique
+strain. A very poorly conditioned but nonsingular law can still amplify input
+roundoff, so inspect the stiffness and validity before interpreting the solve.
+
+`member_loads` returns one `MemberLoads` value per entry in `cell.members`,
+with an index as well as the possibly repeated label. The forces are for one
+physical rib. Multiplicity, length, and cell area affect the smeared stiffness
+but do not scale that rib's force under a prescribed strain.
+
+In the member's local axes, the five work-conjugate strain measures and loads
+are
+
+$$
+\begin{aligned}
+N &= EA(\epsilon_{11}' + z_a\kappa_{11}'),\\
+V_y &= kGA_y(\gamma_{12}' + z_s\kappa_{12}')/2,\\
+V_z &= kGA_z\gamma_{13}',\\
+M_y &= EI_y\kappa_{11}',\\
+T &= -GJ\kappa_{12}'/2.
+\end{aligned}
+$$
+
+Primes mean strain components expressed in the member axes. The positive
+member direction follows `angle_rad`, its transverse in-plane direction makes
+a right-handed frame with `+n`, and the eccentricities point along `+n`.
+Positive axial force extends the rib. Moment and torque signs follow their
+conjugate curvature and twist measures above; do not substitute an external
+beam solver's end-force sign convention without a transformation. The factors
+of one-half and negative twist sign come from the
+[Nemeth member map](../theory/tangent-plane-homogenization.md).
+
+These are beam resultants under the affine, first-approximation strain field.
+They do not recover local skin stresses, joint forces, warping stresses, or
+intersection concentrations. Omitted `kGAy` or `kGAz` produces zero for the
+corresponding force, following the same assumption used by homogenization.
+
 ## Comparing ABD Stiffnesses
 
 For a quick inspection, `repr(result.stiffness)` shows the frame, areal mass,

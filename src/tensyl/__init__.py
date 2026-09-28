@@ -75,9 +75,11 @@ from tensyl.homogenizers import (
     HomogenizationNumericalError,
     HomogenizationResult,
     Homogenizer,
+    MemberLoads,
     ValidityContext,
     ValidityReport,
     ValidityThresholds,
+    member_loads,
     validity_report_for_stiffness,
 )
 from tensyl.materials import (
@@ -104,6 +106,8 @@ from tensyl.sections import (
 __version__ = tensyl_version()
 
 __all__ = [
+    "MemberLoads",
+    "member_loads",
     "StiffnessSymmetryError",
     "DEFAULT_FRAME",
     "DEFAULT_STRAIN_CONVENTION",

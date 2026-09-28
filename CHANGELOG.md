@@ -8,6 +8,10 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `ABDStiffness.strains` to solve coupled generalized loads, with a clear
+  error for singular stiffness. Add `member_loads` and `MemberLoads` for affine
+  first-approximation rib forces, bending moments, and torques, with documented
+  signs and per-member scaling.
 - Add `check_cell_geometry` to compare the drawn periodic length density with
   the member density used by homogenization, accounting for shared boundaries
   and overlapping pieces. Unlabeled graph members now retain their edge's
