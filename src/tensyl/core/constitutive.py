@@ -45,6 +45,10 @@ class _ABDTangentReductionError(ValueError):
     """Raised when a tangent cannot be reduced to Tensyl's ABD block form."""
 
 
+class StiffnessSymmetryError(_ABDTangentReductionError):
+    """Raised when stiffness asymmetry exceeds the chosen import tolerance."""
+
+
 def _checked_finite_fields(obj: object, names: tuple[str, ...]) -> None:
     for name in names:
         object.__setattr__(obj, name, finite_number(getattr(obj, name), name=name))
@@ -78,9 +82,10 @@ def _symmetrized_roundoff_block(values: FloatArray, *, name: str) -> FloatArray:
     if residual > limit:
         msg = (
             f"{name} must be symmetric within numerical roundoff "
-            f"(residual {residual:.6g}, limit {limit:.6g})."
+            f"(residual {residual:.6g}, limit {limit:.6g}). "
+            "For printed-precision matrices, use ABDStiffness.from_published_blocks."
         )
-        raise _ABDTangentReductionError(msg)
+        raise StiffnessSymmetryError(msg)
     return 0.5 * (values + values.T)
 
 
@@ -100,7 +105,7 @@ def _canonical_abd_tangent(values: FloatArray) -> FloatArray:
             f"numerical roundoff (residual {cross_residual:.6g}, "
             f"limit {cross_limit:.6g})."
         )
-        raise _ABDTangentReductionError(msg)
+        raise StiffnessSymmetryError(msg)
     B = _symmetrized_roundoff_block(
         0.5 * (B_upper + B_lower_transpose),
         name="tangent B block",
@@ -490,6 +495,87 @@ class ABDStiffness:
             convention=convention,
             areal_mass=areal_mass,
             metadata={} if metadata is None else metadata,
+            validity=validity,
+        )
+
+    @classmethod
+    def from_published_blocks(
+        cls,
+        A: FloatArray,
+        B: FloatArray,
+        D: FloatArray,
+        As: FloatArray,
+        *,
+        rtol: float = 1.0e-6,
+        frame: Frame2D = DEFAULT_FRAME,
+        convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
+        areal_mass: float | None = None,
+        metadata: Mapping[str, Any] | None = None,
+        validity: ValidityReport | None = None,
+    ) -> ABDStiffness:
+        """Import blocks whose symmetry was rounded to printed precision.
+
+        Each block is averaged with its transpose only when its maximum
+        asymmetry is at most ``rtol`` times that block's largest absolute
+        coefficient. This does not test positive energy or change units.
+
+        Args:
+            A: 3x3 membrane block.
+            B: 3x3 membrane-bending block.
+            D: 3x3 bending block.
+            As: 2x2 transverse-shear block.
+            rtol: Finite relative asymmetry limit, in [0, 1).
+            frame: Local frame for the coefficients.
+            convention: Generalized strain/resultant ordering.
+            areal_mass: Optional nonnegative mass per unit area.
+            metadata: Provenance, augmented by a ``published_blocks`` record.
+            validity: Optional validity report to attach.
+
+        Returns:
+            Exactly symmetric stiffness with the maximum relative correction
+            and each block's absolute correction recorded in metadata.
+
+        Raises:
+            StiffnessSymmetryError: If a block exceeds the requested tolerance.
+            ValueError: If a shape, value, or tolerance is invalid.
+        """
+
+        tolerance = nonnegative_number(rtol, name="rtol")
+        if tolerance >= 1.0:
+            raise ValueError("rtol must be less than 1.")
+        blocks: dict[str, FloatArray] = {}
+        corrections: dict[str, float] = {}
+        relative_correction = 0.0
+        for name, values, shape in (
+            ("A", A, (3, 3)),
+            ("B", B, (3, 3)),
+            ("D", D, (3, 3)),
+            ("As", As, (2, 2)),
+        ):
+            block = _readonly_matrix(values, shape=shape, name=name)
+            scale = float(np.max(np.abs(block)))
+            residual = float(np.max(np.abs(block - block.T)))
+            if residual > tolerance * scale:
+                raise StiffnessSymmetryError(
+                    f"{name} asymmetry {residual:.6g} exceeds rtol * block scale "
+                    f"({tolerance * scale:.6g})."
+                )
+            blocks[name] = 0.5 * block + 0.5 * block.T
+            corrections[name] = 0.5 * residual
+            if scale > 0.0:
+                relative_correction = max(relative_correction, 0.5 * residual / scale)
+        provenance = {} if metadata is None else dict(metadata)
+        provenance["published_blocks"] = {
+            "rtol": tolerance,
+            "max_relative_correction": relative_correction,
+            "absolute_corrections": corrections,
+        }
+        return cls(
+            **blocks,
+            frame=frame,
+            convention=convention,
+            areal_mass=areal_mass,
+            metadata=provenance,
             validity=validity,
         )
 
@@ -1010,6 +1096,7 @@ def superpose_abd_stiffnesses(
 
 
 __all__ = [
+    "StiffnessSymmetryError",
     "ABDStiffnessCoefficients",
     "HyperelasticModel",
     "ABDStiffness",

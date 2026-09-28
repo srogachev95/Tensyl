@@ -8,6 +8,10 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `ABDStiffness.from_published_blocks` for explicitly importing matrices
+  rounded to printed precision. It checks each block's relative asymmetry,
+  averages qualifying entries, and records the corrections. Strict symmetry
+  failures now raise the public `StiffnessSymmetryError`.
 - Infer missing validity pitch from the longest cell repeat vector or largest
   family spacing while preserving caller-supplied scales. Add
   `ValidityContext.from_surface_point` for local curvature context. Reports

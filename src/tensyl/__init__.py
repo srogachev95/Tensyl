@@ -34,6 +34,7 @@ from tensyl.core.constitutive import (
     HyperelasticModel,
     OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
+    StiffnessSymmetryError,
     shift_reference_surface,
     superpose_abd_stiffnesses,
 )
@@ -101,6 +102,7 @@ from tensyl.sections import (
 __version__ = tensyl_version()
 
 __all__ = [
+    "StiffnessSymmetryError",
     "DEFAULT_FRAME",
     "DEFAULT_STRAIN_CONVENTION",
     "BeamMember",

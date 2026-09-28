@@ -7,6 +7,7 @@
         - ABDStiffnessCoefficients
         - HyperelasticModel
         - ABDStiffness
+        - StiffnessSymmetryError
         - OrthotropicStiffnessCoefficients
         - ReducedOrthotropicProperties
         - shift_reference_surface
