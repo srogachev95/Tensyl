@@ -8,6 +8,9 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `tensyl.adapters.abaqus_shell_general_section` for full ABD and transverse
+  shear keyword output, with surface density and explicit checks for unsupported
+  shear laws and missing Abaqus/Explicit mass.
 - Add `ABDStiffness.strains` to solve coupled generalized loads, with a clear
   error for singular stiffness. Add `member_loads` and `MemberLoads` for affine
   first-approximation rib forces, bending moments, and torques, with documented

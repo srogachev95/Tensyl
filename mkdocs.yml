@@ -70,4 +70,5 @@ nav:
       - Homogenizers: api/homogenizers.md
       - Geometry and Fields: api/geometry-and-fields.md
       - External Workflow I/O: api/io.md
+      - Solver Adapters: api/adapters.md
   - References: references.md
