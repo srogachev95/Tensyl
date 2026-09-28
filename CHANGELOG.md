@@ -8,6 +8,10 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add explicit material/member thermal expansion and separate uniform-temperature
+  laminate and cell thermal resultants, with frame rotation, reference shifts,
+  and clear refusals for missing expansion data.
+
 - Add deterministic parameter sweeps with named coefficients, complete mass,
   warning codes, and parameter context on failures.
 

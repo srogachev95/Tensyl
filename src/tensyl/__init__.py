@@ -45,6 +45,7 @@ from tensyl.core.conventions import (
     Frame2D,
     StrainConvention,
 )
+from tensyl.core.thermal import ThermalResultants
 from tensyl.core.typing import (
     GeneralizedResultant,
     GeneralizedStrain,
@@ -82,6 +83,7 @@ from tensyl.homogenizers import (
     member_loads,
     validity_report_for_stiffness,
 )
+from tensyl.homogenizers.thermal import cell_thermal_resultants
 from tensyl.materials import (
     IsotropicMaterial,
     OrthotropicPlyMaterial,
@@ -90,6 +92,7 @@ from tensyl.materials import (
     laminate_plate,
     layup,
 )
+from tensyl.materials.thermal import laminate_thermal_resultants
 from tensyl.sections import (
     BeamSection,
     SectionProperties,
@@ -108,6 +111,9 @@ from tensyl.workflows import sweep
 __version__ = tensyl_version()
 
 __all__ = [
+    "cell_thermal_resultants",
+    "laminate_thermal_resultants",
+    "ThermalResultants",
     "sweep",
     "LaminatedThinWallSection",
     "LaminatedWallSegment",

@@ -17,8 +17,10 @@ from tensyl.homogenizers.tangent_plane import (
     member_tangent_density,
     validity_report_for_stiffness,
 )
+from tensyl.homogenizers.thermal import cell_thermal_resultants
 
 __all__ = [
+    "cell_thermal_resultants",
     "MemberLoads",
     "member_loads",
     "EnergyHomogenizer",

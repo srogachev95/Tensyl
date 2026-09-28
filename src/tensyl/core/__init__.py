@@ -25,6 +25,7 @@ from tensyl.core.rotations import (
     rotate_tangent,
     transverse_shear_transform,
 )
+from tensyl.core.thermal import ThermalResultants
 from tensyl.core.typing import (
     FloatArray,
     GeneralizedResultant,
@@ -40,6 +41,7 @@ from tensyl.core.validity import (
 from tensyl.core.validity_checks import validity_report_for_stiffness
 
 __all__ = [
+    "ThermalResultants",
     "DEFAULT_FRAME",
     "DEFAULT_STRAIN_CONVENTION",
     "FloatArray",

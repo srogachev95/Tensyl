@@ -20,3 +20,5 @@
 ## Batch Workflows
 
 ::: tensyl.workflows.sweep
+
+::: tensyl.homogenizers.cell_thermal_resultants

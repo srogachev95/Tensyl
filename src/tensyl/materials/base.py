@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from tensyl.core._validation import optional_nonnegative_number, positive_number
+from tensyl.core._validation import finite_number, optional_nonnegative_number, positive_number
 from tensyl.core.typing import FloatArray
 
 
@@ -19,13 +19,17 @@ class IsotropicMaterial:
         nu: Poisson ratio satisfying ``-1 < nu < 0.5``.
         density: Optional nonnegative mass density. When present, plate
             builders can report areal mass.
+        alpha: Optional thermal expansion per temperature increment; None is unknown.
     """
 
     E: float
     nu: float
     density: float | None = None
+    alpha: float | None = None
 
     def __post_init__(self) -> None:
+        if self.alpha is not None:
+            object.__setattr__(self, "alpha", finite_number(self.alpha, name="alpha"))
         E = positive_number(self.E, name="E")
         nu = float(self.nu)
         if not np.isfinite(nu) or not -1.0 < nu < 0.5:
@@ -83,6 +87,8 @@ class OrthotropicPlyMaterial:
         G13: Positive transverse-shear modulus in the 1-n plane.
         G23: Positive transverse-shear modulus in the 2-n plane.
         density: Optional nonnegative mass density.
+        alpha1: Optional expansion along material direction 1, per temperature increment.
+        alpha2: Optional expansion along material direction 2, per temperature increment.
     """
 
     E1: float
@@ -92,8 +98,14 @@ class OrthotropicPlyMaterial:
     G13: float
     G23: float
     density: float | None = None
+    alpha1: float | None = None
+    alpha2: float | None = None
 
     def __post_init__(self) -> None:
+        for name in ("alpha1", "alpha2"):
+            value = getattr(self, name)
+            if value is not None:
+                object.__setattr__(self, name, finite_number(value, name=name))
         E1 = positive_number(self.E1, name="E1")
         E2 = positive_number(self.E2, name="E2")
         G12 = positive_number(self.G12, name="G12")

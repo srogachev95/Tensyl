@@ -85,3 +85,48 @@ mixed materials or ply thicknesses.
 `isotropic_plate` and `laminate_plate` expose transverse-shear behavior through
 the `As` block. The shear correction factor is an explicit modeling choice; it
 should be chosen consistently with the plate or shell theory used downstream.
+
+## Uniform Temperature Changes
+
+A heated laminate expands even when no mechanical load is applied. Supply
+`alpha` on an isotropic material, or `alpha1` and `alpha2` along an orthotropic
+ply's material axes, in inverse temperature units. `None` means unknown;
+zero explicitly means no expansion. Negative coefficients are allowed.
+
+`laminate_thermal_resultants(plies)` uses the same bottom-to-top stack and
+midplane as `laminate_plate`. It returns a separate `ThermalResultants` with
+`N_T` and `M_T` per unit **uniform** temperature change:
+
+$$N_T=\sum_k\bar Q_k\bar\alpha_k(z_k-z_{k-1}),\qquad
+M_T=\frac12\sum_k\bar Q_k\bar\alpha_k(z_k^2-z_{k-1}^2).$$
+
+Here $\bar\alpha$ is the engineering strain vector, including twice the tensor
+shear component. These are the thermal terms in classical laminate theory;
+see the hygrothermal development in [NASA RP-1351](https://ntrs.nasa.gov/citations/19950009349).
+The section relation is
+
+$$r=C_8\eta-r_T\Delta T,\qquad r_T=[N_T,M_T,0,0]^T.$$
+
+Thus full restraint gives negative thermal resultants. For free expansion,
+solve using positive equivalent thermal loads:
+
+```python
+from tensyl import IsotropicMaterial, Ply, laminate_plate, laminate_thermal_resultants
+
+plies = (Ply(IsotropicMaterial(E=70e9, nu=0.3, alpha=23e-6), 0.002),)
+stiffness = laminate_plate(plies)
+thermal = laminate_thermal_resultants(plies)
+free_strain = stiffness.strains(thermal.equivalent_load(50.0))
+```
+
+For applied mechanical loads `r`, solve
+`stiffness.strains(r + thermal.equivalent_load(delta_temperature))`. The existing
+stiffness methods keep their mechanical meaning. Keep both objects in the same
+frame and at the same reference surface. `thermal.rotate(angle_rad)` follows
+`stiffness.rotate`; `thermal.shift_reference_surface(d)` changes the thermal
+moment to `M_T - d*N_T`, matching the stiffness reference shift. Both preserve
+energy-conjugate engineering conventions.
+
+The helper refuses missing expansion coefficients. It assumes linear elastic,
+temperature-independent properties and a uniform temperature change. It does
+not include temperature gradients, moisture expansion, or thermal buckling.

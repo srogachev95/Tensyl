@@ -30,3 +30,5 @@
         - GeneralizedResultant
         - generalized_strain
         - generalized_resultant
+
+::: tensyl.core.ThermalResultants
