@@ -49,6 +49,8 @@ bug fixes that correct clearly wrong behavior.
 - Add `Frame2D.is_close` and use it wherever frames must agree: superposition,
   cells, fields, and atlases. Frames that differ only by label or by rotation
   roundoff are now compatible; exact `==` still backs hashing.
+- Test Python 3.13 and 3.14 in CI alongside 3.12, and list them in the package
+  classifiers.
 
 ## 0.3.1 - 2026-07-28
 
