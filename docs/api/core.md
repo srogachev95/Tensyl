@@ -6,8 +6,6 @@
       members:
         - ABDStiffnessCoefficients
         - HyperelasticModel
-        - ConstitutiveModel
-        - LinearModel
         - ABDStiffness
         - OrthotropicStiffnessCoefficients
         - ReducedOrthotropicProperties

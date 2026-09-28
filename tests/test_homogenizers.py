@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import inspect
 from dataclasses import fields
 
@@ -11,9 +12,7 @@ import tensyl.homogenizers.tangent_plane as tangent_plane
 from tensyl import (
     ABDStiffness,
     BeamSection,
-    DirectECHomogenizer,
     EnergyHomogenizer,
-    HomogenizationInputError,
     HomogenizationNumericalError,
     IsotropicMaterial,
     StiffenerFamily,
@@ -22,6 +21,7 @@ from tensyl import (
     equilateral_isogrid_cell,
     isotropic_plate,
     orthogrid_cell,
+    stiffener_family_cell,
     unidirectional_cell,
 )
 from tensyl.cells import BeamMember, CanonicalUnitCell
@@ -191,7 +191,6 @@ def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
         member_energy(member, eta) for member in cell.members
     )
 
-    assert result.diagnostics["symmetric"] is True
     assert result.diagnostics["positive_semidefinite"] is True
     np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
 
@@ -250,51 +249,117 @@ def test_energy_homogenizer_raises_typed_error_for_material_block_asymmetry(
         EnergyHomogenizer().compute(cell)
 
 
-def test_direct_homogenizer_matches_energy_for_unidirectional_family() -> None:
-    skin = _zero_skin()
-    section = _section()
-    spacing = 1.7
+def _closed_form_family_tangent(family: StiffenerFamily) -> np.ndarray:
+    # Classical smeared-stiffener terms written with scalar projection vectors,
+    # independent of Tensyl's 8x8 member transform. r projects wall strain onto
+    # the member axis; q gives twice the tensor shear in member axes.
+    c = np.cos(family.angle_rad)
+    s = np.sin(family.angle_rad)
+    r = np.array([c * c, s * s, c * s])
+    q = np.array([-2.0 * c * s, 2.0 * c * s, c * c - s * s])
+    n = family.multiplicity / family.spacing
+    section = family.section
+    ea, es = family.axial_eccentricity, family.shear_eccentricity
+    assert es is not None
+    kgay = section.kGAy or 0.0
+    kgaz = section.kGAz or 0.0
+    rr = np.outer(r, r)
+    qq = np.outer(q, q)
+    tangent = np.zeros((8, 8))
+    tangent[0:3, 0:3] = n * (section.EA * rr + 0.25 * kgay * qq)
+    coupling = n * (section.EA * ea * rr + 0.25 * kgay * es * qq)
+    tangent[0:3, 3:6] = coupling
+    tangent[3:6, 0:3] = coupling
+    tangent[3:6, 3:6] = n * (
+        section.EA * ea**2 * rr
+        + 0.25 * kgay * es**2 * qq
+        + section.EIy * rr
+        + 0.25 * section.GJ * qq
+    )
+    tangent[6:8, 6:8] = n * kgaz * np.outer([c, s], [c, s])
+    return tangent
 
-    energy = EnergyHomogenizer().compute(
+
+@pytest.mark.parametrize("angle", [0.0, 0.37, -1.1, 0.5 * np.pi, 2.4])
+@pytest.mark.parametrize(("axial", "shear"), [(0.0, None), (0.04, None), (0.04, -0.02)])
+def test_family_cell_matches_closed_form_smeared_stiffener_terms(
+    angle: float, axial: float, shear: float | None
+) -> None:
+    families = (
+        StiffenerFamily(
+            section=_section(),
+            spacing=1.7,
+            angle_rad=angle,
+            axial_eccentricity=axial,
+            shear_eccentricity=shear,
+        ),
+        StiffenerFamily(
+            section=BeamSection(EA=900.0, EIy=35.0, EIz=20.0, GJ=11.0, kGAy=250.0),
+            spacing=2.9,
+            angle_rad=angle + 1.0,
+            axial_eccentricity=-axial,
+            multiplicity=2.0,
+        ),
+    )
+
+    result = EnergyHomogenizer().compute(
+        stiffener_family_cell(skin=_zero_skin(), families=families)
+    )
+
+    expected = sum(_closed_form_family_tangent(family) for family in families)
+    np.testing.assert_allclose(result.stiffness.C8, expected, rtol=1.0e-12, atol=1.0e-9)
+
+
+def test_family_cell_adds_family_mass_per_unit_area() -> None:
+    skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickness=0.08)
+    section = BeamSection(EA=1.0e5, EIy=10.0, EIz=5.0, GJ=2.0, mass_per_length=0.004)
+    families = (
+        StiffenerFamily(section=section, spacing=3.0, angle_rad=0.0, axial_eccentricity=0.2),
+        StiffenerFamily(
+            section=section,
+            spacing=5.0,
+            angle_rad=0.5 * np.pi,
+            axial_eccentricity=0.2,
+            multiplicity=2.0,
+        ),
+    )
+
+    result = EnergyHomogenizer().compute(stiffener_family_cell(skin=skin, families=families))
+
+    assert result.stiffness.areal_mass == pytest.approx(0.1 * 0.08 + 0.004 / 3.0 + 2 * 0.004 / 5.0)
+
+
+def test_family_cell_matches_the_equivalent_unidirectional_cell() -> None:
+    family = StiffenerFamily(
+        section=_section(), spacing=1.7, angle_rad=0.37, axial_eccentricity=0.04
+    )
+
+    from_family = EnergyHomogenizer().compute(
+        stiffener_family_cell(skin=_zero_skin(), families=(family,))
+    )
+    from_cell = EnergyHomogenizer().compute(
         unidirectional_cell(
-            skin=skin,
-            member_section=section,
-            spacing=spacing,
+            skin=_zero_skin(),
+            member_section=_section(),
+            spacing=1.7,
             axial_eccentricity=0.04,
             angle_rad=0.37,
         )
     )
-    direct = DirectECHomogenizer().compute(
-        skin=skin,
-        families=(
-            StiffenerFamily(
-                section=section,
-                spacing=spacing,
-                angle_rad=0.37,
-                axial_eccentricity=0.04,
-            ),
-        ),
+
+    np.testing.assert_allclose(
+        from_family.stiffness.C8, from_cell.stiffness.C8, rtol=1.0e-12, atol=1.0e-12
     )
 
-    np.testing.assert_allclose(direct.stiffness.C8, energy.stiffness.C8, rtol=1.0e-12, atol=1.0e-12)
+
+def test_family_cell_requires_at_least_one_family() -> None:
+    with pytest.raises(ValueError, match="at least one stiffener family"):
+        stiffener_family_cell(skin=_zero_skin(), families=())
 
 
-def test_direct_and_energy_paths_agree_on_areal_mass() -> None:
-    skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickness=0.08)
-    section = BeamSection(EA=1.0e5, EIy=10.0, EIz=5.0, GJ=2.0, mass_per_length=0.004)
-
-    energy = EnergyHomogenizer().compute(
-        unidirectional_cell(skin=skin, member_section=section, spacing=3.0, axial_eccentricity=0.2)
-    )
-    direct = DirectECHomogenizer().compute(
-        skin=skin,
-        families=(
-            StiffenerFamily(section=section, spacing=3.0, angle_rad=0.0, axial_eccentricity=0.2),
-        ),
-    )
-
-    assert energy.stiffness.areal_mass == pytest.approx(0.1 * 0.08 + 0.004 / 3.0)
-    assert direct.stiffness.areal_mass == pytest.approx(energy.stiffness.areal_mass)
+def test_direct_ec_homogenizer_is_retired() -> None:
+    for module_name in ("tensyl", "tensyl.homogenizers"):
+        assert not hasattr(importlib.import_module(module_name), "DirectECHomogenizer")
 
 
 def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
@@ -365,6 +430,20 @@ def test_rotating_a_homogenized_stiffness_keeps_its_validity_report() -> None:
     rotated = result.stiffness.rotate(0.4)
 
     assert rotated.validity == result.validity
+
+
+def test_diagnostics_report_only_checks_that_can_fail() -> None:
+    cell = unidirectional_cell(
+        skin=_zero_skin(), member_section=_section(), spacing=2.0, axial_eccentricity=0.1
+    )
+
+    diagnostics = EnergyHomogenizer().compute(cell).diagnostics
+
+    # Symmetry is enforced by construction and energy consistency was a
+    # constant, so neither tells the caller anything.
+    assert "symmetric" not in diagnostics
+    assert "energy_consistent" not in diagnostics
+    assert {"positive_semidefinite", "minimum_eigenvalue", "rank"} <= set(diagnostics)
 
 
 def test_equilateral_isogrid_has_expected_membrane_symmetry() -> None:
@@ -445,8 +524,3 @@ def test_validity_negative_energy_diagnostic_is_invariant_to_stiffness_scale(
     report = tangent_plane.validity_report_for_stiffness(stiffness)
 
     assert "negative_energy_mode" in report.warnings
-
-
-def test_direct_homogenizer_uses_typed_input_error() -> None:
-    with pytest.raises(HomogenizationInputError, match="requires at least one stiffener family"):
-        DirectECHomogenizer().compute(skin=_zero_skin(), families=())

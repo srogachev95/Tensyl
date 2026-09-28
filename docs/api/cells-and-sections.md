@@ -24,6 +24,7 @@
         - CellEdge
         - CanonicalUnitCell
         - StiffenerFamily
+        - stiffener_family_cell
         - graph_unit_cell
         - unidirectional_cell
         - orthogrid_cell

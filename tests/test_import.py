@@ -43,3 +43,25 @@ def test_top_level_compatibility_shims_are_not_packaged() -> None:
     assert importlib.util.find_spec("tensyl.laminates") is None
     assert importlib.util.find_spec("tensyl.rotations") is None
     assert importlib.util.find_spec("tensyl.typing") is None
+
+
+def test_unused_protocol_aliases_are_gone() -> None:
+    for module_name in ("tensyl", "tensyl.core"):
+        module = importlib.import_module(module_name)
+        for name in ("ConstitutiveModel", "LinearModel"):
+            assert not hasattr(module, name)
+
+
+def test_validity_types_live_in_core() -> None:
+    from tensyl.core import (
+        ValidityContext,
+        ValidityReport,
+        ValidityThresholds,
+        validity_report_for_stiffness,
+    )
+    from tensyl.homogenizers import ValidityReport as HomogenizerValidityReport
+
+    assert ValidityReport.__module__ == "tensyl.core.validity"
+    assert HomogenizerValidityReport is ValidityReport
+    assert ValidityContext.__module__ == ValidityThresholds.__module__ == "tensyl.core.validity"
+    assert validity_report_for_stiffness.__module__ == "tensyl.core.validity_checks"

@@ -33,6 +33,25 @@ bug fixes that correct clearly wrong behavior.
   coefficient in every case now agrees with the corrected SP-8007 formulas to
   roundoff, so the report drops the low-`EIz` cases, the in-plane inertia
   sweep, and the bending-ratio plot.
+- Replace `DirectECHomogenizer` with `stiffener_family_cell`, which turns
+  `StiffenerFamily` inputs into a cell for `EnergyHomogenizer`. The direct path
+  ran the same strain map through the same assembly, so it was never an
+  independent check; the tests now compare family stiffnesses with the
+  classical smeared-stiffener terms written out by hand.
+- Drop the `symmetric` and `energy_consistent` diagnostics. Both were always
+  `True` by construction, so they looked like checks without being any.
+- Move `ValidityContext`, `ValidityThresholds`, and `ValidityReport` into
+  `tensyl.core.validity`, with `validity_report_for_stiffness` in
+  `tensyl.core.validity_checks` (all still exported from `tensyl` and
+  `tensyl.homogenizers`), and type `ABDStiffness.validity` as
+  `ValidityReport | None`. Anything else now raises `TypeError`.
+- Remove the unused `LinearModel` protocol and the `ConstitutiveModel` alias;
+  `HyperelasticModel` remains the stored-energy contract.
+- Add `Frame2D.is_close` and use it wherever frames must agree: superposition,
+  cells, fields, and atlases. Frames that differ only by label or by rotation
+  roundoff are now compatible; exact `==` still backs hashing.
+- Test Python 3.13 and 3.14 in CI alongside 3.12, and list them in the package
+  classifiers.
 
 ## 0.3.1 - 2026-07-28
 

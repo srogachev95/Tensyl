@@ -43,5 +43,4 @@ def assert_energy_consistent(cell) -> None:
         member_energy(member, eta) for member in cell.members
     )
     np.testing.assert_allclose(stiffness_energy, explicit_energy, rtol=1.0e-12, atol=1.0e-10)
-    assert result.diagnostics["symmetric"] is True
     assert result.diagnostics["positive_semidefinite"] is True

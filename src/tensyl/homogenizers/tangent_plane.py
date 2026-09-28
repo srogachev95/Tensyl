@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any, Literal, Protocol
 
 import numpy as np
 
-from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell, StiffenerFamily
+from tensyl.cells.tangent_plane import BeamMember, CanonicalUnitCell
 from tensyl.core._validation import (
     frozen_value,
-    optional_positive_number,
-    positive_number,
     readonly_array,
 )
 from tensyl.core.constitutive import (
@@ -23,14 +20,18 @@ from tensyl.core.constitutive import (
     ReducedOrthotropicProperties,
     _ABDTangentReductionError,
 )
-from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION, StrainConvention
+from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION
 from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
+from tensyl.core.validity import ValidityContext, ValidityReport, ValidityThresholds
+from tensyl.core.validity_checks import (
+    _spectral_properties,
+    _validity_report,
+    validity_report_for_stiffness,
+)
 from tensyl.sections.beam import BeamSection
 
-_SYMMETRY_TOLERANCE = 1.0e-9
 _ROUNDOFF_RELATIVE_TOLERANCE = float(64.0 * np.finfo(np.float64).eps)
-_SPECTRAL_RELATIVE_TOLERANCE = _ROUNDOFF_RELATIVE_TOLERANCE
 
 
 class HomogenizationFailure(Exception):
@@ -49,131 +50,8 @@ class HomogenizationNumericalError(HomogenizationFailure, ArithmeticError):
     """Raised when an assembled tangent violates the homogenizer's numeric contract."""
 
 
-def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
-    if value is None:
-        return None
-    checked = float(value)
-    if checked == np.inf:
-        return checked
-    return positive_number(checked, name=name)
-
-
 def _readonly_matrix(values: FloatArray, *, shape: tuple[int, int], name: str) -> FloatArray:
     return readonly_array(values, shape=shape, name=name)
-
-
-@dataclass(frozen=True, slots=True)
-class ValidityContext:
-    """Optional geometric scale data for tangent-plane validity checks.
-
-    ``characteristic_height`` is a stiffness or stiffener height scale, ``pitch`` is
-    the repeated-cell spacing, ``min_radius`` is the smallest local curvature
-    radius, and ``response_length`` is the intended structural response length
-    such as a buckle wavelength or analysis feature size.
-
-    Attributes:
-        characteristic_height: Optional positive member or wall height scale.
-        pitch: Optional positive repeated-cell pitch.
-        min_radius: Optional positive curvature radius, or infinity for flat
-            geometry.
-        response_length: Optional positive structural response length.
-    """
-
-    characteristic_height: float | None = None
-    pitch: float | None = None
-    min_radius: float | None = None
-    response_length: float | None = None
-
-    def __post_init__(self) -> None:
-        object.__setattr__(
-            self,
-            "characteristic_height",
-            optional_positive_number(self.characteristic_height, name="characteristic_height"),
-        )
-        object.__setattr__(self, "pitch", optional_positive_number(self.pitch, name="pitch"))
-        object.__setattr__(
-            self,
-            "min_radius",
-            _optional_positive_or_inf(self.min_radius, name="min_radius"),
-        )
-        object.__setattr__(
-            self,
-            "response_length",
-            optional_positive_number(self.response_length, name="response_length"),
-        )
-
-
-@dataclass(frozen=True, slots=True)
-class ValidityThresholds:
-    """Warning thresholds for tangent-plane scale-separation checks.
-
-    Attributes:
-        h_over_R: Warning threshold for height over curvature radius.
-        p_over_R: Warning threshold for pitch over curvature radius.
-        p_over_L_response: Warning threshold for pitch over response length.
-        coupling_ratio: Warning threshold for normalized coupling terms.
-    """
-
-    h_over_R: float = 0.05
-    p_over_R: float = 0.05
-    p_over_L_response: float = 0.05
-    coupling_ratio: float = 0.10
-
-    def __post_init__(self) -> None:
-        object.__setattr__(self, "h_over_R", positive_number(self.h_over_R, name="h_over_R"))
-        object.__setattr__(self, "p_over_R", positive_number(self.p_over_R, name="p_over_R"))
-        object.__setattr__(
-            self,
-            "p_over_L_response",
-            positive_number(self.p_over_L_response, name="p_over_L_response"),
-        )
-        object.__setattr__(
-            self,
-            "coupling_ratio",
-            positive_number(self.coupling_ratio, name="coupling_ratio"),
-        )
-
-
-@dataclass(frozen=True, slots=True)
-class ValidityReport:
-    """Machine-readable validity diagnostics attached to a result.
-
-    Attributes:
-        h_over_R: Height-to-radius ratio when both inputs were available.
-        p_over_R: Pitch-to-radius ratio when both inputs were available.
-        p_over_L_response: Pitch-to-response-length ratio when both inputs
-            were available.
-        coupling_ratios: Named normalized coupling indicators.
-        warnings: Stable warning identifiers for violated checks.
-    """
-
-    h_over_R: float | None
-    p_over_R: float | None
-    p_over_L_response: float | None
-    coupling_ratios: Mapping[str, float]
-    warnings: tuple[str, ...]
-
-    def __post_init__(self) -> None:
-        for name in ("h_over_R", "p_over_R", "p_over_L_response"):
-            value = getattr(self, name)
-            if value is not None and (not np.isfinite(value) or value < 0.0):
-                msg = f"{name} must be finite and nonnegative when provided."
-                raise ValueError(msg)
-        object.__setattr__(self, "coupling_ratios", MappingProxyType(dict(self.coupling_ratios)))
-        object.__setattr__(self, "warnings", tuple(self.warnings))
-
-    def __hash__(self) -> int:
-        # MappingProxyType is not hashable; hash the sorted ratios instead so
-        # reports can sit inside hashed stiffness values.
-        return hash(
-            (
-                self.h_over_R,
-                self.p_over_R,
-                self.p_over_L_response,
-                frozen_value(self.coupling_ratios),
-                self.warnings,
-            )
-        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -326,10 +204,6 @@ def _beam_strain_map(axial_eccentricity: float, shear_eccentricity: float) -> Fl
 
     axial_z = float(axial_eccentricity)
     shear_z = float(shear_eccentricity)
-    # This is the shared first-approximation member kinematics used by both the
-    # energy and direct EC paths. Agreement between those paths checks assembly,
-    # not the truth of this strain map.
-    #
     # Rows: axial strain, in-plane shear, transverse shear, out-of-plane
     # bending curvature, and twist rate. There is no in-plane bending row:
     # under uniform wall strain and curvature a member's axis stays straight
@@ -366,7 +240,7 @@ def _beam_stiffness(section: BeamSection) -> FloatArray:
     return stiffness
 
 
-def _member_transform(member: BeamMember | StiffenerFamily) -> FloatArray:
+def _member_transform(member: BeamMember) -> FloatArray:
     if member.shear_eccentricity is None:  # normalized by the value object
         msg = "member shear_eccentricity was not normalized."
         raise HomogenizationInputError(msg)
@@ -376,12 +250,11 @@ def _member_transform(member: BeamMember | StiffenerFamily) -> FloatArray:
     ) @ generalized_strain_transform(member.angle_rad)
 
 
-def member_tangent_density(member: BeamMember | StiffenerFamily) -> FloatArray:
+def member_tangent_density(member: BeamMember) -> FloatArray:
     """Return a member tangent contribution per unit length density.
 
     Args:
-        member: Beam member or repeated stiffener family in tangent-plane
-            coordinates.
+        member: Beam member in tangent-plane coordinates.
 
     Returns:
         Read-only 8x8 stiffness contribution before multiplying by member
@@ -459,20 +332,6 @@ def _cell_areal_mass(cell: CanonicalUnitCell) -> float | None:
     return cell.skin.areal_mass + member_mass / cell.area
 
 
-def _family_areal_mass(
-    skin: ABDStiffness,
-    families: tuple[StiffenerFamily, ...],
-) -> float | None:
-    if skin.areal_mass is None:
-        return None
-    family_mass = 0.0
-    for family in families:
-        if family.section.mass_per_length is None:
-            return None
-        family_mass += family.multiplicity * family.section.mass_per_length / family.spacing
-    return skin.areal_mass + family_mass
-
-
 def _mass_assumptions(areal_mass: float | None) -> tuple[str, ...]:
     if areal_mass is not None:
         return ()
@@ -482,7 +341,7 @@ def _mass_assumptions(areal_mass: float | None) -> tuple[str, ...]:
     )
 
 
-def _assumptions_for_members(members: tuple[BeamMember | StiffenerFamily, ...]) -> tuple[str, ...]:
+def _assumptions_for_members(members: tuple[BeamMember, ...]) -> tuple[str, ...]:
     assumptions = [
         "Local tangent-plane equivalent-stiffness homogenization.",
         "Extension- and shear-weighted member eccentricities are measured along +n.",
@@ -509,12 +368,10 @@ def _diagnostics(
     # have finite but incomplete stiffness. Surface the condition as validity
     # context so callers can decide whether it is acceptable.
     matrix = _readonly_matrix(tangent, shape=(8, 8), name="tangent")
-    symmetric = bool(np.allclose(matrix, matrix.T, atol=_SYMMETRY_TOLERANCE, rtol=0.0))
     eigenvalues, spectral_tolerance, rank = _spectral_properties(matrix)
     min_eigenvalue = float(eigenvalues[0])
     psd = bool(min_eigenvalue >= -spectral_tolerance)
     return {
-        "symmetric": symmetric,
         "positive_semidefinite": psd,
         "minimum_eigenvalue": min_eigenvalue,
         "rank": rank,
@@ -522,103 +379,6 @@ def _diagnostics(
         "cell_area": cell_area,
         "source_equations": ("Nemeth 2011 eqs. 30-39",),
     }
-
-
-def _spectral_properties(matrix: FloatArray) -> tuple[FloatArray, float, int]:
-    symmetric = 0.5 * (matrix + matrix.T)
-    eigenvalues = np.linalg.eigvalsh(symmetric)
-    scale = float(np.max(np.abs(eigenvalues)))
-    tolerance = _SPECTRAL_RELATIVE_TOLERANCE * scale
-    rank = 0 if scale == 0.0 else int(np.linalg.matrix_rank(symmetric, tol=tolerance))
-    return eigenvalues, tolerance, rank
-
-
-def _coupling_ratio(stiffness: ABDStiffness) -> float:
-    # Normalize B by the geometric mean of A and D norms to produce a
-    # scale-free warning metric for membrane-bending coupling.
-    norm_A = float(np.linalg.norm(stiffness.A, ord="fro"))
-    norm_D = float(np.linalg.norm(stiffness.D, ord="fro"))
-    norm_B = float(np.linalg.norm(stiffness.B, ord="fro"))
-    if norm_A == 0.0 or norm_D == 0.0:
-        return 0.0
-    return norm_B / float(np.sqrt(norm_A * norm_D))
-
-
-def _validity_report(
-    stiffness: ABDStiffness,
-    *,
-    context: ValidityContext | None,
-    thresholds: ValidityThresholds,
-) -> ValidityReport:
-    warnings: list[str] = []
-    h_over_R = None
-    p_over_R = None
-    p_over_L_response = None
-    if context is None:
-        warnings.append("validity_context_missing")
-    else:
-        # These ratios are scale-separation checks for using a flat tangent
-        # cell inside a curved or spatially varying shell model.
-        if context.characteristic_height is not None and context.min_radius is not None:
-            h_over_R = context.characteristic_height / context.min_radius
-            if h_over_R >= thresholds.h_over_R:
-                warnings.append("h_over_R_exceeds_threshold")
-        else:
-            warnings.append("h_over_R_unavailable")
-        if context.pitch is not None and context.min_radius is not None:
-            p_over_R = context.pitch / context.min_radius
-            if p_over_R >= thresholds.p_over_R:
-                warnings.append("p_over_R_exceeds_threshold")
-        else:
-            warnings.append("p_over_R_unavailable")
-        if context.pitch is not None and context.response_length is not None:
-            p_over_L_response = context.pitch / context.response_length
-            if p_over_L_response >= thresholds.p_over_L_response:
-                warnings.append("p_over_L_response_exceeds_threshold")
-        else:
-            warnings.append("p_over_L_response_unavailable")
-
-    coupling = _coupling_ratio(stiffness)
-    if coupling >= thresholds.coupling_ratio:
-        warnings.append("membrane_bending_coupling_exceeds_threshold")
-    matrix = stiffness.C8
-    eigenvalues, spectral_tolerance, rank = _spectral_properties(matrix)
-    if rank < matrix.shape[0]:
-        warnings.append("rank_deficient_tangent")
-    if float(eigenvalues[0]) < -spectral_tolerance:
-        warnings.append("negative_energy_mode")
-    return ValidityReport(
-        h_over_R=h_over_R,
-        p_over_R=p_over_R,
-        p_over_L_response=p_over_L_response,
-        coupling_ratios=MappingProxyType({"B_fro": coupling}),
-        warnings=tuple(warnings),
-    )
-
-
-def validity_report_for_stiffness(
-    stiffness: ABDStiffness,
-    *,
-    context: ValidityContext | None = None,
-    thresholds: ValidityThresholds | None = None,
-) -> ValidityReport:
-    """Return tangent-plane validity diagnostics for existing stiffness.
-
-    Args:
-        stiffness: ABD stiffness to inspect.
-        context: Optional geometric and response length scales.
-        thresholds: Optional warning thresholds. Defaults are used when omitted.
-
-    Returns:
-        Validity report with scale-separation ratios, coupling indicators, and
-        warning identifiers.
-    """
-
-    return _validity_report(
-        stiffness,
-        context=context,
-        thresholds=ValidityThresholds() if thresholds is None else thresholds,
-    )
 
 
 def _stiffness_from_tangent(
@@ -700,7 +460,6 @@ class EnergyHomogenizer:
         diagnostics = _diagnostics(
             stiffness.C8, member_count=len(cell.members), cell_area=cell.area
         )
-        diagnostics["energy_consistent"] = True
         return HomogenizationResult(
             stiffness=stiffness,
             validity=_validity_report(
@@ -712,92 +471,7 @@ class EnergyHomogenizer:
         )
 
 
-@dataclass(frozen=True, slots=True)
-class DirectECHomogenizer:
-    """Direct equilibrium-compatibility homogenizer for straight member families.
-
-    Use this path for supported straight-family comparisons or accelerators,
-    not as a replacement for the more general energy cell path.
-
-    Attributes:
-        thresholds: Warning thresholds used when building the result validity
-            report.
-    """
-
-    thresholds: ValidityThresholds = field(default_factory=ValidityThresholds)
-
-    def compute(
-        self,
-        *,
-        skin: ABDStiffness,
-        families: tuple[StiffenerFamily, ...],
-        validity_context: ValidityContext | None = None,
-        convention: StrainConvention = DEFAULT_STRAIN_CONVENTION,
-    ) -> HomogenizationResult:
-        """Compute direct EC stiffness from repeated straight families.
-
-        Args:
-            skin: Baseline skin ABD stiffness.
-            families: One or more straight repeated stiffener families.
-            validity_context: Optional geometric and response length scales for
-                result warnings.
-            convention: Strain convention for the assembled tangent. Only the
-                default engineering-shear convention is currently supported.
-
-        Returns:
-            Homogenization result assembled from skin plus family length-density
-            contributions.
-
-        Raises:
-            HomogenizationInputError: If no families are supplied, or if the
-                skin/convention pair is unsupported.
-            HomogenizationNumericalError: If the assembled tangent materially
-                violates Tensyl's ABD block contract.
-        """
-
-        family_tuple = tuple(families)
-        if not family_tuple:
-            msg = "DirectECHomogenizer requires at least one stiffener family."
-            raise HomogenizationInputError(msg)
-        if skin.convention != convention or convention != DEFAULT_STRAIN_CONVENTION:
-            msg = (
-                "DirectECHomogenizer currently supports Tensyl's default engineering-shear "
-                "convention only."
-            )
-            raise HomogenizationInputError(msg)
-        tangent = np.array(skin.C8, dtype=np.float64, copy=True)
-        # The direct family path uses length density multiplicity / spacing in
-        # place of finite member length divided by finite cell area.
-        for family in family_tuple:
-            tangent += (family.multiplicity / family.spacing) * member_tangent_density(family)
-        metadata = dict(skin.metadata)
-        metadata.update(
-            {
-                "source": "direct_ec_homogenizer",
-                "family_count": len(family_tuple),
-            }
-        )
-        areal_mass = _family_areal_mass(skin, family_tuple)
-        stiffness = _stiffness_from_tangent(
-            tangent, skin=skin, areal_mass=areal_mass, metadata=metadata
-        )
-        diagnostics = _diagnostics(stiffness.C8, member_count=len(family_tuple), cell_area=None)
-        diagnostics["energy_consistent"] = True
-        return HomogenizationResult(
-            stiffness=stiffness,
-            validity=_validity_report(
-                stiffness, context=validity_context, thresholds=self.thresholds
-            ),
-            diagnostics=diagnostics,
-            assumptions=_assumptions_for_members(family_tuple)
-            + ("Direct EC families use member length density multiplicity / spacing.",)
-            + _mass_assumptions(areal_mass),
-            source="direct_ec",
-        )
-
-
 __all__ = [
-    "DirectECHomogenizer",
     "EnergyHomogenizer",
     "HomogenizationFailure",
     "HomogenizationInputError",

@@ -73,8 +73,8 @@ uv sync --dev
 
 **Homogenization and review data**
 
-- `EnergyHomogenizer` as the reference homogenizer;
-- `DirectECHomogenizer` for supported direct equilibrium-compatibility cases;
+- `EnergyHomogenizer` for every cell, including families of parallel stiffeners
+  built with `stiffener_family_cell`;
 - `HomogenizationResult` with stiffness, diagnostics, assumptions, and validity;
 - scale-separation checks for stiffener height, pitch, curvature radius, response
   length, and membrane-bending coupling.

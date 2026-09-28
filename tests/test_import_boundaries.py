@@ -72,3 +72,24 @@ def test_public_package_does_not_depend_on_validation_tooling() -> None:
                 violations.append(f"{path.relative_to(ROOT)} imports {module}")
 
     assert violations == []
+
+
+def test_core_does_not_depend_on_higher_layers() -> None:
+    forbidden_prefixes = (
+        "tensyl.cells",
+        "tensyl.fields",
+        "tensyl.geometry",
+        "tensyl.homogenizers",
+        "tensyl.io",
+        "tensyl.materials",
+        "tensyl.sections",
+    )
+    core_files = sorted((ROOT / "src" / "tensyl" / "core").glob("*.py"))
+
+    violations: list[str] = []
+    for path in core_files:
+        for module in _imports_for(path):
+            if module.startswith(forbidden_prefixes):
+                violations.append(f"{path.relative_to(ROOT)} imports {module}")
+
+    assert violations == []

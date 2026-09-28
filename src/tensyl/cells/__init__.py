@@ -24,6 +24,7 @@ from tensyl.cells.tangent_plane import (
     sandwich_orthogrid_core_cell,
     sandwich_star_core_cell,
     star_cell,
+    stiffener_family_cell,
     unidirectional_cell,
 )
 
@@ -51,5 +52,6 @@ __all__ = [
     "sandwich_orthogrid_core_cell",
     "sandwich_star_core_cell",
     "star_cell",
+    "stiffener_family_cell",
     "unidirectional_cell",
 ]

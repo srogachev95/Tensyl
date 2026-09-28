@@ -6,13 +6,13 @@ from tensyl import (
     ABDAtlas,
     BeamSection,
     ConstantStiffnessField,
-    DirectECHomogenizer,
     EnergyHomogenizer,
     FlatPlate,
     IsotropicMaterial,
     StiffenerFamily,
     isotropic_plate,
     orthogrid_cell,
+    stiffener_family_cell,
 )
 from tensyl.io import from_json, from_yaml, to_json, to_yaml
 
@@ -66,14 +66,14 @@ class HomogenizationSuite:
                 label="e2",
             ),
         )
+        self.family_cell = stiffener_family_cell(skin=self.skin, families=self.families)
         self.energy = EnergyHomogenizer()
-        self.direct = DirectECHomogenizer()
 
     def time_energy_orthogrid(self) -> None:
         self.energy.compute(self.cell)
 
-    def time_direct_ec_orthogrid(self) -> None:
-        self.direct.compute(skin=self.skin, families=self.families)
+    def time_energy_stiffener_families(self) -> None:
+        self.energy.compute(self.family_cell)
 
 
 class StiffnessFieldSuite:
