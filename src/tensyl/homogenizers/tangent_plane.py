@@ -347,8 +347,10 @@ def _assumptions_for_members(members: tuple[BeamMember, ...]) -> tuple[str, ...]
         "Local tangent-plane equivalent-stiffness homogenization.",
         "Extension- and shear-weighted member eccentricities are measured along +n.",
         "Beam members use Nemeth first-approximation generalized strain kinematics.",
-        "Members follow the affine smeared strain; cell-scale deformation relaxation "
-        "is not solved.",
+        (
+            "Members follow the affine smeared strain; cell-scale deformation relaxation "
+            "is not solved."
+        ),
     ]
     if any(member.section.kGAy is None for member in members):
         assumptions.append(

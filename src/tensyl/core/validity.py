@@ -20,7 +20,8 @@ from tensyl.core._validation import frozen_value, optional_positive_number, posi
 
 class _SurfaceRadius(Protocol):
     @property
-    def min_radius(self) -> float: ...
+    def min_radius(self) -> float:
+        """Return the minimum local curvature radius."""
 
 
 def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
