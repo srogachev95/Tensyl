@@ -135,3 +135,11 @@ cylinder itself does not curve the ABD matrix. At each point:
 
 Use this pattern when the structure has station-dependent pitch, section,
 material, laminate, or stiffener orientation.
+
+## Saving the Samples
+
+`to_json(atlas)` or `write_yaml(atlas, path)` from `tensyl.io` stores the built-in
+surface, grids, and all local stiffness samples. The restored `ABDAtlas` can be
+queried without the original field callable. See
+[Cell Inputs and Sampled Atlases](../user-guide/external-workflows.md#cell-inputs-and-sampled-atlases)
+for the v3 contract and supported surfaces.

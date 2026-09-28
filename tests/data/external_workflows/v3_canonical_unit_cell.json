@@ -1,0 +1,235 @@
+{
+  "schema_name": "tensyl.external_workflow",
+  "schema_version": 3,
+  "artifact_type": "canonical_unit_cell",
+  "producer": {
+    "name": "tensyl",
+    "version": "0.3.1"
+  },
+  "units": null,
+  "payload": {
+    "metadata": {
+      "source": "unidirectional",
+      "spacing": 2.0
+    },
+    "area": 2.0,
+    "skin": {
+      "tangent_c8": [
+        [
+          10.989010989010989,
+          3.2967032967032965,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3.2967032967032965,
+          10.989010989010989,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          3.8461538461538463,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.00915750915750916,
+          0.002747252747252748,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.002747252747252748,
+          0.00915750915750916,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.003205128205128206,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          3.2051282051282053,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          3.2051282051282053
+        ]
+      ],
+      "frame": {
+        "e1": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "e2": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "n": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "label": "local_tangent"
+      },
+      "strain_convention": {
+        "membrane_order": [
+          "e11",
+          "e22",
+          "g12"
+        ],
+        "bending_order": [
+          "k11",
+          "k22",
+          "k12"
+        ],
+        "shear_order": [
+          "g13",
+          "g23"
+        ],
+        "engineering_shear": true,
+        "reference_surface": "mid_surface",
+        "normal_positive": "+n"
+      },
+      "areal_mass": 0.2,
+      "metadata": {
+        "source": "isotropic_plate"
+      },
+      "validity": null
+    },
+    "members": [
+      {
+        "section": {
+          "metadata": {},
+          "EA": 10.0,
+          "EIy": 2.0,
+          "EIz": 3.0,
+          "GJ": 1.0,
+          "kGAy": null,
+          "kGAz": null,
+          "EIyz": 0.0,
+          "mass_per_length": 0.4,
+          "thermal_expansion": 1e-05
+        },
+        "length": 1.0,
+        "angle_rad": 0.0,
+        "axial_eccentricity": 0.2,
+        "shear_eccentricity": 0.2,
+        "multiplicity": 1.0,
+        "label": "stiffener"
+      }
+    ],
+    "frame": {
+      "e1": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "e2": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "n": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "label": "local_tangent"
+    },
+    "strain_convention": {
+      "membrane_order": [
+        "e11",
+        "e22",
+        "g12"
+      ],
+      "bending_order": [
+        "k11",
+        "k22",
+        "k12"
+      ],
+      "shear_order": [
+        "g13",
+        "g23"
+      ],
+      "engineering_shear": true,
+      "reference_surface": "mid_surface",
+      "normal_positive": "+n"
+    },
+    "geometry": {
+      "nodes": [
+        {
+          "e1": 0.0,
+          "e2": 0.0,
+          "label": ""
+        },
+        {
+          "e1": 1.0,
+          "e2": 0.0,
+          "label": ""
+        }
+      ],
+      "edges": [
+        {
+          "start": 0,
+          "end": 1,
+          "family": "member",
+          "label": "member"
+        }
+      ],
+      "repeat_vectors": [
+        {
+          "e1": 1.0,
+          "e2": 0.0
+        },
+        {
+          "e1": -0.0,
+          "e2": 2.0
+        }
+      ],
+      "boundary": []
+    }
+  }
+}

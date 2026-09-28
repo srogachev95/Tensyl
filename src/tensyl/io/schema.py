@@ -4,26 +4,64 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from dataclasses import fields
 from os import PathLike
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Annotated, Any, Literal, cast
 
 import numpy as np
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    BeforeValidator,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 from tensyl._version import tensyl_version
+from tensyl.cells import (
+    BeamMember,
+    CanonicalUnitCell,
+    CellGeometry,
+    CellGeometryEdge,
+    CellNode,
+    CellVector,
+)
 from tensyl.core.constitutive import ABDStiffness
 from tensyl.core.conventions import Frame2D, StrainConvention
+from tensyl.core.thermal import ThermalResultants
 from tensyl.core.typing import FloatArray
+from tensyl.fields import ABDAtlas
+from tensyl.geometry import (
+    ConicalFrustum,
+    Cylinder,
+    Ellipsoid,
+    FlatPlate,
+    Sphere,
+    SphericalCap,
+    Surface,
+)
 from tensyl.homogenizers import HomogenizationResult, ValidityReport
+from tensyl.sections import BeamSection
 
 SCHEMA_NAME = "tensyl.external_workflow"
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 type SchemaName = Literal["tensyl.external_workflow"]
-type SchemaVersion = Literal[2]
-type ArtifactType = Literal["abd_stiffness", "homogenization_result"]
+type SchemaVersion = Literal[2, 3]
+type ArtifactType = Literal[
+    "abd_stiffness",
+    "homogenization_result",
+    "canonical_unit_cell",
+    "abd_atlas",
+    "thermal_resultants",
+]
+type WorkflowObject = (
+    ABDStiffness | HomogenizationResult | CanonicalUnitCell | ABDAtlas | ThermalResultants
+)
 type HomogenizationSource = Literal["energy", "direct_ec", "rve", "imported"]
 type PlainYaml = None | str | bool | int | float | list[PlainYaml] | dict[str, PlainYaml]
 
@@ -284,8 +322,8 @@ class ABDStiffnessSchema(_SchemaModel):
     @classmethod
     def from_tensyl(cls, stiffness: ABDStiffness) -> ABDStiffnessSchema:
         if stiffness.validity is not None and not isinstance(stiffness.validity, ValidityReport):
-            # The public ABD object can technically carry arbitrary validity,
-            # but the external schema only promises the Tensyl report shape.
+            # Keep the external boundary explicit even for objects supplied
+            # by callers outside the typed constructor path.
             msg = "validity must be None or a ValidityReport for schema export."
             raise SchemaError(msg)
         return cls(
@@ -364,6 +402,279 @@ class HomogenizationResultSchema(_SchemaModel):
         )
 
 
+def _mechanics_number(value: Any) -> float:
+    return _finite_float(value, path="mechanics value")
+
+
+type MechanicsNumber = Annotated[float, BeforeValidator(_mechanics_number)]
+type Index = Annotated[int, Field(strict=True, ge=0)]
+
+
+class _MetadataSchema(_SchemaModel):
+    metadata: dict[str, PlainYaml]
+
+    @field_validator("metadata", mode="before")
+    @classmethod
+    def _validate_metadata(cls, value: Any) -> dict[str, PlainYaml]:
+        checked = _plain_yaml_mapping(value, path="metadata")
+        return {} if checked is None else checked
+
+
+class BeamSectionSchema(_MetadataSchema):
+    EA: MechanicsNumber
+    EIy: MechanicsNumber
+    EIz: MechanicsNumber
+    GJ: MechanicsNumber
+    kGAy: MechanicsNumber | None
+    kGAz: MechanicsNumber | None
+    EIyz: MechanicsNumber
+    mass_per_length: MechanicsNumber | None
+    thermal_expansion: MechanicsNumber | None
+
+    @classmethod
+    def from_tensyl(cls, section: BeamSection) -> BeamSectionSchema:
+        return cls(**{name: getattr(section, name) for name in cls.model_fields})
+
+    def to_tensyl(self) -> BeamSection:
+        return BeamSection(**self.model_dump())
+
+
+class BeamMemberSchema(_SchemaModel):
+    section: BeamSectionSchema
+    length: MechanicsNumber
+    angle_rad: MechanicsNumber
+    axial_eccentricity: MechanicsNumber
+    shear_eccentricity: MechanicsNumber
+    multiplicity: MechanicsNumber
+    label: str
+
+    @classmethod
+    def from_tensyl(cls, member: BeamMember) -> BeamMemberSchema:
+        values = {name: getattr(member, name) for name in cls.model_fields}
+        values["section"] = BeamSectionSchema.from_tensyl(member.section)
+        return cls(**values)
+
+    def to_tensyl(self) -> BeamMember:
+        return BeamMember(
+            section=self.section.to_tensyl(),
+            length=self.length,
+            angle_rad=self.angle_rad,
+            axial_eccentricity=self.axial_eccentricity,
+            shear_eccentricity=self.shear_eccentricity,
+            multiplicity=self.multiplicity,
+            label=self.label,
+        )
+
+
+class CellNodeSchema(_SchemaModel):
+    e1: MechanicsNumber
+    e2: MechanicsNumber
+    label: str
+
+
+class CellVectorSchema(_SchemaModel):
+    e1: MechanicsNumber
+    e2: MechanicsNumber
+
+
+class CellGeometryEdgeSchema(_SchemaModel):
+    start: Index
+    end: Index
+    family: str
+    label: str
+
+
+class CellGeometrySchema(_SchemaModel):
+    nodes: tuple[CellNodeSchema, ...]
+    edges: tuple[CellGeometryEdgeSchema, ...]
+    repeat_vectors: tuple[CellVectorSchema, CellVectorSchema]
+    boundary: tuple[Index, ...]
+
+    @classmethod
+    def from_tensyl(cls, geometry: CellGeometry) -> CellGeometrySchema:
+        return cls(
+            nodes=tuple(CellNodeSchema(e1=n.e1, e2=n.e2, label=n.label) for n in geometry.nodes),
+            edges=tuple(
+                CellGeometryEdgeSchema(start=e.start, end=e.end, family=e.family, label=e.label)
+                for e in geometry.edges
+            ),
+            repeat_vectors=(
+                CellVectorSchema(
+                    e1=geometry.repeat_vectors[0].e1, e2=geometry.repeat_vectors[0].e2
+                ),
+                CellVectorSchema(
+                    e1=geometry.repeat_vectors[1].e1, e2=geometry.repeat_vectors[1].e2
+                ),
+            ),
+            boundary=geometry.boundary,
+        )
+
+    def to_tensyl(self) -> CellGeometry:
+        return CellGeometry(
+            nodes=tuple(CellNode(**node.model_dump()) for node in self.nodes),
+            edges=tuple(CellGeometryEdge(**edge.model_dump()) for edge in self.edges),
+            repeat_vectors=(
+                CellVector(**self.repeat_vectors[0].model_dump()),
+                CellVector(**self.repeat_vectors[1].model_dump()),
+            ),
+            boundary=self.boundary,
+        )
+
+
+class CanonicalUnitCellSchema(_MetadataSchema):
+    area: MechanicsNumber
+    skin: ABDStiffnessSchema
+    members: tuple[BeamMemberSchema, ...]
+    frame: FrameSchema
+    strain_convention: StrainConventionSchema
+    geometry: CellGeometrySchema | None
+
+    @classmethod
+    def from_tensyl(cls, cell: CanonicalUnitCell) -> CanonicalUnitCellSchema:
+        return cls(
+            area=cell.area,
+            skin=ABDStiffnessSchema.from_tensyl(cell.skin),
+            members=tuple(BeamMemberSchema.from_tensyl(m) for m in cell.members),
+            frame=FrameSchema.from_tensyl(cell.frame),
+            strain_convention=StrainConventionSchema.from_tensyl(cell.convention),
+            geometry=None
+            if cell.geometry is None
+            else CellGeometrySchema.from_tensyl(cell.geometry),
+            metadata=dict(cell.metadata),
+        )
+
+    def to_tensyl(self) -> CanonicalUnitCell:
+        return CanonicalUnitCell(
+            area=self.area,
+            skin=self.skin.to_tensyl(),
+            members=tuple(m.to_tensyl() for m in self.members),
+            frame=self.frame.to_tensyl(),
+            convention=self.strain_convention.to_tensyl(),
+            geometry=None if self.geometry is None else self.geometry.to_tensyl(),
+            metadata=self.metadata,
+        )
+
+
+_SURFACE_TYPES = {
+    "flat_plate": FlatPlate,
+    "cylinder": Cylinder,
+    "sphere": Sphere,
+    "spherical_cap": SphericalCap,
+    "conical_frustum": ConicalFrustum,
+    "ellipsoid": Ellipsoid,
+}
+
+
+class SurfaceSchema(_SchemaModel):
+    """Finite built-in geometry parameters; no executable factories."""
+
+    kind: Literal[
+        "flat_plate", "cylinder", "sphere", "spherical_cap", "conical_frustum", "ellipsoid"
+    ]
+    parameters: dict[str, Any]
+
+    @model_validator(mode="after")
+    def _validate_parameters(self) -> SurfaceSchema:
+        expected = {f.name for f in fields(_SURFACE_TYPES[self.kind])}
+        if set(self.parameters) != expected:
+            raise ValueError(f"Surface parameters for {self.kind} must be {sorted(expected)}.")
+        for name, value in self.parameters.items():
+            if name == "label":
+                if not isinstance(value, str):
+                    raise ValueError("Surface label must be a string.")
+            elif name in ("origin", "e1", "e2"):
+                _finite_vector(value, length=3, path=name)
+            elif value is None and self.kind == "cylinder" and name == "length":
+                continue
+            else:
+                _finite_float(value, path=name)
+        return self
+
+    @classmethod
+    def from_tensyl(cls, surface: Surface) -> SurfaceSchema:
+        for kind, surface_type in _SURFACE_TYPES.items():
+            if type(surface) is surface_type:
+                values = {f.name: getattr(surface, f.name) for f in fields(surface_type)}
+                values = {
+                    k: v.tolist() if isinstance(v, np.ndarray) else v for k, v in values.items()
+                }
+                return cls.model_validate({"kind": kind, "parameters": values})
+        raise SchemaError(f"Unsupported atlas surface type {type(surface).__name__!r}.")
+
+    def to_tensyl(self) -> Surface:
+        return _SURFACE_TYPES[self.kind](**self.parameters)
+
+
+class ABDAtlasSchema(_MetadataSchema):
+    surface: SurfaceSchema
+    u_values: tuple[MechanicsNumber, ...]
+    v_values: tuple[MechanicsNumber, ...]
+    stiffnesses: tuple[tuple[ABDStiffnessSchema, ...], ...]
+
+    @classmethod
+    def from_tensyl(cls, atlas: ABDAtlas) -> ABDAtlasSchema:
+        return cls(
+            surface=SurfaceSchema.from_tensyl(atlas.surface),
+            u_values=atlas.u_values,
+            v_values=atlas.v_values,
+            stiffnesses=tuple(
+                tuple(ABDStiffnessSchema.from_tensyl(s) for s in row) for row in atlas.stiffnesses
+            ),
+            metadata=dict(atlas.metadata),
+        )
+
+    def to_tensyl(self) -> ABDAtlas:
+        atlas = ABDAtlas(
+            surface=self.surface.to_tensyl(),
+            u_values=self.u_values,
+            v_values=self.v_values,
+            stiffnesses=tuple(tuple(s.to_tensyl() for s in row) for row in self.stiffnesses),
+            metadata=self.metadata,
+        )
+        recorded = self.metadata.get("sample_digest")
+        if recorded is not None and recorded != atlas.metadata["sample_digest"]:
+            raise SchemaError("Atlas sample_digest does not match its numeric samples.")
+        return atlas
+
+
+class ThermalResultantsSchema(_SchemaModel):
+    N_T: list[float]
+    M_T: list[float]
+    frame: FrameSchema
+    strain_convention: StrainConventionSchema
+
+    @field_validator("N_T", "M_T", mode="before")
+    @classmethod
+    def _validate_vector(cls, value: Any) -> list[float]:
+        return _finite_vector(value, length=3, path="thermal resultant")
+
+    @classmethod
+    def from_tensyl(cls, result: ThermalResultants) -> ThermalResultantsSchema:
+        return cls(
+            N_T=result.N_T.tolist(),
+            M_T=result.M_T.tolist(),
+            frame=FrameSchema.from_tensyl(result.frame),
+            strain_convention=StrainConventionSchema.from_tensyl(result.convention),
+        )
+
+    def to_tensyl(self) -> ThermalResultants:
+        return ThermalResultants(
+            _as_array(self.N_T),
+            _as_array(self.M_T),
+            self.frame.to_tensyl(),
+            self.strain_convention.to_tensyl(),
+        )
+
+
+type WorkflowPayload = (
+    ABDStiffnessSchema
+    | HomogenizationResultSchema
+    | CanonicalUnitCellSchema
+    | ABDAtlasSchema
+    | ThermalResultantsSchema
+)
+
+
 class ExternalWorkflowEnvelope(_SchemaModel):
     """Versioned top-level envelope for solver-neutral workflow artifacts."""
 
@@ -372,7 +683,7 @@ class ExternalWorkflowEnvelope(_SchemaModel):
     artifact_type: ArtifactType
     producer: ProducerSchema
     units: dict[str, PlainYaml] | None = None
-    payload: ABDStiffnessSchema | HomogenizationResultSchema
+    payload: WorkflowPayload
 
     @field_validator("units", mode="before")
     @classmethod
@@ -381,24 +692,31 @@ class ExternalWorkflowEnvelope(_SchemaModel):
 
     @model_validator(mode="after")
     def _validate_artifact_payload(self) -> ExternalWorkflowEnvelope:
-        # Pydantic can parse the union either way; this guard makes the explicit
-        # artifact_type field the source of truth for the payload contract.
-        if self.artifact_type == "abd_stiffness" and not isinstance(
-            self.payload, ABDStiffnessSchema
+        expected = {
+            "abd_stiffness": ABDStiffnessSchema,
+            "homogenization_result": HomogenizationResultSchema,
+            "canonical_unit_cell": CanonicalUnitCellSchema,
+            "abd_atlas": ABDAtlasSchema,
+            "thermal_resultants": ThermalResultantsSchema,
+        }
+        if self.schema_version == 2 and self.artifact_type not in (
+            "abd_stiffness",
+            "homogenization_result",
         ):
-            msg = "abd_stiffness artifact requires an ABDStiffness payload."
-            raise ValueError(msg)
-        if self.artifact_type == "homogenization_result" and not isinstance(
-            self.payload, HomogenizationResultSchema
-        ):
-            msg = "homogenization_result artifact requires a HomogenizationResult payload."
-            raise ValueError(msg)
+            raise ValueError(
+                "Schema version 2 supports only stiffness and homogenization result artifacts."
+            )
+        if not isinstance(self.payload, expected[self.artifact_type]):
+            raise ValueError(
+                f"{self.artifact_type} artifact requires an "
+                f"{expected[self.artifact_type].__name__} payload."
+            )
         return self
 
     @classmethod
     def from_tensyl(
         cls,
-        obj: ABDStiffness | HomogenizationResult,
+        obj: WorkflowObject,
         *,
         units: Mapping[str, Any] | None = None,
     ) -> ExternalWorkflowEnvelope:
@@ -406,12 +724,19 @@ class ExternalWorkflowEnvelope(_SchemaModel):
             # Preserve the result envelope when it exists; exporting only the
             # stiffness would orphan diagnostics and validity context.
             artifact_type: ArtifactType = "homogenization_result"
-            payload: ABDStiffnessSchema | HomogenizationResultSchema = (
-                HomogenizationResultSchema.from_tensyl(obj)
-            )
+            payload: WorkflowPayload = HomogenizationResultSchema.from_tensyl(obj)
         elif isinstance(obj, ABDStiffness):
             artifact_type = "abd_stiffness"
             payload = ABDStiffnessSchema.from_tensyl(obj)
+        elif isinstance(obj, CanonicalUnitCell):
+            artifact_type = "canonical_unit_cell"
+            payload = CanonicalUnitCellSchema.from_tensyl(obj)
+        elif isinstance(obj, ABDAtlas):
+            artifact_type = "abd_atlas"
+            payload = ABDAtlasSchema.from_tensyl(obj)
+        elif isinstance(obj, ThermalResultants):
+            artifact_type = "thermal_resultants"
+            payload = ThermalResultantsSchema.from_tensyl(obj)
         else:
             msg = f"unsupported schema object type {type(obj).__name__!r}."
             raise SchemaError(msg)
@@ -425,15 +750,8 @@ class ExternalWorkflowEnvelope(_SchemaModel):
             payload=payload,
         )
 
-    def to_tensyl(self) -> ABDStiffness | HomogenizationResult:
-        if self.artifact_type == "abd_stiffness" and isinstance(self.payload, ABDStiffnessSchema):
-            return self.payload.to_tensyl()
-        if self.artifact_type == "homogenization_result" and isinstance(
-            self.payload, HomogenizationResultSchema
-        ):
-            return self.payload.to_tensyl()
-        msg = "artifact type and payload are inconsistent."
-        raise SchemaError(msg)
+    def to_tensyl(self) -> WorkflowObject:
+        return self.payload.to_tensyl()
 
 
 def _model_dump(model: BaseModel) -> dict[str, Any]:
@@ -443,14 +761,14 @@ def _model_dump(model: BaseModel) -> dict[str, Any]:
 
 
 def to_schema(
-    obj: ABDStiffness | HomogenizationResult,
+    obj: WorkflowObject,
     *,
     units: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Return a versioned solver-neutral schema payload.
 
     Args:
-        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        obj: Stiffness, homogenization result, canonical cell, atlas, or thermal loads.
         units: Optional plain mapping describing the unit system. Tensyl stores
             these values as metadata; it does not convert units.
 
@@ -470,14 +788,14 @@ def to_schema(
         raise SchemaError(str(exc)) from exc
 
 
-def from_schema(payload: Mapping[str, Any]) -> ABDStiffness | HomogenizationResult:
+def from_schema(payload: Mapping[str, Any]) -> WorkflowObject:
     """Reconstruct a Tensyl object from a schema payload.
 
     Args:
         payload: Versioned external-workflow mapping.
 
     Returns:
-        ``ABDStiffness`` or ``HomogenizationResult`` described by the payload.
+        The stiffness, result, cell, atlas, or thermal loads described by the payload.
 
     Raises:
         SchemaError: If the payload is missing required fields, has unexpected
@@ -493,14 +811,14 @@ def from_schema(payload: Mapping[str, Any]) -> ABDStiffness | HomogenizationResu
 
 
 def to_yaml(
-    obj: ABDStiffness | HomogenizationResult,
+    obj: WorkflowObject,
     *,
     units: Mapping[str, Any] | None = None,
 ) -> str:
     """Serialize an object to a safe YAML string.
 
     Args:
-        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        obj: Stiffness, homogenization result, canonical cell, atlas, or thermal loads.
         units: Optional plain mapping describing the unit system.
 
     Returns:
@@ -514,14 +832,14 @@ def to_yaml(
 
 
 def to_json(
-    obj: ABDStiffness | HomogenizationResult,
+    obj: WorkflowObject,
     *,
     units: Mapping[str, Any] | None = None,
 ) -> str:
     """Serialize an object to deterministic JSON text.
 
     Args:
-        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        obj: Stiffness, homogenization result, canonical cell, atlas, or thermal loads.
         units: Optional plain mapping describing the unit system.
 
     Returns:
@@ -538,14 +856,14 @@ def to_json(
         raise SchemaError(str(exc)) from exc
 
 
-def from_yaml(text: str) -> ABDStiffness | HomogenizationResult:
+def from_yaml(text: str) -> WorkflowObject:
     """Load a Tensyl object from a safe YAML string.
 
     Args:
         text: YAML text containing a versioned external-workflow mapping.
 
     Returns:
-        ``ABDStiffness`` or ``HomogenizationResult`` described by the payload.
+        The stiffness, result, cell, atlas, or thermal loads described by the payload.
 
     Raises:
         SchemaError: If the YAML is invalid, unsafe, not a mapping, or fails
@@ -571,14 +889,14 @@ def _reject_json_constant(value: str) -> None:
     raise ValueError(msg)
 
 
-def from_json(text: str) -> ABDStiffness | HomogenizationResult:
+def from_json(text: str) -> WorkflowObject:
     """Load a Tensyl object from a JSON string.
 
     Args:
         text: JSON text containing a versioned external-workflow mapping.
 
     Returns:
-        ``ABDStiffness`` or ``HomogenizationResult`` described by the payload.
+        The stiffness, result, cell, atlas, or thermal loads described by the payload.
 
     Raises:
         SchemaError: If the JSON is invalid, contains NaN or infinity, is not a
@@ -597,7 +915,7 @@ def from_json(text: str) -> ABDStiffness | HomogenizationResult:
 
 
 def write_yaml(
-    obj: ABDStiffness | HomogenizationResult,
+    obj: WorkflowObject,
     path: str | PathLike[str],
     *,
     units: Mapping[str, Any] | None = None,
@@ -605,7 +923,7 @@ def write_yaml(
     """Write an object to a safe YAML file.
 
     Args:
-        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        obj: Stiffness, homogenization result, canonical cell, atlas, or thermal loads.
         path: Destination file path.
         units: Optional plain mapping describing the unit system.
 
@@ -618,7 +936,7 @@ def write_yaml(
 
 
 def write_json(
-    obj: ABDStiffness | HomogenizationResult,
+    obj: WorkflowObject,
     path: str | PathLike[str],
     *,
     units: Mapping[str, Any] | None = None,
@@ -626,7 +944,7 @@ def write_json(
     """Write an object to a JSON file.
 
     Args:
-        obj: ``ABDStiffness`` or ``HomogenizationResult`` to serialize.
+        obj: Stiffness, homogenization result, canonical cell, atlas, or thermal loads.
         path: Destination file path.
         units: Optional plain mapping describing the unit system.
 
@@ -638,7 +956,7 @@ def write_json(
     Path(path).write_text(to_json(obj, units=units), encoding="utf-8")
 
 
-def read_yaml(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
+def read_yaml(path: str | PathLike[str]) -> WorkflowObject:
     """Read a Tensyl object from a safe YAML file.
 
     Args:
@@ -655,7 +973,7 @@ def read_yaml(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
     return from_yaml(Path(path).read_text(encoding="utf-8"))
 
 
-def read_json(path: str | PathLike[str]) -> ABDStiffness | HomogenizationResult:
+def read_json(path: str | PathLike[str]) -> WorkflowObject:
     """Read a Tensyl object from a JSON file.
 
     Args:
