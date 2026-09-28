@@ -1,8 +1,9 @@
-"""Tangent-plane validity diagnostics attached to ABD stiffnesses.
+"""Tangent-plane validity data attached to ABD stiffnesses.
 
-These types live in ``core`` so an ``ABDStiffness`` can carry a typed
+These value types live in ``core`` so an ``ABDStiffness`` can carry a typed
 ``ValidityReport`` without the core package depending on the homogenizers
-that usually produce one.
+that usually produce one. The checks that build a report live in
+``tensyl.core.validity_checks``.
 """
 
 from __future__ import annotations
@@ -10,18 +11,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import TYPE_CHECKING
 
 import numpy as np
 
 from tensyl.core._validation import frozen_value, optional_positive_number, positive_number
-from tensyl.core.typing import FloatArray
-
-if TYPE_CHECKING:
-    from tensyl.core.constitutive import ABDStiffness
-
-_ROUNDOFF_RELATIVE_TOLERANCE = float(64.0 * np.finfo(np.float64).eps)
-_SPECTRAL_RELATIVE_TOLERANCE = _ROUNDOFF_RELATIVE_TOLERANCE
 
 
 def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
@@ -133,120 +126,28 @@ class ValidityReport:
         object.__setattr__(self, "coupling_ratios", MappingProxyType(dict(self.coupling_ratios)))
         object.__setattr__(self, "warnings", tuple(self.warnings))
 
-    def __hash__(self) -> int:
-        # MappingProxyType is not hashable; hash the sorted ratios instead so
-        # reports can sit inside hashed stiffness values.
-        return hash(
-            (
-                self.h_over_R,
-                self.p_over_R,
-                self.p_over_L_response,
-                frozen_value(self.coupling_ratios),
-                self.warnings,
-            )
+    def _key(self) -> tuple[object, ...]:
+        # MappingProxyType is not hashable; compare and hash the sorted ratios
+        # instead so reports can sit inside hashed stiffness values.
+        return (
+            self.h_over_R,
+            self.p_over_R,
+            self.p_over_L_response,
+            frozen_value(self.coupling_ratios),
+            self.warnings,
         )
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ValidityReport):
+            return NotImplemented
+        return self._key() == other._key()
 
-def _spectral_properties(matrix: FloatArray) -> tuple[FloatArray, float, int]:
-    symmetric = 0.5 * (matrix + matrix.T)
-    eigenvalues = np.linalg.eigvalsh(symmetric)
-    scale = float(np.max(np.abs(eigenvalues)))
-    tolerance = _SPECTRAL_RELATIVE_TOLERANCE * scale
-    rank = 0 if scale == 0.0 else int(np.linalg.matrix_rank(symmetric, tol=tolerance))
-    return eigenvalues, tolerance, rank
-
-
-def _coupling_ratio(stiffness: ABDStiffness) -> float:
-    # Normalize B by the geometric mean of A and D norms to produce a
-    # scale-free warning metric for membrane-bending coupling.
-    norm_A = float(np.linalg.norm(stiffness.A, ord="fro"))
-    norm_D = float(np.linalg.norm(stiffness.D, ord="fro"))
-    norm_B = float(np.linalg.norm(stiffness.B, ord="fro"))
-    if norm_A == 0.0 or norm_D == 0.0:
-        return 0.0
-    return norm_B / float(np.sqrt(norm_A * norm_D))
-
-
-def _validity_report(
-    stiffness: ABDStiffness,
-    *,
-    context: ValidityContext | None,
-    thresholds: ValidityThresholds,
-) -> ValidityReport:
-    warnings: list[str] = []
-    h_over_R = None
-    p_over_R = None
-    p_over_L_response = None
-    if context is None:
-        warnings.append("validity_context_missing")
-    else:
-        # These ratios are scale-separation checks for using a flat tangent
-        # cell inside a curved or spatially varying shell model.
-        if context.characteristic_height is not None and context.min_radius is not None:
-            h_over_R = context.characteristic_height / context.min_radius
-            if h_over_R >= thresholds.h_over_R:
-                warnings.append("h_over_R_exceeds_threshold")
-        else:
-            warnings.append("h_over_R_unavailable")
-        if context.pitch is not None and context.min_radius is not None:
-            p_over_R = context.pitch / context.min_radius
-            if p_over_R >= thresholds.p_over_R:
-                warnings.append("p_over_R_exceeds_threshold")
-        else:
-            warnings.append("p_over_R_unavailable")
-        if context.pitch is not None and context.response_length is not None:
-            p_over_L_response = context.pitch / context.response_length
-            if p_over_L_response >= thresholds.p_over_L_response:
-                warnings.append("p_over_L_response_exceeds_threshold")
-        else:
-            warnings.append("p_over_L_response_unavailable")
-
-    coupling = _coupling_ratio(stiffness)
-    if coupling >= thresholds.coupling_ratio:
-        warnings.append("membrane_bending_coupling_exceeds_threshold")
-    matrix = stiffness.C8
-    eigenvalues, spectral_tolerance, rank = _spectral_properties(matrix)
-    if rank < matrix.shape[0]:
-        warnings.append("rank_deficient_tangent")
-    if float(eigenvalues[0]) < -spectral_tolerance:
-        warnings.append("negative_energy_mode")
-    return ValidityReport(
-        h_over_R=h_over_R,
-        p_over_R=p_over_R,
-        p_over_L_response=p_over_L_response,
-        coupling_ratios=MappingProxyType({"B_fro": coupling}),
-        warnings=tuple(warnings),
-    )
-
-
-def validity_report_for_stiffness(
-    stiffness: ABDStiffness,
-    *,
-    context: ValidityContext | None = None,
-    thresholds: ValidityThresholds | None = None,
-) -> ValidityReport:
-    """Return tangent-plane validity diagnostics for existing stiffness.
-
-    Args:
-        stiffness: ABD stiffness to inspect.
-        context: Optional geometric and response length scales.
-        thresholds: Optional warning thresholds. Defaults are used when omitted.
-
-    Returns:
-        Validity report with scale-separation ratios, coupling indicators, and
-        warning identifiers.
-    """
-
-    return _validity_report(
-        stiffness,
-        context=context,
-        thresholds=ValidityThresholds() if thresholds is None else thresholds,
-    )
+    def __hash__(self) -> int:
+        return hash(self._key())
 
 
 __all__ = [
     "ValidityContext",
     "ValidityReport",
     "ValidityThresholds",
-    "validity_report_for_stiffness",
 ]

@@ -1,5 +1,10 @@
 # Validity Limits
 
+`ValidityContext`, `ValidityThresholds`, and `ValidityReport` live in
+`tensyl.core.validity`; the checks that build a report live in
+`tensyl.core.validity_checks`. All four public names, including
+`validity_report_for_stiffness`, are available from `tensyl`.
+
 Equivalent-stiffness homogenization is a scale-separated approximation. It is most
 appropriate when stiffener height and pitch are small relative to curvature and
 response length scales:

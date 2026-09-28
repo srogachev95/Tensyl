@@ -23,10 +23,8 @@ from tensyl.core.constitutive import (
 from tensyl.core.conventions import DEFAULT_STRAIN_CONVENTION
 from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
-from tensyl.core.validity import (
-    ValidityContext,
-    ValidityReport,
-    ValidityThresholds,
+from tensyl.core.validity import ValidityContext, ValidityReport, ValidityThresholds
+from tensyl.core.validity_checks import (
     _spectral_properties,
     _validity_report,
     validity_report_for_stiffness,

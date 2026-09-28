@@ -40,9 +40,10 @@ bug fixes that correct clearly wrong behavior.
   classical smeared-stiffener terms written out by hand.
 - Drop the `symmetric` and `energy_consistent` diagnostics. Both were always
   `True` by construction, so they looked like checks without being any.
-- Move `ValidityContext`, `ValidityThresholds`, `ValidityReport`, and
-  `validity_report_for_stiffness` into `tensyl.core.validity` (still exported
-  from `tensyl` and `tensyl.homogenizers`), and type `ABDStiffness.validity` as
+- Move `ValidityContext`, `ValidityThresholds`, and `ValidityReport` into
+  `tensyl.core.validity`, with `validity_report_for_stiffness` in
+  `tensyl.core.validity_checks` (all still exported from `tensyl` and
+  `tensyl.homogenizers`), and type `ABDStiffness.validity` as
   `ValidityReport | None`. Anything else now raises `TypeError`.
 - Remove the unused `LinearModel` protocol and the `ConstitutiveModel` alias;
   `HyperelasticModel` remains the stored-energy contract.

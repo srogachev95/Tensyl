@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import inspect
 from dataclasses import fields
 
@@ -357,11 +358,8 @@ def test_family_cell_requires_at_least_one_family() -> None:
 
 
 def test_direct_ec_homogenizer_is_retired() -> None:
-    import tensyl
-    import tensyl.homogenizers
-
-    assert not hasattr(tensyl, "DirectECHomogenizer")
-    assert not hasattr(tensyl.homogenizers, "DirectECHomogenizer")
+    for module_name in ("tensyl", "tensyl.homogenizers"):
+        assert not hasattr(importlib.import_module(module_name), "DirectECHomogenizer")
 
 
 def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:

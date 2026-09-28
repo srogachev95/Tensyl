@@ -35,8 +35,8 @@ from tensyl.core.validity import (
     ValidityContext,
     ValidityReport,
     ValidityThresholds,
-    validity_report_for_stiffness,
 )
+from tensyl.core.validity_checks import validity_report_for_stiffness
 
 __all__ = [
     "DEFAULT_FRAME",

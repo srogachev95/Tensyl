@@ -46,12 +46,10 @@ def test_top_level_compatibility_shims_are_not_packaged() -> None:
 
 
 def test_unused_protocol_aliases_are_gone() -> None:
-    import tensyl
-    import tensyl.core
-
-    for name in ("ConstitutiveModel", "LinearModel"):
-        assert not hasattr(tensyl, name)
-        assert not hasattr(tensyl.core, name)
+    for module_name in ("tensyl", "tensyl.core"):
+        module = importlib.import_module(module_name)
+        for name in ("ConstitutiveModel", "LinearModel"):
+            assert not hasattr(module, name)
 
 
 def test_validity_types_live_in_core() -> None:
@@ -66,4 +64,4 @@ def test_validity_types_live_in_core() -> None:
     assert ValidityReport.__module__ == "tensyl.core.validity"
     assert HomogenizerValidityReport is ValidityReport
     assert ValidityContext.__module__ == ValidityThresholds.__module__ == "tensyl.core.validity"
-    assert validity_report_for_stiffness.__module__ == "tensyl.core.validity"
+    assert validity_report_for_stiffness.__module__ == "tensyl.core.validity_checks"
