@@ -145,6 +145,73 @@ to stiffness products afterward with `EA = E A`, `EIy = E Iy`, `EIz = E Iz`, and
 for second moments of area; the section-property reference is listed in
 [References](../references.md).
 
+### Laminated Walls
+
+A composite rib needs a different axial modulus for each wall. Build a
+`LaminatedWallSegment(geometry, laminate)` from a `ThinWallSegment` and either
+an `ABDStiffness` or a tuple of `Ply` objects. A ply stack must match the wall
+thickness. For a supplied ABD, the caller is responsible for that thickness.
+Laminate direction 1 follows the beam; direction 2 follows the wall midline.
+
+```python
+from tensyl import (
+    IsotropicMaterial, Ply, ThinWallSegment,
+    LaminatedWallSegment, LaminatedThinWallSection,
+)
+
+wall = LaminatedWallSegment(
+    ThinWallSegment(0, 0, 0, 0.04, 0.002),
+    (Ply(IsotropicMaterial(E=70e9, nu=0.3, density=2700), 0.002),),
+)
+rib = LaminatedThinWallSection((wall,))
+section = rib.section
+```
+
+With membrane compliance $a=A^{-1}$ and wall thickness $t$, the reduction uses
+
+$$E_x=\frac{1}{a_{11}t},\qquad G=\frac{1}{a_{66}t}.$$
+
+These are the moduli for a wall free to contract laterally, following the
+laminate compliance construction in [NASA RP-1351](https://ntrs.nasa.gov/citations/19950009349).
+The beam's elastic centroid is weighted by $E_i A_i$, and each rectangular
+strip contributes its own inertia plus the parallel-axis term, weighted by
+$E_i$. Thus `centroid_z` is the axial stiffness centroid, not necessarily the
+mass or area centroid. Use it when setting axial eccentricity. Open torsion is
+approximated by $GJ=\sum_i G_i L_i t_i^3/3$.
+
+This is a membrane-equivalent beam reduction. It replaces local laminate wall
+bending with a uniform strip and omits section distortion and restrained
+warping. The use of membrane $G$ for open torsion is also an approximation for
+anisotropic walls; use a section solver when through-thickness shear anisotropy
+matters. Nonzero `B` and `A16/A26` coupling are refused (relative tolerance
+$10^{-12}$), because `BeamSection` cannot carry those couplings. `D` and `As`
+are unused and beam shear stiffnesses remain unspecified. Mass is included
+only when every wall supplies areal mass.
+
+### Hats Closed by the Skin
+
+Pass `closure_thickness` to `hat_section` when the isotropic skin closes a
+continuous shear-flow path. The closure uses the hat material's shear modulus.
+For crown width $w$, median height $h$, web thickness $t_w$, crown thickness
+$t_c$, and closure thickness $t_s$, the selected torsion constant is
+
+$$J=\frac{4(wh)^2}{2h/t_w+w/t_c+w/t_s},\qquad
+h=h_{web}+t_{flange}+\frac{t_c+t_s}{2}.$$
+
+This is the single-cell, thin-wall [Bredt formula](https://ocw.mit.edu/courses/16-20-structural-mechanics-fall-2002/a58ea050460c29f7389ff55e084521ed_ho3.pdf)
+using median-line area. It replaces the open-strip estimate; the small open
+mounting-flange contribution is neglected. The skin midplane lies at
+`z = -closure_thickness/2` relative to the existing mounting datum. The closure
+changes only `properties.J` and `section.GJ`: the skin's area, bending, and mass
+stay in the plate model. For an independently calculated constant, construct
+`ThinWallSection(..., torsion_constant=J)`.
+
+Using a closed-cell `GJ` together with a separate skin still needs an energy
+accounting check: excluding skin mass and axial area does not remove shared
+skin shear energy. See [Which J Should Be Used?](../validation/sp8007-reconciliation.md#which-j-should-be-used)
+for the double-counting limit. This option assumes perfect bonding and free
+warping; it does not solve joint slip, multicell flow, or end restraint.
+
 ### Blade Section
 
 ![Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness.](../assets/sections/blade-section.svg)

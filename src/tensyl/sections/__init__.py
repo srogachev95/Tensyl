@@ -1,6 +1,7 @@
 """Section stiffness value objects."""
 
 from tensyl.sections.beam import BeamSection
+from tensyl.sections.laminated import LaminatedThinWallSection, LaminatedWallSegment
 from tensyl.sections.thin_wall import (
     SectionProperties,
     ThinWallSection,
@@ -14,6 +15,8 @@ from tensyl.sections.thin_wall import (
 )
 
 __all__ = [
+    "LaminatedThinWallSection",
+    "LaminatedWallSegment",
     "BeamSection",
     "SectionProperties",
     "ThinWallSection",

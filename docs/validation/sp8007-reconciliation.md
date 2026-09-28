@@ -189,6 +189,9 @@ a torsional stiffness many times larger than the open-section estimate. But the
 closure has to belong to the member model. If the skin is already present as a
 separate plate in the ABD calculation, adding a closed-cell `J` that also uses
 that same skin can double-count skin shear stiffness.
+The explicit `hat_section(closure_thickness=...)` option uses single-cell Bredt
+torsion and carries this same accounting responsibility; see the
+[closed-hat model](../user-guide/beam-sections-and-cells.md#hats-closed-by-the-skin).
 
 Use a restrained-warping torsional stiffness when the boundary conditions,
 attachments, or neighboring structure prevent the section from warping freely.

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 import numpy as np
@@ -77,7 +77,7 @@ class SectionProperties:
         Iz: Positive centroidal second moment about the ``z`` axis.
         Iyz: Centroidal product of inertia. Sign follows the supplied
             ``(y, z)`` coordinate system.
-        J: Positive open-section St Venant torsion approximation.
+        J: Positive torsion constant for the selected open or closed model.
     """
 
     area: float
@@ -198,6 +198,7 @@ class ThinWallSection:
         metadata: Read-only provenance metadata.
         properties: Centroidal geometric section properties.
         section: ``BeamSection`` stiffness object consumed by cell builders.
+        torsion_constant: Optional explicit J replacing the open-strip estimate.
     """
 
     material: IsotropicMaterial
@@ -205,6 +206,7 @@ class ThinWallSection:
     shear_correction_y: float | None = None
     shear_correction_z: float | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    torsion_constant: float | None = None
     properties: SectionProperties = field(init=False)
     section: BeamSection = field(init=False)
 
@@ -222,6 +224,9 @@ class ThinWallSection:
             name="shear_correction_z",
         )
         properties = _section_properties(segments)
+        torsion_constant = optional_positive_number(self.torsion_constant, name="torsion_constant")
+        if torsion_constant is not None:
+            properties = replace(properties, J=torsion_constant)
         metadata = {"source": "thin_wall_section"}
         metadata.update(self.metadata)
         # Convert geometry to centroidal stiffness products because the
@@ -295,8 +300,8 @@ def _section_properties(segments: tuple[ThinWallSegment, ...]) -> SectionPropert
             dz=strip_centroid.z - centroid.z,
         )
         inertia += shifted
-        # Open-section St Venant torsion approximation. Closed-cell torsion and
-        # restrained warping belong in an external section solver for now.
+        # Open-section St Venant torsion approximation; an explicit torsion
+        # constant can replace it when constructing ThinWallSection.
         torsion += strip.open_section_torsion_constant()
 
     return SectionProperties(
@@ -621,6 +626,7 @@ def hat_section(
     shear_correction_y: float | None = None,
     shear_correction_z: float | None = None,
     metadata: Mapping[str, Any] | None = None,
+    closure_thickness: float | None = None,
 ) -> ThinWallSection:
     """Build an open hat stiffener with two webs, crown, and mounting flanges.
 
@@ -639,6 +645,8 @@ def hat_section(
         shear_correction_y: Optional positive shear correction for ``kGAy``.
         shear_correction_z: Optional positive shear correction for ``kGAz``.
         metadata: Optional provenance metadata.
+        closure_thickness: Optional isotropic skin thickness closing the hat.
+            Changes torsion only; skin axial stiffness and mass stay external.
 
     Returns:
         Thin-wall section for the open hat stiffener.
@@ -654,7 +662,7 @@ def hat_section(
     flange_thickness = positive_number(flange_thickness, name="flange_thickness")
     half_crown = 0.5 * crown_width
     top_z = flange_thickness + web_height
-    return thin_wall_section(
+    result = thin_wall_section(
         material=material,
         segments=(
             ThinWallSegment(
@@ -701,6 +709,27 @@ def hat_section(
         shear_correction_y=shear_correction_y,
         shear_correction_z=shear_correction_z,
         metadata=_metadata("hat", metadata),
+    )
+    if closure_thickness is None:
+        return result
+    closure = positive_number(closure_thickness, name="closure_thickness")
+    # Median path extends from the skin midplane to the crown midplane.
+    height = top_z + 0.5 * (crown_thickness + closure)
+    enclosed_area = crown_width * height
+    J = (
+        4
+        * enclosed_area**2
+        / (2 * height / web_thickness + crown_width / crown_thickness + crown_width / closure)
+    )
+    return replace(
+        result,
+        torsion_constant=J,
+        metadata={
+            **result.metadata,
+            "torsion_model": "single_cell_bredt",
+            "closure_thickness": closure,
+            "enclosed_median_area": enclosed_area,
+        },
     )
 
 

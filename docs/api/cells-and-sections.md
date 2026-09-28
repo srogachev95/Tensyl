@@ -8,6 +8,8 @@
         - ThinWallSegment
         - SectionProperties
         - ThinWallSection
+        - LaminatedWallSegment
+        - LaminatedThinWallSection
         - thin_wall_section
         - blade_section
         - tee_section
