@@ -11,10 +11,17 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
+from typing import Protocol
 
 import numpy as np
 
 from tensyl.core._validation import frozen_value, optional_positive_number, positive_number
+
+
+class _SurfaceRadius(Protocol):
+    @property
+    def min_radius(self) -> float:
+        """Return the minimum local curvature radius."""
 
 
 def _optional_positive_or_inf(value: float | None, *, name: str) -> float | None:
@@ -47,6 +54,40 @@ class ValidityContext:
     pitch: float | None = None
     min_radius: float | None = None
     response_length: float | None = None
+
+    @classmethod
+    def from_surface_point(
+        cls,
+        point: _SurfaceRadius,
+        *,
+        characteristic_height: float | None = None,
+        pitch: float | None = None,
+        response_length: float | None = None,
+    ) -> ValidityContext:
+        """Build context using a surface point's minimum curvature radius.
+
+        Args:
+            point: A ``SurfacePoint`` supplying ``min_radius``. Flat geometry
+                supplies infinity, so height/radius and pitch/radius are zero.
+            characteristic_height: Optional positive wall or stiffener height.
+            pitch: Optional positive repeat pitch. The homogenizer can fill
+                this from the cell when it is omitted.
+            response_length: Optional positive response length, such as the
+                intended buckle wavelength.
+
+        Returns:
+            Validated scale context for a pointwise homogenization.
+
+        Raises:
+            ValueError: If any supplied length is invalid.
+        """
+
+        return cls(
+            characteristic_height=characteristic_height,
+            pitch=pitch,
+            min_radius=point.min_radius,
+            response_length=response_length,
+        )
 
     def __post_init__(self) -> None:
         object.__setattr__(
@@ -108,7 +149,8 @@ class ValidityReport:
         p_over_L_response: Pitch-to-response-length ratio when both inputs
             were available.
         coupling_ratios: Named normalized coupling indicators.
-        warnings: Stable warning identifiers for violated checks.
+        warnings: Stable identifiers for exceeded thresholds, missing context,
+            unavailable checks, or numerical concerns.
     """
 
     h_over_R: float | None

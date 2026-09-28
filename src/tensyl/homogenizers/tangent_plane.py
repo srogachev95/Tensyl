@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import Any, Literal, Protocol
 
@@ -25,6 +25,7 @@ from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
 from tensyl.core.validity import ValidityContext, ValidityReport, ValidityThresholds
 from tensyl.core.validity_checks import (
+    _neutral_surface_offset,
     _spectral_properties,
     _validity_report,
     validity_report_for_stiffness,
@@ -346,6 +347,10 @@ def _assumptions_for_members(members: tuple[BeamMember, ...]) -> tuple[str, ...]
         "Local tangent-plane equivalent-stiffness homogenization.",
         "Extension- and shear-weighted member eccentricities are measured along +n.",
         "Beam members use Nemeth first-approximation generalized strain kinematics.",
+        (
+            "Members follow the affine smeared strain; cell-scale deformation relaxation "
+            "is not solved."
+        ),
     ]
     if any(member.section.kGAy is None for member in members):
         assumptions.append(
@@ -356,6 +361,20 @@ def _assumptions_for_members(members: tuple[BeamMember, ...]) -> tuple[str, ...]
             "Omitted member kGAz values contribute no transverse stiffener shear stiffness."
         )
     return tuple(assumptions)
+
+
+def _context_with_cell_pitch(
+    cell: CanonicalUnitCell, context: ValidityContext | None
+) -> ValidityContext | None:
+    if context is not None and context.pitch is not None:
+        return context
+    if cell.geometry is not None:
+        pitch = max(float(np.hypot(v.e1, v.e2)) for v in cell.geometry.repeat_vectors)
+    elif cell.metadata.get("source") == "stiffener_family_cell":
+        pitch = max(cell.metadata["spacings"])
+    else:
+        return context
+    return replace(ValidityContext() if context is None else context, pitch=pitch)
 
 
 def _diagnostics(
@@ -427,7 +446,8 @@ class EnergyHomogenizer:
             cell: Tangent-plane unit cell containing the skin, finite members,
                 frame, convention, and repeated area.
             validity_context: Optional geometric and response length scales for
-                result warnings.
+                result warnings. Missing pitch is filled from the longest cell
+                repeat vector, or the largest stiffener-family spacing.
 
         Returns:
             Homogenization result with stiffness, diagnostics, assumptions, and
@@ -460,10 +480,13 @@ class EnergyHomogenizer:
         diagnostics = _diagnostics(
             stiffness.C8, member_count=len(cell.members), cell_area=cell.area
         )
+        diagnostics["neutral_surface_offset"] = _neutral_surface_offset(stiffness)
         return HomogenizationResult(
             stiffness=stiffness,
             validity=_validity_report(
-                stiffness, context=validity_context, thresholds=self.thresholds
+                stiffness,
+                context=_context_with_cell_pitch(cell, validity_context),
+                thresholds=self.thresholds,
             ),
             diagnostics=diagnostics,
             assumptions=_assumptions_for_members(cell.members) + _mass_assumptions(areal_mass),

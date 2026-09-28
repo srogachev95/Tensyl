@@ -28,6 +28,8 @@
     "stress": "psi"
   },
   "validity_warnings": [
-    "validity_context_missing"
+    "h_over_R_unavailable",
+    "p_over_R_unavailable",
+    "p_over_L_response_unavailable"
   ]
 }

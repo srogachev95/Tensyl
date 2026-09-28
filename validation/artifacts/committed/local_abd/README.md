@@ -24,3 +24,9 @@ promoted solver-backed extraction artifacts; their committed files remain
 comparison oracles for future FE extraction runs. The YAML specs under
 `validation/cases/local_abd/` define the expected artifact layout and promotion
 rules for those planned solver-backed runs.
+
+The four stiffened targets were refreshed on 2026-09-28 for residual coupling
+and inferred validity pitch. Their A, B, D, and As blocks are unchanged.
+They also pick up the corrected mass policy: because these case sections have
+no mass-per-length data, areal mass is unknown instead of reporting skin mass
+alone. The skin-only extraction evidence retains its original provenance.

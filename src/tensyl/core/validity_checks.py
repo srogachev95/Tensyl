@@ -23,15 +23,44 @@ def _spectral_properties(matrix: FloatArray) -> tuple[FloatArray, float, int]:
     return eigenvalues, tolerance, rank
 
 
-def _coupling_ratio(stiffness: ABDStiffness) -> float:
-    # Normalize B by the geometric mean of A and D norms to produce a
-    # scale-free warning metric for membrane-bending coupling.
-    norm_A = float(np.linalg.norm(stiffness.A, ord="fro"))
-    norm_D = float(np.linalg.norm(stiffness.D, ord="fro"))
-    norm_B = float(np.linalg.norm(stiffness.B, ord="fro"))
+def _frobenius_norm(matrix: FloatArray) -> float:
+    scale = float(np.max(np.abs(matrix)))
+    return 0.0 if scale == 0.0 else scale * float(np.linalg.norm(matrix / scale))
+
+
+def _normalized_coupling(A: FloatArray, B: FloatArray, D: FloatArray) -> float:
+    norm_A = _frobenius_norm(A)
+    norm_D = _frobenius_norm(D)
+    norm_B = _frobenius_norm(B)
     if norm_A == 0.0 or norm_D == 0.0:
         return 0.0
-    return norm_B / float(np.sqrt(norm_A * norm_D))
+    return float(norm_B / np.sqrt(norm_A) / np.sqrt(norm_D))
+
+
+def _neutral_surface_offset(stiffness: ABDStiffness) -> float:
+    weights = np.array([1.0, 1.0, np.sqrt(2.0)])
+    A = weights[:, None] * stiffness.A * weights[None, :]
+    B = weights[:, None] * stiffness.B * weights[None, :]
+    scale = float(np.max(np.abs(A)))
+    if scale == 0.0:
+        # No membrane stiffness means there is no preferred neutral surface.
+        return 0.0
+    normalized_A = A / scale
+    return float(np.sum(normalized_A * (B / scale)) / np.sum(normalized_A**2))
+
+
+def _residual_coupling_ratio(stiffness: ABDStiffness) -> float:
+    offset = _neutral_surface_offset(stiffness)
+    residual_B = stiffness.B - offset * stiffness.A
+    neutral_D = stiffness.D - offset * (stiffness.B + residual_B)
+    weights = np.array([1.0, 1.0, np.sqrt(2.0)])
+    # Mandel components use an orthonormal tensor basis. Engineering shear
+    # components do not, so their unweighted norm changes with in-plane axes.
+    return _normalized_coupling(
+        weights[:, None] * stiffness.A * weights[None, :],
+        weights[:, None] * residual_B * weights[None, :],
+        weights[:, None] * neutral_D * weights[None, :],
+    )
 
 
 def _validity_report(
@@ -68,7 +97,7 @@ def _validity_report(
         else:
             warnings.append("p_over_L_response_unavailable")
 
-    coupling = _coupling_ratio(stiffness)
+    coupling = _residual_coupling_ratio(stiffness)
     if coupling >= thresholds.coupling_ratio:
         warnings.append("membrane_bending_coupling_exceeds_threshold")
     matrix = stiffness.C8
@@ -81,7 +110,12 @@ def _validity_report(
         h_over_R=h_over_R,
         p_over_R=p_over_R,
         p_over_L_response=p_over_L_response,
-        coupling_ratios=MappingProxyType({"B_fro": coupling}),
+        coupling_ratios=MappingProxyType(
+            {
+                "B_fro": _normalized_coupling(stiffness.A, stiffness.B, stiffness.D),
+                "B_residual": coupling,
+            }
+        ),
         warnings=tuple(warnings),
     )
 

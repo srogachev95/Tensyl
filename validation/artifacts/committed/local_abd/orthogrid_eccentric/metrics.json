@@ -12,7 +12,7 @@
   "case_name": "local_abd_orthogrid_eccentric",
   "case_type": "local_abd",
   "checks": {
-    "condition_number_C8": 161.15641225268467,
+    "condition_number_C8": 161.15641225268462,
     "max_C8_eigenvalue": 1729719.7098509988,
     "min_C8_eigenvalue": 10733.173354212495,
     "rank_C8": 8,
@@ -28,7 +28,9 @@
     "stress": "psi"
   },
   "validity_warnings": [
-    "validity_context_missing",
+    "h_over_R_unavailable",
+    "p_over_R_unavailable",
+    "p_over_L_response_unavailable",
     "membrane_bending_coupling_exceeds_threshold"
   ]
 }
