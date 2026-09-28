@@ -643,24 +643,28 @@ class Ellipsoid:
         """Return ellipsoid geometry away from the poles.
 
         Args:
-            u: Polar angle ``phi`` in radians.
+            u: Polar angle ``phi`` in radians, strictly between ``0`` and
+                ``pi``.
             v: Azimuth angle ``theta`` in radians.
 
         Returns:
-            A ``SurfacePoint`` with metric, curvature, and principal
-            curvatures computed from the local ellipsoid chart.
+            A ``SurfacePoint`` with outward normal, metric, curvature, and
+            principal curvatures computed from the local ellipsoid chart.
 
         Raises:
-            ValueError: If either coordinate is non-finite or the chart is
-                singular at the requested point.
+            ValueError: If either coordinate is non-finite, ``phi`` is outside
+                ``(0, pi)``, or the chart is singular at the requested point.
         """
 
         phi = finite_number(u, name="u")
         theta = finite_number(v, name="v")
-        sp = float(np.sin(phi))
-        if abs(sp) <= _TOLERANCE:
-            msg = "ellipsoid coordinates are singular at the poles."
+        if phi <= _TOLERANCE or phi >= np.pi - _TOLERANCE:
+            # Outside (0, pi) the chart folds back on itself and the cross
+            # product of the tangents points inward, which would silently flip
+            # every eccentricity sign. The poles themselves are singular.
+            msg = "ellipsoid coordinates are singular at the poles; phi must lie in (0, pi)."
             raise ValueError(msg)
+        sp = float(np.sin(phi))
         cp = float(np.cos(phi))
         st = float(np.sin(theta))
         ct = float(np.cos(theta))

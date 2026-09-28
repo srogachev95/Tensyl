@@ -100,6 +100,23 @@ def test_ellipsoid_computes_finite_geometry_and_sphere_special_case() -> None:
         ellipsoid.point_at(0.0, 0.0)
 
 
+def test_ellipsoid_rejects_polar_angles_that_would_flip_the_normal_inward() -> None:
+    ellipsoid = Ellipsoid(a=2.0, b=3.0, c=4.0)
+
+    with pytest.raises(ValueError, match="poles"):
+        ellipsoid.point_at(1.5 * np.pi, 0.0)
+    with pytest.raises(ValueError, match="poles"):
+        ellipsoid.point_at(-0.5, 0.0)
+
+
+@pytest.mark.parametrize("phi", [0.1, 0.8, 1.5, 2.4, 3.0])
+@pytest.mark.parametrize("theta", [-2.0, 0.0, 1.0, 4.0])
+def test_ellipsoid_normals_point_outward_across_the_chart(phi: float, theta: float) -> None:
+    point = Ellipsoid(a=2.0, b=3.0, c=4.0).point_at(phi, theta)
+
+    assert float(point.position @ point.frame.n) > 0.0
+
+
 def test_sphere_matches_ellipsoid_sphere_special_case() -> None:
     sphere = Sphere(radius=4.0)
     ellipsoid = Ellipsoid(a=4.0, b=4.0, c=4.0)

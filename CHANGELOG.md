@@ -14,6 +14,8 @@ bug fixes that correct clearly wrong behavior.
   the hashes of equal values.
 - Keep the attached validity report when rotating an `ABDStiffness`; rotation
   used to drop it silently.
+- Reject `Ellipsoid` polar angles outside `(0, pi)`. Those angles used to return
+  an inward normal, which silently reversed every eccentricity sign.
 
 ## 0.3.1 - 2026-07-28
 
