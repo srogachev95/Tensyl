@@ -20,6 +20,12 @@ section = BeamSection(
 Tensyl asks for stiffness products instead of raw dimensions because the current
 homogenizer consumes centroidal beam stiffnesses.
 
+Add `mass_per_length` when you want the homogenized panel to report its areal
+mass. The homogenizer only reports panel mass when the skin and every member
+section supply one, because a total that quietly leaves out the stiffeners is
+worse than no total at all. The geometry-derived sections below fill it in
+from the material density.
+
 ## Geometry-Derived Sections
 
 For common isotropic thin-wall stiffeners, Tensyl can compute those products

@@ -16,6 +16,11 @@ bug fixes that correct clearly wrong behavior.
   used to drop it silently.
 - Reject `Ellipsoid` polar angles outside `(0, pi)`. Those angles used to return
   an inward normal, which silently reversed every eccentricity sign.
+- Count stiffener mass in homogenized `areal_mass`. `BeamSection` gains an
+  optional `mass_per_length`, thin-wall sections fill it from material
+  density, and a result now reports `areal_mass=None` with an assumption when
+  the skin or any member has no mass data. It used to report the skin's mass
+  alone, which understated a stiffened panel.
 
 ## 0.3.1 - 2026-07-28
 

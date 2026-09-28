@@ -276,5 +276,13 @@ def test_v2_abd_stiffness_fixtures_load(filename: str) -> None:
 def test_v2_homogenization_result_fixtures_load(filename: str) -> None:
     path = FIXTURE_DIR / filename
     loaded = read_yaml(path) if path.suffix == ".yaml" else read_json(path)
+    expected = _result()
 
-    _assert_result_matches(loaded, _result())
+    assert isinstance(loaded, HomogenizationResult)
+    # The fixture is a frozen artifact: its numbers must still match, but the
+    # current homogenizer may add assumptions the older file never recorded.
+    np.testing.assert_allclose(loaded.stiffness.C8, expected.stiffness.C8)
+    assert loaded.validity == expected.validity
+    assert loaded.stiffness.validity == loaded.validity
+    assert loaded.source == expected.source
+    assert set(loaded.assumptions) <= set(expected.assumptions)

@@ -124,6 +124,26 @@ returns that result with a warning so the unsupported mode can be reviewed.
 ABD stiffness is passed to a geometry field, serialization workflow, or
 downstream adapter.
 
+## Panel Mass
+
+A stiffened panel weighs more than its skin, often a good deal more, so the
+homogenized `areal_mass` counts both. Tensyl adds each member's mass per unit
+length, spread over the repeat area, to the skin's areal mass:
+
+$$
+m_\text{panel} = m_\text{skin} + \frac{1}{A_\text{cell}}
+\sum_{\text{members}} n_k\,L_k\,\mu_k ,
+$$
+
+where $n_k$ is the member multiplicity, $L_k$ its length inside the cell, and
+$\mu_k$ its `BeamSection.mass_per_length`. Thin-wall sections fill in
+$\mu_k = \rho A$ whenever their material has a density.
+
+If the skin or any member section has no mass, the result reports
+`areal_mass=None` and says so in `result.assumptions`. A skin-only number would
+look like an answer while understating the panel, so Tensyl leaves the field
+empty instead.
+
 ## Diagnostics
 
 Homogenization results include:

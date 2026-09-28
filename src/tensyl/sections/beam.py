@@ -8,6 +8,7 @@ from typing import Any
 
 from tensyl.core._validation import (
     finite_number,
+    optional_nonnegative_number,
     optional_positive_number,
     positive_number,
     readonly_mapping,
@@ -23,7 +24,9 @@ class BeamSection:
     ``GJ`` is the torsional stiffness. ``kGAy`` and ``kGAz`` are optional shear
     stiffnesses in the member-local in-plane transverse and normal directions.
     Tensyl expects stiffness products in a consistent unit system; it does not
-    calculate them from cross-section dimensions.
+    calculate them from cross-section dimensions. ``mass_per_length`` is
+    optional, but a homogenized cell reports areal mass only when every member
+    section and the skin supply mass.
 
     Attributes:
         EA: Positive axial stiffness.
@@ -36,6 +39,8 @@ class BeamSection:
             direction.
         EIyz: Product bending stiffness. The ``EIy/EIz/EIyz`` block must be
             positive definite.
+        mass_per_length: Optional nonnegative mass per unit member length,
+            such as ``density * area``.
         metadata: Read-only provenance metadata carried into homogenized
             results.
     """
@@ -47,6 +52,7 @@ class BeamSection:
     kGAy: float | None = None
     kGAz: float | None = None
     EIyz: float = 0.0
+    mass_per_length: float | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -69,6 +75,11 @@ class BeamSection:
             msg = "section bending stiffness block must be positive definite."
             raise ValueError(msg)
         object.__setattr__(self, "EIyz", EIyz)
+        object.__setattr__(
+            self,
+            "mass_per_length",
+            optional_nonnegative_number(self.mass_per_length, name="mass_per_length"),
+        )
         object.__setattr__(self, "metadata", readonly_mapping(self.metadata))
 
 
