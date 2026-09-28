@@ -135,14 +135,18 @@ Each family supplies a section, direction, spacing, and offset.
 If a transverse-shear stiffness is omitted, Tensyl treats its contribution as
 zero and records that assumption in the result.
 
-By default, Tensyl follows Nemeth and leaves out member bending within the panel
-plane. `BeamSection` still stores `EIz` and `EIyz` for section completeness, but
-the cell does not use them unless `include_in_plane_bending=True` is set on the
-member or named constructor. That option is an extension beyond the default
-Nemeth model, and the result records when it is enabled.
+Member bending within the panel plane stores no energy in this model. Under a
+uniform wall strain and curvature, a member's axis stays straight in the panel
+plane: curvature across the member rotates its cross-section about the member
+axis but does not bend it. In Nemeth's notation this is the first-approximation
+condition $\chi_Z=0$. `BeamSection` still stores `EIz` and `EIyz` as section
+data, but the homogenizer does not use them.
 
-In Nemeth's notation, this default is the first-approximation condition
-$\chi_Z=0$.
+Tensyl 0.3.1 and earlier offered an `include_in_plane_bending` switch that let
+`EIz` resist plate curvature across the member. It was removed because beam
+theory gives that term no energy; see the
+[SP-8007 reconciliation](../validation/sp8007-reconciliation.md#why-earlier-reports-disagreed)
+for the consequences.
 
 For the member-frame in-plane shear term, the two effective offsets enter as
 
