@@ -2,6 +2,7 @@
 
 from tensyl.materials.base import IsotropicMaterial, OrthotropicPlyMaterial
 from tensyl.materials.laminates import Ply, PlyMaterial, isotropic_plate, laminate_plate
+from tensyl.materials.layups import layup
 
 __all__ = [
     "IsotropicMaterial",
@@ -10,4 +11,5 @@ __all__ = [
     "PlyMaterial",
     "isotropic_plate",
     "laminate_plate",
+    "layup",
 ]

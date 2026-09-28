@@ -383,3 +383,27 @@ def test_homogenized_field_accepts_an_equal_surface_instance() -> None:
     )
 
     assert field.stiffness_at(FlatPlate(), 0.0, 0.0).C8.shape == (8, 8)
+
+
+@pytest.mark.parametrize("angle", [np.pi / 2, np.pi / 4, -np.pi / 4])
+def test_oriented_constant_field_has_the_expected_axial_energy_and_sign(angle: float) -> None:
+    # A single axial mode has strain c^2*e11 + s^2*e22 + c*s*g12.
+    base = ABDStiffness(
+        A=np.diag([10.0, 0.0, 0.0]), B=np.zeros((3, 3)), D=np.eye(3), As=np.eye(2), areal_mass=2.5
+    )
+    plate = FlatPlate()
+    field = ConstantStiffnessField(base, orientation_rad=angle)
+    stiffness = field.stiffness_at(plate, 0.2, 0.4)
+    c, s = np.cos(angle), np.sin(angle)
+    direction = np.array([c * c, s * s, c * s])
+    np.testing.assert_allclose(stiffness.A, 10.0 * np.outer(direction, direction), atol=1e-14)
+    assert stiffness.frame == plate.point_at(0.2, 0.4).frame
+    assert stiffness.areal_mass == 2.5
+    assert stiffness.metadata["orientation_rad"] == angle
+    np.testing.assert_array_equal(base.A, np.diag([10.0, 0.0, 0.0]))
+
+
+@pytest.mark.parametrize("angle", [np.inf, -np.inf, np.nan])
+def test_constant_field_rejects_nonfinite_orientation(angle: float) -> None:
+    with pytest.raises(ValueError, match="orientation_rad"):
+        ConstantStiffnessField(_stiffness(), orientation_rad=angle)

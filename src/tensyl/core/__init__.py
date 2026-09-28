@@ -6,6 +6,7 @@ from tensyl.core.constitutive import (
     HyperelasticModel,
     OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
+    StiffnessSymmetryError,
     shift_reference_surface,
     superpose_abd_stiffnesses,
 )
@@ -51,6 +52,7 @@ __all__ = [
     "OrthotropicStiffnessCoefficients",
     "ReducedOrthotropicProperties",
     "StrainConvention",
+    "StiffnessSymmetryError",
     "engineering_strain_transform",
     "generalized_resultant",
     "generalized_resultant_transform",

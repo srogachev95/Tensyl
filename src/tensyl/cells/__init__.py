@@ -1,5 +1,6 @@
 """Tangent-plane canonical cell value objects and constructors."""
 
+from tensyl.cells.geometry_checks import check_cell_geometry
 from tensyl.cells.tangent_plane import (
     BeamMember,
     CanonicalUnitCell,
@@ -29,6 +30,7 @@ from tensyl.cells.tangent_plane import (
 )
 
 __all__ = [
+    "check_cell_geometry",
     "BeamMember",
     "CanonicalUnitCell",
     "CellEdge",

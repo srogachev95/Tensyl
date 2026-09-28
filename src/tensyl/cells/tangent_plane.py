@@ -548,7 +548,7 @@ def graph_unit_cell(
                 axial_eccentricity=edge.axial_eccentricity,
                 shear_eccentricity=edge.shear_eccentricity,
                 multiplicity=edge.multiplicity,
-                label=edge.label,
+                label=edge.label or edge.family or "member",
             )
         )
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)

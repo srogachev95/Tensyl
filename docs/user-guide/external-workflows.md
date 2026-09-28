@@ -3,6 +3,35 @@
 Tensyl provides solver-neutral YAML and JSON serialization for ABD stiffnesses and
 homogenization results.
 
+## Matrices Copied from Papers
+
+A printed table may round its two copies of an off-diagonal coefficient
+differently. `ABDStiffness` keeps its strict roundoff check and raises the
+public `StiffnessSymmetryError` when that difference is material. To import
+known printed-precision data, opt in explicitly:
+
+```python
+import numpy as np
+from tensyl import ABDStiffness
+
+A = np.array([[10.0, 2.000001, 0.0], [2.0, 8.0, 0.0], [0.0, 0.0, 3.0]])
+stiffness = ABDStiffness.from_published_blocks(
+    A, np.zeros((3, 3)), np.eye(3), np.eye(2), rtol=1e-6,
+    metadata={"source": "illustrative rounded table"},
+)
+print(stiffness.metadata["published_blocks"])
+```
+
+The constructor requires `max(abs(C - C.T)) <= rtol * max(abs(C))` for
+each block separately, then averages that block with its transpose. A large
+membrane coefficient cannot hide asymmetry in a small coupling block. Metadata
+records each block's largest absolute correction and the largest relative
+correction across blocks; absolute values from A, B, and D have different units
+and should not be compared directly. This import step does not check energy
+positivity or resolve a unit or convention mismatch.
+
+## YAML and JSON
+
 ```python
 from pathlib import Path
 

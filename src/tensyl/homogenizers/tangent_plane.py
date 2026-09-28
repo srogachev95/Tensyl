@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import Any, Literal, Protocol
@@ -104,6 +105,23 @@ class HomogenizationResult:
                 self.assumptions,
                 self.source,
             )
+        )
+
+    def summary(self, *, units: Mapping[str, str] | None = None, precision: int = 6) -> str:
+        """Return the stiffness summary, source, and modeling assumptions.
+
+        ``units`` labels A, B, D, As, and areal_mass without unit conversion;
+        ``precision`` sets decimal places in scientific notation. Use
+        ``print(result.summary())`` for terminal output.
+        """
+
+        return "\n".join(
+            [
+                f"Source: {self.source}",
+                self.stiffness.summary(units=units, precision=precision),
+                "Assumptions:",
+                *(f"- {assumption}" for assumption in self.assumptions),
+            ]
         )
 
     def reduced_orthotropic_properties(

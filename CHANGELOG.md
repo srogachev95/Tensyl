@@ -8,6 +8,23 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add `check_cell_geometry` to compare the drawn periodic length density with
+  the member density used by homogenization, accounting for shared boundaries
+  and overlapping pieces. Unlabeled graph members now retain their edge's
+  family name, falling back to `"member"` when both are omitted.
+- Add `ConstantStiffnessField.orientation_rad`, measured counterclockwise
+  from surface e1 to stiffness e1 about +n. Fields now support a constant
+  material angle relative to each sampled surface frame.
+- Give `ABDStiffness` a compact representation and add `summary()` strings on
+  stiffnesses and homogenization results, with labeled engineering blocks,
+  optional unit labels, warnings, and result assumptions.
+- Add `Ply.from_degrees` and `layup` for degree-based laminate inputs, paired
+  angles, repeated plies/groups, and symmetric stacks in explicit bottom-to-top
+  order. Unsupported notation raises `ValueError`.
+- Add `ABDStiffness.from_published_blocks` for explicitly importing matrices
+  rounded to printed precision. It checks each block's relative asymmetry,
+  averages qualifying entries, and records the corrections. Strict symmetry
+  failures now raise the public `StiffnessSymmetryError`.
 - Infer missing validity pitch from the longest cell repeat vector or largest
   family spacing while preserving caller-supplied scales. Add
   `ValidityContext.from_surface_point` for local curvature context. Reports

@@ -12,6 +12,7 @@ from tensyl.cells import (
     CellVector,
     StiffenerFamily,
     braced_orthogrid_cell,
+    check_cell_geometry,
     diamond_cell,
     equilateral_isogrid_cell,
     equilateral_star_cell,
@@ -34,6 +35,7 @@ from tensyl.core.constitutive import (
     HyperelasticModel,
     OrthotropicStiffnessCoefficients,
     ReducedOrthotropicProperties,
+    StiffnessSymmetryError,
     shift_reference_surface,
     superpose_abd_stiffnesses,
 )
@@ -84,6 +86,7 @@ from tensyl.materials import (
     Ply,
     isotropic_plate,
     laminate_plate,
+    layup,
 )
 from tensyl.sections import (
     BeamSection,
@@ -101,6 +104,7 @@ from tensyl.sections import (
 __version__ = tensyl_version()
 
 __all__ = [
+    "StiffnessSymmetryError",
     "DEFAULT_FRAME",
     "DEFAULT_STRAIN_CONVENTION",
     "BeamMember",
@@ -153,6 +157,7 @@ __all__ = [
     "__version__",
     "blade_section",
     "braced_orthogrid_cell",
+    "check_cell_geometry",
     "diamond_cell",
     "channel_section",
     "equilateral_isogrid_cell",
@@ -166,6 +171,7 @@ __all__ = [
     "isosceles_triangle_grid_cell",
     "kagome_cell",
     "laminate_plate",
+    "layup",
     "orthogrid_cell",
     "regular_hexagonal_grid_cell",
     "sandwich_hexagonal_core_cell",

@@ -26,6 +26,7 @@
         - StiffenerFamily
         - stiffener_family_cell
         - graph_unit_cell
+        - check_cell_geometry
         - unidirectional_cell
         - orthogrid_cell
         - braced_orthogrid_cell
