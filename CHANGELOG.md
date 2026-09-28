@@ -46,6 +46,9 @@ bug fixes that correct clearly wrong behavior.
   `ValidityReport | None`. Anything else now raises `TypeError`.
 - Remove the unused `LinearModel` protocol and the `ConstitutiveModel` alias;
   `HyperelasticModel` remains the stored-energy contract.
+- Add `Frame2D.is_close` and use it wherever frames must agree: superposition,
+  cells, fields, and atlases. Frames that differ only by label or by rotation
+  roundoff are now compatible; exact `==` still backs hashing.
 
 ## 0.3.1 - 2026-07-28
 

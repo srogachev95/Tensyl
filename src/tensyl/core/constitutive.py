@@ -967,7 +967,8 @@ def superpose_abd_stiffnesses(
 
     Raises:
         ValueError: If no stiffnesses are supplied, or if frames/conventions do
-            not match.
+            not match. Frames match when their axes agree within roundoff;
+            labels are ignored and the result uses the first frame.
     """
 
     if not stiffnesses:
@@ -975,7 +976,7 @@ def superpose_abd_stiffnesses(
         raise ValueError(msg)
     first = stiffnesses[0]
     for stiffness in stiffnesses[1:]:
-        if stiffness.frame != first.frame:
+        if not stiffness.frame.is_close(first.frame):
             msg = "all stiffnesses must use the same frame."
             raise ValueError(msg)
         if stiffness.convention != first.convention:

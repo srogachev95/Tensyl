@@ -75,7 +75,7 @@ def _metadata_for_surface(metadata: Mapping[str, Any], point: SurfacePoint) -> d
 def _validate_stiffness_matches_point(
     stiffness: ABDStiffness, point: SurfacePoint, *, context: str
 ) -> None:
-    if stiffness.frame != point.frame:
+    if not stiffness.frame.is_close(point.frame):
         msg = f"{context} local frame must match the surface point frame."
         raise ValueError(msg)
 
@@ -260,7 +260,7 @@ class HomogenizedStiffnessField:
         cell = self.cell_factory(self.surface, point)
         # Pointwise factories are allowed to vary pitch, section, or material,
         # but they must still return a cell expressed in the surface point frame.
-        if cell.frame != point.frame:
+        if not cell.frame.is_close(point.frame):
             msg = "cell frame must match the surface point frame."
             raise ValueError(msg)
         validity_context = (

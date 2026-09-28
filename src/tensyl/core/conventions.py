@@ -80,6 +80,29 @@ class Frame2D:
             and self.label == other.label
         )
 
+    def is_close(self, other: Frame2D, *, atol: float = _DEFAULT_TOLERANCE) -> bool:
+        """Return whether two frames point the same way, ignoring labels.
+
+        Equality (``==``) is exact and includes the label, which is what
+        hashing needs. Compatibility checks, such as adding two stiffnesses or
+        placing a skin in a cell, only care that the axes agree: a relabeled
+        frame or one that picked up roundoff in a rotation describes the same
+        directions.
+
+        Args:
+            other: Frame to compare against.
+            atol: Absolute tolerance on each unit-vector component.
+
+        Returns:
+            ``True`` when ``e1``, ``e2``, and ``n`` agree within ``atol``.
+        """
+
+        return (
+            bool(np.allclose(self.e1, other.e1, atol=atol, rtol=0.0))
+            and bool(np.allclose(self.e2, other.e2, atol=atol, rtol=0.0))
+            and bool(np.allclose(self.n, other.n, atol=atol, rtol=0.0))
+        )
+
     @classmethod
     def canonical(cls, *, label: str = "local_tangent") -> Frame2D:
         """Create the canonical Cartesian local frame.

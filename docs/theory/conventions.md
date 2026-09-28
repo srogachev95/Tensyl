@@ -16,6 +16,14 @@ $$
 \mathbf e_1 \times \mathbf e_2 = \mathbf n.
 $$
 
+When two stiffnesses meet, such as a skin inside a cell, two faces being added,
+or a sampled stiffness bound to a surface point, Tensyl checks that their
+frames point the same way with `Frame2D.is_close`. It compares the axes to
+roundoff and ignores the label, so a frame called `"panel"` and one called
+`"local_tangent"` with the same axes are compatible. A frame rotated by a real
+angle is not, and mixing the two raises rather than adding numbers that belong
+to different directions.
+
 Positive in-plane rotation is counterclockwise about `n`:
 
 $$

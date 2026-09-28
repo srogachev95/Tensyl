@@ -333,7 +333,7 @@ class CanonicalUnitCell:
         if not members:
             msg = "CanonicalUnitCell requires at least one beam member."
             raise ValueError(msg)
-        if self.skin.frame != self.frame:
+        if not self.skin.frame.is_close(self.frame):
             msg = "cell frame must match the skin frame."
             raise ValueError(msg)
         if self.skin.convention != self.convention:
