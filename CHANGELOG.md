@@ -8,6 +8,9 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Add deterministic parameter sweeps with named coefficients, complete mass,
+  warning codes, and parameter context on failures.
+
 - Add membrane-equivalent laminated wall sections with stiffness-weighted
   centroids, and optional single-cell Bredt torsion for a hat closed by an
   isotropic skin. Couplings that the beam model cannot retain are refused.
