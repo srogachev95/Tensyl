@@ -149,21 +149,20 @@ def test_build_sp8007_reconciliation_writes_artifacts_and_plots(tmp_path: Path) 
     assert completed.returncode == 0, completed.stderr
     table = json.loads((artifact_dir / "comparison_table.json").read_text(encoding="utf-8"))
     summary = json.loads((artifact_dir / "summary.json").read_text(encoding="utf-8"))
-    sweep = json.loads((artifact_dir / "inplane_bending_sweep.json").read_text(encoding="utf-8"))
     torsion_sweep = json.loads((artifact_dir / "torsion_sweep.json").read_text(encoding="utf-8"))
 
-    assert table["schema_version"] == "tensyl.validation.sp8007-reconciliation-table.v2"
-    assert len(table["cases"]) == 5
-    assert len(table["rows"]) == 55
+    assert table["schema_version"] == "tensyl.validation.sp8007-reconciliation-table.v3"
+    assert summary["schema_version"] == "tensyl.validation.sp8007-reconciliation-summary.v3"
+    assert len(table["cases"]) == 3
+    assert len(table["rows"]) == 33
     assert summary["source_equations"]["orthogrid"].endswith("Eqs. 82-91")
     assert summary["source_equations"]["isogrid"].endswith("Eqs. 92-98")
     assert "parallel-axis" in summary["source_equations"]["isogrid_correction"]
-    assert any(
-        item["case_name"] == "isogrid_suppressed_inplane_bending_eccentric"
-        and item["worst_abs_relative_delta_corrected"] < 1.0e-3
-        for item in summary["worst_by_case"]
+    assert all(
+        item["worst_abs_relative_delta_corrected"] < 1.0e-12 for item in summary["worst_by_case"]
     )
-    assert len(sweep["rows"]) == 10
+    assert "sweep" not in summary
+    assert not (artifact_dir / "inplane_bending_sweep.json").exists()
     assert torsion_sweep["schema_version"] == "tensyl.validation.sp8007-torsion-sweep.v1"
     assert len(torsion_sweep["rows"]) == 10
     assert (
@@ -176,10 +175,6 @@ def test_build_sp8007_reconciliation_writes_artifacts_and_plots(tmp_path: Path) 
     assert (
         (plot_dir / "sp8007-isogrid-correction.svg").read_text(encoding="utf-8").startswith("<?xml")
     )
-    assert (plot_dir / "sp8007-bending-ratio.svg").read_text(encoding="utf-8").startswith("<?xml")
-    assert (
-        (plot_dir / "sp8007-inplane-bending-sweep.svg")
-        .read_text(encoding="utf-8")
-        .startswith("<?xml")
-    )
     assert (plot_dir / "sp8007-torsion-sweep.svg").read_text(encoding="utf-8").startswith("<?xml")
+    assert not (plot_dir / "sp8007-bending-ratio.svg").exists()
+    assert not (plot_dir / "sp8007-inplane-bending-sweep.svg").exists()

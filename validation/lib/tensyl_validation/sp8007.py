@@ -121,43 +121,23 @@ class SP8007ComparisonCase:
 def default_reconciliation_cases() -> tuple[SP8007ComparisonCase, ...]:
     """Return public synthetic cases for the committed reconciliation artifact."""
 
-    low_in_plane = 1.20e-6
     return (
         SP8007ComparisonCase(
-            name="orthogrid_full_section_eccentric",
+            name="orthogrid_eccentric",
             model="orthogrid",
-            note=(
-                "Orthogrid with in-plane beam bending retained in Tensyl but absent "
-                "from SP-8007 Eqs. 89-91 as written."
-            ),
+            note="Ring-and-stringer orthogrid with eccentric members, SP-8007 Eqs. 82-91.",
         ),
         SP8007ComparisonCase(
-            name="orthogrid_suppressed_inplane_bending",
-            model="orthogrid",
-            in_plane_inertia=low_in_plane,
-            note="Orthogrid limit that nearly removes Tensyl's cross-family in-plane bending.",
-        ),
-        SP8007ComparisonCase(
-            name="isogrid_full_section_eccentric",
+            name="isogrid_zero_eccentricity",
             model="isogrid",
-            note=(
-                "Isogrid with full in-plane beam bending and eccentric axial stiffness "
-                "retained in Tensyl."
-            ),
-        ),
-        SP8007ComparisonCase(
-            name="isogrid_suppressed_inplane_bending_zero_eccentricity",
-            model="isogrid",
-            in_plane_inertia=low_in_plane,
             eccentricity=0.0,
-            note="Isogrid limit where the printed and corrected Eqs. 97-98 coincide.",
+            note="Centered isogrid, where the printed and corrected Eqs. 97-98 coincide.",
         ),
         SP8007ComparisonCase(
-            name="isogrid_suppressed_inplane_bending_eccentric",
+            name="isogrid_eccentric",
             model="isogrid",
-            in_plane_inertia=low_in_plane,
             note=(
-                "Isogrid case isolating the missing eccentric axial-stiffness "
+                "Eccentric isogrid isolating the missing parallel-axis EA*z^2 "
                 "terms in SP-8007 Eqs. 97-98."
             ),
         ),
@@ -193,7 +173,6 @@ def tensyl_coefficients(case: SP8007ComparisonCase) -> dict[CoefficientName, flo
             e2_pitch=case.stringer_spacing,
             e1_axial_eccentricity=case.eccentricity,
             e2_axial_eccentricity=case.eccentricity,
-            include_in_plane_bending=True,
         )
     else:
         cell = equilateral_isogrid_cell(
@@ -201,7 +180,6 @@ def tensyl_coefficients(case: SP8007ComparisonCase) -> dict[CoefficientName, flo
             member_section=section,
             side_length=case.pitch,
             axial_eccentricity=case.eccentricity,
-            include_in_plane_bending=True,
         )
     stiffness = EnergyHomogenizer().compute(cell).stiffness
     return sp8007_coefficients_from_abd(stiffness)
@@ -361,58 +339,7 @@ def _row_interpretation(
 ) -> str:
     if abs_relative_delta_corrected < 1.0e-9:
         return "agreement"
-    if (
-        case.model == "orthogrid"
-        and coefficient in {"Dbar_x", "Dbar_y"}
-        and case.in_plane_inertia > 0.0
-    ):
-        return "cross_family_inplane_bending"
-    if case.model == "isogrid" and coefficient in BENDING_COEFFICIENTS:
-        return "retained_member_bending_residual"
     return "model_difference"
-
-
-def sweep_rows(
-    *,
-    ratios: tuple[float, ...] = (1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0),
-) -> list[dict[str, Any]]:
-    """Return sweep rows showing sensitivity to retained in-plane beam bending."""
-
-    base_cases = (
-        SP8007ComparisonCase(
-            name="orthogrid_inplane_bending_sweep",
-            model="orthogrid",
-            eccentricity=0.32,
-        ),
-        SP8007ComparisonCase(
-            name="isogrid_inplane_bending_sweep_zero_eccentricity",
-            model="isogrid",
-            eccentricity=0.0,
-        ),
-    )
-    rows: list[dict[str, Any]] = []
-    for base in base_cases:
-        for ratio in ratios:
-            case = replace(
-                base,
-                in_plane_inertia=base.out_of_plane_inertia * ratio,
-                note=f"in_plane_inertia/out_of_plane_inertia = {ratio:g}",
-            )
-            comparison = comparison_rows((case,))
-            max_bending_error = max(
-                row["abs_relative_delta_corrected"]
-                for row in comparison
-                if row["coefficient"] in BENDING_COEFFICIENTS
-            )
-            rows.append(
-                {
-                    "case_name": case.name,
-                    "model": case.model,
-                    "in_plane_inertia_ratio": ratio,
-                    "max_bending_abs_relative_delta": max_bending_error,
-                }
-            )
-    return rows
 
 
 def torsion_sweep_rows(
@@ -422,16 +349,8 @@ def torsion_sweep_rows(
     """Return rows showing sensitivity to the supplied member torsion constant."""
 
     base_cases = (
-        SP8007ComparisonCase(
-            name="orthogrid_torsion_sweep",
-            model="orthogrid",
-            in_plane_inertia=1.20e-6,
-        ),
-        SP8007ComparisonCase(
-            name="isogrid_torsion_sweep",
-            model="isogrid",
-            in_plane_inertia=1.20e-6,
-        ),
+        SP8007ComparisonCase(name="orthogrid_torsion_sweep", model="orthogrid"),
+        SP8007ComparisonCase(name="isogrid_torsion_sweep", model="isogrid"),
     )
     rows: list[dict[str, Any]] = []
     for base in base_cases:
@@ -465,7 +384,6 @@ def torsion_sweep_rows(
 
 def summary_payload(
     rows: list[dict[str, Any]],
-    sweep: list[dict[str, Any]],
     torsion_sweep: list[dict[str, Any]],
 ) -> dict[str, Any]:
     """Return a compact report summary from comparison rows."""
@@ -484,7 +402,7 @@ def summary_payload(
             }
         )
     return {
-        "schema_version": "tensyl.validation.sp8007-reconciliation-summary.v2",
+        "schema_version": "tensyl.validation.sp8007-reconciliation-summary.v3",
         "title": "SP-8007 reconciliation summary",
         "source_equations": {
             "orthogrid": SP8007_ORTHOGRID_EQUATIONS,
@@ -497,10 +415,9 @@ def summary_payload(
                 "SP-8007 isogrid Eqs. 97-98 as printed omit explicit stiffener "
                 "parallel-axis EA*z^2 bending terms."
             ),
-            ("Correcting that omission removes the large eccentric-isogrid bending discrepancy."),
             (
-                "The remaining orthogrid bending differences track Tensyl's retained "
-                "cross-family in-plane member bending."
+                "With that omission corrected, every coefficient in every case "
+                "agrees with Tensyl to floating-point roundoff."
             ),
             (
                 "The supplied member torsion constant J is a model input, not a "
@@ -508,6 +425,5 @@ def summary_payload(
             ),
         ],
         "worst_by_case": worst_by_case,
-        "sweep": sweep,
         "torsion_sweep": torsion_sweep,
     }

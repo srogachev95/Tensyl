@@ -40,8 +40,6 @@ class BeamMember:
         shear_eccentricity: Optional signed effective offset for in-plane shear
             response.
             Defaults to ``axial_eccentricity``.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         multiplicity: Positive count or density multiplier for identical
             members represented by this object.
         label: Optional member label for diagnostics and metadata.
@@ -54,7 +52,6 @@ class BeamMember:
     multiplicity: float = 1.0
     label: str = ""
     shear_eccentricity: float | None = None
-    include_in_plane_bending: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "length", positive_number(self.length, name="length"))
@@ -274,8 +271,6 @@ class CellEdge:
             ``+n``.
         shear_eccentricity: Optional signed effective offset for in-plane shear
             response.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         multiplicity: Positive count or density multiplier.
         label: Optional edge label for diagnostics and metadata.
         family: Optional stable family name retained in drawable geometry.
@@ -289,7 +284,6 @@ class CellEdge:
     label: str = ""
     shear_eccentricity: float | None = None
     family: str = ""
-    include_in_plane_bending: bool = False
 
     def __post_init__(self) -> None:
         axial = finite_number(self.axial_eccentricity, name="axial_eccentricity")
@@ -372,8 +366,6 @@ class StiffenerFamily:
             ``+n``.
         shear_eccentricity: Optional signed effective offset for in-plane shear
             response.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         multiplicity: Positive family multiplier.
         label: Optional family label for diagnostics and metadata.
     """
@@ -385,7 +377,6 @@ class StiffenerFamily:
     multiplicity: float = 1.0
     label: str = ""
     shear_eccentricity: float | None = None
-    include_in_plane_bending: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "spacing", positive_number(self.spacing, name="spacing"))
@@ -439,7 +430,6 @@ def _paired_oblique_members(
     multiplicity: float = 1.0,
     positive_label: str,
     negative_label: str,
-    include_in_plane_bending: bool = False,
 ) -> tuple[BeamMember, BeamMember]:
     # Several Nemeth-style cells use mirrored oblique members. Keep the pairing
     # in one helper so opposite material/eccentricity overrides stay symmetric.
@@ -459,7 +449,6 @@ def _paired_oblique_members(
             shear_eccentricity=shear_eccentricity,
             multiplicity=multiplicity,
             label=positive_label,
-            include_in_plane_bending=include_in_plane_bending,
         ),
         BeamMember(
             section=_same_or_second(section, opposite_section),
@@ -469,7 +458,6 @@ def _paired_oblique_members(
             shear_eccentricity=negative_shear_eccentricity,
             multiplicity=multiplicity,
             label=negative_label,
-            include_in_plane_bending=include_in_plane_bending,
         ),
     )
 
@@ -561,7 +549,6 @@ def graph_unit_cell(
                 shear_eccentricity=edge.shear_eccentricity,
                 multiplicity=edge.multiplicity,
                 label=edge.label,
-                include_in_plane_bending=edge.include_in_plane_bending,
             )
         )
     cell_frame, cell_convention = _cell_frame_and_convention(skin, frame, convention)
@@ -603,7 +590,6 @@ def unidirectional_cell(
     axial_eccentricity: float,
     shear_eccentricity: float | None = None,
     angle_rad: float = 0.0,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
     label: str = "unidirectional",
@@ -617,8 +603,6 @@ def unidirectional_cell(
         axial_eccentricity: Signed effective offset for axial response along ``+n``.
         shear_eccentricity: Optional signed effective offset for in-plane shear.
         angle_rad: Family angle measured from local ``e1``.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -643,7 +627,6 @@ def unidirectional_cell(
         axial_eccentricity=axial_eccentricity,
         shear_eccentricity=shear_eccentricity,
         label="stiffener",
-        include_in_plane_bending=include_in_plane_bending,
     )
     angle = member.angle_rad
     direction = (float(np.cos(angle)), float(np.sin(angle)))
@@ -674,7 +657,6 @@ def orthogrid_cell(
     e2_axial_eccentricity: float,
     e1_shear_eccentricity: float | None = None,
     e2_shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -694,8 +676,6 @@ def orthogrid_cell(
         e2_axial_eccentricity: Signed ``e2`` family offset for axial response.
         e1_shear_eccentricity: Optional ``e1`` offset for in-plane shear.
         e2_shear_eccentricity: Optional ``e2`` offset for in-plane shear.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -724,7 +704,6 @@ def orthogrid_cell(
                 axial_eccentricity=e1_axial_eccentricity,
                 shear_eccentricity=e1_shear_eccentricity,
                 label="e1",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
                 section=e2_section,
@@ -733,7 +712,6 @@ def orthogrid_cell(
                 axial_eccentricity=e2_axial_eccentricity,
                 shear_eccentricity=e2_shear_eccentricity,
                 label="e2",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -769,7 +747,6 @@ def equilateral_isogrid_cell(
     side_length: float,
     axial_eccentricity: float,
     shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -781,8 +758,6 @@ def equilateral_isogrid_cell(
         side_length: Positive equilateral-triangle side length.
         axial_eccentricity: Signed effective offset for axial response along ``+n``.
         shear_eccentricity: Optional signed effective offset for in-plane shear.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -813,7 +788,6 @@ def equilateral_isogrid_cell(
                 axial_eccentricity=axial_eccentricity,
                 shear_eccentricity=shear_eccentricity,
                 label="e1",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
                 section=member_section,
@@ -822,7 +796,6 @@ def equilateral_isogrid_cell(
                 axial_eccentricity=axial_eccentricity,
                 shear_eccentricity=shear_eccentricity,
                 label="positive_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
                 section=member_section,
@@ -831,7 +804,6 @@ def equilateral_isogrid_cell(
                 axial_eccentricity=axial_eccentricity,
                 shear_eccentricity=shear_eccentricity,
                 label="negative_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -868,7 +840,6 @@ def braced_orthogrid_cell(
     negative_diagonal_axial_eccentricity: float | None = None,
     negative_diagonal_shear_eccentricity: float | None = None,
     diagonal_pattern: Literal["double", "single"] = "double",
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -895,8 +866,6 @@ def braced_orthogrid_cell(
             offset.
         diagonal_pattern: ``"double"`` for Nemeth figure 14 or ``"single"``
             for the alternating figure-16 pattern.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -977,7 +946,6 @@ def braced_orthogrid_cell(
                 shear_eccentricity=e1_shear_eccentricity,
                 multiplicity=orthogonal_multiplicity,
                 label="e1",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
                 section=e2_section,
@@ -987,7 +955,6 @@ def braced_orthogrid_cell(
                 shear_eccentricity=e2_shear_eccentricity,
                 multiplicity=orthogonal_multiplicity,
                 label="e2",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             *_paired_oblique_members(
                 section=positive_diagonal_section,
@@ -1000,7 +967,6 @@ def braced_orthogrid_cell(
                 opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
                 positive_label="positive_diagonal",
                 negative_label="negative_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -1029,7 +995,6 @@ def diamond_cell(
     negative_diagonal_section: BeamSection | None = None,
     negative_diagonal_axial_eccentricity: float | None = None,
     negative_diagonal_shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1054,8 +1019,6 @@ def diamond_cell(
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1084,7 +1047,6 @@ def diamond_cell(
                 axial_eccentricity=e1_axial_eccentricity,
                 shear_eccentricity=e1_shear_eccentricity,
                 label="e1",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             *_paired_oblique_members(
                 section=positive_diagonal_section,
@@ -1097,7 +1059,6 @@ def diamond_cell(
                 opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
                 positive_label="positive_diagonal",
                 negative_label="negative_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -1136,7 +1097,6 @@ def isosceles_triangle_grid_cell(
     negative_diagonal_section: BeamSection | None = None,
     negative_diagonal_axial_eccentricity: float | None = None,
     negative_diagonal_shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1157,8 +1117,6 @@ def isosceles_triangle_grid_cell(
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1189,7 +1147,6 @@ def isosceles_triangle_grid_cell(
                 axial_eccentricity=e1_axial_eccentricity,
                 shear_eccentricity=e1_shear_eccentricity,
                 label="e1",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             *_paired_oblique_members(
                 section=positive_diagonal_section,
@@ -1202,7 +1159,6 @@ def isosceles_triangle_grid_cell(
                 opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
                 positive_label="positive_diagonal",
                 negative_label="negative_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -1250,7 +1206,6 @@ def kagome_cell(
     negative_diagonal_section: BeamSection | None = None,
     negative_diagonal_axial_eccentricity: float | None = None,
     negative_diagonal_shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1271,8 +1226,6 @@ def kagome_cell(
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1304,7 +1257,6 @@ def kagome_cell(
                 shear_eccentricity=e1_shear_eccentricity,
                 multiplicity=2.0,
                 label="e1",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             *_paired_oblique_members(
                 section=positive_diagonal_section,
@@ -1317,7 +1269,6 @@ def kagome_cell(
                 opposite_shear_eccentricity=negative_diagonal_shear_eccentricity,
                 positive_label="positive_diagonal",
                 negative_label="negative_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -1361,7 +1312,6 @@ def hexagonal_grid_cell(
     negative_diagonal_section: BeamSection | None = None,
     negative_diagonal_axial_eccentricity: float | None = None,
     negative_diagonal_shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1383,8 +1333,6 @@ def hexagonal_grid_cell(
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1421,7 +1369,6 @@ def hexagonal_grid_cell(
                 multiplicity=2.0,
                 positive_label="positive_diagonal",
                 negative_label="negative_diagonal",
-                include_in_plane_bending=include_in_plane_bending,
             ),
             BeamMember(
                 section=e2_section,
@@ -1430,7 +1377,6 @@ def hexagonal_grid_cell(
                 axial_eccentricity=e2_axial_eccentricity,
                 shear_eccentricity=e2_shear_eccentricity,
                 label="e2",
-                include_in_plane_bending=include_in_plane_bending,
             ),
         ),
         frame=cell_frame,
@@ -1469,7 +1415,6 @@ def regular_hexagonal_grid_cell(
     side_length: float,
     axial_eccentricity: float,
     shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1481,8 +1426,6 @@ def regular_hexagonal_grid_cell(
         side_length: Positive regular-hexagon side length.
         axial_eccentricity: Signed effective offset for axial response along ``+n``.
         shear_eccentricity: Optional signed effective offset for in-plane shear.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1508,7 +1451,6 @@ def regular_hexagonal_grid_cell(
         diagonal_axial_eccentricity=axial_eccentricity,
         e2_shear_eccentricity=shear_eccentricity,
         diagonal_shear_eccentricity=shear_eccentricity,
-        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1528,7 +1470,6 @@ def star_cell(
     negative_diagonal_section: BeamSection | None = None,
     negative_diagonal_axial_eccentricity: float | None = None,
     negative_diagonal_shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1549,8 +1490,6 @@ def star_cell(
             offset.
         negative_diagonal_shear_eccentricity: Optional negative-diagonal shear
             offset.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1599,7 +1538,6 @@ def star_cell(
             shear_eccentricity=diagonal_2_shear,
             label="d2-1",
             family="negative_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             0,
@@ -1609,7 +1547,6 @@ def star_cell(
             shear_eccentricity=diagonal_shear_eccentricity,
             label="d1-1",
             family="positive_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             2,
@@ -1619,7 +1556,6 @@ def star_cell(
             shear_eccentricity=e1_shear_eccentricity,
             label="e1-1",
             family="e1",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             2,
@@ -1629,7 +1565,6 @@ def star_cell(
             shear_eccentricity=diagonal_2_shear,
             label="d2-2",
             family="negative_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             4,
@@ -1639,7 +1574,6 @@ def star_cell(
             shear_eccentricity=diagonal_shear_eccentricity,
             label="d1-2",
             family="positive_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             4,
@@ -1649,7 +1583,6 @@ def star_cell(
             shear_eccentricity=e1_shear_eccentricity,
             label="e1-2",
             family="e1",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             6,
@@ -1659,7 +1592,6 @@ def star_cell(
             shear_eccentricity=diagonal_2_shear,
             label="d2-3",
             family="negative_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             6,
@@ -1669,7 +1601,6 @@ def star_cell(
             shear_eccentricity=diagonal_shear_eccentricity,
             label="d1-3",
             family="positive_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             8,
@@ -1679,7 +1610,6 @@ def star_cell(
             shear_eccentricity=e1_shear_eccentricity,
             label="e1-3",
             family="e1",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             8,
@@ -1689,7 +1619,6 @@ def star_cell(
             shear_eccentricity=diagonal_2_shear,
             label="d2-4",
             family="negative_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             10,
@@ -1699,7 +1628,6 @@ def star_cell(
             shear_eccentricity=diagonal_shear_eccentricity,
             label="d1-4",
             family="positive_diagonal",
-            include_in_plane_bending=include_in_plane_bending,
         ),
         CellEdge(
             10,
@@ -1709,7 +1637,6 @@ def star_cell(
             shear_eccentricity=e1_shear_eccentricity,
             label="e1-4",
             family="e1",
-            include_in_plane_bending=include_in_plane_bending,
         ),
     )
     return graph_unit_cell(
@@ -1732,7 +1659,6 @@ def equilateral_star_cell(
     side_length: float,
     axial_eccentricity: float,
     shear_eccentricity: float | None = None,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1744,8 +1670,6 @@ def equilateral_star_cell(
         side_length: Positive equilateral-triangle side length.
         axial_eccentricity: Signed effective offset for axial response along ``+n``.
         shear_eccentricity: Optional signed effective offset for in-plane shear.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to ``skin.frame``.
         convention: Optional strain convention. Defaults to
             ``skin.convention``.
@@ -1770,7 +1694,6 @@ def equilateral_star_cell(
         diagonal_axial_eccentricity=axial_eccentricity,
         e1_shear_eccentricity=shear_eccentricity,
         diagonal_shear_eccentricity=shear_eccentricity,
-        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1806,7 +1729,6 @@ def sandwich_orthogrid_core_cell(
     e1_pitch: float,
     e2_pitch: float,
     core_axial_eccentricity: float = 0.0,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1831,8 +1753,6 @@ def sandwich_orthogrid_core_cell(
             is Nemeth's choice: the reference surface sits at the core
             midplane. Set it whenever the face shifts above point at a
             different reference surface, or the core is not centered on it.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1861,7 +1781,6 @@ def sandwich_orthogrid_core_cell(
         e2_pitch=e2_pitch,
         e1_axial_eccentricity=core_axial_eccentricity,
         e2_axial_eccentricity=core_axial_eccentricity,
-        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1879,7 +1798,6 @@ def sandwich_hexagonal_core_cell(
     diagonal_e2_rise: float,
     e2_member_length: float,
     core_axial_eccentricity: float = 0.0,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1901,8 +1819,6 @@ def sandwich_hexagonal_core_cell(
             is Nemeth's choice: the reference surface sits at the core
             midplane. Set it whenever the face shifts above point at a
             different reference surface, or the core is not centered on it.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -1932,7 +1848,6 @@ def sandwich_hexagonal_core_cell(
         e2_member_length=e2_member_length,
         e2_axial_eccentricity=core_axial_eccentricity,
         diagonal_axial_eccentricity=core_axial_eccentricity,
-        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )
@@ -1949,7 +1864,6 @@ def sandwich_star_core_cell(
     e1_pitch: float,
     e2_pitch: float,
     core_axial_eccentricity: float = 0.0,
-    include_in_plane_bending: bool = False,
     frame: Frame2D | None = None,
     convention: StrainConvention | None = None,
 ) -> CanonicalUnitCell:
@@ -1970,8 +1884,6 @@ def sandwich_star_core_cell(
             is Nemeth's choice: the reference surface sits at the core
             midplane. Set it whenever the face shifts above point at a
             different reference surface, or the core is not centered on it.
-        include_in_plane_bending: Whether to include member bending within the
-            panel plane. Disabled by default to match Nemeth.
         frame: Optional cell frame. Defaults to the combined face stiffness
             frame.
         convention: Optional strain convention. Defaults to the combined face
@@ -2000,7 +1912,6 @@ def sandwich_star_core_cell(
         e2_pitch=e2_pitch,
         e1_axial_eccentricity=core_axial_eccentricity,
         diagonal_axial_eccentricity=core_axial_eccentricity,
-        include_in_plane_bending=include_in_plane_bending,
         frame=frame,
         convention=convention,
     )

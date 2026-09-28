@@ -133,30 +133,44 @@ def test_distinct_nemeth_eccentricities_have_positive_b11_and_b66_coupling() -> 
     assert stiffness.B[2, 2] == pytest.approx(3.0)
 
 
-def test_in_plane_member_bending_is_an_explicit_beyond_nemeth_option() -> None:
-    section = _section()
-    strict = unidirectional_cell(
-        skin=_zero_skin(),
-        member_section=section,
-        spacing=2.0,
-        axial_eccentricity=0.0,
-    )
-    extended = unidirectional_cell(
-        skin=_zero_skin(),
-        member_section=section,
-        spacing=2.0,
-        axial_eccentricity=0.0,
-        include_in_plane_bending=True,
-    )
+def test_member_in_plane_bending_inertia_does_not_stiffen_the_panel() -> None:
+    # Under uniform plate strain and curvature a member's axis stays straight in
+    # the panel plane, so EIz and EIyz store no energy in the first-order model.
+    slender = BeamSection(EA=1200.0, EIy=50.0, EIz=30.0, GJ=20.0)
+    wide = BeamSection(EA=1200.0, EIy=50.0, EIz=3.0e4, GJ=20.0, EIyz=40.0)
 
-    strict_result = EnergyHomogenizer().compute(strict)
-    extended_result = EnergyHomogenizer().compute(extended)
+    def tangent(section: BeamSection) -> np.ndarray:
+        cell = unidirectional_cell(
+            skin=_zero_skin(),
+            member_section=section,
+            spacing=2.0,
+            axial_eccentricity=0.1,
+            angle_rad=0.3,
+        )
+        return EnergyHomogenizer().compute(cell).stiffness.C8
 
-    assert strict_result.stiffness.D[1, 1] == pytest.approx(0.0)
-    assert extended_result.stiffness.D[1, 1] == pytest.approx(section.EIz / 2.0)
-    assert extended_result.stiffness.D[0, 1] == pytest.approx(section.EIyz / 2.0)
-    assert not any("beyond-Nemeth" in item for item in strict_result.assumptions)
-    assert any("beyond-Nemeth" in item for item in extended_result.assumptions)
+    np.testing.assert_array_equal(tangent(slender), tangent(wide))
+
+
+def test_in_plane_bending_extension_flag_is_gone() -> None:
+    # The removed keyword is passed on purpose, so the type checker is told to
+    # expect the unknown argument.
+    with pytest.raises(TypeError, match="include_in_plane_bending"):
+        BeamMember(
+            section=_section(),
+            length=1.0,
+            angle_rad=0.0,
+            axial_eccentricity=0.0,
+            include_in_plane_bending=True,  # ty: ignore[unknown-argument]
+        )
+    with pytest.raises(TypeError, match="include_in_plane_bending"):
+        unidirectional_cell(
+            skin=_zero_skin(),
+            member_section=_section(),
+            spacing=2.0,
+            axial_eccentricity=0.0,
+            include_in_plane_bending=True,  # ty: ignore[unknown-argument]
+        )
 
 
 def test_energy_homogenizer_matches_explicit_cell_energy() -> None:
@@ -308,7 +322,6 @@ def test_rotating_cell_matches_rotated_homogenized_stiffness() -> None:
                 shear_eccentricity=member.shear_eccentricity,
                 multiplicity=member.multiplicity,
                 label=member.label,
-                include_in_plane_bending=member.include_in_plane_bending,
             )
             for member in original.members
         ),

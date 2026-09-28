@@ -34,124 +34,55 @@ def test_sp8007_extraction_uses_modified_twisting_stiffness() -> None:
     assert coefficients["Dbar_xy"] != pytest.approx(stiffness.D[2, 2])
 
 
-def test_orthogrid_membrane_coupling_and_modified_twisting_match_sp8007() -> None:
-    case = SP8007ComparisonCase(
-        name="orthogrid_full_section_eccentric",
-        model="orthogrid",
-    )
+def test_orthogrid_matches_sp8007_as_written_for_every_coefficient() -> None:
+    case = SP8007ComparisonCase(name="orthogrid_eccentric", model="orthogrid")
 
     tensyl = tensyl_coefficients(case)
     sp8007 = sp8007_reference_coefficients(case)
 
-    for coefficient in (
-        "Ebar_x",
-        "Ebar_y",
-        "Ebar_xy",
-        "Gbar_xy",
-        "Cbar_x",
-        "Cbar_y",
-        "Cbar_xy",
-        "Kbar_xy",
-        "Dbar_xy",
-    ):
-        assert tensyl[coefficient] == pytest.approx(sp8007[coefficient], rel=1.0e-12, abs=1.0e-9)
+    for coefficient, value in sp8007.items():
+        assert tensyl[coefficient] == pytest.approx(value, rel=1.0e-12, abs=1.0e-9)
 
 
-def test_orthogrid_inplane_member_bending_explains_bending_gap() -> None:
-    full = SP8007ComparisonCase(
-        name="orthogrid_full_section_eccentric",
-        model="orthogrid",
-        in_plane_inertia=1.20e-3,
-    )
-    suppressed = SP8007ComparisonCase(
-        name="orthogrid_suppressed_inplane_bending",
-        model="orthogrid",
-        in_plane_inertia=1.20e-6,
-    )
-
-    full_rows = comparison_rows((full,))
-    suppressed_rows = comparison_rows((suppressed,))
-    full_error = max(
-        row["abs_relative_delta_corrected"]
-        for row in full_rows
-        if row["coefficient"] in {"Dbar_x", "Dbar_y"}
-    )
-    suppressed_error = max(
-        row["abs_relative_delta_corrected"]
-        for row in suppressed_rows
-        if row["coefficient"] in {"Dbar_x", "Dbar_y"}
-    )
-
-    assert full_error > 0.10
-    assert suppressed_error < 1.0e-3
-
-
-def test_orthogrid_cross_family_eiz_terms_explain_bending_deltas() -> None:
+def test_isogrid_zero_eccentricity_matches_sp8007_as_written() -> None:
     case = SP8007ComparisonCase(
-        name="orthogrid_full_section_eccentric",
-        model="orthogrid",
-        in_plane_inertia=1.20e-3,
-    )
-    material = case.material()
-    tensyl = tensyl_coefficients(case)
-    sp8007 = sp8007_reference_coefficients(case)
-
-    assert tensyl["Dbar_x"] - sp8007["Dbar_x"] == pytest.approx(
-        material.E * case.in_plane_inertia / case.rib_spacing
-    )
-    assert tensyl["Dbar_y"] - sp8007["Dbar_y"] == pytest.approx(
-        material.E * case.in_plane_inertia / case.stringer_spacing
-    )
-
-
-def test_isogrid_zero_eccentricity_limit_matches_sp8007_when_inplane_bending_is_small() -> None:
-    case = SP8007ComparisonCase(
-        name="isogrid_suppressed_inplane_bending_zero_eccentricity",
+        name="isogrid_zero_eccentricity",
         model="isogrid",
-        in_plane_inertia=1.20e-6,
         eccentricity=0.0,
     )
     rows = comparison_rows((case,))
 
-    assert max(row["abs_relative_delta_corrected"] for row in rows) < 1.0e-3
+    assert max(row["abs_relative_delta_as_written"] for row in rows) < 1.0e-12
 
 
 def test_isogrid_parallel_axis_correction_closes_eccentric_gap() -> None:
-    case = SP8007ComparisonCase(
-        name="isogrid_suppressed_inplane_bending_eccentric",
-        model="isogrid",
-        in_plane_inertia=1.20e-6,
-        eccentricity=0.32,
-    )
+    case = SP8007ComparisonCase(name="isogrid_eccentric", model="isogrid", eccentricity=0.32)
     rows = comparison_rows((case,))
     as_written_bending_error = max(
         row["abs_relative_delta_as_written"]
         for row in rows
         if row["coefficient"] in {"Dbar_x", "Dbar_y", "Dbar_xy"}
     )
-    corrected_bending_error = max(
-        row["abs_relative_delta_corrected"]
-        for row in rows
-        if row["coefficient"] in {"Dbar_x", "Dbar_y", "Dbar_xy"}
-    )
-    membrane_error = max(
-        row["abs_relative_delta_corrected"]
-        for row in rows
-        if row["coefficient"] in {"Ebar_x", "Ebar_y", "Ebar_xy", "Gbar_xy"}
-    )
+    corrected_error = max(row["abs_relative_delta_corrected"] for row in rows)
 
-    assert membrane_error < 1.0e-12
     assert as_written_bending_error > 1.0
-    assert corrected_bending_error < 1.0e-3
+    assert corrected_error < 1.0e-12
+
+
+def test_every_report_case_agrees_with_corrected_sp8007() -> None:
+    rows = comparison_rows()
+
+    assert {row["case_name"] for row in rows} == {
+        "orthogrid_eccentric",
+        "isogrid_zero_eccentricity",
+        "isogrid_eccentric",
+    }
+    assert max(row["abs_relative_delta_corrected"] for row in rows) < 1.0e-12
+    assert {row["interpretation"] for row in rows} == {"agreement"}
 
 
 def test_isogrid_parallel_axis_correction_matches_expected_terms() -> None:
-    case = SP8007ComparisonCase(
-        name="isogrid_suppressed_inplane_bending_eccentric",
-        model="isogrid",
-        in_plane_inertia=1.20e-6,
-        eccentricity=0.32,
-    )
+    case = SP8007ComparisonCase(name="isogrid_eccentric", model="isogrid", eccentricity=0.32)
     material = case.material()
     d_correction, dxy_correction = isogrid_parallel_axis_correction(case)
     expected_d = 3.0 * 3.0**0.5 * material.E * case.stiffener_area * case.eccentricity**2
