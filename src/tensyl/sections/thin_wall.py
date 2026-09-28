@@ -235,6 +235,7 @@ class ThinWallSection:
         # corrections become None and later appear as homogenizer assumptions
         # instead of guessed stiffness.
         section = BeamSection(
+            thermal_expansion=self.material.alpha,
             EA=self.material.E * properties.area,
             EIy=self.material.E * properties.Iy,
             EIz=self.material.E * properties.Iz,

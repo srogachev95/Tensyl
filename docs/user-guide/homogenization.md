@@ -302,3 +302,33 @@ Compare ABD stiffnesses block by block:
 - rotate stiffnesses into a common frame before comparing anisotropic blocks;
 - avoid comparing scalar equivalent moduli unless the reduction assumptions are
   stated.
+
+## Thermal Loading of a Stiffened Cell
+
+Use `cell_thermal_resultants(cell, skin=skin_thermal)` with an explicit
+`ThermalResultants` for the skin. Its axes, normal, convention, and reference
+surface must match the cell. Every `BeamSection` must provide
+`thermal_expansion`, the member's uniform axial expansion per temperature
+increment. Isotropic thin-wall helpers copy this from the material's `alpha`.
+Unknown values raise an error; use zero explicitly when expansion is absent.
+
+For member strain map $T$, the added thermal load per unit temperature is
+
+$$r_{T,member}=\frac{mL}{A_{cell}}T^T
+[EA\alpha,0,0,0,0]^T.$$
+
+This follows by expanding the axial energy
+$\tfrac12 EA(\epsilon_{member}-\alpha\Delta T)^2$. The map supplies the angle
+projection and the moment from axial eccentricity automatically. The returned
+thermal vector is used with the mechanical homogenized stiffness as described
+in [Uniform Temperature Changes](materials-and-laminates.md#uniform-temperature-changes).
+For member load recovery, subtract `EA * thermal_expansion * delta_temperature`
+from each recovered axial force; the existing `member_loads` call reports its
+mechanical contribution only.
+
+This beam model assumes uniform axial expansion. It omits intrinsic thermal
+curvature of a heterogeneous rib, local relaxation, and thermal gradients.
+The laminated wall reduction does not infer a member expansion coefficient;
+use an independently justified effective coefficient or a section solver.
+Thermal resultants are separate from mechanical ABD exports, including the
+Abaqus adapter.

@@ -92,7 +92,7 @@ def _assert_stiffness_matches(loaded: ABDStiffness, expected: ABDStiffness) -> N
 
 
 def _assert_result_matches(
-    loaded: HomogenizationResult | ABDStiffness,
+    loaded: object,
     expected: HomogenizationResult,
 ) -> None:
     assert isinstance(loaded, HomogenizationResult)

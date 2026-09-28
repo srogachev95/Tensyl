@@ -10,3 +10,5 @@
         - isotropic_plate
         - laminate_plate
         - layup
+
+::: tensyl.materials.laminate_thermal_resultants

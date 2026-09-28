@@ -8,6 +8,15 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Write external-workflow schema v3 with canonical cell, sampled atlas, and
+  thermal-resultant artifacts. Readers retain v2 stiffness/result support;
+  new writers always emit v3. Atlas loading validates built-in surfaces,
+  grids, sample frames, and recorded sample digests.
+
+- Add explicit material/member thermal expansion and separate uniform-temperature
+  laminate and cell thermal resultants, with frame rotation, reference shifts,
+  and clear refusals for missing expansion data.
+
 - Add deterministic parameter sweeps with named coefficients, complete mass,
   warning codes, and parameter context on failures.
 

@@ -5,6 +5,8 @@
       show_source: false
       members:
         - SchemaError
+        - to_schema
+        - from_schema
         - to_yaml
         - from_yaml
         - write_yaml

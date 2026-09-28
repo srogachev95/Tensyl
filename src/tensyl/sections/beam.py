@@ -41,6 +41,8 @@ class BeamSection:
             positive definite.
         mass_per_length: Optional nonnegative mass per unit member length,
             such as ``density * area``.
+        thermal_expansion: Optional uniform axial expansion per temperature increment.
+            None means unknown. Intrinsic thermal curvature is not represented.
         metadata: Read-only provenance metadata carried into homogenized
             results.
     """
@@ -55,7 +57,15 @@ class BeamSection:
     mass_per_length: float | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
+    thermal_expansion: float | None = None
+
     def __post_init__(self) -> None:
+        if self.thermal_expansion is not None:
+            object.__setattr__(
+                self,
+                "thermal_expansion",
+                finite_number(self.thermal_expansion, name="thermal_expansion"),
+            )
         object.__setattr__(self, "EA", positive_number(self.EA, name="EA"))
         object.__setattr__(self, "EIy", positive_number(self.EIy, name="EIy"))
         object.__setattr__(self, "EIz", positive_number(self.EIz, name="EIz"))
