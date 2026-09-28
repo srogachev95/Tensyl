@@ -27,19 +27,66 @@ $$
 \frac{p}{L_\text{response}}\ge 0.05.
 $$
 
-Tensyl also reports a membrane-bending coupling ratio:
+## Coupling That a Reference Shift Cannot Remove
+
+An eccentric rib creates a nonzero `B` block, but part of that coupling can
+come from where the analyst put the reference surface. The warning uses
+`coupling_ratios["B_residual"]`, which measures the coupling left after the
+best common shift. It is unchanged by an in-plane rotation or reference shift,
+up to floating-point roundoff.
+
+First express each block in Mandel components:
 
 $$
-\frac{\|\mathbf B\|_F}
-{\sqrt{\|\mathbf A\|_F\|\mathbf D\|_F}}.
+\mathbf C_M = \mathbf W\mathbf C\mathbf W,\qquad
+\mathbf W=\operatorname{diag}(1,1,\sqrt{2}),\quad
+\mathbf C\in\{\mathbf A,\mathbf B,\mathbf D\}.
 $$
 
-The default warning threshold is `0.10`. Read this ratio as: how much of the
-stiffness's behavior is membrane-bending cross-talk, relative to the membrane and
-bending stiffness it sits between. A large value means strain and curvature are
-strongly coupled — usually a sign of eccentric stiffeners or an offset reference
-surface, and a hint that a scalar "equivalent modulus" would throw away
-something real.
+The Mandel basis is orthonormal, so its Frobenius norm is independent of the
+chosen axes. Engineering-shear components do not have that property. See
+[Brannon's discussion of Voigt and Mandel representations](https://csmbrannon.net/2015/08/10/fourth-order-tensor-tutorial-excerpts-voigt-and-mandel-representations-as-well-as-isotropy-topics/).
+
+The following projection is Tensyl's diagnostic definition. Minimizing
+$\|\mathbf B_M-d\mathbf A_M\|_F^2$ gives
+
+$$
+d_* = \frac{\langle\mathbf B_M,\mathbf A_M\rangle_F}
+                 {\|\mathbf A_M\|_F^2},\qquad
+\mathbf B_* = \mathbf B-d_*\mathbf A,\qquad
+\mathbf D_* = \mathbf D-2d_*\mathbf B+d_*^2\mathbf A.
+$$
+
+The reported residual is
+
+$$
+B_\mathrm{residual}=
+\frac{\|\mathbf B_{*,M}\|_F}
+     {\sqrt{\|\mathbf A_M\|_F\|\mathbf D_{*,M}\|_F}}.
+$$
+
+The default warning threshold is `0.10`. A large residual means a single
+reference shift cannot remove the membrane-bending coupling. Keep the full ABD
+law when that coupling matters to the response.
+
+`result.diagnostics["neutral_surface_offset"]` gives $d_*$ in the model's
+length units, positive along `+n` from the current reference surface. It is a
+least-squares offset across all membrane modes, not generally `B11/A11` or a
+neutral surface shared by every load direction. If `A` is zero, the diagnostic
+uses zero offset because no membrane neutral surface is defined. A zero
+normalizing block gives a zero ratio; rank and negative-energy warnings still
+need review.
+
+`coupling_ratios["B_fro"]` retains the original engineering-component ratio
+$\|\mathbf B\|_F/\sqrt{\|\mathbf A\|_F\|\mathbf D\|_F}$ at the report's chosen
+reference surface and axes. It is retained for reading older artifacts and no
+longer drives the warning. Transforming a stiffness preserves its attached
+report; call `validity_report_for_stiffness(transformed, context=...)` to get
+`B_fro` for the new surface and axes.
+
+Very large offsets can lose bending precision through cancellation in the
+reference-shift formula. Keep the reference near the panel when possible;
+these diagnostics do not recover digits already lost in an imported matrix.
 
 ## Interpreting Warnings
 

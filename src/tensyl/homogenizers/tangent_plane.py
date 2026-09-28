@@ -25,6 +25,7 @@ from tensyl.core.rotations import generalized_strain_transform
 from tensyl.core.typing import FloatArray
 from tensyl.core.validity import ValidityContext, ValidityReport, ValidityThresholds
 from tensyl.core.validity_checks import (
+    _neutral_surface_offset,
     _spectral_properties,
     _validity_report,
     validity_report_for_stiffness,
@@ -460,6 +461,7 @@ class EnergyHomogenizer:
         diagnostics = _diagnostics(
             stiffness.C8, member_count=len(cell.members), cell_area=cell.area
         )
+        diagnostics["neutral_surface_offset"] = _neutral_surface_offset(stiffness)
         return HomogenizationResult(
             stiffness=stiffness,
             validity=_validity_report(

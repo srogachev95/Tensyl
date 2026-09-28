@@ -282,7 +282,14 @@ def test_v2_homogenization_result_fixtures_load(filename: str) -> None:
     # The fixture is a frozen artifact: its numbers must still match, but the
     # current homogenizer may add assumptions the older file never recorded.
     np.testing.assert_allclose(loaded.stiffness.C8, expected.stiffness.C8)
-    assert loaded.validity == expected.validity
+    assert loaded.validity.h_over_R == expected.validity.h_over_R
+    assert loaded.validity.p_over_R == expected.validity.p_over_R
+    assert loaded.validity.p_over_L_response == expected.validity.p_over_L_response
+    assert loaded.validity.warnings == expected.validity.warnings
+    # Older artifacts retain their report, including the original ratio keys.
+    # New diagnostics may be added without rewriting that historical evidence.
+    for name, ratio in loaded.validity.coupling_ratios.items():
+        assert expected.validity.coupling_ratios[name] == pytest.approx(ratio, rel=1e-14)
     assert loaded.stiffness.validity == loaded.validity
     assert loaded.source == expected.source
     assert set(loaded.assumptions) <= set(expected.assumptions)

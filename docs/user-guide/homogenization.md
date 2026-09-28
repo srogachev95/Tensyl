@@ -22,6 +22,11 @@ stiffness and the information needed to judge the calculation:
   positive-semidefinite status;
 - `result.assumptions` records modeling assumptions;
 - `result.validity.warnings` reports scale-separation and coupling warnings.
+- `result.validity.coupling_ratios["B_residual"]` measures coupling after the
+  best common reference shift. It drives the coupling warning and is unchanged
+  by rotating the axes or shifting the reference surface.
+- `result.diagnostics["neutral_surface_offset"]` gives that shift along `+n`
+  in the model's length units. See the [derivation](../theory/validity.md).
 
 ## Stiffener Families
 

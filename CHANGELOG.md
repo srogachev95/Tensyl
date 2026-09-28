@@ -8,6 +8,11 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Base the membrane-bending coupling warning on `B_residual`, measured in
+  Mandel components after the best common reference shift. Rotating the axes
+  or moving the reference surface no longer changes this indicator. Keep
+  `B_fro` for the report's original surface and axes, and report the
+  least-squares `neutral_surface_offset` in homogenization diagnostics.
 - Compare `ABDStiffness`, `HomogenizationResult`, `SurfacePoint`, and
   `FlatPlate` by value. Equal stiffnesses now work as dictionary keys instead
   of raising NumPy's array truth-value error, and signed zeros no longer split
