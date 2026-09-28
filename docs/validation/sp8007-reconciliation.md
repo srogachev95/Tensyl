@@ -10,13 +10,6 @@ The SP-8007 source used for this audit is Mark Hilburger's
 *Buckling of Thin-Walled Circular Cylinders*, NASA/SP-8007-2020/REV 2:
 <https://ntrs.nasa.gov/citations/20205011530>.
 
-!!! note "This study includes an optional extension"
-    Tensyl follows Nemeth by default and leaves out member bending within the
-    panel plane. This reconciliation deliberately sets
-    `include_in_plane_bending=True` so it can measure that additional stiffness
-    against the compact SP-8007 formulas. References to retained `EIz` on this
-    page apply to those study cases, not to Tensyl's default behavior.
-
 ## Read This First
 
 The isogrid equations in SP-8007 Eqs. 97-98 omit the explicit parallel-axis
@@ -60,18 +53,18 @@ $$
 \frac{3\sqrt{3}}{2}\frac{EA}{a}z^2.
 $$
 
-With that correction, the large eccentric-isogrid discrepancy goes away in the
-case where in-plane member bending has been suppressed. The remaining
-differences come from model content.
+With that correction, every coefficient in every case agrees with Tensyl to
+floating-point roundoff. The eccentric-isogrid discrepancy is a printed-equation
+omission, not a difference in physics.
 
 ## What Was Compared
 
 The audit computes three sets of coefficients for each case. First it evaluates
 the SP-8007 equations as printed: ring-and-stringer orthogrids use Eqs. 82-91,
 and equilateral isogrids use Eqs. 92-98. Second it applies the isogrid correction
-above where it is needed. Third it computes a Tensyl ABD stiffness with the
-optional in-plane member-bending extension enabled and extracts the same
-SP-8007-style barred coefficients from that matrix.
+above where it is needed. Third it computes Tensyl's default energy-homogenized
+ABD stiffness and extracts the same SP-8007-style barred coefficients from that
+matrix.
 
 For a cylinder, Tensyl's local `e1` direction is axial and `e2` is
 circumferential, so the mapping is:
@@ -100,27 +93,23 @@ $$
 
 The named cases in the plots are:
 
-| Plot label | Model | What changed | Why it is in the audit |
-| --- | --- | --- | --- |
-| `orthogrid full EIz` | Orthogrid | Enables the extension with `EIz = E * 1.20e-3 in^4`. | Shows the added cross-family in-plane bending contribution. |
-| `orthogrid low EIz` | Orthogrid | Enables the extension but reduces `EIz` to `E * 1.20e-6 in^4`. | Shows that the orthogrid bending mismatch collapses as the added term becomes small. |
-| `isogrid full EIz` | Isogrid | Enables the extension with full `EIz` and eccentric stiffeners. | Shows the combined effect of in-plane member bending and eccentric axial bending. |
-| `isogrid z = 0` | Isogrid | Uses low `EIz` and zero eccentricity. | Checks the centered-member isogrid limit where the printed and corrected SP-8007 formulas are the same. |
-| `isogrid corrected z` | Isogrid | Uses low `EIz` and eccentricity `z = 0.32 in`. | Isolates the missing `EA z^2` terms in SP-8007 Eqs. 97-98. |
+| Plot label | Model | What it checks |
+| --- | --- | --- |
+| `orthogrid` | Ring-and-stringer orthogrid with eccentric members, `z = 0.32 in` | SP-8007 Eqs. 82-91 term by term, including coupling and modified twisting. |
+| `isogrid, z = 0` | Equilateral isogrid with centered members | The limit where the printed and corrected Eqs. 97-98 are the same. |
+| `isogrid, z = 0.32 in` | Equilateral isogrid with eccentric members | Isolates the missing `EA z^2` terms in SP-8007 Eqs. 97-98. |
 
-All five cases use the same material, skin thickness, stiffener area,
-out-of-plane inertia, torsion constant, and local spacing or pitch unless the
-table says otherwise. The baseline values are `E = 10.6e6 psi`, `nu = 0.33`,
-`t = 0.080 in`, `A = 0.030 in^2`, `Iy = 1.20e-3 in^4`, `J = 2.50e-4 in^4`,
-orthogrid spacings `bs = 6 in` and `br = 8 in`, and isogrid pitch `a = 6 in`.
+All three cases use the same material, skin thickness, stiffener area,
+out-of-plane inertia, torsion constant, and local spacing or pitch. The values
+are `E = 10.6e6 psi`, `nu = 0.33`, `t = 0.080 in`, `A = 0.030 in^2`,
+`Iy = 1.20e-3 in^4`, `J = 2.50e-4 in^4`, orthogrid spacings `bs = 6 in` and
+`br = 8 in`, and isogrid pitch `a = 6 in`.
 
 ## Correcting the Isogrid Typo
 
-The plot below isolates the eccentric isogrid case with the member in-plane
-bending inertia driven very small. SP-8007 as printed omits the eccentric axial
-energy in the bending terms. Once the `EA z^2` terms are restored, Tensyl and
-the corrected hand formula agree to the residual left by the intentionally tiny
-`EIz`.
+The plot below isolates the eccentric isogrid case. SP-8007 as printed omits
+the eccentric axial energy in the bending terms. Once the `EA z^2` terms are
+restored, Tensyl and the corrected hand formula agree to roundoff.
 
 ![SP-8007 isogrid correction](../assets/validation/sp8007-isogrid-correction.svg)
 
@@ -132,113 +121,50 @@ missing printed term is the source of the large orange-bar gap.
 After this correction, the main isogrid discrepancy is not a Tensyl problem. It
 is the missing printed `EA z^2` term in SP-8007 Eqs. 97-98.
 
-## Orthogrid Model Difference
+## Agreement Across Every Coefficient
 
-The orthogrid mismatch is different. It is not affected by the isogrid
-correction, and it is not a convention problem. When the optional extension is
-enabled, Tensyl retains a member stiffness that the SP-8007 ring/stringer
-formulas in Eqs. 89-91 do not include.
-
-In the extended model, each rib or stringer adds in-plane bending stiffness when
-the panel bends across that member. For an axis-aligned orthogrid, the SP-8007
-printed formulas include same-family out-of-plane bending and eccentric axial
-bending:
-
-$$
-\bar{D}_x
-\leftarrow
-\frac{(EI_y)_s}{b_s}
-+
-\frac{(EA)_s z_s^2}{b_s},
-$$
-
-$$
-\bar{D}_y
-\leftarrow
-\frac{(EI_y)_r}{b_r}
-+
-\frac{(EA)_r z_r^2}{b_r}.
-$$
-
-The optional extension adds the cross-family in-plane bending terms:
-
-$$
-\Delta \bar{D}_x = \frac{(EI_z)_r}{b_r},
-$$
-
-$$
-\Delta \bar{D}_y = \frac{(EI_z)_s}{b_s}.
-$$
-
-In plain terms, the extension lets a rib contribute when the panel bends axially
-across it and lets a stringer contribute when the panel bends
-circumferentially across it. The SP-8007 orthogrid hand equations used here do
-not include those terms.
-
-The coefficient-level comparison below uses the corrected SP-8007 reference.
-The membrane terms, coupling terms, and modified twisting term agree to roundoff
-for the orthogrid cases when the inputs are normalized the same way. The bending
-terms remain different until the cross-family `EIz` contribution is made small.
+With the printed isogrid omission corrected, the two calculations are the same
+calculation written two ways. The plot below shows the largest difference for
+each coefficient in each case, measured against the corrected SP-8007 value.
+Every bar sits near `1e-16`, the size of double-precision roundoff, and well
+below the dashed `1e-12` line the report uses as its agreement limit. A missing
+bar means the two values matched exactly.
 
 ![SP-8007 coefficient deltas](../assets/validation/sp8007-term-errors.svg)
 
-This plot is a corrected-reference error plot. Bars at the bottom of the log
-axis are roundoff-level agreement. The remaining visible bars are bending terms.
-For the orthogrid full-`EIz` case, those bars are the cross-family in-plane
-bending terms enabled for this Tensyl study and omitted by SP-8007 Eqs. 89-91.
-For the low-`EIz` cases, the bars collapse because the added term has been made
-small.
+That is a stronger result than it looks. SP-8007's orthogrid equations are
+written family by family with scalar `EA/b`, `EI/b`, and `GJ/b` terms, while
+Tensyl rotates each member's strain map into the panel frame and assembles an
+`8 x 8` energy matrix. The isogrid bending coefficients show it most clearly:
+SP-8007's $3\sqrt{3}\,EI/(4a) + \sqrt{3}\,GJ/(4a)$ falls straight out of the
+member transforms at `0` and `+/-60` degrees. Agreement to roundoff means the
+member kinematics, the rotations, the density of each family, and the barred
+coefficient mapping are all doing what the hand formulas do.
 
-The bending ratios show the same point more directly.
+It is still not proof that either model is right about a real panel. Both
+calculations share the same first-approximation member kinematics, so they
+share the same blind spots: local skin buckling between stiffeners, joint
+flexibility, and anything the smeared-stiffener idea cannot see. Finite-element
+and test evidence answer those questions; this comparison does not.
 
-![SP-8007 bending ratios](../assets/validation/sp8007-bending-ratio.svg)
+## Why Earlier Reports Disagreed
 
-This plot divides Tensyl's bending coefficients by the corrected SP-8007
-values. A ratio of `1.0` means the two calculations agree. The `orthogrid full
-EIz` case rises above `1.0` in `Dbar_x` and `Dbar_y` because the study enables
-the rib and stringer cross-family `EIz` terms. The low-`EIz` and
-corrected-isogrid cases sit at `1.0` because the isolated formula error has been
-corrected and the member-bending residual has been made small.
+Reports published with Tensyl 0.3.1 and earlier turned on an optional
+`include_in_plane_bending` extension for this study and showed an orthogrid
+bending gap proportional to `EIz`. That extension has been removed. It let a
+member's in-plane bending stiffness `EIz` resist plate curvature across the
+member, but a member's axis stays straight in the panel plane under uniform
+wall strain and curvature, so beam theory gives that term no energy. Nemeth's
+first approximation, $\chi_Z = 0$, says the same thing. The gap the old report
+attributed to "cross-family in-plane bending" was stiffness that the physical
+panel does not have.
 
-And the sweep below makes the mechanism explicit. As the member in-plane inertia
-is reduced relative to its out-of-plane inertia, the orthogrid bending mismatch
-collapses.
-
-![SP-8007 in-plane bending sweep](../assets/validation/sp8007-inplane-bending-sweep.svg)
-
-The horizontal axis is the ratio `Iz / Iy` used for the stiffener section. Moving
-left makes the member closer to a blade with negligible in-plane bending. Moving
-right makes the member closer to a section with comparable in-plane and
-out-of-plane bending stiffness. The error grows with `Iz / Iy` because the
-missing SP-8007 contribution is proportional to `EIz`.
-
-## Engineering Impact
-
-The orthogrid mismatch lives in the bending block of the equivalent ABD
-stiffness. It does not change the basic axis-aligned membrane `A` terms in these
-cases. Compared with the optional extended model, an SP-8007 orthogrid reduction
-predicts less bending stiffness when the stiffener has meaningful in-plane
-section inertia.
-
-The impact is largest for grids where the stiffener is not a slender blade. Wide
-caps, flanges, tees, channels, z-stiffeners, hat sections, box-like stiffeners,
-and closed or nearly closed sections can all have enough `EIz` for the
-cross-family term to matter. Dense grids and thin skins make the effect easier
-to see because the member stiffness is spread over a smaller panel area and the
-skin contributes less of the total bending stiffness.
-
-The downstream impact is usually a buckling or load-redistribution impact. A
-classical orthotropic-cylinder calculation that receives the lower SP-8007
-bending terms can predict different buckling loads, different preferred modes,
-or different margins than a calculation that receives Tensyl's full ABD
-stiffness. The sign of the margin change depends on the load, shell geometry,
-mode shape, and knockdown workflow. Engineers should not collapse a
-stiffener-rich panel into SP-8007 barred constants without checking how much
-`EIz` has been removed.
-
-For these deliberately extended orthogrid cases, Tensyl includes section
-stiffness that the compact SP-8007 ring/stringer formulas omit. The default
-Nemeth path leaves those cross-family terms out.
+A wide flange does resist bending across its width, but through its own plate
+bending stiffness, roughly `E w t^3 / 12` per unit length, not through
+`EIz = E t w^3 / 12`. For a flange that is ten times wider than it is thick,
+the two differ by a factor of one hundred. If that flange stiffness matters for
+your panel, model it as part of the skin or with a detailed section model
+rather than through the member `EIz`.
 
 ## Which `J` Should Be Used?
 
@@ -300,9 +226,6 @@ of barred constants can be the right handoff, but it is still a reduction.
 
 Be especially careful with these inputs:
 
-- `EIz`: when `include_in_plane_bending=True`, Tensyl retains cross-family
-  in-plane member bending, while the SP-8007 orthogrid expressions used here do
-  not expose the same term.
 - Eccentricity: SP-8007 isogrid Eqs. 97-98 should be corrected for explicit
   `EA z^2` bending terms before drawing physics conclusions.
 - `J`: open-section St Venant torsion, closed-cell torsion, and restrained
@@ -318,7 +241,6 @@ The committed evidence lives under
   rows, including the printed and corrected SP-8007 references;
 - `summary.json` records the worst corrected-reference term by case and the
   interpretation notes;
-- `inplane_bending_sweep.json` records the `EIz` sweep;
 - `torsion_sweep.json` records the `J` sensitivity sweep;
 - `manifest.json` records provenance for the run.
 

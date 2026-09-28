@@ -24,6 +24,15 @@ bug fixes that correct clearly wrong behavior.
 - Add `core_axial_eccentricity` to the sandwich core cells. The core used to be
   pinned to the reference surface, which is right only when that surface is the
   core midplane; any other choice of face shifts gave the wrong `D` block.
+- Remove the `include_in_plane_bending` option from members, stiffener
+  families, and every cell constructor. It let a member's `EIz` resist plate
+  curvature across the member, which beam theory does not support; Nemeth's
+  first approximation, `chi_Z = 0`, is now the only model. `EIz` and `EIyz`
+  stay on `BeamSection` as section data.
+- Rebuild the SP-8007 reconciliation without that extension. Every
+  coefficient in every case now agrees with the corrected SP-8007 formulas to
+  roundoff, so the report drops the low-`EIz` cases, the in-plane inertia
+  sweep, and the bending-ratio plot.
 
 ## 0.3.1 - 2026-07-28
 

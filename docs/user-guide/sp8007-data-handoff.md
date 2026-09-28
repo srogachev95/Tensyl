@@ -72,13 +72,12 @@ strain map. Some SP-8007 elastic-constant expressions omit beam contributions
 that Tensyl includes. When those numbers disagree, inspect section inertia,
 torsion constant, reference-surface choice, and eccentricity.
 
-For orthogrids, the main model choice is whether a member may bend within the
-panel plane. Tensyl leaves that effect out by default to follow Nemeth. The
-[SP-8007 reconciliation](../validation/sp8007-reconciliation.md) turns it back
-on with `include_in_plane_bending=True` to study the difference. SP-8007
-ring/stringer Eqs. 89-91 do not expose the added `EIz` and `EIyz` terms, so a
-handoff based only on the barred coefficients can miss that optional stiffness
-for wide, flanged, capped, or closed stiffeners.
+For axis-aligned orthogrids and equilateral isogrids, Tensyl and the SP-8007
+elastic-constant formulas carry the same member physics. The
+[SP-8007 reconciliation](../validation/sp8007-reconciliation.md) shows every
+barred coefficient agreeing to roundoff once the printed isogrid omission below
+is corrected. What the barred set can still lose is anything off-axis, which is
+why `orthotropic_coefficients()` reports those terms instead of dropping them.
 
 For isogrids with eccentric members, use corrected bending terms:
 

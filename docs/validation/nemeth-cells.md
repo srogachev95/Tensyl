@@ -180,11 +180,9 @@ Tensyl exposes them as `axial_eccentricity` and `shear_eccentricity`. Both are
 signed along `+n`; when the shear value is omitted, it defaults to the axial
 value.
 
-By default, Tensyl also follows Nemeth's first approximation and leaves out
-member bending within the panel plane. `BeamSection` still stores `EIz` and
-`EIyz`, but the cell uses them only when
-`include_in_plane_bending=True` is requested explicitly. The result records
-that extension in its assumptions.
+Tensyl also follows Nemeth's first approximation, $\chi_Z=0$: member bending
+within the panel plane stores no energy. `BeamSection` still stores `EIz` and
+`EIyz` as section data, but the homogenizer does not use them.
 
 Positive shear eccentricity produces positive `B66` coupling under Tensyl's
 documented `+n` convention. The equations and sign definitions are given in
