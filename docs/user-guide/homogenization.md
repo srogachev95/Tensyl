@@ -223,6 +223,25 @@ unit system.
 
 ## Comparing ABD Stiffnesses
 
+For a quick inspection, `repr(result.stiffness)` shows the frame, areal mass,
+A11 and D11 scales, and warning count. A missing report shows `warnings=None`;
+that means validity has not been evaluated.
+
+Use `print(result.summary())` to read all four blocks, warning codes, and
+modeling assumptions. `stiffness.summary()` returns the same block display
+without the homogenizer's source and assumptions. Both return strings, so they
+can also be written to a report or log:
+
+```python
+print(result.summary(
+    units={"A": "lbf/in", "B": "lbf", "D": "lbf in", "As": "lbf/in"},
+    precision=6,
+))
+```
+
+Unit labels are supplied by the caller and do not convert values. Blocks use
+the engineering-shear ordering `11, 22, 12`, with `13, 23` for transverse shear.
+
 Compare ABD stiffnesses block by block:
 
 - compare `A`, `B`, `D`, and `As`;

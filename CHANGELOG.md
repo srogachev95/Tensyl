@@ -8,6 +8,9 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Give `ABDStiffness` a compact representation and add `summary()` strings on
+  stiffnesses and homogenization results, with labeled engineering blocks,
+  optional unit labels, warnings, and result assumptions.
 - Add `Ply.from_degrees` and `layup` for degree-based laminate inputs, paired
   angles, repeated plies/groups, and symmetric stacks in explicit bottom-to-top
   order. Unsupported notation raises `ValueError`.

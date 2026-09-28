@@ -598,6 +598,58 @@ class ABDStiffness:
             validity=validity,
         )
 
+    def __repr__(self) -> str:
+        count = None if self.validity is None else len(self.validity.warnings)
+        return (
+            f"ABDStiffness(frame={self.frame.label!r}, areal_mass={self.areal_mass!r}, "
+            f"A11={self.A[0, 0]:.4e}, D11={self.D[0, 0]:.4e}, warnings={count})"
+        )
+
+    def summary(self, *, units: Mapping[str, str] | None = None, precision: int = 6) -> str:
+        """Return a readable engineering-notation block summary.
+
+        Args:
+            units: Optional display labels keyed by A, B, D, As, or areal_mass.
+                These labels do not convert or validate the numeric units.
+            precision: Decimal places in scientific notation, from 0 to 16.
+
+        Returns:
+            Text containing the local frame, ordering, block values, mass,
+            and validity warnings. Use ``print(stiffness.summary())`` to print.
+
+        Raises:
+            ValueError: If precision is not an integer from 0 to 16.
+        """
+
+        if (
+            isinstance(precision, bool)
+            or not isinstance(precision, int)
+            or not 0 <= precision <= 16
+        ):
+            raise ValueError("precision must be an integer from 0 to 16.")
+        labels = {} if units is None else units
+        lines = [
+            f"ABD stiffness — frame: {self.frame.label}",
+            "Engineering notation (engineering shear): 11, 22, 12; transverse: 13, 23",
+            f"Reference surface: {self.convention.reference_surface}; positive normal: +n",
+        ]
+        for name in ("A", "B", "D", "As"):
+            label = f" [{labels[name]}]" if name in labels else ""
+            lines.append(name + label)
+            lines.append(
+                np.array2string(
+                    getattr(self, name), formatter={"float_kind": lambda x: f"{x:.{precision}e}"}
+                )
+            )
+        mass = "unknown" if self.areal_mass is None else f"{self.areal_mass:.{precision}e}"
+        mass_unit = f" [{labels['areal_mass']}]" if "areal_mass" in labels else ""
+        lines.append(f"Areal mass{mass_unit}: {mass}")
+        if self.validity is None:
+            lines.append("Validity: not evaluated")
+        else:
+            lines.append("Warnings: " + (", ".join(self.validity.warnings) or "none"))
+        return "\n".join(lines)
+
     def __hash__(self) -> int:
         # Frozen dataclasses do not make arrays hashable. Hash the numeric
         # payload explicitly so ABDStiffness can be used in caches and atlases.
