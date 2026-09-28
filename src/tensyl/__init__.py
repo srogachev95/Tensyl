@@ -103,10 +103,12 @@ from tensyl.sections import (
     zee_section,
 )
 from tensyl.sections.laminated import LaminatedThinWallSection, LaminatedWallSegment
+from tensyl.workflows import sweep
 
 __version__ = tensyl_version()
 
 __all__ = [
+    "sweep",
     "LaminatedThinWallSection",
     "LaminatedWallSegment",
     "MemberLoads",

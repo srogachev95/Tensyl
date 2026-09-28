@@ -86,3 +86,35 @@ validity warnings, convention metadata, and unit labels alongside the stiffness
 tangent.
 
 Next: [FEM Solver Handoff](solver-handoff.md).
+
+## Parameter Sweeps
+
+Use `sweep` to compare a finite Cartesian grid of cell inputs. It visits values
+in the mapping's insertion order, with the last parameter changing fastest.
+Each row contains the input parameters, all 21 named stiffness coefficients,
+`areal_mass`, and a tuple of `warning_codes`.
+
+```python
+from tensyl import BeamSection, IsotropicMaterial, isotropic_plate, sweep, unidirectional_cell
+
+material = IsotropicMaterial(E=70e9, nu=0.3, density=2700)
+
+def build_panel(thickness):
+    return unidirectional_cell(
+        skin=isotropic_plate(material, thickness),
+        member_section=BeamSection(EA=1e6, EIy=100, EIz=100, GJ=10, mass_per_length=0.2),
+        spacing=0.1, axial_eccentricity=0,
+    )
+
+rows = sweep(build_panel, {"thickness": [0.001, 0.002, 0.003]})
+for row in rows:
+    print(row["thickness"], row["A11"], row["D11"], row["warning_codes"])
+```
+
+Pass `homogenizer=` to use a configured homogenizer. The helper materializes
+finite input axes and all result rows; choose a modest grid. An empty mapping
+calls the builder once with no arguments, while an empty axis produces no
+rows. A builder or solver failure stops the sweep and preserves the exception,
+adding the failed parameters as a note. Output column names are reserved so an
+input cannot overwrite a result. Use the returned dictionaries with the
+standard library's `csv.DictWriter` or your own dataframe/reporting tools.

@@ -16,3 +16,7 @@
         - MemberLoads
         - member_loads
         - validity_report_for_stiffness
+
+## Batch Workflows
+
+::: tensyl.workflows.sweep
