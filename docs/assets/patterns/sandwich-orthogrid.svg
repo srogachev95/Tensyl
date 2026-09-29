@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 550" role="img" aria-labelledby="title desc">
+<title id="title">Orthogrid sandwich core</title>
+<desc id="desc">Rib centerlines tiled from the cell geometry. The dashed orange parallelogram spans one pair of repeat vectors; the right view enlarges that same cell.</desc>
+<rect width="960" height="550" fill="white"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#18344a"/></marker></defs>
+<text x="28.00" y="35.00" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#18344a">Orthogrid sandwich core</text>
+<text x="28.00" y="63.00" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#18344a">sandwich_orthogrid_core_cell(...)</text>
+<text x="28.00" y="101.00" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18344a">Repeated layout</text>
+<text x="522.00" y="101.00" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18344a">One repeat · enlarged</text>
+<rect x="28" y="120" width="450" height="285" rx="5" fill="#f7fafc" stroke="#d7e1e7"/>
+<defs><clipPath id="view0"><rect x="29" y="121" width="448" height="283"/></clipPath>
+<clipPath id="cell0"><polygon points="197.750,299.333 308.250,299.333 308.250,225.667 197.750,225.667"/></clipPath></defs>
+<polygon points="197.750,299.333 308.250,299.333 308.250,225.667 197.750,225.667" fill="#fff0e5"/>
+<g clip-path="url(#view0)">
+<g fill="none" stroke="#176b87" stroke-width="2" stroke-linecap="round"><path d="M-78.500 188.833L32.000 188.833"/>
+<path d="M-78.500 262.500L32.000 262.500"/>
+<path d="M-78.500 336.167L32.000 336.167"/>
+<path d="M142.500 188.833L142.500 115.167"/>
+<path d="M142.500 188.833L253.000 188.833"/>
+<path d="M142.500 262.500L142.500 188.833"/>
+<path d="M142.500 262.500L253.000 262.500"/>
+<path d="M142.500 336.167L142.500 262.500"/>
+<path d="M142.500 336.167L253.000 336.167"/>
+<path d="M142.500 409.833L142.500 336.167"/>
+<path d="M253.000 188.833L253.000 115.167"/>
+<path d="M253.000 188.833L363.500 188.833"/>
+<path d="M253.000 262.500L253.000 188.833"/>
+<path d="M253.000 262.500L363.500 262.500"/>
+<path d="M253.000 336.167L253.000 262.500"/>
+<path d="M253.000 336.167L363.500 336.167"/>
+<path d="M253.000 409.833L253.000 336.167"/>
+<path d="M32.000 188.833L142.500 188.833"/>
+<path d="M32.000 188.833L32.000 115.167"/>
+<path d="M32.000 262.500L142.500 262.500"/>
+<path d="M32.000 262.500L32.000 188.833"/>
+<path d="M32.000 336.167L142.500 336.167"/>
+<path d="M32.000 336.167L32.000 262.500"/>
+<path d="M32.000 409.833L32.000 336.167"/>
+<path d="M363.500 188.833L363.500 115.167"/>
+<path d="M363.500 188.833L474.000 188.833"/>
+<path d="M363.500 262.500L363.500 188.833"/>
+<path d="M363.500 262.500L474.000 262.500"/>
+<path d="M363.500 336.167L363.500 262.500"/>
+<path d="M363.500 336.167L474.000 336.167"/>
+<path d="M363.500 409.833L363.500 336.167"/>
+<path d="M474.000 188.833L474.000 115.167"/>
+<path d="M474.000 188.833L584.500 188.833"/>
+<path d="M474.000 262.500L474.000 188.833"/>
+<path d="M474.000 262.500L584.500 262.500"/>
+<path d="M474.000 336.167L474.000 262.500"/>
+<path d="M474.000 336.167L584.500 336.167"/>
+<path d="M474.000 409.833L474.000 336.167"/></g>
+</g>
+<polygon points="197.750,299.333 308.250,299.333 308.250,225.667 197.750,225.667" fill="none" stroke="#b65020" stroke-width="2" stroke-dasharray="7 5"/>
+<rect x="522" y="120" width="410" height="285" rx="5" fill="#f7fafc" stroke="#d7e1e7"/>
+<defs><clipPath id="view1"><rect x="523" y="121" width="408" height="283"/></clipPath>
+<clipPath id="cell1"><polygon points="561.250,373.000 892.750,373.000 892.750,152.000 561.250,152.000"/></clipPath></defs>
+<polygon points="561.250,373.000 892.750,373.000 892.750,152.000 561.250,152.000" fill="#fff0e5"/>
+<g clip-path="url(#view1)">
+<g fill="none" stroke="#a8c4d0" stroke-width="2" stroke-linecap="round"><path d="M395.500 262.500L727.000 262.500"/>
+<path d="M727.000 262.500L1058.500 262.500"/>
+<path d="M727.000 262.500L727.000 41.500"/>
+<path d="M727.000 483.500L727.000 262.500"/></g>
+<g clip-path="url(#cell1)" fill="none" stroke="#176b87" stroke-width="3" stroke-linecap="round"><path d="M395.500 262.500L727.000 262.500"/>
+<path d="M727.000 262.500L1058.500 262.500"/>
+<path d="M727.000 262.500L727.000 41.500"/>
+<path d="M727.000 483.500L727.000 262.500"/></g>
+</g>
+<polygon points="561.250,373.000 892.750,373.000 892.750,152.000 561.250,152.000" fill="none" stroke="#b65020" stroke-width="2" stroke-dasharray="7 5"/>
+<path d="M845 70H888" stroke="#18344a" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M845 70V30" stroke="#18344a" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="899.00" y="75.00" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#18344a">e1</text>
+<text x="834.00" y="20.00" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#18344a">e2</text>
+<text x="28.00" y="440.00" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#18344a">e1_pitch = 150 mm; e2_pitch = 100 mm</text>
+<text x="28.00" y="470.00" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#18344a">Repeat vectors (e1, e2), mm:  a = (150.00, 0.00)   b = (0.00, 100.00)</text>
+<text x="28.00" y="499.00" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#18344a">Repeat area = 15,000.0 mm²</text>
+<path d="M28 528H60" stroke="#176b87" stroke-width="3"/>
+<text x="70.00" y="533.00" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#18344a">Rib centerline</text>
+<path d="M250 528H282" stroke="#b65020" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="292.00" y="533.00" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#18344a">Repeat boundary</text>
+<text x="660.00" y="533.00" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#18344a">Plan view · equal scale on both axes</text>
+</svg>
