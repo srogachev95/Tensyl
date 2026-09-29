@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 390" role="img" aria-labelledby="title desc">
 <title id="title">Repeat dimensions and rib eccentricity</title>
-<desc id="desc">A 150 by 100 mm orthogrid bay in plan, and a true-scale section through a 25 mm blade on a 2 mm skin. The rib centroid is 13.5 mm above the skin midplane.</desc>
+<desc id="desc">A 150 by 100 mm orthogrid cell centered on a rib intersection, with a dashed boundary halfway to neighboring nodes, and a true-scale section through a 25 mm blade on a 2 mm skin. The rib centroid is 13.5 mm above the skin midplane.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#18344a"/></marker></defs>
 <rect width="760" height="390" fill="white"/>
 <g font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18344a" stroke-linejoin="round">
 <text x="26.000" y="34.000" font-size="18" fill="#18344a" text-anchor="start" font-weight="600">Repeat cell · plan view</text>
 <text x="405.000" y="34.000" font-size="18" fill="#18344a" text-anchor="start" font-weight="600">Blade on skin · section view</text>
-<polygon points="55.000,241.000 280.000,241.000 280.000,91.000 55.000,91.000" fill="#e6f0f5" stroke="#176b87" stroke-width="1.5"/>
-<polyline points="55.000,241.000 280.000,241.000" fill="none" stroke="#176b87" stroke-width="4"/>
-<polyline points="55.000,91.000 280.000,91.000" fill="none" stroke="#176b87" stroke-width="4"/>
-<polyline points="55.000,241.000 55.000,91.000" fill="none" stroke="#176b87" stroke-width="4"/>
-<polyline points="280.000,241.000 280.000,91.000" fill="none" stroke="#176b87" stroke-width="4"/>
+<polygon points="55.000,241.000 280.000,241.000 280.000,91.000 55.000,91.000" fill="#e6f0f5" stroke="none" stroke-width="1"/>
+<polygon points="55.000,241.000 280.000,241.000 280.000,91.000 55.000,91.000" fill="#fbe9dc" stroke="none" stroke-width="1.5"/>
+<polyline points="167.500,241.000 167.500,91.000" fill="none" stroke="#176b87" stroke-width="4"/>
+<polyline points="55.000,166.000 280.000,166.000" fill="none" stroke="#176b87" stroke-width="4"/>
+<polyline points="55.000,241.000 280.000,241.000 280.000,91.000 55.000,91.000 55.000,241.000" fill="none" stroke="#b65020" stroke-width="2" stroke-dasharray="5 5"/>
 <polyline points="55.000,241.000 55.000,273.000" fill="none" stroke="#72838d" stroke-width="1"/>
 <polyline points="280.000,241.000 280.000,273.000" fill="none" stroke="#72838d" stroke-width="1"/>
 <polyline points="55.000,273.000 280.000,273.000" fill="none" stroke="#18344a" stroke-width="1" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
@@ -46,6 +46,6 @@
 <text x="427.000" y="323.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">Skin midplane: z = 0</text>
 <polyline points="711.000,160.000 711.000,104.000" fill="none" stroke="#18344a" stroke-width="2" marker-end="url(#arrow)"/>
 <text x="711.000" y="91.000" font-size="16" fill="#18344a" text-anchor="middle" font-weight="400">+n</text>
-<text x="26.000" y="367.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">Ribs on cell edges are shared by adjacent repeats.</text>
+<text x="26.000" y="367.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">Dashed boundary: halfway to the neighboring rib intersections.</text>
 </g>
 </svg>

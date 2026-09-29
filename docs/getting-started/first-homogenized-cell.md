@@ -6,6 +6,10 @@ Each blade is 25 mm high and 2 mm thick. The repeat rectangle is 150 mm along
 
 [![Repeat dimensions and positive rib eccentricity](../assets/diagrams/repeat-offset.svg)](../assets/diagrams/repeat-offset.svg "Open full-size diagram")
 
+The dashed repeat boundary is centered on a rib intersection and lies halfway
+to the neighboring intersections. It encloses one complete rib length in each
+direction and the surrounding skin.
+
 Use `blade_section` to calculate the rib's axial, bending, and torsional stiffness
 from its material and dimensions. The blade centroid lies 12.5 mm above its base.
 Adding half the skin thickness places it 13.5 mm above the skin midplane.

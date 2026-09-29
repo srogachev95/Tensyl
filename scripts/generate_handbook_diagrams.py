@@ -85,55 +85,56 @@ class Drawing:
         return "\n".join([*self.parts, "</g>", "</svg>", ""])
 
 
-def grid(d, cell, origin, scale, repeats=1):
-    """Draw the actual cell edges, with coincident shared edges drawn once."""
-    geometry = cell.geometry
+def grid(d, cell, origin, scale, repeats=1, *, highlight=False):
+    """Draw node-centered repeats using the model's two orthogrid pitches.
+
+    Translating the repeat boundary by half a pitch in each direction places
+    one complete rib cross inside each cell. The physical rib density is unchanged.
+    """
     p, q = cell.metadata["e1_pitch"], cell.metadata["e2_pitch"]
 
     def xy(x, y):
         return origin[0] + (x + p / 2) * scale, origin[1] - (y + q / 2) * scale
 
-    d.polygon(
-        [
-            xy(-p / 2, -q / 2),
-            xy((repeats - 0.5) * p, -q / 2),
-            xy((repeats - 0.5) * p, (repeats - 0.5) * q),
-            xy(-p / 2, (repeats - 0.5) * q),
+    outline = [
+        xy(-p / 2, -q / 2),
+        xy((repeats - 0.5) * p, -q / 2),
+        xy((repeats - 0.5) * p, (repeats - 0.5) * q),
+        xy(-p / 2, (repeats - 0.5) * q),
+    ]
+    d.polygon(outline, color=GRAY if repeats > 1 else "none", width=1)
+    center = (repeats - 1) / 2
+    boundary = [
+        xy(x * p, y * q)
+        for x, y in [
+            (center - 0.5, center - 0.5),
+            (center + 0.5, center - 0.5),
+            (center + 0.5, center + 0.5),
+            (center - 0.5, center + 0.5),
         ]
-    )
-    edges = set()
-    for segment in geometry.segments(repeat_a=repeats, repeat_b=repeats):
-        ends = tuple(
-            sorted(
-                (
-                    (round(segment.start_e1, 10), round(segment.start_e2, 10)),
-                    (round(segment.end_e1, 10), round(segment.end_e2, 10)),
-                )
-            )
-        )
-        if ends not in edges:
-            d.line([xy(*point) for point in ends], width=4)
-            edges.add(ends)
+    ]
+    if highlight or repeats == 1:
+        d.polygon(boundary, fill="#fbe9dc", color="none")
+    for i in range(repeats):
+        d.line([xy(i * p, -q / 2), xy(i * p, (repeats - 0.5) * q)], width=4)
+        d.line([xy(-p / 2, i * q), xy((repeats - 0.5) * p, i * q)], width=4)
+    if highlight or repeats == 1:
+        d.line([*boundary, boundary[0]], color=ORANGE, dash=True)
     return xy
 
 
 def panel_model(example):
     d = Drawing(
         "From ribbed panel to equivalent plate",
-        "Three by three identical orthogrid bays. The central bay is highlighted, "
-        "enlarged, and homogenized into plate stiffness.",
+        "An orthogrid with a repeat cell centered on a rib intersection. Solid lines "
+        "are ribs; the dashed cell boundary lies halfway to neighboring nodes.",
         340,
     )
     cell = example["cell"]
     p, q = cell.metadata["e1_pitch"], cell.metadata["e2_pitch"]
     for x, title in [(24, "1  Repeating panel"), (315, "2  One cell"), (563, "3  Plate model")]:
         d.text(x, 35, title, bold=True)
-    xy = grid(d, cell, (24, 244), 520, repeats=3)
-    boundary = [
-        xy(x, y)
-        for x, y in [(p / 2, q / 2), (1.5 * p, q / 2), (1.5 * p, 1.5 * q), (p / 2, 1.5 * q)]
-    ]
-    d.polygon(boundary, fill="#fbe9dc", color=ORANGE, width=3)
+    grid(d, cell, (24, 244), 520, repeats=3, highlight=True)
     grid(d, cell, (325, 225), 1200)
     d.line([(275, 165), (307, 165)], color=INK, arrow=True)
     d.line([(518, 165), (550, 165)], color=INK, arrow=True)
@@ -143,14 +144,15 @@ def panel_model(example):
     d.text(141, 282, "Skin and ribs · plan view", anchor="middle", size=16)
     d.text(415, 282, f"{p * 1000:g} × {q * 1000:g} mm", anchor="middle", size=16)
     d.text(650, 282, "Energy per unit area", anchor="middle", size=16)
-    d.text(24, 319, "Orange outline: the repeat cell used in the next step.", size=16)
+    d.text(24, 319, "Solid blue: ribs. Dashed orange: repeat-cell boundary.", size=16)
     return d.finish()
 
 
 def repeat_offset(example):
     d = Drawing(
         "Repeat dimensions and rib eccentricity",
-        "A 150 by 100 mm orthogrid bay in plan, and a true-scale section through "
+        "A 150 by 100 mm orthogrid cell centered on a rib intersection, with a dashed "
+        "boundary halfway to neighboring nodes, and a true-scale section through "
         "a 25 mm blade on a 2 mm skin. The rib centroid is 13.5 mm above the skin midplane.",
         390,
     )
@@ -201,7 +203,7 @@ def repeat_offset(example):
     d.text(427, 323, "Skin midplane: z = 0", size=16)
     d.line([(711, 160), (711, 104)], color=INK, arrow=True)
     d.text(711, 91, "+n", size=16, anchor="middle")
-    d.text(26, 367, "Ribs on cell edges are shared by adjacent repeats.", size=16)
+    d.text(26, 367, "Dashed boundary: halfway to the neighboring rib intersections.", size=16)
     return d.finish()
 
 
