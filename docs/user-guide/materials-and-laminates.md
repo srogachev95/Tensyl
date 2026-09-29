@@ -1,132 +1,102 @@
 # Materials and Laminates
 
-Tensyl supports skin-only ABD stiffnesses for isotropic plates and orthotropic
-laminates.
+Start with the skin construction. An isotropic skin needs a modulus, Poisson's
+ratio, and thickness. A laminate needs the material, thickness, and angle of each
+ply. Both produce the same `ABDStiffness` interface for the next modeling step.
 
 ## Isotropic Plate
 
 ```python
-from tensyl import IsotropicMaterial, isotropic_plate
-
-material = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-stiffness = isotropic_plate(material, thickness=0.080)
+--8<-- "docs/examples/scripts/walkthrough.py:skin"
 ```
 
-Inputs must be consistent. In the US customary examples here, `E` is in `psi`
-and `thickness` is in `in` — see [Units and Consistency](units-and-consistency.md).
+These SI inputs give the [walkthrough's 2 mm skin](../getting-started/first-abd-stiffness.md).
+Density is mass per volume, here kg/m³. Supply it to obtain areal mass in kg/m².
 
 ## Orthotropic Laminate
 
-Laminate plies are supplied bottom-to-top through the section thickness.
+A ply's direction 1 follows its fibers; direction 2 is transverse in the ply.
+Define the elastic and shear moduli in Pa, density in kg/m³, and thermal
+expansion coefficients in 1/K. The values below illustrate a carbon/epoxy ply:
 
 ```python
-import math
-
-from tensyl import OrthotropicPlyMaterial, Ply, laminate_plate
-
-ply_material = OrthotropicPlyMaterial(
-    E1=20.0e6,
-    E2=1.4e6,
-    G12=0.8e6,
-    nu12=0.28,
-    G13=0.7e6,
-    G23=0.55e6,
-)
-
-stiffness = laminate_plate(
-    [
-        Ply(ply_material, thickness=0.005, angle_rad=0.0),
-        Ply(ply_material, thickness=0.005, angle_rad=math.pi / 2.0),
-        Ply(ply_material, thickness=0.005, angle_rad=math.pi / 2.0),
-        Ply(ply_material, thickness=0.005, angle_rad=0.0),
-    ]
-)
+--8<-- "docs/examples/scripts/materials_sections.py:laminate"
 ```
 
-For a symmetric laminate about the reference surface, the `B` block should be
-zero within numerical tolerance. Unsymmetric layups can produce nonzero
-membrane-bending coupling.
+Plies are ordered **bottom to top along `+n`**, with the reference at the laminate
+midplane. The symmetric stack has a near-zero `B` block. The `[0/90]` stack is
+unsymmetric and couples extension to curvature; reversing that stack reverses
+`B` while preserving `A` and `D`.
+
+Classical laminate theory integrates each transformed ply stiffness
+$\bar{\mathbf Q}_k$ between its lower and upper coordinates:
+
+$$
+\mathbf A=\sum_k\bar{\mathbf Q}_k(z_k-z_{k-1}),\quad
+\mathbf B=\frac12\sum_k\bar{\mathbf Q}_k(z_k^2-z_{k-1}^2),\quad
+\mathbf D=\frac13\sum_k\bar{\mathbf Q}_k(z_k^3-z_{k-1}^3).
+$$
+
+See [NASA RP-1351](https://ntrs.nasa.gov/citations/19950009349) for the laminate
+constitutive and thermal derivations. Each ply angle rotates material axes into
+the laminate axes before integration.
 
 ## Angles and Stacking Strings
 
-Use `Ply.from_degrees(material, thickness, angle_deg, label="")` when the
-source drawing gives degrees. For equal-thickness plies of one material, the
-same stack can be written as a stacking string:
+`Ply.from_degrees` accepts angles from a drawing directly. `Ply(..., angle_rad=...)`
+uses radians. For equal-thickness plies of one material, `layup` expands common
+stacking notation:
 
-```python
-from tensyl import layup, laminate_plate
-
-plies = layup(ply_material, 0.005, "[0/±45/90]s")
-stiffness = laminate_plate(plies)
-```
-
-This expands, **bottom to top along `+n`**, to
-`0, +45, -45, 90, 90, -45, +45, 0` degrees. The symmetric suffix mirrors the
-whole stack and duplicates the middle ply. `[0/90]2s` first repeats `0, 90`
-twice, then mirrors, giving `0, 90, 0, 90, 90, 0, 90, 0`. Reversing an
-unsymmetric stack reverses its B block about the midplane, so stacking order
-is part of the mechanics input.
-
-| Syntax | Expansion |
+| String | Angles from bottom to top, degrees |
 | --- | --- |
-| `±45` or `+-45` | `+45, -45` |
-| `∓45` | `-45, +45` |
-| `0_2` or `0₂` | `0, 0` |
-| `±45_2` | `+45, -45, +45, -45` |
-| `[0/90]2` | `0, 90, 0, 90` |
+| `[0/±45/90]s` | 0, +45, −45, 90, 90, −45, +45, 0 |
+| `[0/90]2s` | 0, 90, 0, 90, 90, 0, 90, 0 |
+| `[0_2/90]` | 0, 0, 90 |
+| `[±45_2]` | +45, −45, +45, −45 |
 
-Angles may be signed decimals; spaces around entries are accepted. Repeat
-counts must be positive integers. Nested brackets, commas, exponent notation,
-and unrecognized suffixes raise `ValueError`. Use explicit `Ply` objects for
-mixed materials or ply thicknesses.
+`+-` also spells `±`; `∓` expands the negative angle first. Repeats use positive
+integers. The symmetric suffix mirrors the whole expanded stack, including its
+middle ply. Use explicit `Ply` objects for mixed materials or thicknesses.
 
 ## Shear Correction
 
-`isotropic_plate` and `laminate_plate` expose transverse-shear behavior through
-the `As` block. The shear correction factor is an explicit modeling choice; it
-should be chosen consistently with the plate or shell theory used downstream.
+`isotropic_plate` and `laminate_plate` use a default transverse-shear correction
+of 5/6. Set `shear_correction` explicitly to match the plate or shell theory in
+your analysis. It scales the `As` block, while `A`, `B`, and `D` follow the
+through-thickness integration above.
 
 ## Uniform Temperature Changes
 
-A heated laminate expands even when no mechanical load is applied. Supply
-`alpha` on an isotropic material, or `alpha1` and `alpha2` along an orthotropic
-ply's material axes, in inverse temperature units. `None` means unknown;
-zero explicitly means no expansion. Negative coefficients are allowed.
-
-`laminate_thermal_resultants(plies)` uses the same bottom-to-top stack and
-midplane as `laminate_plate`. It returns a separate `ThermalResultants` with
-`N_T` and `M_T` per unit **uniform** temperature change:
-
-$$N_T=\sum_k\bar Q_k\bar\alpha_k(z_k-z_{k-1}),\qquad
-M_T=\frac12\sum_k\bar Q_k\bar\alpha_k(z_k^2-z_{k-1}^2).$$
-
-Here $\bar\alpha$ is the engineering strain vector, including twice the tensor
-shear component. These are the thermal terms in classical laminate theory;
-see the hygrothermal development in [NASA RP-1351](https://ntrs.nasa.gov/citations/19950009349).
-The section relation is
-
-$$r=C_8\eta-r_T\Delta T,\qquad r_T=[N_T,M_T,0,0]^T.$$
-
-Thus full restraint gives negative thermal resultants. For free expansion,
-solve using positive equivalent thermal loads:
+Supply isotropic `alpha`, or orthotropic `alpha1` and `alpha2`, to calculate
+expansion under a uniform temperature change. Zero specifies zero expansion;
+`None` leaves the property unknown. Thermal resultants are a separate object
+so the same elastic stiffness can be used for several temperature changes.
 
 ```python
-from tensyl import IsotropicMaterial, Ply, laminate_plate, laminate_thermal_resultants
-
-plies = (Ply(IsotropicMaterial(E=70e9, nu=0.3, alpha=23e-6), 0.002),)
-stiffness = laminate_plate(plies)
-thermal = laminate_thermal_resultants(plies)
-free_strain = stiffness.strains(thermal.equivalent_load(50.0))
+--8<-- "docs/examples/scripts/materials_sections.py:thermal"
 ```
 
-For applied mechanical loads `r`, solve
-`stiffness.strains(r + thermal.equivalent_load(delta_temperature))`. The existing
-stiffness methods keep their mechanical meaning. Keep both objects in the same
-frame and at the same reference surface. `thermal.rotate(angle_rad)` follows
-`stiffness.rotate`; `thermal.shift_reference_surface(d)` changes the thermal
-moment to `M_T - d*N_T`, matching the stiffness reference shift. Both preserve
-energy-conjugate engineering conventions.
+The free aluminum skin expands by $23\times10^{-6}\times50=0.00115$ in each
+in-plane direction, with zero curvature. The section law is
 
-The helper refuses missing expansion coefficients. It assumes linear elastic,
-temperature-independent properties and a uniform temperature change. It does
-not include temperature gradients, moisture expansion, or thermal buckling.
+$$\mathbf r=\mathbf C_8\boldsymbol\eta-\mathbf r_T\Delta T,\qquad
+\mathbf r_T=[\mathbf N_T,\mathbf M_T,0,0]^T,$$
+
+where $\mathbf N_T$ and $\mathbf M_T$ are force and moment resultants per kelvin.
+Laminate theory gives
+
+$$\mathbf N_T=\sum_k\bar{\mathbf Q}_k\bar{\boldsymbol\alpha}_k(z_k-z_{k-1}),\quad
+\mathbf M_T=\frac12\sum_k\bar{\mathbf Q}_k\bar{\boldsymbol\alpha}_k(z_k^2-z_{k-1}^2).$$
+
+The transformed expansion vector uses engineering shear. For applied mechanical
+loads, solve `stiffness.strains(loads + thermal.equivalent_load(delta_temperature))`.
+Full restraint sets strain to zero and therefore gives negative thermal resultants.
+Properties are linear elastic and temperature independent over the chosen increment.
+
+Keep mechanical and thermal objects in the same axes and at the same reference
+surface. `thermal.rotate(angle)` follows the stiffness rotation;
+`thermal.shift_reference_surface(d)` changes `M_T` to `M_T - d*N_T`.
+The [stiffened-cell example](homogenization.md#thermal-loading-of-a-stiffened-cell)
+adds rib expansion using the same sign convention.
+
+[Complete material and section script](../examples/scripts/materials_sections.py).

@@ -1,31 +1,93 @@
-# Validity Limits
+<span id="validity-limits"></span>
+# Modeling Choices
 
-`ValidityContext`, `ValidityThresholds`, and `ValidityReport` live in
-`tensyl.core.validity`; the checks that build a report live in
-`tensyl.core.validity_checks`. All four public names, including
-`validity_report_for_stiffness`, are available from `tensyl`.
+The equivalent plate represents the average response of a repeating skin-and-rib
+construction. Choose its inputs around the deformation you want to study:
+the rib strain model, section torsion, reference surface, and the distance over
+which the panel response changes.
 
-Equivalent-stiffness homogenization is a scale-separated approximation. It is most
-appropriate when stiffener height and pitch are small relative to curvature and
-response length scales:
+## The Affine Assumption
 
-$$
-\frac{h_s}{R_\text{min}} \ll 1,
-\qquad
-\frac{p}{R_\text{min}} \ll 1,
-\qquad
-\frac{p}{L_\text{response}} \ll 1.
-$$
+Every rib follows the prescribed panel strain and curvature through the
+[Nemeth member map](tangent-plane-homogenization.md). This gives a direct energy
+calculation from section stiffnesses. The cell has no additional displacement
+unknowns to solve.
 
-Tensyl's default warning thresholds are:
+Allowing ribs to bend and rearrange within a cell can reduce its energy at the
+same average panel strain. For compatible beam/skin kinematics,
 
 $$
-\frac{h_s}{R_\text{min}}\ge 0.05,
-\qquad
-\frac{p}{R_\text{min}}\ge 0.05,
-\qquad
-\frac{p}{L_\text{response}}\ge 0.05.
+W_\mathrm{relaxed}(\boldsymbol\eta)=\min_{\mathbf q}
+W(\boldsymbol\eta,\mathbf q)\le W(\boldsymbol\eta,\mathbf0)
+=W_\mathrm{affine}(\boldsymbol\eta).
 $$
+
+Here $\mathbf q$ contains the internal cell displacements. This explains why an
+affine model can give a higher stiffness than a model with internal relaxation.
+The comparison assumes the same members, connections, and admissible
+kinematics. Thin-skinned hexagonal and star patterns are useful candidates for
+such a comparison because member rearrangement can govern their response.
+See [Nemeth and the homogenization sources](../references.md).
+
+## Choose the Response Scales
+
+Use rib/panel height $h_s$, representative pitch $p$, minimum curvature radius
+$R_\min$, and response length $L_\mathrm{response}$ to compare the local cell
+with the larger deformation:
+
+| Ratio | Interpretation | Default warning threshold |
+| --- | --- | --- |
+| $h_s/R_\min$ | Height relative to shell curvature | 0.05 |
+| $p/R_\min$ | Pitch relative to shell curvature | 0.05 |
+| $p/L_\mathrm{response}$ | Pitch relative to response variation | 0.05 |
+
+For bending or buckling, response length might be a bending variation length or
+an estimated buckle half-wavelength. For load redistribution, use the distance
+over which the resultants change appreciably. Define it from that response,
+rather than automatically using the full part length.
+
+`ValidityContext` carries these inputs. If pitch is omitted, Tensyl uses the
+longest repeat vector or largest supplied family spacing. An explicit pitch
+takes precedence. `ValidityContext.from_surface_point(...)` supplies the local
+radius; flat points use infinity, so known height/radius and pitch/radius ratios
+are zero. `ValidityThresholds` lets the analysis select other thresholds.
+
+## Interpreting Warnings
+
+Read the numerical ratios alongside the warning codes:
+
+| Code | Meaning |
+| --- | --- |
+| `validity_context_missing` | Scale context was neither supplied nor inferred. |
+| `*_unavailable` | That ratio needs another input. |
+| `*_exceeds_threshold` | The computed ratio reached its threshold. |
+| `membrane_bending_coupling_exceeds_threshold` | Residual coupling reached its threshold, normally 0.10. |
+| `rank_deficient_tangent` | A generalized deformation has no resolved stiffness at the numerical tolerance. |
+| `negative_energy_mode` | A negative eigenvalue exceeds roundoff. |
+
+For a scale warning, check the chosen response length and compare the relevant
+response with a detailed model when cell deformation is significant. For a
+coupling warning, retain the full ABD relation; the derivation below describes
+what the diagnostic measures.
+
+## Section and Connection Idealizations
+
+Thin-wall helpers use rectangular strips and centroidal beam stiffness. Their
+usual torsion law is the freely warping open-section approximation. A hat can
+also use a skin-closed Bredt shear-flow model; the
+[section guide](../user-guide/beam-sections-and-cells.md#hats-closed-by-the-skin)
+explains the input and the shared skin-energy accounting.
+
+Laminated walls use membrane compliance to obtain an equivalent axial modulus
+and shear modulus. That reduction accepts symmetric, membrane-orthotropic walls;
+local laminate bending and anisotropic warping call for a richer section model.
+
+<span id="out-of-scope-for-the-first-model-family"></span>
+The panel stiffness supplies the constitutive part of a structural analysis.
+Use a local model for skin-bay buckling, rib crippling, joints, intersections,
+and load introduction. Use the panel or shell model for equilibrium, boundary
+conditions, imperfections, and global response. This separates the physical
+questions at the scales where they occur.
 
 ## Coupling That a Reference Shift Cannot Remove
 
@@ -88,90 +150,3 @@ Very large offsets can lose bending precision through cancellation in the
 reference-shift formula. Keep the reference near the panel when possible;
 these diagnostics do not recover digits already lost in an imported matrix.
 
-## Interpreting Warnings
-
-Warnings distinguish missing evidence from a computed concern:
-
-| Code | Meaning |
-| --- | --- |
-| `validity_context_missing` | No scale context was supplied or inferred; scale checks did not run. |
-| `h_over_R_unavailable`, `p_over_R_unavailable`, `p_over_L_response_unavailable` | Context exists, but inputs for that particular check are missing. |
-| `*_exceeds_threshold` | The ratio was computed and reached its warning threshold. |
-| `rank_deficient_tangent` | At least one generalized mode has no resolved stiffness at the numerical rank tolerance. |
-| `negative_energy_mode` | The tangent has a negative eigenvalue beyond roundoff. |
-
-`EnergyHomogenizer` fills an omitted pitch from the longest repeat vector in
-`cell.geometry`. For `stiffener_family_cell`, it uses the largest family
-spacing. This is a conservative cell-size estimate, not a mode-dependent
-wavelength. An explicit `ValidityContext.pitch` always wins. Height, curvature,
-and response length still need context; an inferred pitch alone cannot run any
-of the scale-separation checks.
-
-Use `ValidityContext.from_surface_point(point, characteristic_height=...,
-response_length=...)` in a field's validity factory to take the minimum radius
-from its `SurfacePoint`. Flat points supply infinity, giving zero height/radius
-and pitch/radius ratios when those lengths are known.
-
-These warnings are prompts for engineering review, not certification criteria.
-An unavailable check is not a failed check, and absence of a warning does not
-prove the assumptions hold.
-
-So a warning fired — now what? In practice:
-
-- re-read the assumptions and confirm the geometry actually matches a
-  scale-separated model (is pitch really small next to your response length?);
-- compare the homogenized result against a detailed finite-element model of the
-  same geometry and loading before trusting it downstream;
-- or change the model family entirely if the separation of scales simply does
-  not hold.
-
-Those checks establish whether the approximation holds for your geometry.
-This is the boundary drawn in
-["What Tensyl Is Not"](../index.md).
-
-## The Affine Assumption
-
-The homogenizer makes every rib follow the smeared panel strain through
-Nemeth's first-approximation member map. It adds the resulting skin and member
-energies without solving for cell-scale displacements. See
-[Nemeth, equations 30–39](https://ntrs.nasa.gov/citations/20110004039) and the
-[implemented strain map](tangent-plane-homogenization.md).
-
-That constraint can make a panel too stiff. In a beam/skin model where the
-affine deformation is admissible, allowing internal displacements to relax
-can only lower the minimum energy at fixed macroscopic strain:
-
-$$
-W_\mathrm{relaxed}(\boldsymbol\eta)
-=\min_{\mathbf q} W(\boldsymbol\eta,\mathbf q)
-\le W(\boldsymbol\eta,\mathbf 0)=W_\mathrm{affine}(\boldsymbol\eta).
-$$
-
-This is the Voigt-like upper-bound interpretation of the affine model. It is
-not a certified bound against every shell or solid model: that comparison
-also depends on compatible kinematics, member assumptions, joints, and how
-skin and ribs connect. Hexagonal and star patterns with thin skins deserve
-particular care because member bending and cell rearrangement can make their
-in-plane response much softer than the affine prediction. A small pitch ratio
-does not test this limitation; compare the relevant modes with a model that
-allows that relaxation.
-
-Section assumptions matter too. Tensyl's thin-wall helpers supply open-section
-torsion. A hat closed by its attached skin forms a closed cell and can have a
-very different torsional stiffness. Read
-[Which J Should Be Used?](../validation/sp8007-reconciliation.md#which-j-should-be-used)
-before using an open hat section for that panel.
-
-## Out of Scope for the First Model Family
-
-The current tangent-plane family does not model:
-
-- local skin buckling between stiffeners;
-- stiffener crippling;
-- joints, welds, fasteners, or bondlines;
-- stiffener intersection stress concentrations;
-- local load introduction;
-- geometric imperfections;
-- nonlinear material response;
-- nonlinear postbuckling;
-- response modes with wavelength comparable to stiffener pitch.

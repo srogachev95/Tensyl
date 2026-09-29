@@ -50,7 +50,8 @@ nav:
       - Modeling Choices: theory/validity.md
   - Building a Model:
       - Materials and Laminates: user-guide/materials-and-laminates.md
-      - Sections and Rib Patterns: user-guide/beam-sections-and-cells.md
+      - Rib Sections: user-guide/beam-sections-and-cells.md
+      - Rib Patterns: user-guide/rib-patterns.md
       - Surfaces and Fields: user-guide/geometry-and-fields.md
   - Using the Results:
       - Loads, Mass, and Reports: user-guide/homogenization.md
@@ -74,4 +75,5 @@ nav:
           - Homogenizers: api/homogenizers.md
           - Geometry and Fields: api/geometry-and-fields.md
           - Files: api/io.md
+          - File Format: api/file-format.md
           - Solver Adapters: api/adapters.md

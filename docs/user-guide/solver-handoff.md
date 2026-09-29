@@ -1,22 +1,18 @@
 # FEM Solver Handoff
 
-Tensyl computes an equivalent ABD stiffness. A finite-element solver consumes
-that stiffness through whatever shell-section machinery it provides. Sometimes
-that machinery is a reduced orthotropic material. Sometimes it is a
-preintegrated shell stiffness. Sometimes it is a solver-specific section option
-that benefits from a quick patch check before it joins the serious model.
+Export the equivalent stiffness into the shell-section definition used by your
+solver. A direct section carries the full ABD relation; a reduced material
+route fits the membrane compliance at a chosen shell thickness.
 
-This page describes practical handoff routes for NX Nastran, ANSYS, and Abaqus.
-A YAML or JSON artifact from [External Workflows](external-workflows.md) is still
-a useful traceability record: it keeps the stiffness, units, validity warnings,
-and assumptions together while the solver input gets the particular syntax it
-needs.
+This page covers Abaqus, ANSYS, and NX Nastran. Save the
+[result artifact](external-workflows.md) alongside the solver input to keep its
+units, frame, assumptions, and report.
 
 ## Before Solver Input
 
 Tensyl's canonical generalized strain and resultant order is defined in
-[Equivalent-Stiffness Mechanics](../theory/equivalent-stiffness.md). Treat that
-ordering as part of the data contract, not as a formatting preference.
+[Equivalent-Stiffness Mechanics](../theory/equivalent-stiffness.md). Use the same
+ordering for the solver section and its applied strain vector.
 
 For solvers that take a six-by-six shell section stiffness, the part to hand off
 is:
@@ -75,8 +71,7 @@ stiffness is nearly uncoupled.
 
 Choose an effective shell thickness `t_eff`. In this context, `t_eff` is the
 thickness that the downstream shell property will use with the reduced material
-constants. It is the bookkeeping thickness for the solver handoff, not something
-Tensyl can discover from the ABD matrix alone.
+constants. Record it with the solver property so the reduced constants can be reproduced.
 
 The reduction forms:
 
@@ -100,10 +95,8 @@ G_{12} = \frac{1}{S_{66}},
 \nu_{21} = -\frac{S_{12}}{S_{22}}.
 $$
 
-!!! note "What the reduced route keeps"
-    This preserves the chosen membrane compliance. It does not generally
-    preserve the bending block, eccentric stiffener coupling, or transverse-shear
-    stiffness. If those are carrying the physics, use a richer workflow.
+This reduction preserves the membrane compliance. Use a direct section when
+the analysis needs independently specified `B`, `D`, or `As` blocks.
 
 Use the reduced route when the terms it discards are intentionally negligible:
 
@@ -114,7 +107,7 @@ Use the reduced route when the terms it discards are intentionally negligible:
   material and thickness.
 
 ```python
-props = result.reduced_orthotropic_properties(t_eff=0.080)
+props = result.reduced_orthotropic_properties(t_eff=0.002)
 
 print(props.E1, props.E2, props.G12, props.nu12)
 print(props.warnings)
@@ -165,11 +158,6 @@ represented as a laminate stack and you want the solver to integrate ply
 stiffnesses. An unsymmetric laminate can produce membrane-bending coupling, but
 it is still a laminate model, not an arbitrary ABD matrix fit.
 
-!!! note "Good first model"
-    `MAT8` plus `PSHELL` is a useful first model when membrane behavior is the
-    main target. It is not meant to preserve every term of a general stiffened
-    ABD matrix.
-
 ### Higher Fidelity: `PSHELL` Material References
 
 The `PSHELL` card has separate material references for membrane, bending,
@@ -187,13 +175,6 @@ sequence and element family you plan to use:
    output is available.
 4. Run a one-element patch model with imposed membrane strains and curvatures,
    then compare recovered resultants with `K_ABD @ eta`.
-
-!!! warning "Verify the section stiffness"
-    `MID1` through `MID4` can be a useful high-fidelity path, but it is not a
-    universal "paste the ABD matrix here" slot. If the recovered section
-    stiffness does not match the Tensyl matrix within the tolerance needed for
-    the analysis, keep the NX Nastran model reduced and document the
-    approximation.
 
 ## ANSYS
 
@@ -289,16 +270,14 @@ stiffness, second-direction stiffness, and coupling term fields.
 
 Use the adapter to write those numbers without hand-packing them:
 
-```python
-from tensyl.adapters import abaqus_shell_general_section
+Continue with `stiffness` from the [family workflow](rib-patterns.md#independent-families):
 
-deck_fragment = abaqus_shell_general_section(
-    stiffness, elset="panel", orientation="tensyl_axes"
-)
+```python
+--8<-- "docs/examples/scripts/panel_workflows.py:abaqus"
 ```
 
-Here `stiffness` is the local `ABDStiffness`; the element set and orientation
-must already exist in the solver model. Align its section axes and positive
+Here `stiffness` is the local `ABDStiffness`. Define the `PANEL` element set
+in the solver model; pass `orientation="name"` when using a named orientation. Align its section axes and positive
 normal with the Tensyl frame, and place the shell reference surface where the
 stiffness was calculated. The adapter applies no second offset or rotation.
 
@@ -328,8 +307,7 @@ element and analysis procedure you intend to use.
 For a reduced workflow, define an engineering-constants material and use
 `*SHELL SECTION` or a material-based `*SHELL GENERAL SECTION`. That is convenient
 when `B = 0` and the ABD stiffness behaves like a conventional orthotropic
-shell. It is not a substitute for the direct 21-entry stiffness when stiffener
-eccentricity coupling matters.
+shell. Use the direct 21-entry stiffness for eccentricity coupling.
 
 ## Patch Check
 
@@ -347,30 +325,28 @@ check in the target solver:
 4. For transverse shear flexible elements, apply independent shear checks against
    `As`.
 
-!!! tip "Small model, large leverage"
-    The patch check catches axis swaps, offset mistakes, solver-specific scaling,
-    and the occasional perfectly formatted wrong number. A single element is
-    cheap; a bad coordinate system can get expensive.
+The patch check makes axis, reference-surface, and scaling differences visible
+before the section is used throughout a larger model.
 
 Next: [SP-8007 Data Handoff](sp8007-data-handoff.md).
 
 ## References
 
-- Abaqus 2024, `*SHELL GENERAL SECTION`, direct stiffness data lines and
+- Abaqus 2025, `*SHELL GENERAL SECTION`, direct stiffness data lines and
   orientation parameter:
-  <https://docs.software.vt.edu/abaqusv2024/English/SIMACAEKEYRefMap/simakey-r-shellgeneralsection.htm>.
-- Abaqus 2024, `*TRANSVERSE SHEAR STIFFNESS`:
-  <https://docs.software.vt.edu/abaqusv2024/English/SIMACAEKEYRefMap/simakey-r-transverseshearstiffness.htm>.
+  <https://docs.software.vt.edu/abaqusv2025/English/SIMACAEKEYRefMap/simakey-r-shellgeneralsection.htm>.
+- Abaqus 2025, `*TRANSVERSE SHEAR STIFFNESS`:
+  <https://docs.software.vt.edu/abaqusv2025/English/SIMACAEKEYRefMap/simakey-r-transverseshearstiffness.htm>.
 - ANSYS 2024 R2 command reference, `SECTYPE`, shell section considerations for
   `GENS`:
   <https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SECTYPE.html>.
-- ANSYS command reference mirror, `SSPA`, `SSPB`, `SSPD`, and `SSPE` command
+- ANSYS 2024 R2 command reference, `SSPA`, `SSPB`, `SSPD`, and `SSPE` command
   field layouts:
-  <https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPA.html>,
-  <https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPB.html>,
-  <https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPD.html>,
+  <https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SSPA.html>,
+  <https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SSPB.html>,
+  <https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SSPD.html>,
   and
-  <https://www.mm.bme.hu/~gyebro/files/ans_help_v182/ans_cmd/Hlp_C_SSPE.html>.
+  <https://ansyshelp.ansys.com/public/Views/Secured/corp/v242/en/ans_cmd/Hlp_C_SSPE.html>.
 - Siemens NX Nastran Quick Reference Guide, `MAT8`, `PSHELL`, `PCOMP`, `PCOMPG`,
   and `MAT2` Bulk Data entries. Use the guide installed with the NX Nastran
   release being used for analysis.

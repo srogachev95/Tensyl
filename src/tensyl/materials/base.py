@@ -1,4 +1,4 @@
-"""Material value objects for Phase 1 plate stiffnesses."""
+"""Elastic materials for plate, laminate, and rib stiffness calculations."""
 
 from __future__ import annotations
 
@@ -17,8 +17,8 @@ class IsotropicMaterial:
     Attributes:
         E: Positive Young's modulus.
         nu: Poisson ratio satisfying ``-1 < nu < 0.5``.
-        density: Optional nonnegative mass density. When present, plate
-            builders can report areal mass.
+        density: Optional nonnegative mass per volume (kg/m³ for SI inputs). Plate
+            builders use it to calculate mass per area.
         alpha: Optional thermal expansion per temperature increment; None is unknown.
     """
 
@@ -86,7 +86,7 @@ class OrthotropicPlyMaterial:
             symmetry.
         G13: Positive transverse-shear modulus in the 1-n plane.
         G23: Positive transverse-shear modulus in the 2-n plane.
-        density: Optional nonnegative mass density.
+        density: Optional nonnegative mass per volume (kg/m³ for SI inputs).
         alpha1: Optional expansion along material direction 1, per temperature increment.
         alpha2: Optional expansion along material direction 2, per temperature increment.
     """
