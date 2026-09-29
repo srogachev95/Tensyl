@@ -34,9 +34,11 @@ away from the reference surface. For the `e1` ribs, with section area $A_r$,
 centroidal second moment $I_y$, spacing $s$, and offset $z$:
 
 $$
-\Delta A_{11}=\frac{EA_r}{s},\qquad
-\Delta B_{11}=\frac{EA_rz}{s},\qquad
-\Delta D_{11}=\frac{E(I_y+A_rz^2)}{s}.
+\begin{aligned}
+\Delta A_{11}&=\frac{EA_r}{s},\\
+\Delta B_{11}&=\frac{EA_rz}{s},\\
+\Delta D_{11}&=\frac{E(I_y+A_rz^2)}{s}.
+\end{aligned}
 $$
 
 These are the aligned-member terms in the

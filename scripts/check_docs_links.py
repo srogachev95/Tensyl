@@ -22,6 +22,8 @@ class Page(HTMLParser):
             self.ids.add(identifier)
         if tag == "a" and (href := values.get("href")):
             self.links.append(href)
+        if tag in {"img", "script"} and (src := values.get("src")):
+            self.links.append(src)
 
 
 def check(site: Path) -> list[str]:

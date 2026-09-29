@@ -1,369 +1,74 @@
-<img src="docs/assets/brand/tensyl-logo.jpeg" alt="Tensyl logo" width="420">
+<img src="https://raw.githubusercontent.com/srogachev95/Tensyl/main/docs/assets/brand/tensyl-logo.jpeg" alt="Tensyl logo" width="300">
 
 # Tensyl
 
-Tensyl is a Python scientific-computing library for equivalent-stiffness
-homogenization of stiffened plates and shells.
+**Equivalent stiffness for stiffened plates and shells, in Python.**
 
-The library builds local ABD and transverse-shear stiffness laws for skins,
-laminates, stiffened tangent-plane cells, and geometry-bound stiffness fields. It
-keeps conventions, diagnostics, validity data, and serialization metadata
-explicit.
+Describe a skin, rib sections, and a repeating pattern. Tensyl combines their
+strain energy into plate stiffness blocks for stretching (`A`), coupling (`B`),
+bending (`D`), and transverse shear (`As`). Use the result to calculate strains,
+recover rib forces, compare stiffness and mass, or prepare a shell analysis.
 
-The public Python package name is `tensyl`.
-
-## Mechanics Lineage
-
-Tensyl implements a documented equivalent-plate tradition in Python. The first
-stiffened-cell homogenization family is based on Michael P. Nemeth's NASA
-treatise, *A Treatise on Equivalent-Plate Stiffnesses for Stiffened
-Laminated-Composite Plates and Plate-Like Lattices* (NASA/TP-2011-216882), which
-collects direct equilibrium-compatibility and strain-energy formulations for
-stiffened laminated plates and plate-like lattices.
-
-The stiffness notation follows classical laminated plate and first-order
-shear-deformation theory: `A`, `B`, `D`, and `As` are stored together as one
-canonical `8 x 8` tangent. The documentation lists the mechanics sources in
-[References](docs/references.md) and writes out the governing equations in
-[Equivalent-Stiffness Mechanics](docs/theory/equivalent-stiffness.md).
+[Engineering handbook](https://srogachev95.github.io/Tensyl/) ·
+[Worked panel](docs/getting-started/first-abd-stiffness.md) ·
+[Verification](docs/validation/index.md) · [Changelog](CHANGELOG.md)
 
 ## Install
+
+Python 3.12 or later:
 
 ```bash
 uv add tensyl
 ```
 
-or:
+Or use `python -m pip install tensyl` in an active environment.
 
-```bash
-pip install tensyl
-```
+## Start with a Skin
 
-For local development from this repository:
-
-```bash
-uv sync --dev
-```
-
-## Library Capabilities
-
-**Materials and skins**
-
-- isotropic plate skins with transverse shear;
-- orthotropic ply materials;
-- bottom-to-top laminate stacks with ply angle, thickness, and density;
-- canonical `A`, `B`, `D`, `As`, and `C8` stiffness storage.
-
-**Stiffener sections**
-
-- direct `BeamSection` input for `EA`, `EI`, `GJ`, and shear stiffness products;
-- geometry-derived open thin-wall sections for blade, tee, zee, channel, and hat
-  stiffeners;
-- custom `ThinWallSegment` layouts for open thin-wall section geometry.
-
-**Cell and pattern libraries**
-
-- unidirectional and orthogrid cells;
-- braced orthogrid cells;
-- equilateral isogrid cells;
-- isosceles triangle, Kagome, hexagonal, and star pattern cells;
-- sandwich-core variants;
-- graph-defined custom unit cells through `CellNode`, `CellEdge`, and
-  `graph_unit_cell`.
-
-**Homogenization and review data**
-
-- `EnergyHomogenizer` for every cell, including families of parallel stiffeners
-  built with `stiffener_family_cell`;
-- `HomogenizationResult` with stiffness, diagnostics, assumptions, and validity;
-- scale-separation checks for stiffener height, pitch, curvature radius, response
-  length, and membrane-bending coupling.
-
-**Geometry and fields**
-
-- flat plates, cylinders, spheres, spherical caps, conical frustums, and
-  ellipsoids;
-- constant stiffness fields;
-- pointwise homogenized stiffness fields with local cell factories;
-- sampled stiffness atlases with bilinear interpolation in canonical `C8` storage.
-
-**External handoff**
-
-- YAML and JSON serialization for `ABDStiffness` and `HomogenizationResult`;
-- schema versioning, unit labels, diagnostics, assumptions, and validity metadata;
-- solver-neutral artifacts for downstream tools.
-
-## Example 1: Skin-Only ABD Stiffness
-
-An isotropic skin about its mid-surface has zero membrane-bending coupling in
-the `B` block.
+Calculate a 2 mm aluminum plate using metres, newtons, and kilograms:
 
 ```python
 from tensyl import IsotropicMaterial, isotropic_plate
 
-aluminum = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-stiffness = isotropic_plate(aluminum, thickness=0.080)
-
-print(stiffness.A)   # membrane stiffness
-print(stiffness.B)   # membrane-bending coupling
-print(stiffness.D)   # bending stiffness
-print(stiffness.As)  # transverse-shear stiffness
+aluminum = IsotropicMaterial(E=70e9, nu=0.33, density=2700)
+skin = isotropic_plate(aluminum, thickness=0.002)
 ```
 
-The canonical tangent is an `8 x 8` matrix. The named blocks are views into that
-operator:
+The skin has membrane stiffness `A11 = 157.109 MN/m`, bending stiffness
+`D11 = 52.3697 N m`, and areal mass `5.4 kg/m²`.
+The [walkthrough](docs/getting-started/first-homogenized-cell.md) adds blade ribs,
+explains the resulting stiffness and mass, then applies a membrane load.
 
-- `A`: membrane stiffness;
-- `B`: membrane-bending coupling;
-- `D`: bending and twisting stiffness;
-- `As`: transverse-shear stiffness.
+## Build and Use a Panel Model
 
-Tensyl keeps stiffness as the first-class result. Scalar equivalent moduli are
-derived interpretations, not the primary object.
+- **Materials:** isotropic skins, orthotropic laminates, stacking notation,
+  density, and uniform-temperature thermal resultants.
+- **Ribs:** beam stiffness input, geometry-derived thin-wall sections,
+  laminated walls, and open or skin-closed hat torsion.
+- **Patterns:** named grids, sandwich cores, independent rib families,
+  custom graph cells, and drawn-versus-modeled rib-density checks.
+- **Analysis workflows:** coupled load-to-strain solves, member forces,
+  rotations, reference shifts, and stiffness/mass sweeps.
+- **Shell properties:** constant or varying fields on plates, cylinders,
+  spheres, cones, and ellipsoids; sampled stiffness atlases.
+- **Handoff:** JSON/YAML artifacts, Abaqus general-section keywords,
+  and orthotropic-cylinder coefficient extraction.
 
-## Example 2: Composite Laminate
-
-`laminate_plate` builds a plate stiffness from ply material, ply thickness, and
-ply angle. The stack is supplied bottom-to-top.
-
-```python
-import math
-
-from tensyl import OrthotropicPlyMaterial, Ply, laminate_plate
-
-carbon_epoxy = OrthotropicPlyMaterial(
-    E1=18.0e6,
-    E2=1.4e6,
-    G12=0.75e6,
-    nu12=0.28,
-    G13=0.75e6,
-    G23=0.50e6,
-    density=0.058,
-)
-
-stiffness = laminate_plate(
-    (
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.5 * math.pi),
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
-    )
-)
-
-assert stiffness.C8.shape == (8, 8)
-assert abs(stiffness.B).max() < 1.0e-9
-```
-
-The two zero-degree plies make the local `e1` direction stiffer than `e2`. The
-symmetric stack keeps `B` near zero, so membrane strain and bending curvature are
-not coupled by the chosen reference surface.
-
-## Example 3: Geometry-Derived Orthogrid
-
-Thin-wall section helpers compute centroidal beam-section stiffnesses from
-section geometry. Those sections can be used directly in cell constructors.
-Here the hat stiffener runs along `e1`, the blade rib runs along `e2`, and the
-two pitch values give the repeat-box dimensions along those same directions.
-
-```python
-from tensyl import (
-    EnergyHomogenizer,
-    IsotropicMaterial,
-    blade_section,
-    hat_section,
-    isotropic_plate,
-    orthogrid_cell,
-)
-
-aluminum = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-skin_thickness = 0.080
-skin = isotropic_plate(aluminum, thickness=skin_thickness)
-
-stringer = hat_section(
-    material=aluminum,
-    web_height=0.50,
-    web_thickness=0.050,
-    crown_width=0.40,
-    crown_thickness=0.050,
-    flange_width=0.20,
-    flange_thickness=0.050,
-)
-
-rib = blade_section(
-    material=aluminum,
-    height=0.50,
-    thickness=0.050,
-    shear_correction_y=5.0 / 6.0,
-    shear_correction_z=5.0 / 6.0,
-)
-
-skin_face_offset = 0.5 * skin_thickness
-cell = orthogrid_cell(
-    skin=skin,
-    e1_section=stringer.section,
-    e2_section=rib.section,
-    e1_pitch=8.0,
-    e2_pitch=6.0,
-    e1_axial_eccentricity=skin_face_offset + stringer.centroid_z,
-    e2_axial_eccentricity=skin_face_offset + rib.centroid_z,
-)
-
-result = EnergyHomogenizer().compute(cell)
-
-print(result.stiffness.A)
-print(result.stiffness.B)
-print(result.diagnostics)
-print(result.validity.warnings)
-```
-
-The result contains the homogenized stiffness, diagnostics, modeling assumptions,
-and validity warnings. Nonzero `B` follows from eccentric stiffeners relative to
-the chosen reference surface.
-
-## Example 4: Custom Graph Cell
-
-`graph_unit_cell` defines a tangent-plane cell from local nodes, edges, section
-properties, eccentricities, and cell area.
-
-```python
-from tensyl import (
-    BeamSection,
-    CellEdge,
-    CellNode,
-    CellVector,
-    EnergyHomogenizer,
-    graph_unit_cell,
-)
-
-section = BeamSection(
-    EA=3.2e6,
-    EIy=2.4e4,
-    EIz=6.5e3,
-    GJ=4.0e3,
-    kGAy=1.1e6,
-    kGAz=0.9e6,
-)
-
-custom = graph_unit_cell(
-    area=48.0,
-    skin=skin,
-    nodes=(
-        CellNode(0.0, 0.0),
-        CellNode(6.0, 0.0),
-        CellNode(0.0, 8.0),
-    ),
-    edges=(
-        CellEdge(0, 1, section, axial_eccentricity=0.45, family="e1"),
-        CellEdge(0, 2, section, axial_eccentricity=0.45, family="e2"),
-    ),
-    repeat_vectors=(CellVector(6.0, 0.0), CellVector(0.0, 8.0)),
-    boundary=(0, 1, 2),
-)
-
-custom_result = EnergyHomogenizer().compute(custom)
-```
-
-The graph constructor converts the node and edge layout into beam members before
-homogenization. Supplying repeat vectors also keeps the coordinates needed to
-draw the cell in `custom.geometry`.
-
-## Example 5: Stiffness on a Shell Surface
-
-Geometry is separate from constitutive stiffness. A cylinder supplies local
-frames and curvature context; it does not alter the numeric ABD matrix in a
-constant stiffness field.
-
-```python
-from tensyl import ConstantStiffnessField, Cylinder
-
-surface = Cylinder(radius=120.0, length=300.0)
-field = ConstantStiffnessField(result.stiffness)
-
-stiffness_at_midbay = field.stiffness_at(surface, 150.0, 0.0)
-
-assert stiffness_at_midbay.frame.label == "cylinder"
-assert stiffness_at_midbay.C8.shape == (8, 8)
-```
-
-Variable structure can be represented with `HomogenizedStiffnessField`, which
-rebuilds the local cell at each surface point, or with `ABDAtlas`, which
-interpolates sampled stiffnesses.
-
-## Example 6: Export
-
-`tensyl.io` serializes stiffnesses and homogenization results to solver-neutral
-YAML or JSON artifacts.
-
-```python
-from pathlib import Path
-
-from tensyl.io import read_yaml, to_yaml, write_yaml
-
-text = to_yaml(
-    result,
-    units={"length": "in", "force": "lbf", "stress": "psi"},
-)
-
-write_yaml(
-    result,
-    Path("stiffness.yaml"),
-    units={"length": "in", "force": "lbf", "stress": "psi"},
-)
-
-same_result = read_yaml(Path("stiffness.yaml"))
-```
-
-Unit labels ride along with the export as metadata; Tensyl never inspects or
-converts the values. Whatever consistent system you put in is the system you get
-back.
-
-## Scope
-
-Tensyl forms and audits equivalent ABD stiffnesses. It is not a certification
-buckling solver, a local stress recovery tool, or a substitute for detailed
-finite-element analysis, and its tangent-plane homogenization relies on scale
-separation between stiffener pitch, stiffener height, local curvature radius, and
-the structural response length of interest.
-
-Local buckling, crippling, joints, cutouts, load introduction, nonlinear
-postbuckling, and final allowables stay outside the current package scope.
-
-## Documentation Map
-
-The formal documentation is built with MkDocs from `docs/`.
-
-- [Getting started](docs/getting-started/installation.md) covers setup and the
-  shortest path to an ABD stiffness.
-- [Background](docs/background/motivation.md) explains the engineering motivation
-  and terminology.
-- [Theory](docs/theory/equivalent-stiffness.md) documents ABD stiffnesses,
-  conventions, tangent-plane homogenization, and validity limits.
-- [User guide](docs/user-guide/materials-and-laminates.md) covers materials,
-  cells, sections, geometry, fields, and external handoff.
-- [Examples](docs/examples/skin-only.md) provides worked examples and executable
-  snippets.
-- [Validation](docs/validation/index.md) separates completed source checks from
-  the planned independent FEM program.
-- [API reference](docs/api/core.md) exposes the public Python interfaces.
-- [References](docs/references.md) lists the external sources used by the
-  mechanics documentation.
-
-## Development
-
-This repository uses `uv` for dependency management and command execution.
+These capabilities describe current `main`, including development features
+after release 0.3.1. To run all handbook examples from this checkout:
 
 ```bash
-uv sync --dev
-uv run ruff check .
-uv run ruff format --check .
-uv run ty check
-uv run pytest
-uv run mkdocs build --strict
+uv sync --group dev
+uv run python docs/examples/scripts/walkthrough.py
 ```
 
-Release notes are tracked in [CHANGELOG.md](CHANGELOG.md), and contribution
-process details are in [CONTRIBUTING.md](CONTRIBUTING.md).
+## Mechanics and Verification
 
-## Documentation Authoring
+The homogenizer follows Nemeth's equivalent-plate energy method. The handbook
+explains [the mechanics](docs/theory/tangent-plane-homogenization.md),
+[modeling choices](docs/theory/validity.md), and [sources](docs/references.md).
+Verification includes independent grid-formula checks, SP-8007 reconciliation,
+and a retained CalculiX skin membrane/bending comparison.
 
-Documentation math uses `$...$` for inline equations and `$$...$$` for display
-equations so the same Markdown renders in Obsidian and MkDocs.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development and checks.
+Licensed under the [MIT license](LICENSE).

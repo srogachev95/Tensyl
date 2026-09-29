@@ -8,6 +8,11 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Refresh the README, glossary, source references, and verification narrative;
+  document the retained CalculiX skin ABD6 comparison and correct the FEM
+  evidence overview. Convert field-map examples to SI, reuse executable examples
+  in documentation tests, and check public documentation links in CI.
+
 - Introduce an engineering handbook with a connected SI panel walkthrough,
   executable source snippets, checked output tables, and diagrams of the
   repeat cell, reference surface, and plate deformation modes.

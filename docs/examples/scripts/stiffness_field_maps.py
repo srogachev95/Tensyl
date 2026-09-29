@@ -96,7 +96,7 @@ def _style_colorbar(colorbar: Any) -> None:
 
 
 def scaled_section(section: BeamSection, scale: float, *, label: str) -> BeamSection:
-    """Return a uniformly scaled beam section for a local design variation."""
+    """Scale section stiffness products and mass by an explicit design factor."""
 
     return BeamSection(
         EA=section.EA * scale,
@@ -106,45 +106,48 @@ def scaled_section(section: BeamSection, scale: float, *, label: str) -> BeamSec
         kGAy=None if section.kGAy is None else section.kGAy * scale,
         kGAz=None if section.kGAz is None else section.kGAz * scale,
         EIyz=section.EIyz * scale,
-        metadata={**section.metadata, "showpiece_scale": scale, "showpiece_label": label},
+        mass_per_length=(
+            None if section.mass_per_length is None else section.mass_per_length * scale
+        ),
+        metadata={**section.metadata, "example_scale": scale, "example_label": label},
     )
 
 
-def cylinder_design_at(x: float, length: float = 240.0) -> dict[str, float]:
+def cylinder_design_at(x: float, length: float = 6.0) -> dict[str, float]:
     """Axially varying wall definition for the practical cylinder example."""
 
     station = x / length
     taper = 0.5 - 0.5 * math.cos(math.pi * station)
     reinforcement_band = math.exp(-(((station - 0.58) / 0.13) ** 2))
     return {
-        "skin_thickness": 0.070 + 0.030 * taper + 0.018 * reinforcement_band,
-        "e1_pitch": 8.4 - 1.5 * taper + 0.8 * reinforcement_band,
-        "e2_pitch": 5.2 + 2.1 * station,
+        "skin_thickness": 0.00175 + 0.00075 * taper + 0.00045 * reinforcement_band,
+        "e1_pitch": 0.21 - 0.0375 * taper + 0.02 * reinforcement_band,
+        "e2_pitch": 0.13 + 0.0525 * station,
         "stringer_scale": 1.00 + 0.26 * reinforcement_band,
         "rib_scale": 0.92 + 0.18 * taper,
     }
 
 
 def build_cylinder_field() -> tuple[Cylinder, HomogenizedStiffnessField]:
-    """Build a 100 inch diameter cylinder with axially varying orthogrid layout."""
+    """Build a 2.5 m diameter cylinder with axially varying orthogrid layout."""
 
-    surface = Cylinder(radius=50.0, length=240.0, label="variable_orthogrid_cylinder")
-    material = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
+    surface = Cylinder(radius=1.25, length=6.0, label="variable_orthogrid_cylinder")
+    material = IsotropicMaterial(E=70e9, nu=0.33, density=2700)
     stringer = hat_section(
         material=material,
-        web_height=1.0,
-        web_thickness=0.060,
-        crown_width=0.55,
-        crown_thickness=0.060,
-        flange_width=0.24,
-        flange_thickness=0.060,
+        web_height=0.025,
+        web_thickness=0.0015,
+        crown_width=0.01375,
+        crown_thickness=0.0015,
+        flange_width=0.006,
+        flange_thickness=0.0015,
         shear_correction_y=5.0 / 6.0,
         shear_correction_z=5.0 / 6.0,
     )
     rib = blade_section(
         material=material,
-        height=1.0,
-        thickness=0.065,
+        height=0.025,
+        thickness=0.001625,
         shear_correction_y=5.0 / 6.0,
         shear_correction_z=5.0 / 6.0,
     )
@@ -177,10 +180,10 @@ def build_cylinder_field() -> tuple[Cylinder, HomogenizedStiffnessField]:
     def validity_context(point: Any, cell: CanonicalUnitCell) -> ValidityContext:
         pitch = max(cell.metadata["e1_pitch"], cell.metadata["e2_pitch"])
         return ValidityContext(
-            characteristic_height=1.0,
+            characteristic_height=0.025,
             pitch=pitch,
             min_radius=point.min_radius,
-            response_length=60.0,
+            response_length=1.5,
         )
 
     return (
@@ -199,7 +202,7 @@ def sample_cylinder(x_count: int = 52, theta_count: int = 56) -> dict[str, np.nd
     """Sample the variable cylinder stiffness field for plotting or tests."""
 
     surface, field = build_cylinder_field()
-    x_values = np.linspace(0.0, 240.0, x_count)
+    x_values = np.linspace(0.0, surface.length, x_count)
     theta_values = np.linspace(0.0, 2.0 * math.pi, theta_count)
     x_grid, theta_grid = np.meshgrid(x_values, theta_values, indexing="ij")
 
@@ -227,7 +230,7 @@ def sample_cylinder(x_count: int = 52, theta_count: int = 56) -> dict[str, np.nd
         x[index], y[index], z[index] = point.position
         a11[index] = stiffness.A[0, 0]
         d11[index] = stiffness.D[0, 0]
-        coupling[index] = np.nan if validity is None else validity.coupling_ratios["B_fro"]
+        coupling[index] = np.nan if validity is None else validity.coupling_ratios["B_residual"]
         p_over_r[index] = np.nan if validity is None else validity.p_over_R
         p_over_l[index] = np.nan if validity is None else validity.p_over_L_response
         thickness[index] = design["skin_thickness"]
@@ -252,8 +255,8 @@ def sample_cylinder(x_count: int = 52, theta_count: int = 56) -> dict[str, np.nd
         "e1_pitch": e1_pitch,
         "e2_pitch": e2_pitch,
         "warning_count": warning_count,
-        "radius": np.array(50.0),
-        "stiffener_height": np.array(1.0),
+        "radius": np.array(1.25),
+        "stiffener_height": np.array(0.025),
     }
 
 
@@ -301,7 +304,7 @@ def render_cylinder_map(
     ax_surface.set_box_aspect((240.0, 100.0, 100.0), zoom=1.2)
     ax_surface.set_axis_off()
     _style_3d_axes(ax_surface)
-    ax_surface.set_title("100 inch diameter cylinder colored by local $A_{11}$", y=0.94, pad=0)
+    ax_surface.set_title("2.5 m diameter cylinder colored by local $A_{11}$", y=0.94, pad=0)
     colorbar = fig.colorbar(
         cm.ScalarMappable(norm=norm, cmap=STIFFNESS_CMAP),
         ax=ax_surface,
@@ -345,9 +348,9 @@ def render_cylinder_map(
         label="e2 cell span",
     )
     ax_inputs.set_title("Wall inputs along the barrel")
-    ax_inputs.set_xlabel("axial station, in")
-    ax_inputs.set_ylabel("skin thickness, in")
-    ax_pitch.set_ylabel("orthogrid pitch, in")
+    ax_inputs.set_xlabel("axial station, m")
+    ax_inputs.set_ylabel("skin thickness, m")
+    ax_pitch.set_ylabel("orthogrid pitch, m")
     ax_inputs.grid(True, alpha=0.55)
     input_lines = ax_inputs.get_lines() + ax_pitch.get_lines()
     ax_inputs.legend(
@@ -378,7 +381,7 @@ def render_cylinder_map(
         coupling / np.nanmax(coupling),
         color=LINE_COLORS["coupling"],
         linewidth=1.9,
-        label="coupling ratio (scaled)",
+        label="residual coupling (scaled)",
     )
     ax_validity = ax_response.twinx()
     ax_validity.plot(
@@ -394,10 +397,10 @@ def render_cylinder_map(
         linestyle="--",
         linewidth=1.2,
         alpha=0.7,
-        label="$p/R$ caution (0.05)",
+        label="$p/R$ threshold (0.05)",
     )
     ax_response.set_title("Equivalent stiffness response")
-    ax_response.set_xlabel("axial station, in")
+    ax_response.set_xlabel("axial station, m")
     ax_response.set_ylabel("normalized stiffness")
     ax_validity.set_ylabel(r"pitch / radius, $p/R$")
     ax_response.grid(True, alpha=0.55)
@@ -421,7 +424,7 @@ def render_cylinder_map(
         0.50,
         0.02,
         "Skin thickness and orthogrid pitch vary by axial station, so the local ABD wall "
-        "law is recomputed at each station rather than assumed constant.",
+        "law is recomputed at each station.",
         ha="center",
         fontsize=8.7,
         color=CAPTION_COLOR,
@@ -432,15 +435,15 @@ def render_cylinder_map(
 
 
 def ellipsoid_design_at(phi: float, theta: float) -> dict[str, float]:
-    """Pointwise fictional stiffener layout used by the ellipsoid showpiece."""
+    """Pointwise fictional stiffener layout used by the ellipsoid example."""
 
     latitude_weight = math.sin(phi) ** 2
     wave = 0.5 + 0.5 * math.cos(3.0 * theta - 0.8 * math.cos(phi))
     nose_weight = abs(math.cos(phi))
     return {
-        "skin_thickness": 0.052 + 0.018 * latitude_weight + 0.006 * wave,
-        "primary_pitch": 4.6 + 1.8 * latitude_weight + 0.9 * wave,
-        "secondary_pitch": 5.2 + 1.4 * (1.0 - wave) + 0.7 * nose_weight,
+        "skin_thickness": 0.0013 + 0.00045 * latitude_weight + 0.00015 * wave,
+        "primary_pitch": 0.115 + 0.045 * latitude_weight + 0.0225 * wave,
+        "secondary_pitch": 0.13 + 0.035 * (1.0 - wave) + 0.0175 * nose_weight,
         "angle_rad": 0.55 * math.sin(theta) + 0.25 * math.sin(2.0 * phi),
         "primary_scale": 0.85 + 0.45 * wave,
         "secondary_scale": 0.80 + 0.30 * latitude_weight,
@@ -450,23 +453,23 @@ def ellipsoid_design_at(phi: float, theta: float) -> dict[str, float]:
 def build_ellipsoid_field() -> tuple[Ellipsoid, HomogenizedStiffnessField]:
     """Build the ellipsoid and pointwise stiffness field used in the figure."""
 
-    surface = Ellipsoid(a=180.0, b=125.0, c=75.0, label="ellipsoid_showpiece")
-    material = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
+    surface = Ellipsoid(a=4.5, b=3.125, c=1.875, label="ellipsoid_example")
+    material = IsotropicMaterial(E=70e9, nu=0.33, density=2700)
     hat = hat_section(
         material=material,
-        web_height=0.54,
-        web_thickness=0.045,
-        crown_width=0.42,
-        crown_thickness=0.045,
-        flange_width=0.22,
-        flange_thickness=0.045,
+        web_height=0.0135,
+        web_thickness=0.001125,
+        crown_width=0.0105,
+        crown_thickness=0.001125,
+        flange_width=0.0055,
+        flange_thickness=0.001125,
         shear_correction_y=5.0 / 6.0,
         shear_correction_z=5.0 / 6.0,
     )
     blade = blade_section(
         material=material,
-        height=0.42,
-        thickness=0.045,
+        height=0.0105,
+        thickness=0.001125,
         shear_correction_y=5.0 / 6.0,
         shear_correction_z=5.0 / 6.0,
     )
@@ -478,7 +481,7 @@ def build_ellipsoid_field() -> tuple[Ellipsoid, HomogenizedStiffnessField]:
             material,
             thickness=design["skin_thickness"],
             frame=point.frame,
-            metadata={"source": "ellipsoid_showpiece_skin"},
+            metadata={"source": "ellipsoid_example_skin"},
         )
         primary = scaled_section(
             hat.section,
@@ -513,7 +516,7 @@ def build_ellipsoid_field() -> tuple[Ellipsoid, HomogenizedStiffnessField]:
             frame=point.frame,
             convention=skin.convention,
             metadata={
-                "source": "ellipsoid_showpiece_cell",
+                "source": "ellipsoid_example_cell",
                 "primary_pitch": design["primary_pitch"],
                 "secondary_pitch": design["secondary_pitch"],
                 "angle_rad": design["angle_rad"],
@@ -524,10 +527,10 @@ def build_ellipsoid_field() -> tuple[Ellipsoid, HomogenizedStiffnessField]:
     def validity_context(point: Any, cell: CanonicalUnitCell) -> ValidityContext:
         pitch = max(cell.metadata["primary_pitch"], cell.metadata["secondary_pitch"])
         return ValidityContext(
-            characteristic_height=0.62,
+            characteristic_height=0.0155,
             pitch=pitch,
             min_radius=point.min_radius,
-            response_length=52.0,
+            response_length=1.3,
         )
 
     return (
@@ -573,7 +576,7 @@ def sample_ellipsoid(phi_count: int = 32, theta_count: int = 64) -> dict[str, np
         d11[index] = stiffness.D[0, 0]
         validity = stiffness.validity
         p_over_r[index] = np.nan if validity is None else validity.p_over_R
-        coupling[index] = np.nan if validity is None else validity.coupling_ratios["B_fro"]
+        coupling[index] = np.nan if validity is None else validity.coupling_ratios["B_residual"]
         pitch[index] = max(design["primary_pitch"], design["secondary_pitch"])
         angle_deg[index] = math.degrees(design["angle_rad"])
         warning_count[index] = 0 if validity is None else len(validity.warnings)
@@ -600,7 +603,7 @@ def render_ellipsoid_map(
     *,
     data: dict[str, np.ndarray] | None = None,
 ) -> Path:
-    """Render the ellipsoid showpiece image for the documentation."""
+    """Render the ellipsoid example image for the documentation."""
 
     if data is None:
         data = sample_ellipsoid()
@@ -671,7 +674,7 @@ def render_ellipsoid_map(
         alpha=0.85,
     )
     ax_map.clabel(contours, inline=True, fontsize=7, fmt="%.2f")
-    ax_map.set_title("Where the tangent-plane assumption works hardest", pad=14)
+    ax_map.set_title("Pitch relative to local curvature radius", pad=14)
     ax_map.set_xlabel(r"azimuth $\theta$ (deg)")
     ax_map.set_ylabel(r"polar angle $\phi$ (deg)")
     ax_map.set_xlim(0.0, 360.0)

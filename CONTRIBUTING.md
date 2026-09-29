@@ -19,11 +19,30 @@ uv run ruff format --check .
 uv run ty check
 uv run pytest
 uv run mkdocs build --strict
+uv run python scripts/check_docs_links.py site
 ```
 
 Documentation is part of the product. Changes that alter behavior, public APIs,
 mechanics assumptions, examples, or release workflows should update the relevant
 documentation in the same change.
+
+## Handbook Examples
+
+Put complete runnable examples in `docs/examples/scripts/`. The public pages
+include marked regions from those scripts with `pymdownx.snippets`; documentation
+tests execute the same files. Keep prerequisites explicit when a page continues
+an earlier example. Mark solver-input templates and conceptual fragments as such.
+
+After changing example inputs, regenerate the displayed tables and plots:
+
+```bash
+uv run python docs/examples/scripts/render_handbook.py
+uv run python docs/examples/scripts/stiffness_field_maps.py
+```
+
+Preserve public page URLs and heading anchors when moving a topic. The built-site
+check covers the heading baseline, local links, scripts, and images. Review
+changed pages at desktop and narrow widths as well as running the strict build.
 
 ## Packaging Checks
 

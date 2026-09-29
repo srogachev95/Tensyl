@@ -80,7 +80,9 @@ custom_section = thin_wall_section(
 # --8<-- [end:custom]
 
 if __name__ == "__main__":
-    print("Symmetric laminate B norm:", __import__("numpy").linalg.norm(symmetric.B))
+    import numpy as np
+
+    print("Symmetric laminate B norm:", np.linalg.norm(symmetric.B))
     print("Free thermal strain:", free_strain)
     print("Hat GJ, open / closed [N m²]:", open_hat.section.GJ, closed_hat.section.GJ)
     print("Composite blade EA [N]:", composite_section.EA)
