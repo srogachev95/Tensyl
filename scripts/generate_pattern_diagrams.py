@@ -48,8 +48,10 @@ def render(pattern: Pattern) -> str:
     span_x = max(p[0] for p in polygon) - min(p[0] for p in polygon)
     span_y = max(p[1] for p in polygon) - min(p[1] for p in polygon)
     parts = [
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 550" '
-        'role="img" aria-labelledby="title desc">',
+        (
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 550" '
+            'role="img" aria-labelledby="title desc">'
+        ),
         f'<title id="title">{escape(pattern.title)}</title>',
         (
             '<desc id="desc">Rib centerlines tiled from the cell geometry. The dashed orange '

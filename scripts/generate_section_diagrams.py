@@ -525,9 +525,11 @@ def render(diagram: Diagram) -> str:
             'markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" '
             'orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#18344a"/></marker>'
         ),
-        '<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" '
-        'patternTransform="rotate(45)"><path d="M0 0V8" stroke="#bdcbd3" stroke-width="2"/>'
-        "</pattern>",
+        (
+            '<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" '
+            'patternTransform="rotate(45)"><path d="M0 0V8" stroke="#bdcbd3" stroke-width="2"/>'
+            "</pattern>"
+        ),
         "</defs>",
         f'<rect width="{WIDTH}" height="{HEIGHT}" fill="white"/>',
         _text(28, 34, diagram.title, size=23),
@@ -557,10 +559,14 @@ def render(diagram: Diagram) -> str:
     # Axes are a separate orientation key; dimensions use the datum above.
     parts.extend(
         [
-            '<path d="M62 414V354" fill="none" stroke="#18344a" '
-            'stroke-width="1.5" marker-end="url(#arrow)"/>',
-            '<path d="M62 414H112" fill="none" stroke="#18344a" '
-            'stroke-width="1.5" marker-end="url(#arrow)"/>',
+            (
+                '<path d="M62 414V354" fill="none" stroke="#18344a" '
+                'stroke-width="1.5" marker-end="url(#arrow)"/>'
+            ),
+            (
+                '<path d="M62 414H112" fill="none" stroke="#18344a" '
+                'stroke-width="1.5" marker-end="url(#arrow)"/>'
+            ),
             _text(120, 420, "+y"),
             _text(44, 342, "+z"),
         ]
