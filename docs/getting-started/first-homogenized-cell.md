@@ -1,77 +1,56 @@
 # First Homogenized Cell
 
-A real panel may contain hundreds of stiffeners. Tensyl starts with one
-repeating patch and replaces that detailed pattern with an equivalent ABD
-stiffness for the whole panel.
+Add two perpendicular families of blade ribs to the skin from the previous page.
+Each blade is 25 mm high and 2 mm thick. The repeat rectangle is 150 mm along
+`e1` and 100 mm along `e2`: ribs running along `e1` are therefore **100 mm apart**.
 
-This example uses an orthogrid: one member family runs along local `e1`, and a
-second runs along local `e2`. The repeat box is `8.0` units wide along `e1` and
-`6.0` units high along `e2`. Tensyl calls those dimensions `e1_pitch` and
-`e2_pitch`. The `e1` members are therefore `6.0` units apart, while the `e2`
-members are `8.0` units apart.
+![Repeat dimensions and positive rib eccentricity](../assets/diagrams/repeat-offset.svg)
+
+Use `blade_section` to calculate the rib's axial, bending, and torsional stiffness
+from its material and dimensions. The blade centroid lies 12.5 mm above its base.
+Adding half the skin thickness places it 13.5 mm above the skin midplane.
+
+Continue the previous page's Python session:
 
 ```python
-from tensyl import (
-    BeamSection,
-    EnergyHomogenizer,
-    IsotropicMaterial,
-    ValidityContext,
-    isotropic_plate,
-    orthogrid_cell,
-)
-
-skin = isotropic_plate(
-    IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
-    thickness=0.080,
-)
-
-section = BeamSection(
-    EA=3.2e6,    # lbf
-    EIy=2.4e4,   # lbf*in^2
-    EIz=6.5e3,   # lbf*in^2
-    GJ=4.0e3,    # lbf*in^2
-    kGAy=1.1e6,  # lbf
-    kGAz=0.9e6,  # lbf
-)
-
-cell = orthogrid_cell(
-    skin=skin,
-    e1_section=section,
-    e2_section=section,
-    e1_pitch=8.0,
-    e2_pitch=6.0,
-    e1_axial_eccentricity=0.45,
-    e2_axial_eccentricity=0.45,
-)
-
-result = EnergyHomogenizer().compute(
-    cell,
-    validity_context=ValidityContext(
-        characteristic_height=0.50,
-        pitch=8.0,
-        min_radius=120.0,
-        response_length=80.0,
-    ),
-)
-
-stiffness = result.stiffness
-print(result.validity.warnings)
+--8<-- "docs/examples/scripts/walkthrough.py:grid"
 ```
 
-The result keeps more than the four stiffness blocks:
+The blade helper leaves `kGAy` and `kGAz` unspecified, so this calculation adds
+rib axial, bending, and torsional energy. Transverse shear stiffness comes from
+the skin. Supply section shear stiffnesses when your section model provides them;
+see [beam sections](../user-guide/beam-sections-and-cells.md).
 
-- `stiffness` is the equivalent `ABDStiffness`;
-- `diagnostics` reports basic matrix checks, including symmetry and unsupported
-  deformation modes;
-- `assumptions` records modeling choices made during the calculation;
-- `validity` reports scale-separation and coupling warnings.
+`ValidityContext` describes a flat panel with a 27 mm overall height and a 1 m
+response length. The repeat dimensions supply the pitch. The
+[modeling guide](../theory/validity.md) explains how these scales enter the report.
 
-Warnings do not automatically invalidate a result. They mark assumptions that an
-engineering workflow should review before using the ABD stiffness in sizing,
-buckling, or finite-element work.
+## What the Ribs Add
 
-In this example both stiffener centroids sit on the `+n` side of the skin
-reference surface. Their positive offsets therefore create a nonzero `B` block,
-which couples stretching and bending.
+--8<-- "docs/includes/walkthrough-comparison.md"
 
-Next: [Homogenization and Results](../user-guide/homogenization.md).
+The ribs increase bending stiffness substantially because their material sits
+away from the reference surface. For the `e1` ribs, with section area $A_r$,
+centroidal second moment $I_y$, spacing $s$, and offset $z$:
+
+$$
+\Delta A_{11}=\frac{EA_r}{s},\qquad
+\Delta B_{11}=\frac{EA_rz}{s},\qquad
+\Delta D_{11}=\frac{E(I_y+A_rz^2)}{s}.
+$$
+
+These are the aligned-member terms in the
+[energy assembly](../theory/tangent-plane-homogenization.md). The positive `B11`
+means extension and bending are coupled about the skin midplane. Panel mass
+counts the skin and both rib families: $5.4+1.35+0.90=7.65$ kg/m².
+
+For these inputs, the report contains:
+
+--8<-- "docs/includes/walkthrough-warnings.md"
+
+The first compares the 150 mm pitch with the 1 m response length. The second
+measures membrane–bending coupling that remains after the best common reference
+shift. Both give information about this panel and its selected scales; the
+[report guide](../theory/validity.md#interpreting-warnings) explains the thresholds.
+
+Next: [Apply loads and save the result](use-the-result.md).

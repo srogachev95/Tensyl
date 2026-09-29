@@ -1,47 +1,40 @@
 # Installation
 
-Tensyl is developed for Python 3.12 and later.
-
-With `uv`:
+Tensyl requires Python 3.12 or later. Install the published package into your
+project:
 
 ```bash
 uv add tensyl
 ```
 
-With pip:
+Or use pip in an active environment:
 
 ```bash
-pip install tensyl
+python -m pip install tensyl
 ```
 
-For local development from the repository:
+Check the version with `python -c "import tensyl; print(tensyl.__version__)"`.
+
+## From Source
+
+The current-main handbook includes features added after 0.3.1. To run its examples:
 
 ```bash
-uv sync --dev
-uv run pytest
-```
-
-The package import name is:
-
-```python
-import tensyl
+git clone https://github.com/srogachev95/Tensyl.git
+cd Tensyl
+uv sync --group dev
+uv run python docs/examples/scripts/walkthrough.py
 ```
 
 ## Unit Policy
 
-Tensyl does not own a unit system: every input must already be in one consistent
-set of units, and Tensyl will not catch you if it isn't. This matters enough to
-get its own page — see [Units and Consistency](../user-guide/units-and-consistency.md)
-for the rule, the reference tables, and the failure mode to watch for.
+Use one consistent unit system. This handbook uses metres, newtons, kilograms,
+and kelvins for temperature differences. Tensyl works with numerical values;
+[unit labels](../user-guide/units-and-consistency.md) describe the chosen system.
 
 ## Verification Commands
 
-Contributors should run:
+Contributor setup and checks live in
+[CONTRIBUTING.md](https://github.com/srogachev95/Tensyl/blob/main/CONTRIBUTING.md).
 
-```bash
-uv run ruff check .
-uv run ruff format --check .
-uv run ty check
-uv run pytest
-uv run mkdocs build --strict
-```
+Next: [Calculate the skin stiffness](first-abd-stiffness.md).
