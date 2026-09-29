@@ -10,9 +10,9 @@ def render_tables() -> dict[str, str]:
     skin = example["skin"]
     result = example["result"]
     stiff = result.stiffness
-    comparison = "| Quantity | Skin | Stiffened panel | Unit |\n| --- | ---: | ---: | --- |\n"
+    comparison = "| Quantity | Skin | Panel | Unit |\n| --- | ---: | ---: | --- |\n"
     for name, before, after, unit in (
-        ("A11", skin.A[0, 0], stiff.A[0, 0], "N/m"),
+        ("A11", skin.A[0, 0] / 1e6, stiff.A[0, 0] / 1e6, "MN/m"),
         ("B11", skin.B[0, 0], stiff.B[0, 0], "N"),
         ("D11", skin.D[0, 0], stiff.D[0, 0], "N m"),
         ("Areal mass", skin.areal_mass, stiff.areal_mass, "kg/m²"),

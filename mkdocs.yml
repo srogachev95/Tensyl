@@ -2,6 +2,7 @@ site_name: Tensyl
 site_description: Equivalent-stiffness homogenization tools for stiffened plates and shells.
 site_url: https://srogachev95.github.io/Tensyl/
 repo_url: https://github.com/srogachev95/Tensyl
+edit_uri: edit/main/docs/
 docs_dir: docs
 strict: true
 theme:
@@ -20,6 +21,8 @@ markdown_extensions:
       check_paths: true
   - pymdownx.arithmatex:
       generic: true
+extra_css:
+  - stylesheets/handbook.css
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
@@ -62,6 +65,7 @@ nav:
       - SP-8007 Inputs: user-guide/sp8007-data-handoff.md
   - Verification:
       - Evidence Overview: validation/index.md
+      - CalculiX Skin Comparison: validation/calculix-skin.md
       - Nemeth Formulas: validation/nemeth-cells.md
       - SP-8007 Reconciliation: validation/sp8007-reconciliation.md
   - Reference:

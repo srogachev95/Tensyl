@@ -1,72 +1,38 @@
 # Motivation and History
 
-Stiffened plates and shells appear throughout aerospace engineering:
-integrally stiffened panels, launch-vehicle barrels, ring-and-stringer shells,
-isogrids, orthogrids, sandwich sections, and lattice-like facesheets.
+A stiffened panel contains two useful length scales: the rib repeat and the
+complete structure. Equivalent-plate modeling connects them by turning the skin
+and rib stiffnesses into a constitutive relation per panel area. That makes it
+practical to change a construction and compare its effect on a larger plate or
+shell model.
 
-Detailed stiffener-by-stiffener models are the gold standard — and a slog.
-Rebuilding every rib for a trade study you will throw away next week is a poor
-use of a Tuesday. Equivalent-stiffness modeling smears the stiffeners into a single
-continuum ABD stiffness: you trade local detail for a small, auditable matrix that
-still gets the global membrane, bending, twisting, and shear story right.
+![Isogrid cylinder specimens from Nemeth's treatise](../assets/nemeth-treatise/fig-03-isogrid-stiffened-cylinders.jpg)
 
-Tensyl's core rule is:
-
-> Compute a local equivalent-stiffness model; embed that stiffness in
-> geometry-specific shell kinematics.
-
-This separation keeps the local homogenization problem small and auditable. A
-local ABD stiffness can be computed on a tangent plane, checked for validity, rotated, and
-then attached to a flat panel, cylindrical barrel, dome, or other surface.
-
-![Two isogrid-stiffened cylinder specimens from Nemeth's equivalent-plate treatise.](../assets/nemeth-treatise/fig-03-isogrid-stiffened-cylinders.jpg)
-
-*Source: Nemeth, NASA/TP-2011-216882, figure 3; full citation in
-[References](../references.md).*
+Source: [Nemeth, NASA/TP-2011-216882](https://ntrs.nasa.gov/citations/20110004039), figure 3.
 
 ## Use Cases
 
-Tensyl is intended for:
+Tensyl supports early panel sizing, comparisons of rib pitch and section,
+laminated skins, and stiffness distributions over shells. A calculation can
+produce a local load–strain relation, a stiffness-and-mass sweep, or a portable
+section artifact for a finite-element model.
 
-- early sizing of stiffened skins and shell sections;
-- trade studies over stiffener pitch, height, orientation, and material;
-- comparison of canonical grids such as unidirectional, orthogrid, isogrid,
-  hexagonal, star, and sandwich-core cells;
-- building solver-neutral stiffness artifacts for external workflows;
-- creating reduced models for global stiffness studies.
-
-Tensyl is not intended to hide the assumptions behind equivalent-stiffness modeling.
-Every homogenized result carries diagnostics and validity information because a
-local ABD stiffness is useful only when its assumptions match the structural question.
-
-New to the vocabulary — "ABD stiffness," "tangent plane," "scale separation,"
-"pitch"? The [Terminology](terminology.md) page defines each precisely and is
-worth a read before the Theory section.
+The [walkthrough](../getting-started/first-abd-stiffness.md) follows that process
+for one aluminum panel. The [modeling guide](../theory/validity.md) describes the
+local cell deformation and response scales.
 
 ## Brief History
 
-Equivalent-continuum modeling is older than the finite-element method, for the
-plain reason that engineers needed answers before they had the compute to model
-every stiffener. The idea has aged well. Tensyl is a modern implementation of a
-long tradition rather than a new invention.
+Equivalent-plate methods have a long history in stiffened plates and shells.
+Nemeth's 2011 treatise surveys work dating to 1914 and develops both equilibrium–
+compatibility and strain-energy formulations for stiffened laminates and lattices.
+Tensyl uses the strain-energy construction for its member assembly.
 
-Classical plate and shell theory supplied the language: membrane resultants,
-bending resultants, transverse shear, and stiffness matrices. Reissner- and
-Mindlin-type first-order shear-deformation theories promoted transverse shear
-from an afterthought to an explicit part of the stiffness model. Laminated-plate
-theory then organized anisotropic skins into the familiar `A`, `B`, and `D`
-stiffness blocks that Tensyl still uses.
+Classical laminate theory supplies the `A`, `B`, and `D` blocks. Reissner–Mindlin
+plate theory adds transverse shear, retained as `As`. Surface geometry then
+provides the local axes and curvature for a shell application.
 
-Nemeth's NASA treatise is the primary source for Tensyl's first homogenization
-family. It surveys decades of equivalent-plate results and lays out both the
-direct equilibrium-compatibility and strain-energy methods for stiffened
-laminated plates and plate-like lattices. Tensyl implements that tradition as a
-scientific Python library with explicit conventions, typed value objects,
-verification checks, and neutral export formats, so the assumptions stay visible
-instead of buried in a spreadsheet.
-
-NASA SP-8007 and related shell-buckling literature are the reason these stiffness
-properties matter in practice, especially for thin cylindrical shells. Tensyl
-does not implement those buckling criteria; it computes and audits the ABD
-stiffnesses that can feed them. See [References](../references.md) for the full
-lineage.
+NASA SP-8007 is one application of these stiffness properties in cylindrical
+shell analysis. The [reconciliation](../validation/sp8007-reconciliation.md)
+connects Tensyl's matrix entries to its barred elastic constants. Full mechanics
+sources are listed in [References](../references.md).

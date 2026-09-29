@@ -98,3 +98,30 @@ def test_surface_and_atlas_examples() -> None:
         restored.stiffness_at(restored.surface, 0.75, np.pi / 2).C8,
         example["interpolated"].C8,
     )
+
+
+def test_readme_runs_the_same_skin_example() -> None:
+    readme = (ROOT / "README.md").read_text()
+    displayed = readme.split("```python\n", 1)[1].split("```", 1)[0].strip()
+    source = (SCRIPTS / "walkthrough.py").read_text()
+    snippet = source.split("# --8<-- [start:skin]\n", 1)[1].split("# --8<-- [end:skin]", 1)[0]
+    assert displayed == snippet.strip()
+    example = runpy.run_path(str(SCRIPTS / "walkthrough.py"))
+    assert example["skin"].areal_mass == pytest.approx(5.4)
+
+
+def test_plot_and_coefficient_handoff_use_the_workflow_cell() -> None:
+    from matplotlib import pyplot as plt
+
+    example = runpy.run_path(str(SCRIPTS / "panel_workflows.py"))
+    plot = runpy.run_path(str(SCRIPTS / "plot_cell.py"))["plot_cell"]
+    cell = example["custom_cell"]
+    axes = plot(cell)
+    assert len(axes.lines) == 4 * len(cell.geometry.edges)
+    plt.close(axes.figure)
+    coefficients = example["orthogrid_constants"]
+    D = example["stiffness"].D
+    assert coefficients.Dbar_xy == pytest.approx(2 * D[0, 1] + 4 * D[2, 2])
+    iso = example["isogrid_constants"]
+    assert iso.Ebar_x == pytest.approx(iso.Ebar_y)
+    assert iso.Cbar_x == pytest.approx(iso.Cbar_y)

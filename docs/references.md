@@ -1,8 +1,8 @@
 # References
 
-This page lists external sources used to ground the mechanics narrative and
-terminology. Local report extracts and project planning notes are not part of
-the formal public documentation.
+These sources supply the plate, laminate, section, and homogenization mechanics
+used throughout the handbook. Equations and source comparisons link to the
+relevant entry or primary publication.
 
 ## Equivalent-Plate and Stiffened-Wall Theory
 
@@ -16,10 +16,18 @@ the formal public documentation.
 
 ## Section Properties
 
+- MIT OpenCourseWare, *16.20 Structural Mechanics*, Fall 2002,
+  [torsion notes](https://ocw.mit.edu/courses/16-20-structural-mechanics-fall-2002/a58ea050460c29f7389ff55e084521ed_ho3.pdf).
+  Thin-wall open and closed-section torsion, including Bredt shear flow.
+
 - R. C. Hibbeler, *Statics and Mechanics of Materials*, 2nd ed., Pearson
   Prentice Hall, 2004.
 
 ## Plates, Shells, and Laminates
+
+- Alan T. Nettles, *Basic Mechanics of Laminated Composite Plates*, NASA RP-1351,
+  1994. [NASA record](https://ntrs.nasa.gov/citations/19950009349).
+  Laminate stiffness and compliance, engineering constants, and thermal resultants.
 
 - Manfredo P. do Carmo, *Differential Geometry of Curves and Surfaces*,
   Prentice-Hall, 1976.

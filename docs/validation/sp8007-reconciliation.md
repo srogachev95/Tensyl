@@ -1,14 +1,10 @@
 # SP-8007 Reconciliation
 
-This page compares Tensyl's tangent-plane stiffnesses with the elastic-constant
-formulas in NASA SP-8007 Section 4.1.2.6. It is not a calibration exercise.
-SP-8007 is a published design reference, but it is not an oracle for Tensyl, and
-Tensyl is not an oracle for SP-8007. The useful question is narrower and harder:
-when the numbers diverge, which physics did each model keep or throw away?
-
-The SP-8007 source used for this audit is Mark Hilburger's
-*Buckling of Thin-Walled Circular Cylinders*, NASA/SP-8007-2020/REV 2:
-<https://ntrs.nasa.gov/citations/20205011530>.
+Tensyl's orthogrid and isogrid stiffnesses agree with the elastic-constant
+formulas in [NASA SP-8007, Section 4.1.2.6](https://ntrs.nasa.gov/citations/20205011530)
+to roundoff after restoring the eccentric axial-energy term omitted from the
+printed isogrid bending equations. This page shows the correction, the cases,
+and the effect of the selected rib torsion model.
 
 ## Read This First
 
@@ -54,8 +50,7 @@ $$
 $$
 
 With that correction, every coefficient in every case agrees with Tensyl to
-floating-point roundoff. The eccentric-isogrid discrepancy is a printed-equation
-omission, not a difference in physics.
+floating-point roundoff. The compared member kinematics are then consistent.
 
 ## What Was Compared
 
@@ -66,30 +61,9 @@ above where it is needed. Third it computes Tensyl's default energy-homogenized
 ABD stiffness and extracts the same SP-8007-style barred coefficients from that
 matrix.
 
-For a cylinder, Tensyl's local `e1` direction is axial and `e2` is
-circumferential, so the mapping is:
-
-| SP-8007 coefficient | Tensyl source |
-| --- | --- |
-| `Ebar_x` | `A[0, 0]` |
-| `Ebar_y` | `A[1, 1]` |
-| `Ebar_xy` | `A[0, 1]` |
-| `Gbar_xy` | `A[2, 2]` |
-| `Dbar_x` | `D[0, 0]` |
-| `Dbar_y` | `D[1, 1]` |
-| `Dbar_xy` | `2*D[0, 1] + 4*D[2, 2]` |
-| `Cbar_x` | `B[0, 0]` |
-| `Cbar_y` | `B[1, 1]` |
-| `Cbar_xy` | `B[0, 1]` |
-| `Kbar_xy` | `B[2, 2]` |
-
-The last bending row is the easy place to make a bad comparison. SP-8007's
-`\bar{D}_{xy}` is a modified twisting stiffness, not Tensyl's `D66` entry by
-itself. With Tensyl's engineering twist convention, the coefficient is
-
-$$
-\bar{D}_{xy} = 2D_{12} + 4D_{66}.
-$$
+The [coefficient mapping](../user-guide/sp8007-data-handoff.md#coefficient-extraction)
+uses axial `e1` and circumferential `e2`. In particular, the modified twisting
+coefficient is $\bar D_{xy}=2D_{12}+4D_{66}$.
 
 The named cases in the plots are:
 
@@ -118,9 +92,6 @@ orange bar is SP-8007 exactly as printed. The green bar is SP-8007 with the
 `EA z^2` correction restored. The green and blue bars lie together because the
 missing printed term is the source of the large orange-bar gap.
 
-After this correction, the main isogrid discrepancy is not a Tensyl problem. It
-is the missing printed `EA z^2` term in SP-8007 Eqs. 97-98.
-
 ## Agreement Across Every Coefficient
 
 With the printed isogrid omission corrected, the two calculations are the same
@@ -132,7 +103,7 @@ bar means the two values matched exactly.
 
 ![SP-8007 coefficient deltas](../assets/validation/sp8007-term-errors.svg)
 
-That is a stronger result than it looks. SP-8007's orthogrid equations are
+SP-8007's orthogrid equations are
 written family by family with scalar `EA/b`, `EI/b`, and `GJ/b` terms, while
 Tensyl rotates each member's strain map into the panel frame and assembles an
 `8 x 8` energy matrix. The isogrid bending coefficients show it most clearly:
@@ -141,11 +112,9 @@ member transforms at `0` and `+/-60` degrees. Agreement to roundoff means the
 member kinematics, the rotations, the density of each family, and the barred
 coefficient mapping are all doing what the hand formulas do.
 
-It is still not proof that either model is right about a real panel. Both
-calculations share the same first-approximation member kinematics, so they
-share the same blind spots: local skin buckling between stiffeners, joint
-flexibility, and anything the smeared-stiffener idea cannot see. Finite-element
-and test evidence answer those questions; this comparison does not.
+This verifies the equation implementation and coefficient translation for the
+listed cases. [Modeling choices](../theory/validity.md) explains their shared
+affine member assumption.
 
 ## Why Earlier Reports Disagreed
 
@@ -168,47 +137,17 @@ rather than through the member `EIz`.
 
 ## Which `J` Should Be Used?
 
-The torsion constant is not a universal number. `BeamSection.GJ` should be the
-torsional stiffness of the member idealization you mean to put into the
-equivalent panel.
+`BeamSection.GJ` specifies the torsional stiffness of the member model. The
+[section guide](../user-guide/beam-sections-and-cells.md#hats-closed-by-the-skin)
+compares an open hat with a skin-closed shear-flow path and explains shared
+skin-energy accounting. A restrained-warping value can be supplied from a
+section or finite-element analysis for the corresponding boundary condition.
 
-Use an open-section St Venant `J` when the stiffener behaves like a freely
-warping open member. That is the assumption behind Tensyl's simple thin-wall
-section helper:
-
-$$
-J_{\mathrm{sv}} \approx \sum_i \frac{l_i t_i^3}{3}.
-$$
-
-This is the correct input for blades, angles, tees, channels, and other open
-members when warping is not strongly restrained.
-
-Use a closed-cell torsional stiffness when the actual modeled member has a
-closed shear-flow path. A closed hat bonded to a skin, a tube, or a box can have
-a torsional stiffness many times larger than the open-section estimate. But the
-closure has to belong to the member model. If the skin is already present as a
-separate plate in the ABD calculation, adding a closed-cell `J` that also uses
-that same skin can double-count skin shear stiffness.
-The explicit `hat_section(closure_thickness=...)` option uses single-cell Bredt
-torsion and carries this same accounting responsibility; see the
-[closed-hat model](../user-guide/beam-sections-and-cells.md#hats-closed-by-the-skin).
-
-Use a restrained-warping torsional stiffness when the boundary conditions,
-attachments, or neighboring structure prevent the section from warping freely.
-That value is usually a section-analysis or finite-element result, not the free
-St Venant constant and not the closed-cell Bredt constant by itself.
-
-Open-section `J`, closed-cell `J`, and restrained-warping `J` represent
-different member models. The correct value is the torsional stiffness of the
-section and boundary condition represented by the homogenized member. If that
-boundary condition is uncertain, bracket it. The plot below shows how much the
-modified twisting stiffness moves when the supplied member `J` is swept over
-large factors.
+The plot sweeps the supplied member `J` while retaining all other inputs:
 
 ![SP-8007 torsion sweep](../assets/validation/sp8007-torsion-sweep.svg)
 
-This plot does not choose a torsion model. It shows the consequence of the `J`
-value supplied to the member. The orthogrid line moves strongly because its
+The plot shows how the chosen `J` affects the modified twisting coefficient. The orthogrid line moves strongly because its
 modified twisting stiffness receives direct stringer and rib `GJ` terms. The
 isogrid line moves less in this synthetic case because the same coefficient also
 contains larger bending and corrected eccentric-axial contributions. A closed
@@ -217,28 +156,15 @@ factors.
 
 ## Guidance
 
-Use the SP-8007-style coefficients when a downstream classical
-orthotropic-cylinder calculation expects exactly that data shape. In that
-workflow, export the coefficients with the mapping above, keep the assumptions
-with the artifact, and do not pass `D66` as `\bar{D}_{xy}`.
-
-Keep the full Tensyl ABD stiffness when the panel has meaningful off-axis terms,
-strong membrane-bending coupling, or section properties that do not match the
-simplified SP-8007 assumptions. Reducing the full ABD stiffness to a short list
-of barred constants can be the right handoff, but it is still a reduction.
-
-Be especially careful with these inputs:
-
-- Eccentricity: SP-8007 isogrid Eqs. 97-98 should be corrected for explicit
-  `EA z^2` bending terms before drawing physics conclusions.
-- `J`: open-section St Venant torsion, closed-cell torsion, and restrained
-  warping can differ by large factors; choose the value that matches the member
-  model and boundary condition.
+Use the [data-handoff workflow](../user-guide/sp8007-data-handoff.md) to extract
+the barred constants. Record the reference surface, eccentricities, and torsion
+model with the result. The full ABD matrix remains available for analyses that
+use its complete coupling terms.
 
 ## Artifacts
 
 The committed evidence lives under
-`validation/artifacts/committed/sp8007_reconciliation/`:
+[the SP-8007 artifact directory](https://github.com/srogachev95/Tensyl/tree/main/validation/artifacts/committed/sp8007_reconciliation):
 
 - `comparison_table.json` and `comparison_table.csv` contain the coefficient
   rows, including the printed and corrected SP-8007 references;

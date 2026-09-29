@@ -1,0 +1,25 @@
+/* Keep wide engineering content readable within a narrow page. */
+.rst-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+div.arithmatex {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+div.arithmatex > mjx-container {
+  width: max-content;
+  min-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .rst-content table th,
+  .rst-content table td {
+    padding: 6px 8px;
+    white-space: normal;
+  }
+}
