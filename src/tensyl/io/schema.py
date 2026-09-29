@@ -963,7 +963,7 @@ def read_yaml(path: str | PathLike[str]) -> WorkflowObject:
         path: Source YAML file path.
 
     Returns:
-        ``ABDStiffness`` or ``HomogenizationResult`` described by the file.
+        The stiffness, result, cell, atlas, or thermal loads described by the file.
 
     Raises:
         SchemaError: If the file contents fail YAML or schema validation.
@@ -980,7 +980,7 @@ def read_json(path: str | PathLike[str]) -> WorkflowObject:
         path: Source JSON file path.
 
     Returns:
-        ``ABDStiffness`` or ``HomogenizationResult`` described by the file.
+        The stiffness, result, cell, atlas, or thermal loads described by the file.
 
     Raises:
         SchemaError: If the file contents fail JSON or schema validation.

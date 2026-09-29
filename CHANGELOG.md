@@ -11,6 +11,10 @@ bug fixes that correct clearly wrong behavior.
 - Introduce an engineering handbook with a connected SI panel walkthrough,
   executable source snippets, checked output tables, and diagrams of the
   repeat cell, reference surface, and plate deformation modes.
+- Reorganize the mechanics and practical guides around materials, rib sections,
+  repeat patterns, and result workflows. Add executable SI examples for thermal
+  loads, laminated walls, hat torsion, transformations, sweeps, and shell fields;
+  retain existing documentation URLs and move file-format details into reference.
 
 - Write external-workflow schema v3 with canonical cell, sampled atlas, and
   thermal-resultant artifacts. Readers retain v2 stiffness/result support;
