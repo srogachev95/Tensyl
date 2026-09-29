@@ -8,6 +8,35 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+## 0.4.0 - 2026-09-29
+
+This release adds thermal loads, laminated rib sections, load recovery, design
+sweeps, and portable model artifacts. The engineering handbook now follows one
+SI panel example and includes generated section and pattern drawings.
+
+### Updating from 0.3.1
+
+- Replace `DirectECHomogenizer` with `stiffener_family_cell(...)` and
+  `EnergyHomogenizer().compute(cell)`.
+- Remove `include_in_plane_bending` arguments. The member model now uses
+  Nemeth's first approximation, `chi_Z = 0`, throughout.
+- Set `core_axial_eccentricity` when the sandwich reference differs from the
+  core midplane, and account for rib mass in the corrected `areal_mass` result.
+- Update downstream artifact readers for schema v3 output. Tensyl still reads
+  v2 stiffness and homogenization-result files.
+
+### Changes
+
+- Preserve the recorded Tensyl version when loading a saved stiffness atlas.
+  New sampling records the current version; the file producer still identifies
+  the writer. This fixes cross-version schema v3 round trips.
+
+- Redraw the section figures from builder geometry with clear dimension symbols
+  and computed centroids. Correct the tee web-height definition and add the
+  skin-closed hat's median shear-flow path. Add executable examples and 15
+  pattern figures covering every named grid, both bracing options, regular
+  variants, and all sandwich cores. Use node-centered orthogrid repeat views.
+
 - Refresh the README, glossary, source references, and verification narrative;
   document the retained CalculiX skin ABD6 comparison and correct the FEM
   evidence overview. Convert field-map examples to SI, reuse executable examples

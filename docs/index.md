@@ -47,8 +47,7 @@ newtons, kilograms, and basic Python.
 The [modeling guide](theory/validity.md) explains the deformation model and the
 length scales used to interpret a homogenized panel.
 
-!!! note "Documentation for current main"
-    This handbook includes development features added after release 0.3.1.
-    [Install from source](getting-started/installation.md#from-source) to run every
-    example. The [changelog](https://github.com/srogachev95/Tensyl/blob/main/CHANGELOG.md)
-    records which features are unreleased.
+This handbook covers **Tensyl 0.4.0**, available on
+[PyPI](https://pypi.org/project/tensyl/0.4.0/). The
+[release notes](https://github.com/srogachev95/Tensyl/blob/v0.4.0/CHANGELOG.md)
+describe the new features and migration from 0.3.1.

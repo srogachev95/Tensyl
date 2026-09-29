@@ -55,8 +55,9 @@ explains the resulting stiffness and mass, then applies a membrane load.
 - **Handoff:** JSON/YAML artifacts, Abaqus general-section keywords,
   and orthotropic-cylinder coefficient extraction.
 
-These capabilities describe current `main`, including development features
-after release 0.3.1. To run all handbook examples from this checkout:
+These capabilities are available in Tensyl 0.4.0. See the
+[release notes](https://github.com/srogachev95/Tensyl/blob/v0.4.0/CHANGELOG.md)
+for changes since 0.3.1. To run the handbook examples from this checkout:
 
 ```bash
 uv sync --group dev

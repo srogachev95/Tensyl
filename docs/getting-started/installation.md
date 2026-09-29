@@ -1,7 +1,7 @@
 # Installation
 
-Tensyl requires Python 3.12 or later. Install the published package into your
-project:
+Tensyl 0.4.0 requires Python 3.12 or later. Install the published package into
+your project:
 
 ```bash
 uv add tensyl
@@ -15,12 +15,16 @@ python -m pip install tensyl
 
 Check the version with `python -c "import tensyl; print(tensyl.__version__)"`.
 
+This handbook's examples use 0.4.0. To install that exact version, use
+`python -m pip install tensyl==0.4.0`. When updating from 0.3.1, see the
+[migration notes](https://github.com/srogachev95/Tensyl/blob/v0.4.0/CHANGELOG.md#updating-from-031).
+
 ## From Source
 
-The current-main handbook includes features added after 0.3.1. To run its examples:
+Clone the release source to run the complete example scripts:
 
 ```bash
-git clone https://github.com/srogachev95/Tensyl.git
+git clone --branch v0.4.0 https://github.com/srogachev95/Tensyl.git
 cd Tensyl
 uv sync --group dev
 uv run python docs/examples/scripts/walkthrough.py
