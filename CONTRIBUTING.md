@@ -53,7 +53,7 @@ uv run python scripts/generate_handbook_diagrams.py
 uv run python scripts/generate_section_diagrams.py
 ```
 
-The handbook renderer uses the walkthrough's cell geometry and blade dimensions,
+The handbook renderer uses the walkthrough's repeat dimensions and blade dimensions,
 the cylinder's local frame, and analytic plate deformation shapes. Section
 drawings use the section builders' wall segments and computed centroids. Keep
 physical coordinates separate from page placement, use one scale per view, and
