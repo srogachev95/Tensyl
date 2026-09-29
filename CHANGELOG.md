@@ -8,6 +8,10 @@ bug fixes that correct clearly wrong behavior.
 
 ## Unreleased
 
+- Introduce an engineering handbook with a connected SI panel walkthrough,
+  executable source snippets, checked output tables, and diagrams of the
+  repeat cell, reference surface, and plate deformation modes.
+
 - Write external-workflow schema v3 with canonical cell, sampled atlas, and
   thermal-resultant artifacts. Readers retain v2 stiffness/result support;
   new writers always emit v3. Atlas loading validates built-in surfaces,

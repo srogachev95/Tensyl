@@ -1,0 +1,209 @@
+{
+  "index.html": [
+    "tensyl",
+    "what-tensyl-computes",
+    "what-tensyl-is-not",
+    "documentation-map",
+    "first-workflow"
+  ],
+  "background/terminology/index.html": [
+    "terminology",
+    "abd-stiffness",
+    "concept-model",
+    "name-mapping",
+    "abd-blocks",
+    "resultants",
+    "why-not-scalar-equivalent-modulus",
+    "stiffener-pitch-and-cell-area",
+    "eccentricity",
+    "tangent-plane"
+  ],
+  "background/motivation/index.html": [
+    "motivation-and-history",
+    "use-cases",
+    "brief-history"
+  ],
+  "user-guide/beam-sections-and-cells/index.html": [
+    "beam-sections-and-cells",
+    "geometry-derived-sections",
+    "laminated-walls",
+    "hats-closed-by-the-skin",
+    "blade-section",
+    "tee-section",
+    "zee-section",
+    "channel-section",
+    "hat-section",
+    "custom-thin-wall-sections",
+    "named-cells",
+    "angles-and-eccentricity",
+    "graph-cells",
+    "check-the-drawn-member-density"
+  ],
+  "user-guide/materials-and-laminates/index.html": [
+    "materials-and-laminates",
+    "isotropic-plate",
+    "orthotropic-laminate",
+    "angles-and-stacking-strings",
+    "shear-correction",
+    "uniform-temperature-changes"
+  ],
+  "user-guide/geometry-and-fields/index.html": [
+    "geometry-and-stiffness-fields",
+    "built-in-surfaces",
+    "what-changes-when-you-choose-a-surface",
+    "constant-stiffness-field",
+    "surface-recipes",
+    "stiffness-atlas",
+    "choosing-a-response-length"
+  ],
+  "user-guide/external-workflows/index.html": [
+    "external-workflows",
+    "matrices-copied-from-papers",
+    "yaml-and-json",
+    "schema",
+    "migration-from-version-2",
+    "cell-inputs-and-sampled-atlases",
+    "traceability",
+    "parameter-sweeps"
+  ],
+  "user-guide/sp8007-data-handoff/index.html": [
+    "sp-8007-data-handoff",
+    "coefficient-extraction",
+    "orthogrid-handoff",
+    "isogrid-variant",
+    "symmetric-laminate-variant"
+  ],
+  "user-guide/homogenization/index.html": [
+    "homogenization-and-results",
+    "stiffener-families",
+    "reading-the-result",
+    "reading-the-blocks",
+    "panel-mass",
+    "diagnostics",
+    "strains-and-member-loads",
+    "comparing-abd-stiffnesses",
+    "thermal-loading-of-a-stiffened-cell"
+  ],
+  "user-guide/units-and-consistency/index.html": [
+    "units-and-consistency",
+    "the-rule",
+    "reference-unit-systems",
+    "recording-units-in-exports"
+  ],
+  "user-guide/solver-handoff/index.html": [
+    "fem-solver-handoff",
+    "before-solver-input",
+    "reduced-orthotropic-properties",
+    "nx-nastran",
+    "simple-route-mat8-and-pshell",
+    "higher-fidelity-pshell-material-references",
+    "ansys",
+    "abaqus",
+    "patch-check",
+    "references"
+  ],
+  "references/index.html": [
+    "references",
+    "equivalent-plate-and-stiffened-wall-theory",
+    "section-properties",
+    "plates-shells-and-laminates",
+    "shell-buckling-context",
+    "homogenization-context"
+  ],
+  "theory/equivalent-stiffness/index.html": [
+    "equivalent-stiffness-mechanics",
+    "stored-energy-contract",
+    "linear-abd-stiffness",
+    "what-the-abd-stiffness-does-not-prove"
+  ],
+  "theory/validity/index.html": [
+    "validity-limits",
+    "coupling-that-a-reference-shift-cannot-remove",
+    "interpreting-warnings",
+    "the-affine-assumption",
+    "out-of-scope-for-the-first-model-family"
+  ],
+  "theory/tangent-plane-homogenization/index.html": [
+    "tangent-plane-homogenization",
+    "how-geometry-enters-the-abd-law",
+    "inputs",
+    "beam-section-quantities",
+    "thin-wall-section-geometry",
+    "diagnostics",
+    "limits"
+  ],
+  "theory/conventions/index.html": [
+    "frames-and-conventions",
+    "rotation-of-abd-stiffnesses",
+    "reference-surface",
+    "eccentricity-inputs",
+    "member-angles",
+    "engineering-shear"
+  ],
+  "getting-started/installation/index.html": [
+    "installation",
+    "unit-policy",
+    "verification-commands"
+  ],
+  "getting-started/first-abd-stiffness/index.html": [
+    "first-abd-stiffness"
+  ],
+  "getting-started/first-homogenized-cell/index.html": [
+    "first-homogenized-cell"
+  ],
+  "examples/sampled-stiffness-atlas/index.html": [
+    "variable-stiffness-fields",
+    "sampled-stiffness-atlas",
+    "interpretation",
+    "pointwise-homogenized-field",
+    "saving-the-samples"
+  ],
+  "examples/stiffness-field-maps/index.html": [
+    "stiffness-field-maps",
+    "variable-orthogrid-cylinder",
+    "ellipsoid-showpiece",
+    "rebuild-the-figures",
+    "why-this-is-useful"
+  ],
+  "examples/skin-only/index.html": [
+    "skin-and-laminate-abd-stiffness",
+    "isotropic-skin",
+    "interpretation",
+    "symmetric-laminate"
+  ],
+  "examples/orthogrid-panel/index.html": [
+    "orthogrid-panel-and-barrel",
+    "orthogrid-panel",
+    "selected-output",
+    "interpretation",
+    "constant-stiffness-barrel"
+  ],
+  "validation/index.html": [
+    "validation-overview",
+    "evidence-available-now",
+    "evidence-still-planned",
+    "how-to-read-the-evidence"
+  ],
+  "validation/sp8007-reconciliation/index.html": [
+    "sp-8007-reconciliation",
+    "read-this-first",
+    "what-was-compared",
+    "correcting-the-isogrid-typo",
+    "agreement-across-every-coefficient",
+    "why-earlier-reports-disagreed",
+    "which-j-should-be-used",
+    "guidance",
+    "artifacts"
+  ],
+  "validation/nemeth-cells/index.html": [
+    "nemeth-cell-verification",
+    "what-was-checked",
+    "how-cell-dimensions-are-named",
+    "available-patterns",
+    "viewing-any-named-cell",
+    "how-the-numerical-check-works",
+    "results",
+    "what-this-result-means",
+    "advanced-mechanics-notes"
+  ]
+}

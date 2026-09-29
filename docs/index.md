@@ -1,86 +1,54 @@
 # Tensyl
 
-Tensyl is a Python library for equivalent-stiffness homogenization of stiffened
-plates and shells. It helps engineering teams build, check, transform, and export
-local ABD stiffnesses for skins, laminates, and stiffened repeating cells.
+Tensyl calculates equivalent stiffness for stiffened plates and shells. Describe
+the skin, rib sections, and repeating pattern in Python, then use the resulting
+plate stiffness to calculate strains, recover rib forces, compare designs, or
+prepare a shell model.
 
-In one line: Tensyl replaces a panel full of stiffeners with a single equivalent
-stiffness — a small, auditable stiffness matrix that behaves like the real thing under
-global loads, without the cost of modeling every rib.
-
-The public package name is `tensyl`.
-
-!!! tip "New here? Read in this order"
-    Start with [Background](background/motivation.md) for the why, then
-    [Terminology](background/terminology.md) for the vocabulary — it is the
-    glossary the rest of the manual leans on. Theory and the User Guide make a
-    lot more sense once those two are in hand.
+![A ribbed panel, one repeat cell, and its equivalent plate](assets/diagrams/panel-model.svg)
 
 ## What Tensyl Computes
 
-Tensyl computes a local constitutive stiffness in laminated-plate notation:
+The result contains four blocks: **A** for stretching, **B** for coupling between
+stretching and bending, **D** for bending and twisting, and **As** for transverse
+shear. Together they relate loads per unit width to the deformation of the
+panel. Tensyl also calculates panel mass when the skin and ribs have density data.
 
-$$
-\begin{bmatrix}
-\mathbf N \\
-\mathbf M \\
-\mathbf Q
-\end{bmatrix}
-=
-\mathbf C_\text{stiffness}
-\begin{bmatrix}
-\boldsymbol\epsilon^0 \\
-\boldsymbol\kappa \\
-\boldsymbol\gamma_s^0
-\end{bmatrix}.
-$$
-
-The first public ABD stiffness is `ABDStiffness`. It stores the membrane stiffness
-`A`, membrane-bending coupling `B`, bending/twisting stiffness `D`, and
-transverse-shear stiffness `As` as one canonical $8\times8$ tangent operator.
-
-## What Tensyl Is Not
-
-Tensyl is not a certification buckling solver, local stress recovery tool, or
-replacement for detailed finite-element analysis. The tangent-plane
-homogenization tools assume scale separation between stiffener pitch, stiffener
-height, local curvature radius, and the structural response length of interest.
-
-Use Tensyl to form and audit equivalent ABD stiffnesses. Use detailed analysis for
-local buckling, crippling, joints, cutouts, load introduction, nonlinear
-postbuckling, and final allowables.
-
-## Documentation Map
-
-- [Getting started](getting-started/installation.md) covers installation and the
-  shortest path to an ABD stiffness.
-- [Background](background/motivation.md) introduces the engineering motivation,
-  history, and terminology.
-- [Theory](theory/equivalent-stiffness.md) explains conventions, ABD stiffnesses, and
-  tangent-plane homogenization.
-- [User guide](user-guide/materials-and-laminates.md) documents the main
-  engineering workflows.
-- [Examples](examples/skin-only.md) provides worked examples and
-  executable snippets.
-- [Validation](validation/index.md) explains the available source checks and the
-  independent FEM work still planned.
-- [API reference](api/core.md) exposes the public Python interfaces.
-- [References](references.md) lists the external sources used by the
-  documentation.
+Build isotropic or laminated skins, derive beam stiffness from section geometry,
+and arrange ribs as named grids, independent families, or a custom repeat cell.
+The same stiffness can be rotated, moved to another reference surface, or placed
+on a curved shell. Thermal loads, design sweeps, sampled stiffness maps, JSON/YAML
+files, and an Abaqus section exporter connect the calculation to analysis work.
 
 ## First Workflow
 
-```python
-from tensyl import IsotropicMaterial, isotropic_plate
+Start with a **2 mm aluminum skin**, add **25 mm blade ribs**, then apply a
+membrane load. The three-part walkthrough explains each input and checks the
+result against familiar plate and smeared-rib formulas:
 
-aluminum = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-stiffness = isotropic_plate(aluminum, thickness=0.080)
+1. [Calculate the skin stiffness](getting-started/first-abd-stiffness.md).
+2. [Add the stiffeners](getting-started/first-homogenized-cell.md).
+3. [Apply loads and save the result](getting-started/use-the-result.md).
 
-print(stiffness.A)
-print(stiffness.D)
-```
+[Install Tensyl](getting-started/installation.md) first. The examples use metres,
+newtons, kilograms, and basic Python.
 
-This example uses a consistent US customary unit system: force in `lbf`, length
-in `in`, stress in `psi`, and mass density in units compatible with the
-downstream workflow. Tensyl records unit labels in exported artifacts but does
-not convert units.
+## Documentation Map
+
+| Your next question | Where to go |
+| --- | --- |
+| How does the stiffness represent a panel? | [How the model works](theory/equivalent-stiffness.md) |
+| How do I describe my construction? | [Materials](user-guide/materials-and-laminates.md), [sections and cells](user-guide/beam-sections-and-cells.md) |
+| How do I interpret and use the output? | [Using the results](user-guide/homogenization.md) |
+| How was the calculation checked? | [Verification](validation/index.md) |
+| What does a particular function accept? | [API reference](api/core.md) |
+
+<span id="what-tensyl-is-not"></span>
+The [modeling guide](theory/validity.md) explains the deformation model and the
+length scales used to interpret a homogenized panel.
+
+!!! note "Documentation for current main"
+    This handbook includes development features added after release 0.3.1.
+    [Install from source](getting-started/installation.md#from-source) to run every
+    example. The [changelog](https://github.com/srogachev95/Tensyl/blob/main/CHANGELOG.md)
+    records which features are unreleased.
