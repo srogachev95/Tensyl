@@ -10,8 +10,9 @@ bending (`D`), and transverse shear (`As`). Use the result to calculate strains,
 recover rib forces, compare stiffness and mass, or prepare a shell analysis.
 
 [Engineering handbook](https://srogachev95.github.io/Tensyl/) ·
-[Worked panel](docs/getting-started/first-abd-stiffness.md) ·
-[Verification](docs/validation/index.md) · [Changelog](CHANGELOG.md)
+[Worked panel](https://srogachev95.github.io/Tensyl/getting-started/first-abd-stiffness/) ·
+[Verification](https://srogachev95.github.io/Tensyl/validation/) ·
+[Changelog](https://github.com/srogachev95/Tensyl/blob/main/CHANGELOG.md)
 
 ## Install
 
@@ -37,7 +38,7 @@ skin = isotropic_plate(aluminum, thickness=skin_thickness)
 
 The skin has membrane stiffness `A11 = 157.109 MN/m`, bending stiffness
 `D11 = 52.3697 N m`, and areal mass `5.4 kg/m²`.
-The [walkthrough](docs/getting-started/first-homogenized-cell.md) adds blade ribs,
+The [walkthrough](https://srogachev95.github.io/Tensyl/getting-started/first-homogenized-cell/) adds blade ribs,
 explains the resulting stiffness and mass, then applies a membrane load.
 
 ## Build and Use a Panel Model
@@ -55,8 +56,9 @@ explains the resulting stiffness and mass, then applies a membrane load.
 - **Handoff:** JSON/YAML artifacts, Abaqus general-section keywords,
   and orthotropic-cylinder coefficient extraction.
 
-These capabilities describe current `main`, including development features
-after release 0.3.1. To run all handbook examples from this checkout:
+These capabilities are available in Tensyl 0.4.0. See the
+[release notes](https://github.com/srogachev95/Tensyl/blob/v0.4.0/CHANGELOG.md)
+for changes since 0.3.1. To run the handbook examples from this checkout:
 
 ```bash
 uv sync --group dev
@@ -66,10 +68,12 @@ uv run python docs/examples/scripts/walkthrough.py
 ## Mechanics and Verification
 
 The homogenizer follows Nemeth's equivalent-plate energy method. The handbook
-explains [the mechanics](docs/theory/tangent-plane-homogenization.md),
-[modeling choices](docs/theory/validity.md), and [sources](docs/references.md).
+explains [the mechanics](https://srogachev95.github.io/Tensyl/theory/tangent-plane-homogenization/),
+[modeling choices](https://srogachev95.github.io/Tensyl/theory/validity/), and
+[sources](https://srogachev95.github.io/Tensyl/references/).
 Verification includes independent grid-formula checks, SP-8007 reconciliation,
 and a retained CalculiX skin membrane/bending comparison.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development and checks.
-Licensed under the [MIT license](LICENSE).
+See [CONTRIBUTING.md](https://github.com/srogachev95/Tensyl/blob/main/CONTRIBUTING.md)
+for development and checks. Licensed under the
+[MIT license](https://github.com/srogachev95/Tensyl/blob/main/LICENSE).

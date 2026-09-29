@@ -46,3 +46,8 @@ stiffness samples, and provenance. Query `restored_atlas` using its restored
 surface without the original Python factory. See
 [files and sweeps](../user-guide/external-workflows.md#cell-inputs-and-sampled-atlases)
 for the serialized data.
+
+The atlas retains the Tensyl version recorded when its samples were created.
+Loading it with a newer release preserves that provenance; sampling a new atlas
+with `ABDAtlas.from_field` records the current version. Each saved file also
+identifies the version that wrote the file in its `producer` block.

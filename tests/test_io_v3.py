@@ -164,6 +164,28 @@ def test_v3_frozen_artifacts_remain_readable() -> None:
         assert to_schema(restored)["payload"] == payload["payload"]
 
 
+def test_atlas_preserves_recorded_version_across_library_upgrades(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import tensyl.fields.stiffness_field as fields
+
+    path = Path(__file__).parent / "data" / "external_workflows" / "v3_abd_atlas.json"
+    payload = json.loads(path.read_text())
+    monkeypatch.setattr(fields, "tensyl_version", lambda: "99.0.0")
+    restored = from_schema(payload)
+    assert isinstance(restored, ABDAtlas)
+    assert to_schema(restored)["payload"] == payload["payload"]
+    assert restored.metadata["tensyl_version"] == "0.3.1"
+    resampled = ABDAtlas.from_field(
+        restored.surface,
+        ConstantStiffnessField(restored.stiffnesses[0][0]),
+        u_values=restored.u_values,
+        v_values=restored.v_values,
+        metadata=restored.metadata,
+    )
+    assert resampled.metadata["tensyl_version"] == "99.0.0"
+
+
 def test_custom_surface_is_refused_instead_of_losing_its_behavior() -> None:
     class CustomPlate(FlatPlate):
         pass
