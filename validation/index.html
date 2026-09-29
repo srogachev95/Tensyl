@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/validation/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Validation Overview - Tensyl</title>
+    <title>Evidence Overview - Tensyl</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Validation Overview";
+        var mkdocs_page_name = "Evidence Overview";
         var mkdocs_page_input_path = "validation/index.md";
         var mkdocs_page_url = "/Tensyl/validation/";
       </script>
@@ -41,102 +42,105 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/homogenization/">Loads, Mass, and Reports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
               <ul class="current">
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Validation Overview</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Evidence Overview</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#evidence-available-now">Evidence Available Now</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#evidence-still-planned">Evidence Still Planned</a>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-read-the-evidence">How to Read the Evidence</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#how-to-read-the-evidence">How To Read the Evidence</a>
+    <li class="toctree-l2"><a class="reference internal" href="#evidence-still-planned">Evidence Still Planned</a>
     </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -152,10 +156,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Validation</li>
-      <li class="breadcrumb-item active">Validation Overview</li>
+          <li class="breadcrumb-item">Verification</li>
+      <li class="breadcrumb-item active">Evidence Overview</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/validation/index.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/validation/index.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -164,58 +168,66 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="validation-overview">Validation Overview</h1>
-<p>Tensyl separates checks against published equations from comparisons with
-physical tests or detailed finite-element models. Both matter, but they answer
-different questions.</p>
+<p>Tensyl checks the stiffness calculation against plate formulas, independent
+implementations of published grid equations, and a retained CalculiX skin
+comparison. Each comparison identifies its inputs, reference calculation, and
+measured differences.</p>
 <h2 id="evidence-available-now">Evidence Available Now</h2>
-<p>The <a href="nemeth-cells/">Nemeth cell verification</a> checks the named stiffener-cell
-layouts and stiffness calculations against NASA/TP-2011-216882. Eight source
-cases agree with a separately written calculation to floating-point rounding.
-This is strong evidence that the source equations and cell definitions were
-translated correctly.</p>
-<p>The <a href="sp8007-reconciliation/">SP-8007 reconciliation</a> compares selected
-orthogrid and isogrid stiffness terms with the elastic-constant formulas in
-NASA SP-8007. It identifies which terms agree directly, one printed isogrid
-term that needs correction, and the effect of an optional in-plane
-member-bending extension.</p>
-<p>These are literature checks. They do not replace a physical test campaign or
-an independently meshed finite-element comparison.</p>
+<table>
+<thead>
+<tr>
+<th>Comparison</th>
+<th>What was compared</th>
+<th>Result and evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Plate and laminate formulas</td>
+<td>Isotropic stiffness, laminate integration, transformations, and energy</td>
+<td><a href="https://github.com/srogachev95/Tensyl/tree/main/tests">Library tests</a> and the executable handbook examples</td>
+</tr>
+<tr>
+<td>Nemeth cell tables</td>
+<td>Eight named grid cases, all four stiffness blocks, independently transcribed member data</td>
+<td><a href="nemeth-cells/">Formula comparison</a>: agreement to floating-point roundoff</td>
+</tr>
+<tr>
+<td>SP-8007 elastic constants</td>
+<td>Orthogrid and centered/eccentric isogrid barred coefficients</td>
+<td><a href="sp8007-reconciliation/">Reconciliation</a>: agreement to roundoff with the eccentric isogrid correction</td>
+</tr>
+<tr>
+<td>CalculiX 2.23</td>
+<td>Skin-only membrane/bending ABD6 extraction</td>
+<td><a href="calculix-skin/">Solver comparison</a>: relative matrix error 3.79×10⁻⁸</td>
+</tr>
+</tbody>
+</table>
+<p>The source-equation checks exercise member counts, angles, offsets, section
+terms, and coefficient ordering. The CalculiX case compares extracted solver
+resultants with the isotropic skin's membrane and bending stiffness.</p>
+<h2 id="how-to-read-the-evidence">How to Read the Evidence</h2>
+<p>Start with the case definition and the compared quantities. A formula check
+shows whether the code reproduces those equations. A solver extraction shows
+agreement for the retained mesh, boundary conditions, and imposed modes.
+The <a href="https://github.com/srogachev95/Tensyl/tree/main/validation/artifacts/committed">artifact directory</a> contains the numerical records.</p>
+<p>For the skin-only case, <code>comparison_metrics.json</code> contains the solver residuals;
+<code>metrics.json</code> describes the Tensyl target's own matrix checks. The extraction
+manifest records the software versions, input hash, command, and raw-output paths.</p>
 <h2 id="evidence-still-planned">Evidence Still Planned</h2>
-<p>The independent FEM program remains planned work. It will compare Tensyl with
-detailed models for:</p>
-<ul>
-<li>skin-only, unidirectional, orthogrid, eccentric-orthogrid, and isogrid cells;</li>
-<li>flat-panel and barrel response;</li>
-<li>cases near the limits of the repeating-cell approximation;</li>
-<li>sensitivity to joints, boundary conditions, and local effects that an
-  equivalent stiffness cannot represent directly.</li>
-</ul>
-<p>Each promoted case should include the input deck, solver version, extracted
-results, comparison metrics, plots, and a manifest sufficient for another
-engineer to repeat the work.</p>
-<h2 id="how-to-read-the-evidence">How To Read the Evidence</h2>
-<p>A close literature comparison means the implementation follows the stated
-source under the same assumptions. It does not prove that either model captures
-every feature of a real structure.</p>
-<p>Before using a result, check:</p>
-<ul>
-<li>whether the stiffener pattern and section idealization match the structure;</li>
-<li>whether pitch and stiffener height are small enough for the response being
-  studied;</li>
-<li>whether joints, cutouts, local buckling, crippling, or load introduction need
-  a more detailed model;</li>
-<li>whether the local frame, reference surface, and eccentricity signs match the
-  downstream analysis.</li>
-</ul>
-<p>That distinction keeps the claim proportional to the evidence: the current
-source checks are useful and repeatable, while independent FEM correlation is
-still to come.</p>
+<p>The retained solver comparison covers the skin's six membrane/bending modes.
+Further campaign work includes transverse shear, mesh-convergence studies,
+stiffened cells, and panel/barrel response. Existing flat-panel and barrel
+artifacts are target calculations for those future comparisons. The
+<a href="https://github.com/srogachev95/Tensyl/tree/main/validation">validation campaign</a>
+keeps case definitions and artifact provenance together.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../user-guide/sp8007-data-handoff/" class="btn btn-neutral float-left" title="SP-8007 Data Handoff"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="nemeth-cells/" class="btn btn-neutral float-right" title="Nemeth Cell Verification">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../user-guide/sp8007-data-handoff/" class="btn btn-neutral float-left" title="SP-8007 Inputs"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="calculix-skin/" class="btn btn-neutral float-right" title="CalculiX Skin Comparison">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -245,7 +257,7 @@ still to come.</p>
       <span><a href="../user-guide/sp8007-data-handoff/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="nemeth-cells/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="calculix-skin/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
@@ -41,166 +42,181 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../core/">Core</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Materials</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >API</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.materials">materials</a>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">Core</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Materials</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials">materials</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial">IsotropicMaterial</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial">IsotropicMaterial</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.E">E</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.E">E</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.G">G</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.G">G</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.density">density</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.alpha">alpha</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.nu">nu</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.density">density</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.nu">nu</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.plane_stress_stiffness">plane_stress_stiffness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.IsotropicMaterial.plane_stress_stiffness">plane_stress_stiffness</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial">OrthotropicPlyMaterial</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial">OrthotropicPlyMaterial</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.E1">E1</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.E1">E1</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.E2">E2</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.E2">E2</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.G12">G12</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.G12">G12</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.G13">G13</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.G13">G13</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.G23">G23</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.G23">G23</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.density">density</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.alpha1">alpha1</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.nu12">nu12</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.alpha2">alpha2</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.nu21">nu21</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.density">density</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.nu12">nu12</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.nu21">nu21</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.reduced_stiffness">reduced_stiffness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.transformed_reduced_stiffness">transformed_reduced_stiffness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.transformed_shear_stiffness">transformed_shear_stiffness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.reduced_stiffness">reduced_stiffness</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.transformed_reduced_stiffness">transformed_reduced_stiffness</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.OrthotropicPlyMaterial.transformed_shear_stiffness">transformed_shear_stiffness</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.materials.Ply">Ply</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply">Ply</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply.angle_rad">angle_rad</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.angle_rad">angle_rad</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply.material">material</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.material">material</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply.thickness">thickness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.thickness">thickness</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.Ply.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.materials.Ply.from_degrees">from_degrees</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.materials.isotropic_plate">isotropic_plate</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.isotropic_plate">isotropic_plate</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.materials.laminate_plate">laminate_plate</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.laminate_plate">laminate_plate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.layup">layup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.materials.laminate_thermal_resultants">laminate_thermal_resultants</a>
     </li>
     </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -216,10 +232,11 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">API Reference</li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">API</li>
       <li class="breadcrumb-item active">Materials</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/materials.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/api/materials.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -311,8 +328,16 @@
                   (<code><span title="float">float</span> | None</code>)
               –
               <div class="doc-md-description">
-                <p>Optional nonnegative mass density. When present, plate
-builders can report areal mass.</p>
+                <p>Optional nonnegative mass per volume (kg/m³ for SI inputs). Plate
+builders use it to calculate mass per area.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>alpha</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional thermal expansion per temperature increment; None is unknown.</p>
               </div>
             </li>
         </ul>
@@ -406,6 +431,27 @@ builders can report areal mass.</p>
 
 
 
+<h3 id="tensyl.materials.IsotropicMaterial.alpha" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="tensyl.materials.IsotropicMaterial.density" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">density</span> <span class="o">=</span> <span class="kc">None</span></code>
 
@@ -450,7 +496,7 @@ builders can report areal mass.</p>
 
 
 <h3 id="tensyl.materials.IsotropicMaterial.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -621,7 +667,23 @@ symmetry.</p>
                   (<code><span title="float">float</span> | None</code>)
               –
               <div class="doc-md-description">
-                <p>Optional nonnegative mass density.</p>
+                <p>Optional nonnegative mass per volume (kg/m³ for SI inputs).</p>
+              </div>
+            </li>
+            <li>
+              <b><code>alpha1</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional expansion along material direction 1, per temperature increment.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>alpha2</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional expansion along material direction 2, per temperature increment.</p>
               </div>
             </li>
         </ul>
@@ -750,6 +812,48 @@ symmetry.</p>
 
 
 
+<h3 id="tensyl.materials.OrthotropicPlyMaterial.alpha1" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">alpha1</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.materials.OrthotropicPlyMaterial.alpha2" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">alpha2</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="tensyl.materials.OrthotropicPlyMaterial.density" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">density</span> <span class="o">=</span> <span class="kc">None</span></code>
 
@@ -839,7 +943,7 @@ symmetry.</p>
 
 
 <h3 id="tensyl.materials.OrthotropicPlyMaterial.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">E1</span><span class="p">,</span> <span class="n">E2</span><span class="p">,</span> <span class="n">G12</span><span class="p">,</span> <span class="n">nu12</span><span class="p">,</span> <span class="n">G13</span><span class="p">,</span> <span class="n">G23</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">E1</span><span class="p">,</span> <span class="n">E2</span><span class="p">,</span> <span class="n">G12</span><span class="p">,</span> <span class="n">nu12</span><span class="p">,</span> <span class="n">G13</span><span class="p">,</span> <span class="n">G23</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha2</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1306,6 +1410,30 @@ numerically but still preserve the input.</p>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.materials.Ply.from_degrees" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_degrees</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a ply with an angle in degrees, preserving its label.</p>
+<p>Angles follow the same positive rotation about the local normal as
+<code>angle_rad</code>. Thickness must be positive and the angle finite.</p>
+
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -1688,9 +1816,147 @@ positive.</p>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.materials.layup" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">layup</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">ply_thickness</span><span class="p">,</span> <span class="n">notation</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Expand a layup string into equal-thickness plies, bottom to top.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>material</code></b>
+                  (<code><span title="tensyl.materials.laminates.PlyMaterial">PlyMaterial</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Material shared by all expanded plies.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>ply_thickness</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Positive thickness of each ply.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>notation</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Slash-separated angles in degrees, optionally enclosed in
+brackets. <code>±a</code> and <code>+-a</code> expand to +a, -a; <code>∓a</code> reverses
+that pair. <code>0_2</code> and <code>0₂</code> repeat an entry. A bracketed group
+may have an integer repeat count followed by <code>s</code> for symmetry:
+<code>[0/90]2s</code> repeats twice, then appends the reversed stack.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="Ply
+
+
+  
+      dataclass
+   (tensyl.materials.laminates.Ply)" href="#tensyl.materials.Ply">Ply</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Tuple of plies ordered from the negative-normal face to the positive</p>
+              </div>
+            </li>
+            <li>
+                  <code>...</code>
+              –
+              <div class="doc-md-description">
+                <p>face. Symmetry duplicates the middle ply; none is shared across it.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If notation is empty, malformed, nested, or unsupported,
+a repeat count is not positive, or thickness is invalid.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
 
 
   </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="tensyl.materials.laminate_thermal_resultants"></a>
+    <div class="doc doc-contents first">
+
+        <p>Integrate Qbar alpha through bottom-to-top plies about the midplane.</p>
+<p>Returns N_T and M_T per unit uniform temperature change. Every material
+must supply expansion coefficients; unknown coefficients are refused.
+Temperature gradients and temperature-dependent properties are unsupported.</p>
+
 
     </div>
 

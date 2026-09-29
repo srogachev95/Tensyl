@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
@@ -41,318 +42,333 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../core/">Core</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../materials/">Materials</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Geometry and Fields</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >API</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry">geometry</a>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">Core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Geometry and Fields</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry">geometry</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.curvature">curvature</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.curvature">curvature</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.frame">frame</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.frame">frame</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.jacobian">jacobian</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.jacobian">jacobian</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.metadata">metadata</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.metadata">metadata</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.metric">metric</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.metric">metric</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.min_radius">min_radius</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.min_radius">min_radius</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.position">position</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.position">position</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.principal_curvatures">principal_curvatures</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.principal_curvatures">principal_curvatures</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.tangent_u">tangent_u</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.tangent_u">tangent_u</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.tangent_v">tangent_v</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.tangent_v">tangent_v</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.u">u</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.u">u</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.v">v</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.v">v</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__eq__">__eq__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__hash__">__hash__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SurfacePoint.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Surface">Surface</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Surface">Surface</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Surface.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Surface.point_at">point_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.FlatPlate">FlatPlate</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate">FlatPlate</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.e1">e1</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.e1">e1</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.e2">e2</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.e2">e2</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.origin">origin</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.origin">origin</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__eq__">__eq__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__hash__">__hash__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.FlatPlate.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.FlatPlate.point_at">point_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Cylinder">Cylinder</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder">Cylinder</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Cylinder.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.length">length</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Cylinder.length">length</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.radius">radius</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Cylinder.radius">radius</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Cylinder.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Cylinder.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Cylinder.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Cylinder.point_at">point_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Sphere">Sphere</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere">Sphere</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Sphere.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.radius">radius</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Sphere.radius">radius</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Sphere.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Sphere.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Sphere.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Sphere.point_at">point_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.SphericalCap">SphericalCap</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap">SphericalCap</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.half_angle_rad">half_angle_rad</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SphericalCap.half_angle_rad">half_angle_rad</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SphericalCap.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.radius">radius</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SphericalCap.radius">radius</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SphericalCap.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SphericalCap.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.SphericalCap.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.SphericalCap.point_at">point_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum">ConicalFrustum</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum">ConicalFrustum</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.length">length</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.length">length</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_end">radius_end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_end">radius_end</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_start">radius_start</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_start">radius_start</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.slope">slope</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.slope">slope</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.point_at">point_at</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_at">radius_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.ConicalFrustum.radius_at">radius_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.geometry.Ellipsoid">Ellipsoid</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid">Ellipsoid</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.a">a</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.a">a</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.b">b</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.b">b</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.c">c</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.c">c</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.point_at">point_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.geometry.Ellipsoid.point_at">point_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields">fields</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields">fields</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.StiffnessField">StiffnessField</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessField">StiffnessField</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessField.stiffness_at">stiffness_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessField.stiffness_at">stiffness_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField">ConstantStiffnessField</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField">ConstantStiffnessField</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.stiffness">stiffness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.orientation_rad">orientation_rad</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.stiffness">stiffness</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.stiffness_at">stiffness_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ConstantStiffnessField.stiffness_at">stiffness_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField">HomogenizedStiffnessField</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField">HomogenizedStiffnessField</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.cache">cache</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.cache">cache</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.cell_factory">cell_factory</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.cell_factory">cell_factory</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.homogenizer">homogenizer</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.homogenizer">homogenizer</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.surface">surface</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.surface">surface</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.validity_context_factory">validity_context_factory</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.validity_context_factory">validity_context_factory</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.stiffness_at">stiffness_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.HomogenizedStiffnessField.stiffness_at">stiffness_at</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.StiffnessCache">StiffnessCache</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache">StiffnessCache</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.precision">precision</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.precision">precision</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.size">size</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.size">size</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.clear">clear</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.clear">clear</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.get">get</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.get">get</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.key">key</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.key">key</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.StiffnessCache.set">set</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.StiffnessCache.set">set</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.fields.ABDAtlas">ABDAtlas</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas">ABDAtlas</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.metadata">metadata</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.metadata">metadata</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.stiffnesses">stiffnesses</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.stiffnesses">stiffnesses</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.surface">surface</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.surface">surface</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.u_values">u_values</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.u_values">u_values</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.v_values">v_values</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.v_values">v_values</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.from_field">from_field</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.from_field">from_field</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.fields.ABDAtlas.stiffness_at">stiffness_at</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.fields.ABDAtlas.stiffness_at">stiffness_at</a>
     </li>
         </ul>
     </li>
     </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -368,10 +384,11 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">API Reference</li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">API</li>
       <li class="breadcrumb-item active">Geometry and Fields</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/geometry-and-fields.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/api/geometry-and-fields.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -813,6 +830,38 @@ directions.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="tensyl.geometry.SurfacePoint.__eq__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.SurfacePoint.__hash__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="tensyl.geometry.SurfacePoint.__init__" class="doc doc-heading">
             <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">tangent_u</span><span class="p">,</span> <span class="n">tangent_v</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="n">principal_curvatures</span><span class="p">,</span> <span class="n">min_radius</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
 
@@ -1087,7 +1136,7 @@ singular point of the parameterization.</p>
                   (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
               –
               <div class="doc-md-description">
-                <p>Unit direction for increasing <code>u</code>.</p>
+                <p>Direction for increasing <code>u</code>; normalized on construction.</p>
               </div>
             </li>
             <li>
@@ -1095,7 +1144,8 @@ singular point of the parameterization.</p>
                   (<code><span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
               –
               <div class="doc-md-description">
-                <p>Unit direction for increasing <code>v</code>.</p>
+                <p>Direction for increasing <code>v</code>; normalized on construction and
+required to be orthogonal to <code>e1</code>.</p>
               </div>
             </li>
             <li>
@@ -1214,6 +1264,38 @@ singular point of the parameterization.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.FlatPlate.__eq__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.geometry.FlatPlate.__hash__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
@@ -2924,7 +3006,8 @@ apex.</p>
                   (<code><span title="float">float</span></code>)
               –
               <div class="doc-md-description">
-                <p>Polar angle <code>phi</code> in radians.</p>
+                <p>Polar angle <code>phi</code> in radians, strictly between <code>0</code> and
+<code>pi</code>.</p>
               </div>
             </li>
             <li>
@@ -2960,7 +3043,7 @@ apex.</p>
    (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
               –
               <div class="doc-md-description">
-                <p>A <code>SurfacePoint</code> with metric, curvature, and principal</p>
+                <p>A <code>SurfacePoint</code> with outward normal, metric, curvature, and</p>
               </div>
             </li>
             <li>
@@ -2972,7 +3055,7 @@ apex.</p>
    (tensyl.geometry.surfaces.SurfacePoint)" href="#tensyl.geometry.SurfacePoint">SurfacePoint</a></code>
               –
               <div class="doc-md-description">
-                <p>curvatures computed from the local ellipsoid chart.</p>
+                <p>principal curvatures computed from the local ellipsoid chart.</p>
               </div>
             </li>
         </ul>
@@ -2995,8 +3078,8 @@ apex.</p>
                   <code><span title="ValueError">ValueError</span></code>
               –
               <div class="doc-md-description">
-                <p>If either coordinate is non-finite or the chart is
-singular at the requested point.</p>
+                <p>If either coordinate is non-finite, <code>phi</code> is outside
+<code>(0, pi)</code>, or the chart is singular at the requested point.</p>
               </div>
             </li>
         </ul>
@@ -3284,8 +3367,16 @@ surface or coordinates.</p>
    (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
               –
               <div class="doc-md-description">
-                <p>Local stiffness to reuse at every sampled point. Its numeric
-C8 matrix is preserved, then rebound to each surface point frame.</p>
+                <p>Local stiffness to reuse at every sampled point.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>orientation_rad</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Counterclockwise angle from the surface's e1 to the
+stiffness's e1 about +n. Zero preserves the original components.</p>
               </div>
             </li>
         </ul>
@@ -3314,6 +3405,27 @@ C8 matrix is preserved, then rebound to each surface point frame.</p>
 
 
 
+<h3 id="tensyl.fields.ConstantStiffnessField.orientation_rad" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">orientation_rad</span> <span class="o">=</span> <span class="mf">0.0</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="tensyl.fields.ConstantStiffnessField.stiffness" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">stiffness</span></code>
 
@@ -3337,7 +3449,23 @@ C8 matrix is preserved, then rebound to each surface point frame.</p>
 
 
 <h3 id="tensyl.fields.ConstantStiffnessField.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">stiffness</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">stiffness</span><span class="p">,</span> <span class="n">orientation_rad</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.fields.ConstantStiffnessField.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
 
 </h3>
 
@@ -3422,7 +3550,7 @@ C8 matrix is preserved, then rebound to each surface point frame.</p>
    (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
               –
               <div class="doc-md-description">
-                <p>A new <code>ABDStiffness</code> with the same numeric law and the sampled</p>
+                <p>A new <code>ABDStiffness</code> expressed in the sampled surface frame,</p>
               </div>
             </li>
             <li>
@@ -3434,7 +3562,7 @@ C8 matrix is preserved, then rebound to each surface point frame.</p>
    (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>
               –
               <div class="doc-md-description">
-                <p>surface frame.</p>
+                <p>with the supplied material orientation.</p>
               </div>
             </li>
         </ul>
@@ -4807,7 +4935,7 @@ coordinate is outside the sampled grid.</p>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../homogenizers/" class="btn btn-neutral float-left" title="Homogenizers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../io/" class="btn btn-neutral float-right" title="External Workflow I/O">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../io/" class="btn btn-neutral float-right" title="Files">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>

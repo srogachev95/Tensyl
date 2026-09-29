@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/theory/tangent-plane-homogenization/" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Tangent-Plane Homogenization - Tensyl</title>
+    <title>Energy Homogenization - Tensyl</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Tangent-Plane Homogenization";
+        var mkdocs_page_name = "Energy Homogenization";
         var mkdocs_page_input_path = "theory/tangent-plane-homogenization.md";
         var mkdocs_page_url = "/Tensyl/theory/tangent-plane-homogenization/";
       </script>
@@ -41,108 +42,109 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../conventions/">Frames and Conventions</a>
-                  </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Energy Homogenization</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#how-geometry-enters-the-abd-law">How Geometry Enters the ABD Law</a>
-    </li>
     <li class="toctree-l2"><a class="reference internal" href="#inputs">Inputs</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#beam-section-quantities">Beam Section Quantities</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#thin-wall-section-geometry">Thin-Wall Section Geometry</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#diagnostics">Diagnostics</a>
+    <li class="toctree-l2"><a class="reference internal" href="#how-geometry-enters-the-abd-law">How Geometry Enters the ABD Law</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#limits">Limits</a>
+    <li class="toctree-l2"><a class="reference internal" href="#diagnostics">Diagnostics</a>
     </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../conventions/">Axes and Reference Surface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -158,10 +160,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Theory</li>
-      <li class="breadcrumb-item active">Tangent-Plane Homogenization</li>
+          <li class="breadcrumb-item">How the Model Works</li>
+      <li class="breadcrumb-item active">Energy Homogenization</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/theory/tangent-plane-homogenization.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/theory/tangent-plane-homogenization.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -170,246 +172,108 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="tangent-plane-homogenization">Tangent-Plane Homogenization</h1>
-<p>Tensyl begins with one small patch of a repeating stiffener pattern. It
-calculates the skin and member stiffness in that patch, then spreads the member
-contributions over the patch area. The result is one equivalent ABD stiffness
-that a larger plate or shell model can use without drawing every stiffener.</p>
-<p>The patch is treated as flat in the local <code>e1</code>-<code>e2</code> plane. Surface curvature is
-handled later, when the stiffness is placed on a barrel, dome, or another shell
-surface.</p>
-<p>The member contribution follows one compact energy equation:</p>
-<p>For a cell with area <span class="arithmatex">\(A_\text{cell}\)</span>, a beam member contributes:</p>
-<div class="arithmatex">\[
-\Delta\mathbf C_m =
-\frac{\mu_m L_m}{A_\text{cell}}
-\mathbf T_m^T\mathbf K_m\mathbf T_m.
-\]</div>
-<p>In this equation:</p>
-<ul>
-<li><span class="arithmatex">\(\mu_m\)</span> says how many identical members the cell represents;</li>
-<li><span class="arithmatex">\(L_m\)</span> is the length of that member inside the cell;</li>
-<li><span class="arithmatex">\(\mathbf K_m\)</span> contains the member's beam stiffnesses;</li>
-<li><span class="arithmatex">\(\mathbf T_m\)</span> converts panel deformation into deformation along the member.</li>
-</ul>
-<p>Adding every member contribution to the skin gives the equivalent stiffness:</p>
-<div class="arithmatex">\[
-\mathbf C_\text{stiffness}
-=
-\mathbf C_\text{skin}
-+
-\sum_m \Delta\mathbf C_m.
-\]</div>
-<p>The energy method is Tensyl's reference calculation. It works for both named
-patterns and custom graph cells, and its assembled stiffness is symmetric by
-construction. A direct formula is also available for supported families of
-straight, parallel stiffeners and is tested against the energy calculation.</p>
-<p>This follows the equivalent-plate idea used by Nemeth for stiffened laminated
-plates and plate-like lattices. Tensyl treats those formulas as mechanics
-guidance and keeps the energy path as the executable reference.</p>
-<h2 id="how-geometry-enters-the-abd-law">How Geometry Enters the ABD Law</h2>
-<p>The homogenizer answers a local question: how stiff is this repeating patch in
-its own directions? At any point on a plate or shell, those directions are the
-local right-handed frame:</p>
-<div class="arithmatex">\[
-\{\mathbf e_1,\mathbf e_2,\mathbf n\}.
-\]</div>
-<p>The same ABD relationship is used at every point:</p>
-<div class="arithmatex">\[
-\mathbf r = \mathbf C_\text{stiffness}\boldsymbol\eta.
-\]</div>
-<p>Defining a barrel, dome, cone, or ellipsoid does not change the local cell
-matrix by itself. Geometry enters later in three ways:</p>
-<ul>
-<li>the surface supplies local directions and curvature;</li>
-<li>a stiffness field selects the ABD stiffness at each point;</li>
-<li>a shell, buckling, or sizing model combines that stiffness with loads,
-  boundary conditions, and the full structure.</li>
-</ul>
-<p>Keeping these jobs separate makes the result easier to inspect. The cell says
-how the local material responds, the surface says where that local patch sits,
-and the solver handles the response of the complete structure.</p>
-<p>The public stiffness-field helpers implement this separation directly:</p>
-<ul>
-<li><code>ConstantStiffnessField</code> returns the same <code>C8</code> stiffness at each point and
-  attaches the local frame from <code>surface.point_at(u, v)</code>. The numeric matrix is
-  unchanged.</li>
-<li><code>HomogenizedStiffnessField</code> calls a user-supplied cell factory at each surface
-  point. The ABD stiffness can change pointwise if the factory changes pitch,
-  member angle, eccentricity, section, material, or laminate with the local
-  geometry.</li>
-<li><code>ABDAtlas</code> stores sampled ABD stiffnesses, interpolates between them, and
-  attaches the result to the target point's local frame.</li>
-</ul>
-<p>For a cylinder, <code>e1</code> is axial, <code>e2</code> is circumferential, and <code>n</code> is outward. A
-longitudinal stringer therefore has angle <code>0</code>, and a ring rib has angle
-<code>pi/2</code>. The cylinder radius does not change the constant-field tangent, but it
-does set the curvature scale used by validity ratios such as
-<span class="arithmatex">\(p/R_\text{min}\)</span> and <span class="arithmatex">\(h_s/R_\text{min}\)</span>.</p>
-<p>For an ellipsoid, the same rule holds, but the frame and curvature vary over the
-surface. Uniform parameter spacing is not uniform physical pitch on a triaxial
-ellipsoid. If stiffener pitch or orientation is meant to follow physical
-distance, the pointwise cell factory or atlas samples must encode that choice.
-Tensyl will not infer a geodesic stiffener layout from the word "ellipsoid".</p>
-<p>This is why the method is generalizable under its stated assumptions. Any smooth
-surface that can provide a local tangent frame and curvature scale can host the
-same local ABD law. The approximation is appropriate when the modeled response
-is scale separated from stiffener height, stiffener pitch, and local curvature,
-as discussed in <a href="../validity/">Validity Limits</a>. The mechanics basis follows the
-equivalent-plate, first-order plate/shell, differential-geometry, and
-homogenization sources listed in <a href="../../references/">References</a>.</p>
+<p>Start with a small repeating patch of skin and ribs. Give it a uniform panel
+strain and curvature, calculate the energy stored in the skin and each rib,
+and divide the rib energy by the repeat area. Matching that energy defines the
+equivalent plate stiffness.</p>
+<p>This is the first-approximation equivalent-plate construction in
+<a href="https://ntrs.nasa.gov/citations/20110004039">Nemeth, NASA/TP-2011-216882, equations 30–39</a>.
+Tensyl applies the same assembly to named grids, custom graph cells, and
+independent families of parallel ribs.</p>
 <h2 id="inputs">Inputs</h2>
-<p>The calculation needs a skin, one or more stiffener sections, and the repeating
-cell that places those stiffeners:</p>
-<ul>
-<li><code>skin</code> is the unstiffened skin or laminate ABD stiffness.</li>
-<li><code>BeamSection</code> holds the stiffness of one member cross-section.</li>
-<li><code>BeamMember</code> places a section in a cell with a length, angle, and offset.</li>
-<li><code>CanonicalUnitCell.area</code> is the panel area represented by that repeat.</li>
-<li><code>CanonicalUnitCell.geometry</code> holds the coordinates needed to draw the cell.</li>
-</ul>
-<p>The direct calculation uses <code>StiffenerFamily</code> instead of individual members.
-Each family supplies a section, direction, spacing, and offset.</p>
-<h2 id="beam-section-quantities">Beam Section Quantities</h2>
-<p><code>BeamSection</code> stores centroidal member-local stiffnesses:</p>
 <table>
 <thead>
 <tr>
-<th>Quantity</th>
-<th>Meaning</th>
-<th>Common units, US customary</th>
+<th>Input</th>
+<th>Physical meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>EA</code></td>
-<td>axial stiffness</td>
-<td><code>lbf</code></td>
+<td><code>skin</code></td>
+<td>Plate or laminate stiffness per panel area</td>
 </tr>
 <tr>
-<td><code>EIy</code></td>
-<td>bending stiffness about member-local <code>y</code></td>
-<td><code>lbf*in^2</code></td>
+<td><code>BeamSection</code></td>
+<td>Centroidal stiffness of a rib cross-section</td>
 </tr>
 <tr>
-<td><code>EIz</code></td>
-<td>bending stiffness about member-local <code>z</code></td>
-<td><code>lbf*in^2</code></td>
+<td><code>BeamMember</code></td>
+<td>Rib length, angle, eccentricity, and multiplicity</td>
 </tr>
 <tr>
-<td><code>GJ</code></td>
-<td>torsional stiffness</td>
-<td><code>lbf*in^2</code></td>
+<td><code>CanonicalUnitCell.area</code></td>
+<td>Panel area represented by the repeat</td>
 </tr>
 <tr>
-<td><code>kGAy</code></td>
-<td>in-plane shear stiffness</td>
-<td><code>lbf</code></td>
-</tr>
-<tr>
-<td><code>kGAz</code></td>
-<td>transverse shear stiffness</td>
-<td><code>lbf</code></td>
+<td><code>cell.geometry</code></td>
+<td>Repeat vectors, nodes, and edges used to draw the pattern</td>
 </tr>
 </tbody>
 </table>
-<p>If a transverse-shear stiffness is omitted, Tensyl treats its contribution as
-zero and records that assumption in the result.</p>
-<p>By default, Tensyl follows Nemeth and leaves out member bending within the panel
-plane. <code>BeamSection</code> still stores <code>EIz</code> and <code>EIyz</code> for section completeness, but
-the cell does not use them unless <code>include_in_plane_bending=True</code> is set on the
-member or named constructor. That option is an extension beyond the default
-Nemeth model, and the result records when it is enabled.</p>
-<p>In Nemeth's notation, this default is the first-approximation condition
-<span class="arithmatex">\(\chi_Z=0\)</span>.</p>
-<p>For the member-frame in-plane shear term, the two effective offsets enter as</p>
+<p>A straight family with spacing <span class="arithmatex">\(s\)</span> supplies <span class="arithmatex">\(1/s\)</span> of rib length per panel area.
+For a cell member of length <span class="arithmatex">\(L_m\)</span> and multiplicity <span class="arithmatex">\(\mu_m\)</span>, that density is
+<span class="arithmatex">\(\mu_m L_m/A_\mathrm{cell}\)</span>. A shared boundary rib can be represented by two
+half-members or one full member.</p>
+<h2 id="beam-section-quantities">Beam Section Quantities</h2>
+<p>Express panel strains in the member's local directions, indicated by primes.
+The member strain map is</p>
 <div class="arithmatex">\[
-\Gamma_{XY}
-=
-\frac{1}{2}\left(\gamma_{XY}^0+\bar{\bar z}\kappa_{XY}\right).
+\mathbf q_m=\mathbf T_m\boldsymbol\eta=
+\begin{bmatrix}
+\epsilon_{11}'+z_a\kappa_{11}'\\
+(\gamma_{12}'+z_s\kappa_{12}')/2\\
+\gamma_{13}'\\\kappa_{11}'\\-\kappa_{12}'/2
+\end{bmatrix},\qquad
+\mathbf K_m=\operatorname{diag}(EA,kGA_y,kGA_z,EI_y,GJ).
 \]</div>
-<p>In plain terms, a positive shear offset produces positive <code>B66</code> coupling under
-the documented <code>+n</code> convention.</p>
-<p><code>BeamSection</code> still asks for stiffness products (<code>EA</code>, <code>EIy</code>, <code>EIz</code>, <code>GJ</code>,
-<code>kGAy</code>, <code>kGAz</code>) because the homogenizer consumes centroidal beam stiffnesses.
-The thin-wall section helpers are an upstream calculation layer; they do not
-change the member strain map.</p>
+<p>Here <span class="arithmatex">\(z_a\)</span> is the axial eccentricity and <span class="arithmatex">\(z_s\)</span> is the in-plane shear eccentricity,
+both measured along <code>+n</code>. Their usual value is the centroid offset. The five
+entries represent axial strain, in-plane shear, transverse shear, bending
+curvature, and twist rate. The halves and twist sign follow Nemeth's engineering
+shear convention.</p>
+<p>The rib contribution and complete plate stiffness are</p>
+<div class="arithmatex">\[
+\Delta\mathbf C_m=\frac{\mu_mL_m}{A_\mathrm{cell}}
+\mathbf T_m^T\mathbf K_m\mathbf T_m,\qquad
+\mathbf C_8=\mathbf C_\mathrm{skin}+\sum_m\Delta\mathbf C_m.
+\]</div>
+<p>For a rib aligned with <code>e1</code>, this recovers
+<span class="arithmatex">\(\Delta A_{11}=EA/s\)</span>, <span class="arithmatex">\(\Delta B_{11}=EAz_a/s\)</span>, and
+<span class="arithmatex">\(\Delta D_{11}=(EI_y+EAz_a^2)/s\)</span>. At angle <span class="arithmatex">\(\theta\)</span>, the axial contribution
+to <span class="arithmatex">\(A_{11}\)</span> becomes <span class="arithmatex">\(EA\cos^4\theta/s\)</span>.</p>
+<p>The first-approximation strain field keeps the member axis straight within the
+panel plane: Nemeth's <span class="arithmatex">\(\chi_Z=0\)</span>. <code>EIz</code> and <code>EIyz</code> remain available as section
+properties; the five-mode energy above uses <code>EIy</code> for bending. The historical
+change to that mapping is recorded in the
+<a href="../../validation/sp8007-reconciliation/#why-earlier-reports-disagreed">SP-8007 reconciliation</a>.</p>
 <h2 id="thin-wall-section-geometry">Thin-Wall Section Geometry</h2>
-<p>The geometry helpers represent an isotropic stiffener as rectangular wall
-segments in the member-local <code>(y, z)</code> section plane. The <code>X</code> axis runs along the
-stiffener, <code>z</code> follows the wall normal used for member eccentricity, and <code>y</code> is
-the in-plane transverse section axis. Section constructors measure <code>centroid_z</code>
-from their own <code>z = 0</code> construction datum; member eccentricity is still measured
-from the wall reference surface. If those datums differ, shift the centroid
-coordinate before building the cell.</p>
-<p>For each segment, Tensyl sums the rectangular area contribution and then shifts
-to the section centroid. The resulting geometric properties are:</p>
-<div class="arithmatex">\[
-A = \int_A dA,\qquad
-I_y = \int_A (z-z_c)^2\,dA,
-\]</div>
-<div class="arithmatex">\[
-I_z = \int_A (y-y_c)^2\,dA,\qquad
-I_{yz} = \int_A (y-y_c)(z-z_c)\,dA.
-\]</div>
-<p>The segment endpoints are midline coordinates. This is the intended thin-wall
-modeling convention; local corner buildup, weld radii, and exact flange/web
-overlap are outside this geometry helper.</p>
-<p>For an isotropic material, the generated <code>BeamSection</code> uses:</p>
-<div class="arithmatex">\[
-EA = E A,\qquad EI_y = E I_y,\qquad EI_z = E I_z,\qquad
-EI_{yz} = E I_{yz}.
-\]</div>
-<p>The torsion value uses the open-section St Venant thin-wall approximation:</p>
-<div class="arithmatex">\[
-J_{\mathrm{sv}} \approx \sum_i \frac{l_i t_i^3}{3},\qquad
-GJ = G\,J_{\mathrm{sv}}.
-\]</div>
-<p>This is intentionally modest. It does not include closed-cell Bredt torsion,
-restrained warping, local flange/web stress recovery, crippling, or joint
-details. If those effects matter, compute the section properties externally and
-pass a <code>BeamSection</code> directly. There is no shame in outsourcing a problem to the
-tool that actually solves it.</p>
-<p>There is no universal torsion constant for a stiffener drawing. Use the <code>GJ</code>
-that belongs to the member idealization and boundary condition in the equivalent
-wall. A freely warping blade, tee, angle, or channel should usually use an
-open-section St Venant value. A tube, closed hat, or box should use a closed-cell
-torsional stiffness only when the closed shear-flow path is truly part of the
-member model; if the skin is already modeled as the plate skin, do not count the
-same skin again inside the stiffener <code>J</code>. If joints, end constraints, or
-neighboring structure restrain warping, use a section-analysis or finite-element
-torsional stiffness for that restrained condition.</p>
-<p>Transverse shear stiffnesses are optional. If <code>shear_correction_y</code> or
-<code>shear_correction_z</code> is supplied, Tensyl computes <code>kGAy</code> or <code>kGAz</code> as
-<span class="arithmatex">\(\kappa G A\)</span>. If a correction is omitted, the corresponding shear stiffness is
-left as <code>None</code>, and the homogenization result records the same omitted-shear
-assumption used for hand-entered <code>BeamSection</code> values.</p>
+<p>The <a href="../../user-guide/beam-sections-and-cells/">section guide</a> derives <code>EA</code>, <code>EIy</code>,
+and <code>GJ</code> from isotropic strips or laminated walls. Use N for axial and shear
+stiffnesses, and N m² for bending and torsional stiffnesses in SI. Omitted
+<code>kGAy</code> or <code>kGAz</code> contributes zero in the corresponding member mode; the result
+records that choice.</p>
+<h2 id="how-geometry-enters-the-abd-law">How Geometry Enters the ABD Law</h2>
+<p>The calculation takes place in the local tangent plane. A surface supplies
+local directions and curvature; a field supplies the stiffness at that point.
+With zero material angle, a constant field uses the original numeric matrix.
+A nonzero angle rotates it into the surface axes. A varying field builds a
+new local cell as the layout changes. See
+<a href="../../user-guide/geometry-and-fields/">surfaces and fields</a>.</p>
 <h2 id="diagnostics">Diagnostics</h2>
-<p>The homogenizer returns <code>HomogenizationResult</code>, not just an ABD stiffness. The result
-records:</p>
-<ul>
-<li>symmetry, positive-semidefinite status, rank, member count, and cell area;</li>
-<li>assumptions attached to the member strain map and section inputs;</li>
-<li>a <code>ValidityReport</code> with scale-separation ratios and warning codes.</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Two methods agreeing is necessary, not sufficient</p>
-<p>Energy-vs-direct agreement is a good sign, but it is not proof. Both paths
-share the same member strain map, so they can agree and still be wrong
-together. For high-consequence use, you still need independent literature,
-test, or finite-element evidence.</p>
-</div>
-<h2 id="limits">Limits</h2>
-<p>The first homogenizer is a tangent-plane model. It does not model local joints,
-fasteners, stiffener crippling, curved stiffener geodesics, or full shell
-equilibrium. Use geometry validity ratios such as <code>h_over_R</code>, <code>p_over_R</code>, and
-<code>p_over_L_response</code> to decide whether the local flat-cell assumption is
-reasonable for the intended response mode.</p>
+<p>The result reports positive-semidefinite status, minimum eigenvalue, rank,
+member count, cell area, and the best common neutral-surface offset. It also
+carries the input assumptions and scale ratios. The
+<a href="../../user-guide/homogenization/#diagnostics">result guide</a> explains how to read them.</p>
+<p><span id="limits"></span>
+Next: <a href="../conventions/">Axes and reference surface</a>, then
+<a href="../validity/">modeling choices</a> for the affine strain assumption and response scales.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../conventions/" class="btn btn-neutral float-left" title="Frames and Conventions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../validity/" class="btn btn-neutral float-right" title="Validity Limits">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../equivalent-stiffness/" class="btn btn-neutral float-left" title="Plate Stiffness"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../conventions/" class="btn btn-neutral float-right" title="Axes and Reference Surface">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -436,10 +300,10 @@ reasonable for the intended response mode.</p>
         </span>
     
     
-      <span><a href="../conventions/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../equivalent-stiffness/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../validity/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../conventions/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

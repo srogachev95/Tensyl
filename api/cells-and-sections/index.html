@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
@@ -41,344 +42,385 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../core/">Core</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../materials/">Materials</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Cells and Sections</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >API</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections">sections</a>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">Core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../materials/">Materials</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Cells and Sections</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections">sections</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.BeamSection">BeamSection</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection">BeamSection</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EA">EA</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.EA">EA</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EIy">EIy</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.EIy">EIy</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EIyz">EIyz</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.EIyz">EIyz</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.EIz">EIz</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.EIz">EIz</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.GJ">GJ</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.GJ">GJ</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.kGAy">kGAy</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.kGAy">kGAy</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.kGAz">kGAz</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.kGAz">kGAz</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.metadata">metadata</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.mass_per_length">mass_per_length</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.metadata">metadata</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.BeamSection.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.thermal_expansion">thermal_expansion</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.BeamSection.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.ThinWallSegment">ThinWallSegment</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment">ThinWallSegment</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.end_y">end_y</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.end_y">end_y</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.end_z">end_z</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.end_z">end_z</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.length">length</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.length">length</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.start_y">start_y</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.start_y">start_y</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.start_z">start_z</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.start_z">start_z</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.thickness">thickness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.thickness">thickness</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSegment.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.SectionProperties">SectionProperties</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties">SectionProperties</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iy">Iy</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iy">Iy</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iyz">Iyz</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iyz">Iyz</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iz">Iz</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.Iz">Iz</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.J">J</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.J">J</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.area">area</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.area">area</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.centroid_y">centroid_y</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.centroid_y">centroid_y</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.centroid_z">centroid_z</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.centroid_z">centroid_z</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.SectionProperties.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.SectionProperties.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.ThinWallSection">ThinWallSection</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection">ThinWallSection</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.centroid_y">centroid_y</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.centroid_y">centroid_y</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.centroid_z">centroid_z</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.centroid_z">centroid_z</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.material">material</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.material">material</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.metadata">metadata</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.metadata">metadata</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.properties">properties</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.properties">properties</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.section">section</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.section">section</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.segments">segments</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.segments">segments</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.shear_correction_y">shear_correction_y</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.shear_correction_y">shear_correction_y</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.shear_correction_z">shear_correction_z</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.shear_correction_z">shear_correction_z</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.torsion_constant">torsion_constant</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.ThinWallSection.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.ThinWallSection.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.thin_wall_section">thin_wall_section</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.blade_section">blade_section</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.tee_section">tee_section</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.zee_section">zee_section</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.channel_section">channel_section</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.sections.hat_section">hat_section</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells">cells</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.BeamMember">BeamMember</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment">LaminatedWallSegment</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.angle_rad">angle_rad</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.E">E</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.axial_eccentricity">axial_eccentricity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.G">G</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.include_in_plane_bending">include_in_plane_bending</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.geometry">geometry</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.laminate">laminate</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.length">length</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.stiffness">stiffness</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.multiplicity">multiplicity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.section">section</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.shear_eccentricity">shear_eccentricity</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.__init__">__init__</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedWallSegment.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.CellNode">CellNode</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection">LaminatedThinWallSection</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.e1">e1</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection.centroid_y">centroid_y</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.e2">e2</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection.centroid_z">centroid_z</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection.section">section</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection.segments">segments</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.sections.LaminatedThinWallSection.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.CellEdge">CellEdge</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.thin_wall_section">thin_wall_section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.blade_section">blade_section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.tee_section">tee_section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.zee_section">zee_section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.channel_section">channel_section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.sections.hat_section">hat_section</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells">cells</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.BeamMember">BeamMember</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.axial_eccentricity">axial_eccentricity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.angle_rad">angle_rad</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.end">end</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.axial_eccentricity">axial_eccentricity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.family">family</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.include_in_plane_bending">include_in_plane_bending</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.length">length</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.multiplicity">multiplicity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.multiplicity">multiplicity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.section">section</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.section">section</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.shear_eccentricity">shear_eccentricity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.shear_eccentricity">shear_eccentricity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.start">start</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.__init__">__init__</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.BeamMember.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellNode">CellNode</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.area">area</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellNode.e1">e1</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.convention">convention</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellNode.e2">e2</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.frame">frame</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellNode.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.geometry">geometry</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellNode.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.members">members</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.metadata">metadata</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.skin">skin</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.__init__">__init__</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellNode.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.StiffenerFamily">StiffenerFamily</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CellEdge">CellEdge</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.angle_rad">angle_rad</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.axial_eccentricity">axial_eccentricity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.axial_eccentricity">axial_eccentricity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.end">end</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.include_in_plane_bending">include_in_plane_bending</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.family">family</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.label">label</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.label">label</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.multiplicity">multiplicity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.multiplicity">multiplicity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.section">section</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.section">section</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.shear_eccentricity">shear_eccentricity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.shear_eccentricity">shear_eccentricity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.spacing">spacing</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.start">start</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CellEdge.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.graph_unit_cell">graph_unit_cell</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.area">area</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.unidirectional_cell">unidirectional_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.convention">convention</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.orthogrid_cell">orthogrid_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.frame">frame</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.braced_orthogrid_cell">braced_orthogrid_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.geometry">geometry</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.equilateral_isogrid_cell">equilateral_isogrid_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.members">members</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.isosceles_triangle_grid_cell">isosceles_triangle_grid_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.metadata">metadata</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.kagome_cell">kagome_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.skin">skin</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.hexagonal_grid_cell">hexagonal_grid_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.__init__">__init__</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.regular_hexagonal_grid_cell">regular_hexagonal_grid_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.CanonicalUnitCell.__post_init__">__post_init__</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.star_cell">star_cell</a>
+        </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.equilateral_star_cell">equilateral_star_cell</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.StiffenerFamily">StiffenerFamily</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.angle_rad">angle_rad</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.sandwich_hexagonal_core_cell">sandwich_hexagonal_core_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.axial_eccentricity">axial_eccentricity</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.sandwich_orthogrid_core_cell">sandwich_orthogrid_core_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.label">label</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.cells.sandwich_star_core_cell">sandwich_star_core_cell</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.multiplicity">multiplicity</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.section">section</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.shear_eccentricity">shear_eccentricity</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.spacing">spacing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.cells.StiffenerFamily.__post_init__">__post_init__</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.stiffener_family_cell">stiffener_family_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.graph_unit_cell">graph_unit_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.check_cell_geometry">check_cell_geometry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.unidirectional_cell">unidirectional_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.orthogrid_cell">orthogrid_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.braced_orthogrid_cell">braced_orthogrid_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.equilateral_isogrid_cell">equilateral_isogrid_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.isosceles_triangle_grid_cell">isosceles_triangle_grid_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.kagome_cell">kagome_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.hexagonal_grid_cell">hexagonal_grid_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.regular_hexagonal_grid_cell">regular_hexagonal_grid_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.star_cell">star_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.equilateral_star_cell">equilateral_star_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.sandwich_hexagonal_core_cell">sandwich_hexagonal_core_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.sandwich_orthogrid_core_cell">sandwich_orthogrid_core_cell</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.cells.sandwich_star_core_cell">sandwich_star_core_cell</a>
     </li>
     </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -394,10 +436,11 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">API Reference</li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">API</li>
       <li class="breadcrumb-item active">Cells and Sections</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/cells-and-sections.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/api/cells-and-sections.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -461,7 +504,9 @@
 <code>GJ</code> is the torsional stiffness. <code>kGAy</code> and <code>kGAz</code> are optional shear
 stiffnesses in the member-local in-plane transverse and normal directions.
 Tensyl expects stiffness products in a consistent unit system; it does not
-calculate them from cross-section dimensions.</p>
+calculate them from cross-section dimensions. <code>mass_per_length</code> is
+optional, but a homogenized cell reports areal mass only when every member
+section and the skin supply mass.</p>
 
 
 <table class="field-list">
@@ -531,6 +576,24 @@ direction.</p>
               <div class="doc-md-description">
                 <p>Product bending stiffness. The <code>EIy/EIz/EIyz</code> block must be
 positive definite.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mass_per_length</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional nonnegative mass per unit member length,
+such as <code>density * area</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>thermal_expansion</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional uniform axial expansion per temperature increment.
+None means unknown. Intrinsic thermal curvature is not represented.</p>
               </div>
             </li>
             <li>
@@ -711,8 +774,50 @@ results.</p>
 
 
 
+<h3 id="tensyl.sections.BeamSection.mass_per_length" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">mass_per_length</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="tensyl.sections.BeamSection.metadata" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.BeamSection.thermal_expansion" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">thermal_expansion</span> <span class="o">=</span> <span class="kc">None</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
@@ -735,7 +840,7 @@ results.</p>
 
 
 <h3 id="tensyl.sections.BeamSection.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">EA</span><span class="p">,</span> <span class="n">EIy</span><span class="p">,</span> <span class="n">EIz</span><span class="p">,</span> <span class="n">GJ</span><span class="p">,</span> <span class="n">kGAy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kGAz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EIyz</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">EA</span><span class="p">,</span> <span class="n">EIy</span><span class="p">,</span> <span class="n">EIz</span><span class="p">,</span> <span class="n">GJ</span><span class="p">,</span> <span class="n">kGAy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kGAz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">EIyz</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mass_per_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">thermal_expansion</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1181,7 +1286,7 @@ construction datum, not automatically the skin mid-surface.</p>
                   (<code><span title="float">float</span></code>)
               –
               <div class="doc-md-description">
-                <p>Positive open-section St Venant torsion approximation.</p>
+                <p>Positive torsion constant for the selected open or closed model.</p>
               </div>
             </li>
         </ul>
@@ -1500,6 +1605,14 @@ member-local <code>z</code> direction.</p>
                 <p><code>BeamSection</code> stiffness object consumed by cell builders.</p>
               </div>
             </li>
+            <li>
+              <b><code>torsion_constant</code></b>
+                  (<code><span title="float">float</span> | None</code>)
+              –
+              <div class="doc-md-description">
+                <p>Optional explicit J replacing the open-strip estimate.</p>
+              </div>
+            </li>
         </ul>
       </td>
     </tr>
@@ -1764,6 +1877,27 @@ member-local <code>z</code> direction.</p>
 
 </div>
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.ThinWallSection.torsion_constant" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">torsion_constant</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
 
 
 
@@ -1771,7 +1905,7 @@ member-local <code>z</code> direction.</p>
 
 
 <h3 id="tensyl.sections.ThinWallSection.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">segments</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="n">segments</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">torsion_constant</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -1787,6 +1921,365 @@ member-local <code>z</code> direction.</p>
 
 
 <h3 id="tensyl.sections.ThinWallSection.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.sections.LaminatedWallSegment" class="doc doc-heading">
+            <code>LaminatedWallSegment</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Wall geometry and an uncoupled laminate aligned along the member.</p>
+<p>Laminate direction 1 is the beam axis; direction 2 follows the wall
+midline. Supply an ABD stiffness or bottom-to-top plies whose total
+thickness matches the geometry. Nonzero B or A16/A26 is refused because
+BeamSection cannot retain those couplings. Local D and As are not used.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.E" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">E</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.G" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">G</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.geometry" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">geometry</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.laminate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">laminate</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.stiffness" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffness</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">laminate</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.LaminatedWallSegment.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="tensyl.sections.LaminatedThinWallSection" class="doc doc-heading">
+            <code>LaminatedThinWallSection</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Reduce laminated strips to a beam about its stiffness-weighted centroid.</p>
+<p>Uses membrane-equivalent E and G for axial/bending stiffness and open-strip
+torsion. This omits laminate wall bending, warping, and section distortion.
+Shear stiffnesses are left unspecified. Mass is known only if every wall
+provides areal mass. <code>centroid_y/z</code> locate the elastic centroid, which
+should be used for the member's axial eccentricity.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedThinWallSection.centroid_y" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">centroid_y</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedThinWallSection.centroid_z" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">centroid_z</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedThinWallSection.section" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">section</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.sections.LaminatedThinWallSection.segments" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">segments</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.LaminatedThinWallSection.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.sections.LaminatedThinWallSection.__post_init__" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
 
 </h3>
@@ -2612,7 +3105,7 @@ use <code>0.5 * skin_thickness + section.centroid_z</code> as member eccentricit
 
 
 <h2 id="tensyl.sections.hat_section" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">hat_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">web_height</span><span class="p">,</span> <span class="n">web_thickness</span><span class="p">,</span> <span class="n">crown_width</span><span class="p">,</span> <span class="n">crown_thickness</span><span class="p">,</span> <span class="n">flange_width</span><span class="p">,</span> <span class="n">flange_thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">hat_section</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">web_height</span><span class="p">,</span> <span class="n">web_thickness</span><span class="p">,</span> <span class="n">crown_width</span><span class="p">,</span> <span class="n">crown_thickness</span><span class="p">,</span> <span class="n">flange_width</span><span class="p">,</span> <span class="n">flange_thickness</span><span class="p">,</span> <span class="n">shear_correction_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shear_correction_z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">closure_thickness</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -2724,6 +3217,17 @@ than a hat flipped down into the skin.</p>
               –
               <div class="doc-md-description">
                 <p>Optional provenance metadata.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>closure_thickness</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional isotropic skin thickness closing the hat.
+Changes torsion only; skin axial stiffness and mass stay external.</p>
               </div>
             </li>
         </ul>
@@ -2907,15 +3411,6 @@ Defaults to <code>axial_eccentricity</code>.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>multiplicity</code></b>
                   (<code><span title="float">float</span></code>)
               –
@@ -2982,27 +3477,6 @@ members represented by this object.</p>
             <code class="highlight language-python"><span class="n">axial_eccentricity</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="tensyl.cells.BeamMember.include_in_plane_bending" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">include_in_plane_bending</span> <span class="o">=</span> <span class="kc">False</span></code>
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
@@ -3125,7 +3599,7 @@ members represented by this object.</p>
 
 
 <h3 id="tensyl.cells.BeamMember.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -3425,15 +3899,6 @@ response.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>multiplicity</code></b>
                   (<code><span title="float">float</span></code>)
               –
@@ -3525,27 +3990,6 @@ panel plane. Disabled by default to match Nemeth.</p>
 
 <h3 id="tensyl.cells.CellEdge.family" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">family</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="tensyl.cells.CellEdge.include_in_plane_bending" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">include_in_plane_bending</span> <span class="o">=</span> <span class="kc">False</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
@@ -3671,7 +4115,7 @@ panel plane. Disabled by default to match Nemeth.</p>
 
 
 <h3 id="tensyl.cells.CellEdge.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
 
 </h3>
 
@@ -4047,7 +4491,7 @@ The cell frame and strain convention must match the skin ABD stiffness.</p>
 
 
 
-        <p>A repeating family of parallel stiffeners for the direct calculation.</p>
+        <p>A repeating family of parallel stiffeners for <code>stiffener_family_cell</code>.</p>
 <p><code>spacing</code> is the family pitch normal to the member direction.
 Eccentricities use the same signed <code>+n</code> convention as <code>BeamMember</code>.</p>
 
@@ -4107,15 +4551,6 @@ Eccentricities use the same signed <code>+n</code> convention as <code>BeamMembe
               <div class="doc-md-description">
                 <p>Optional signed effective offset for in-plane shear
 response.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
               </div>
             </li>
             <li>
@@ -4184,27 +4619,6 @@ panel plane. Disabled by default to match Nemeth.</p>
             <code class="highlight language-python"><span class="n">axial_eccentricity</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="tensyl.cells.StiffenerFamily.include_in_plane_bending" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">include_in_plane_bending</span> <span class="o">=</span> <span class="kc">False</span></code>
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
@@ -4327,7 +4741,7 @@ panel plane. Disabled by default to match Nemeth.</p>
 
 
 <h3 id="tensyl.cells.StiffenerFamily.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -4364,6 +4778,167 @@ panel plane. Disabled by default to match Nemeth.</p>
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.cells.stiffener_family_cell" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">stiffener_family_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">families</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a cell from repeating families of parallel stiffeners.</p>
+<p>Use this when the stiffeners are best described family by family, each with
+its own spacing and angle, rather than as a drawn repeat cell. The families
+need not share a common repeat box: each one contributes a member length of
+<code>multiplicity / spacing</code> per unit panel area, which is all the
+homogenizer needs. The returned cell therefore has unit area and no
+drawable geometry.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>skin</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+
+
+  
+      dataclass
+   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Baseline skin stiffness.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>families</code></b>
+                  (<code><span title="tuple">tuple</span>[<a class="autorefs autorefs-internal" title="StiffenerFamily
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.StiffenerFamily)" href="#tensyl.cells.StiffenerFamily">StiffenerFamily</a>, ...]</code>)
+              –
+              <div class="doc-md-description">
+                <p>One or more repeating stiffener families.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>frame</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Frame2D
+
+
+  
+      dataclass
+   (tensyl.core.conventions.Frame2D)" href="../core/#tensyl.core.conventions.Frame2D">Frame2D</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional cell frame. Defaults to <code>skin.frame</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>convention</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
+
+
+  
+      dataclass
+   (tensyl.core.conventions.StrainConvention)" href="../core/#tensyl.core.conventions.StrainConvention">StrainConvention</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional strain convention. Defaults to
+<code>skin.convention</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="CanonicalUnitCell
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.CanonicalUnitCell)" href="#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Canonical unit cell with one member per family, ready for</p>
+              </div>
+            </li>
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="CanonicalUnitCell
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.CanonicalUnitCell)" href="#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a></code>
+              –
+              <div class="doc-md-description">
+                <p><code>EnergyHomogenizer</code>.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If no families are supplied, or frame or convention
+validation fails.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
@@ -4566,8 +5141,118 @@ the skin.</p>
 <div class="doc doc-object doc-function">
 
 
+<h2 id="tensyl.cells.check_cell_geometry" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">check_cell_geometry</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Compare drawn and modeled member length per area for each family.</p>
+<p>The drawing is tiled 3x3, clipped to one half-open repeat parallelogram,
+and overlapping collinear segments within each family are counted once.
+Modeled density is the sum of <code>multiplicity * length / cell.area</code>.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>cell</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="CanonicalUnitCell
+
+
+  
+      dataclass
+   (tensyl.cells.tangent_plane.CanonicalUnitCell)" href="#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>Cell with drawable geometry and independent repeat vectors.
+Member labels must identify drawing families or uniquely labeled
+drawing edges. A drawing with one family needs no label mapping.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>Family names mapped to <code>(drawn_density, modeled_density)</code> in inverse</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>length units. Unequal values report a discrepancy; they do not raise.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If geometry is absent, a family cannot be identified, or
+the drawing extends beyond the 3x3 neighborhood. Geometric
+comparisons use a tolerance of 1e-10 in repeat coordinates.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>This audits length accounting, not connectivity, material, eccentricity,
+member orientation, or mechanical validity. Coincident members assigned to
+different families are treated as separate physical contributions.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="tensyl.cells.unidirectional_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">unidirectional_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angle_rad</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;unidirectional&#39;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">unidirectional_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angle_rad</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;unidirectional&#39;</span><span class="p">)</span></code>
 
 </h2>
 
@@ -4647,17 +5332,6 @@ the skin.</p>
               –
               <div class="doc-md-description">
                 <p>Family angle measured from local <code>e1</code>.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
               </div>
             </li>
             <li>
@@ -4767,7 +5441,7 @@ validation fails.</p>
 
 
 <h2 id="tensyl.cells.orthogrid_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">orthogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">e2_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">e2_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">orthogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">e2_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">e2_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -4882,17 +5556,6 @@ and vice versa.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>frame</code></b>
                   (<code><a class="autorefs autorefs-internal" title="Frame2D
 
@@ -4989,7 +5652,7 @@ fails.</p>
 
 
 <h2 id="tensyl.cells.braced_orthogrid_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">braced_orthogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">e2_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">e2_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_pattern</span><span class="o">=</span><span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">braced_orthogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">e2_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">e2_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_pattern</span><span class="o">=</span><span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -5181,17 +5844,6 @@ for the alternating figure-16 pattern.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>frame</code></b>
                   (<code><a class="autorefs autorefs-internal" title="Frame2D
 
@@ -5288,7 +5940,7 @@ panel plane. Disabled by default to match Nemeth.</p>
 
 
 <h2 id="tensyl.cells.equilateral_isogrid_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">equilateral_isogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">side_length</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">equilateral_isogrid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">side_length</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -5358,17 +6010,6 @@ panel plane. Disabled by default to match Nemeth.</p>
               –
               <div class="doc-md-description">
                 <p>Optional signed effective offset for in-plane shear.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
               </div>
             </li>
             <li>
@@ -5469,7 +6110,7 @@ fails.</p>
 
 
 <h2 id="tensyl.cells.isosceles_triangle_grid_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">isosceles_triangle_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">isosceles_triangle_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -5618,17 +6259,6 @@ offset.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>frame</code></b>
                   (<code><a class="autorefs autorefs-internal" title="Frame2D
 
@@ -5725,7 +6355,7 @@ validation fails.</p>
 
 
 <h2 id="tensyl.cells.kagome_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">kagome_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">kagome_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -5874,17 +6504,6 @@ offset.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>frame</code></b>
                   (<code><a class="autorefs autorefs-internal" title="Frame2D
 
@@ -5981,7 +6600,7 @@ validation fails.</p>
 
 
 <h2 id="tensyl.cells.hexagonal_grid_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">hexagonal_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_half_pitch</span><span class="p">,</span> <span class="n">diagonal_e2_rise</span><span class="p">,</span> <span class="n">e2_member_length</span><span class="p">,</span> <span class="n">e2_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e2_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">hexagonal_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_half_pitch</span><span class="p">,</span> <span class="n">diagonal_e2_rise</span><span class="p">,</span> <span class="n">e2_member_length</span><span class="p">,</span> <span class="n">e2_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e2_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -6138,17 +6757,6 @@ offset.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>frame</code></b>
                   (<code><a class="autorefs autorefs-internal" title="Frame2D
 
@@ -6245,7 +6853,7 @@ validation fails.</p>
 
 
 <h2 id="tensyl.cells.regular_hexagonal_grid_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">regular_hexagonal_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">side_length</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">regular_hexagonal_grid_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">side_length</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -6315,17 +6923,6 @@ validation fails.</p>
               –
               <div class="doc-md-description">
                 <p>Optional signed effective offset for in-plane shear.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
               </div>
             </li>
             <li>
@@ -6426,7 +7023,7 @@ fails.</p>
 
 
 <h2 id="tensyl.cells.star_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">star_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">star_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">positive_diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">e1_axial_eccentricity</span><span class="p">,</span> <span class="n">diagonal_axial_eccentricity</span><span class="p">,</span> <span class="n">e1_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_section</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_axial_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative_diagonal_shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -6575,17 +7172,6 @@ offset.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
-              </div>
-            </li>
-            <li>
               <b><code>frame</code></b>
                   (<code><a class="autorefs autorefs-internal" title="Frame2D
 
@@ -6682,7 +7268,7 @@ or convention validation fails.</p>
 
 
 <h2 id="tensyl.cells.equilateral_star_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">equilateral_star_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">side_length</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">equilateral_star_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">member_section</span><span class="p">,</span> <span class="n">side_length</span><span class="p">,</span> <span class="n">axial_eccentricity</span><span class="p">,</span> <span class="n">shear_eccentricity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -6752,17 +7338,6 @@ or convention validation fails.</p>
               –
               <div class="doc-md-description">
                 <p>Optional signed effective offset for in-plane shear.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
               </div>
             </li>
             <li>
@@ -6863,7 +7438,7 @@ fails.</p>
 
 
 <h2 id="tensyl.cells.sandwich_hexagonal_core_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sandwich_hexagonal_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_to_reference</span><span class="p">,</span> <span class="n">top_face_to_reference</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">e1_half_pitch</span><span class="p">,</span> <span class="n">diagonal_e2_rise</span><span class="p">,</span> <span class="n">e2_member_length</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">sandwich_hexagonal_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_to_reference</span><span class="p">,</span> <span class="n">top_face_to_reference</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">e1_half_pitch</span><span class="p">,</span> <span class="n">diagonal_e2_rise</span><span class="p">,</span> <span class="n">e2_member_length</span><span class="p">,</span> <span class="n">core_axial_eccentricity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -6977,14 +7552,17 @@ surface.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
+              <b><code>core_axial_eccentricity</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>0.0</code>
 )
               –
               <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
+                <p>Signed offset from the sandwich reference
+surface to the core centroid along <code>+n</code>. The default <code>0.0</code>
+is Nemeth's choice: the reference surface sits at the core
+midplane. Set it whenever the face shifts above point at a
+different reference surface, or the core is not centered on it.</p>
               </div>
             </li>
             <li>
@@ -7085,7 +7663,7 @@ validation fails.</p>
 
 
 <h2 id="tensyl.cells.sandwich_orthogrid_core_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sandwich_orthogrid_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_to_reference</span><span class="p">,</span> <span class="n">top_face_to_reference</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">sandwich_orthogrid_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_to_reference</span><span class="p">,</span> <span class="n">top_face_to_reference</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">e2_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">core_axial_eccentricity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -7195,14 +7773,17 @@ top-face eccentricity.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
+              <b><code>core_axial_eccentricity</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>0.0</code>
 )
               –
               <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
+                <p>Signed offset from the sandwich reference
+surface to the core centroid along <code>+n</code>. The default <code>0.0</code>
+is Nemeth's choice: the reference surface sits at the core
+midplane. Set it whenever the face shifts above point at a
+different reference surface, or the core is not centered on it.</p>
               </div>
             </li>
             <li>
@@ -7303,7 +7884,7 @@ fails.</p>
 
 
 <h2 id="tensyl.cells.sandwich_star_core_cell" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">sandwich_star_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_to_reference</span><span class="p">,</span> <span class="n">top_face_to_reference</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">include_in_plane_bending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">sandwich_star_core_cell</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">bottom_face</span><span class="p">,</span> <span class="n">top_face</span><span class="p">,</span> <span class="n">bottom_face_to_reference</span><span class="p">,</span> <span class="n">top_face_to_reference</span><span class="p">,</span> <span class="n">e1_section</span><span class="p">,</span> <span class="n">diagonal_section</span><span class="p">,</span> <span class="n">e1_pitch</span><span class="p">,</span> <span class="n">e2_pitch</span><span class="p">,</span> <span class="n">core_axial_eccentricity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h2>
 
@@ -7409,14 +7990,17 @@ surface.</p>
               </div>
             </li>
             <li>
-              <b><code>include_in_plane_bending</code></b>
-                  (<code><span title="bool">bool</span></code>, default:
-                      <code>False</code>
+              <b><code>core_axial_eccentricity</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>0.0</code>
 )
               –
               <div class="doc-md-description">
-                <p>Whether to include member bending within the
-panel plane. Disabled by default to match Nemeth.</p>
+                <p>Signed offset from the sandwich reference
+surface to the core centroid along <code>+n</code>. The default <code>0.0</code>
+is Nemeth's choice: the reference surface sits at the core
+midplane. Set it whenever the face shifts above point at a
+different reference surface, or the core is not centered on it.</p>
               </div>
             </li>
             <li>

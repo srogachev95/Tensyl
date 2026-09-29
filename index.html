@@ -3,17 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Equivalent-stiffness homogenization tools for stiffened plates and shells." /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/" />
       <link rel="shortcut icon" href="img/favicon.ico" />
-    <title>Tensyl</title>
+    <title>Overview - Tensyl</title>
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="stylesheet" href="css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Home";
+        var mkdocs_page_name = "Overview";
         var mkdocs_page_input_path = "index.md";
         var mkdocs_page_url = "/Tensyl/";
       </script>
@@ -41,104 +42,105 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Overview</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#what-tensyl-computes">What Tensyl Computes</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#what-tensyl-is-not">What Tensyl Is Not</a>
+    <li class="toctree-l2"><a class="reference internal" href="#first-workflow">First Workflow</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#documentation-map">Documentation Map</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#first-workflow">First Workflow</a>
-    </li>
     </ul>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -154,9 +156,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Home</li>
+          <li class="breadcrumb-item">Start Here</li>
+      <li class="breadcrumb-item active">Overview</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -165,78 +168,70 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="tensyl">Tensyl</h1>
-<p>Tensyl is a Python library for equivalent-stiffness homogenization of stiffened
-plates and shells. It helps engineering teams build, check, transform, and export
-local ABD stiffnesses for skins, laminates, and stiffened repeating cells.</p>
-<p>In one line: Tensyl replaces a panel full of stiffeners with a single equivalent
-stiffness — a small, auditable stiffness matrix that behaves like the real thing under
-global loads, without the cost of modeling every rib.</p>
-<p>The public package name is <code>tensyl</code>.</p>
-<div class="admonition tip">
-<p class="admonition-title">New here? Read in this order</p>
-<p>Start with <a href="background/motivation/">Background</a> for the why, then
-<a href="background/terminology/">Terminology</a> for the vocabulary — it is the
-glossary the rest of the manual leans on. Theory and the User Guide make a
-lot more sense once those two are in hand.</p>
-</div>
+<p>Tensyl calculates equivalent stiffness for stiffened plates and shells. Describe
+the skin, rib sections, and repeating pattern in Python, then use the resulting
+plate stiffness to calculate strains, recover rib forces, compare designs, or
+prepare a shell model.</p>
+<p><a href="assets/diagrams/panel-model.svg" title="Open full-size diagram"><img alt="A ribbed panel, one repeat cell, and its equivalent plate" src="assets/diagrams/panel-model.svg" /></a></p>
 <h2 id="what-tensyl-computes">What Tensyl Computes</h2>
-<p>Tensyl computes a local constitutive stiffness in laminated-plate notation:</p>
-<div class="arithmatex">\[
-\begin{bmatrix}
-\mathbf N \\
-\mathbf M \\
-\mathbf Q
-\end{bmatrix}
-=
-\mathbf C_\text{stiffness}
-\begin{bmatrix}
-\boldsymbol\epsilon^0 \\
-\boldsymbol\kappa \\
-\boldsymbol\gamma_s^0
-\end{bmatrix}.
-\]</div>
-<p>The first public ABD stiffness is <code>ABDStiffness</code>. It stores the membrane stiffness
-<code>A</code>, membrane-bending coupling <code>B</code>, bending/twisting stiffness <code>D</code>, and
-transverse-shear stiffness <code>As</code> as one canonical <span class="arithmatex">\(8\times8\)</span> tangent operator.</p>
-<h2 id="what-tensyl-is-not">What Tensyl Is Not</h2>
-<p>Tensyl is not a certification buckling solver, local stress recovery tool, or
-replacement for detailed finite-element analysis. The tangent-plane
-homogenization tools assume scale separation between stiffener pitch, stiffener
-height, local curvature radius, and the structural response length of interest.</p>
-<p>Use Tensyl to form and audit equivalent ABD stiffnesses. Use detailed analysis for
-local buckling, crippling, joints, cutouts, load introduction, nonlinear
-postbuckling, and final allowables.</p>
-<h2 id="documentation-map">Documentation Map</h2>
-<ul>
-<li><a href="getting-started/installation/">Getting started</a> covers installation and the
-  shortest path to an ABD stiffness.</li>
-<li><a href="background/motivation/">Background</a> introduces the engineering motivation,
-  history, and terminology.</li>
-<li><a href="theory/equivalent-stiffness/">Theory</a> explains conventions, ABD stiffnesses, and
-  tangent-plane homogenization.</li>
-<li><a href="user-guide/materials-and-laminates/">User guide</a> documents the main
-  engineering workflows.</li>
-<li><a href="examples/skin-only/">Examples</a> provides worked examples and
-  executable snippets.</li>
-<li><a href="validation/">Validation</a> explains the available source checks and the
-  independent FEM work still planned.</li>
-<li><a href="api/core/">API reference</a> exposes the public Python interfaces.</li>
-<li><a href="references/">References</a> lists the external sources used by the
-  documentation.</li>
-</ul>
+<p>The result contains four blocks: <strong>A</strong> for stretching, <strong>B</strong> for coupling between
+stretching and bending, <strong>D</strong> for bending and twisting, and <strong>As</strong> for transverse
+shear. Together they relate loads per unit width to the deformation of the
+panel. Tensyl also calculates panel mass when the skin and ribs have density data.</p>
+<p>Build isotropic or laminated skins, derive beam stiffness from section geometry,
+and arrange ribs as named grids, independent families, or a custom repeat cell.
+The same stiffness can be rotated, moved to another reference surface, or placed
+on a curved shell. Thermal loads, design sweeps, sampled stiffness maps, JSON/YAML
+files, and an Abaqus section exporter connect the calculation to analysis work.</p>
 <h2 id="first-workflow">First Workflow</h2>
-<pre><code class="language-python">from tensyl import IsotropicMaterial, isotropic_plate
-
-aluminum = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-stiffness = isotropic_plate(aluminum, thickness=0.080)
-
-print(stiffness.A)
-print(stiffness.D)
-</code></pre>
-<p>This example uses a consistent US customary unit system: force in <code>lbf</code>, length
-in <code>in</code>, stress in <code>psi</code>, and mass density in units compatible with the
-downstream workflow. Tensyl records unit labels in exported artifacts but does
-not convert units.</p>
+<p>Start with a <strong>2 mm aluminum skin</strong>, add <strong>25 mm blade ribs</strong>, then apply a
+membrane load. The three-part walkthrough explains each input and checks the
+result against familiar plate and smeared-rib formulas:</p>
+<ol>
+<li><a href="getting-started/first-abd-stiffness/">Calculate the skin stiffness</a>.</li>
+<li><a href="getting-started/first-homogenized-cell/">Add the stiffeners</a>.</li>
+<li><a href="getting-started/use-the-result/">Apply loads and save the result</a>.</li>
+</ol>
+<p><a href="getting-started/installation/">Install Tensyl</a> first. The examples use metres,
+newtons, kilograms, and basic Python.</p>
+<h2 id="documentation-map">Documentation Map</h2>
+<table>
+<thead>
+<tr>
+<th>Your next question</th>
+<th>Where to go</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How does the stiffness represent a panel?</td>
+<td><a href="theory/equivalent-stiffness/">How the model works</a></td>
+</tr>
+<tr>
+<td>How do I describe my construction?</td>
+<td><a href="user-guide/materials-and-laminates/">Materials</a>, <a href="user-guide/beam-sections-and-cells/">sections and cells</a></td>
+</tr>
+<tr>
+<td>How do I interpret and use the output?</td>
+<td><a href="user-guide/homogenization/">Using the results</a></td>
+</tr>
+<tr>
+<td>How was the calculation checked?</td>
+<td><a href="validation/">Verification</a></td>
+</tr>
+<tr>
+<td>What does a particular function accept?</td>
+<td><a href="api/core/">API reference</a></td>
+</tr>
+</tbody>
+</table>
+<p><span id="what-tensyl-is-not"></span>
+The <a href="theory/validity/">modeling guide</a> explains the deformation model and the
+length scales used to interpret a homogenized panel.</p>
+<p>This handbook covers <strong>Tensyl 0.4.0</strong>, available on
+<a href="https://pypi.org/project/tensyl/0.4.0/">PyPI</a>. The
+<a href="https://github.com/srogachev95/Tensyl/blob/v0.4.0/CHANGELOG.md">release notes</a>
+describe the new features and migration from 0.3.1.</p>
               
             </div>
           </div><footer>
@@ -288,8 +283,3 @@ not convert units.</p>
 
 </body>
 </html>
-
-<!--
-MkDocs version : 1.6.1
-Build Date UTC : 2026-07-28 14:38:58.962371+00:00
--->

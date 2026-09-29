@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/examples/sampled-stiffness-atlas/" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Variable Stiffness Fields - Tensyl</title>
+    <title>Sampled Stiffness - Tensyl</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Variable Stiffness Fields";
+        var mkdocs_page_name = "Sampled Stiffness";
         var mkdocs_page_input_path = "examples/sampled-stiffness-atlas.md";
         var mkdocs_page_url = "/Tensyl/examples/sampled-stiffness-atlas/";
       </script>
@@ -41,102 +42,107 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Sampled Stiffness</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#pointwise-homogenized-field">Pointwise Homogenized Field</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#interpretation">Interpretation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sampled-stiffness-atlas">Sampled Stiffness Atlas</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#saving-the-samples">Saving the Samples</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
-              <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../skin-only/">Skin and Laminate ABD Stiffness</a>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Variable Stiffness Fields</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#sampled-stiffness-atlas">Sampled Stiffness Atlas</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#interpretation">Interpretation</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#pointwise-homogenized-field">Pointwise Homogenized Field</a>
-    </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
-                </li>
               </ul>
       </div>
     </div>
@@ -152,10 +158,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Examples</li>
-      <li class="breadcrumb-item active">Variable Stiffness Fields</li>
+          <li class="breadcrumb-item">Using the Results</li>
+      <li class="breadcrumb-item active">Sampled Stiffness</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/examples/sampled-stiffness-atlas.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/examples/sampled-stiffness-atlas.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -164,136 +170,100 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="variable-stiffness-fields">Variable Stiffness Fields</h1>
-<p>These examples cover two ways to represent stiffness that varies over a surface:
-interpolate sampled ABD stiffnesses with <code>ABDAtlas</code>, or recompute the local
-homogenized cell at each surface point.</p>
-<h2 id="sampled-stiffness-atlas">Sampled Stiffness Atlas</h2>
-<p>Sample a station-varying skin field on a cylinder and interpolate between the
-samples.</p>
-<pre><code class="language-python">import math
-
-from tensyl import ABDAtlas, Cylinder, IsotropicMaterial, isotropic_plate
-
-
-class TaperedSkinField:
-    def __init__(self, material):
-        self.material = material
-
-    def stiffness_at(self, surface, u, v):
-        point = surface.point_at(u, v)
-        thickness = 0.070 + 0.00010 * point.u
-        return isotropic_plate(
-            self.material,
-            thickness=thickness,
-            frame=point.frame,
-            metadata={&quot;thickness&quot;: thickness},
-        )
-
-
-surface = Cylinder(radius=120.0, length=300.0)
-field = TaperedSkinField(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1))
-
-atlas = ABDAtlas.from_field(
-    surface,
-    field,
-    u_values=(0.0, 150.0, 300.0),
-    v_values=(0.0, math.pi),
-)
-
-root = atlas.stiffness_at(surface, 0.0, 0.0)
-mid = atlas.stiffness_at(surface, 75.0, 0.5 * math.pi)
-tip = atlas.stiffness_at(surface, 300.0, math.pi)
-
-assert root.A[0, 0] &lt; mid.A[0, 0] &lt; tip.A[0, 0]
-assert mid.frame.label == &quot;cylinder&quot;
-assert atlas.metadata[&quot;interpolation&quot;] == &quot;bilinear_c8&quot;
-</code></pre>
-<h2 id="interpretation">Interpretation</h2>
-<p>The atlas interpolates sampled canonical <code>C8</code> matrices. It does not know why the
-samples vary; here the reason is skin thickness. In a real workflow, the samples
-could come from measurements, sizing output, or a more expensive local model.</p>
-<p>Use a grid that resolves the physical variation you intend to represent. A
-coarse atlas is convenient, not prophetic.</p>
-<div class="admonition warning">
-<p class="admonition-title">Interpolation is not mechanics</p>
-<p><code>ABDAtlas</code> interpolates sampled matrices. It does not know whether the
-underlying structure varies smoothly, whether the sample grid is dense
-enough, or whether a sharp design change sits between two stations.</p>
-</div>
+<p>Let the spacing between a cylinder's axial ribs increase from 100 mm to 120 mm
+along its 3 m length. Recompute the local orthogrid at each station, then sample
+that field for a portable stiffness map.</p>
+<p>Start with the material and cylinder setup from
+<a href="../../user-guide/geometry-and-fields/#constant-stiffness-field">constant fields</a>.
+The <a href="../scripts/surface_fields.py">complete script</a> runs all the steps on this page.</p>
 <h2 id="pointwise-homogenized-field">Pointwise Homogenized Field</h2>
-<p>Use <code>HomogenizedStiffnessField</code> when the local cell definition should be rebuilt
-from the surface point. This example varies stringer spacing with axial station,
-so the local orthogrid ABD stiffness changes with station too.</p>
 <pre><code class="language-python">from tensyl import (
-    BeamSection,
     EnergyHomogenizer,
     HomogenizedStiffnessField,
     StiffnessCache,
     ValidityContext,
+    blade_section,
     orthogrid_cell,
 )
 
-section = BeamSection(EA=3.2e6, EIy=2.4e4, EIz=6.5e3, GJ=4.0e3, kGAy=1.1e6, kGAz=0.9e6)
+rib = blade_section(material=aluminum, height=0.025, thickness=0.002)
 
 
 def cell_factory(surface, point):
-    del surface
-    e1_pitch = 8.0
-    e2_pitch = 6.0 + point.u / 150.0
-    skin = isotropic_plate(field.material, thickness=0.080, frame=point.frame)
+    local_skin = isotropic_plate(aluminum, 0.002, frame=point.frame)
     return orthogrid_cell(
-        skin=skin,
-        e1_section=section,
-        e2_section=section,
-        e1_pitch=e1_pitch,
-        e2_pitch=e2_pitch,
-        e1_axial_eccentricity=0.45,
-        e2_axial_eccentricity=0.45,
+        skin=local_skin,
+        e1_section=rib.section,
+        e2_section=rib.section,
+        e1_pitch=0.15,
+        e2_pitch=0.10 + 0.02 * point.u / surface.length,
+        e1_axial_eccentricity=0.0135,
+        e2_axial_eccentricity=0.0135,
         frame=point.frame,
     )
 
 
-def validity_context(point, cell):
-    return ValidityContext(
-        characteristic_height=0.50,
-        pitch=max(cell.metadata[&quot;e1_pitch&quot;], cell.metadata[&quot;e2_pitch&quot;]),
-        min_radius=point.min_radius,
-        response_length=80.0,
+def context_factory(point, cell):
+    return ValidityContext.from_surface_point(
+        point,
+        characteristic_height=0.027,
+        response_length=1.0,
     )
 
 
-homogenized = HomogenizedStiffnessField(
+varying = HomogenizedStiffnessField(
     surface,
     cell_factory,
     EnergyHomogenizer(),
     cache=StiffnessCache(),
-    validity_context_factory=validity_context,
+    validity_context_factory=context_factory,
 )
-
-station_0 = homogenized.stiffness_at(surface, 0.0, 0.0)
-station_150 = homogenized.stiffness_at(surface, 150.0, 0.0)
-
-assert station_0.frame.label == &quot;cylinder&quot;
-assert station_150.validity is not None
-assert station_0.A[0, 0] &gt; station_150.A[0, 0]
-assert station_150.validity.p_over_R == 8.0 / 120.0
+root = varying.stiffness_at(surface, 0.0, 0.0)
+tip = varying.stiffness_at(surface, 3.0, 0.0)
 </code></pre>
-<p>The stiffness changes because the cell factory changes the local cell. The
-cylinder itself does not curve the ABD matrix. At each point:</p>
-<ol>
-<li><code>surface.point_at(u, v)</code> supplies the local frame and <code>min_radius</code>.</li>
-<li><code>cell_factory</code> builds a skin and orthogrid cell in that frame.</li>
-<li><code>EnergyHomogenizer</code> computes the local ABD stiffness.</li>
-<li><code>validity_context</code> attaches scale-separation ratios for that point.</li>
-</ol>
-<p>Use this pattern when the structure has station-dependent pitch, section,
-material, laminate, or stiffener orientation.</p>
+<p>The factory creates the skin and cell in <code>point.frame</code>. The context factory
+supplies local curvature and the chosen response length. The inferred pitch is
+the largest repeat dimension.</p>
+<h2 id="interpretation">Interpretation</h2>
+<p>The axial stiffness <code>A11</code> falls from 192.109 MN/m at the root to 186.276 MN/m at
+the tip. Increasing axial-rib spacing spreads the same rib stiffness over more
+panel area. Circumferential ribs retain their 150 mm spacing.</p>
+<p>The cylinder radius sets the curvature scale, while the cell factory defines
+the changing construction. The <a href="../../user-guide/geometry-and-fields/">surface guide</a>
+explains the local axes and material orientation.</p>
+<h2 id="sampled-stiffness-atlas">Sampled Stiffness Atlas</h2>
+<pre><code class="language-python">from tensyl import ABDAtlas
+from tensyl.io import from_json, to_json
+
+atlas = ABDAtlas.from_field(
+    surface,
+    varying,
+    u_values=(0.0, 1.5, 3.0),
+    v_values=(0.0, math.pi, 2 * math.pi),
+)
+interpolated = atlas.stiffness_at(surface, 0.75, math.pi / 2)
+restored_atlas = from_json(to_json(atlas, units={&quot;length&quot;: &quot;m&quot;, &quot;force&quot;: &quot;N&quot;, &quot;mass&quot;: &quot;kg&quot;}))
+</code></pre>
+<p>The query at 0.75 m lies halfway between the first two sampled stations. Its
+<code>A11</code> is 190.518 MN/m. Bilinear interpolation uses the sampled matrix entries;
+its result approaches the directly computed field as the grid resolves the
+variation in spacing.</p>
+<h2 id="saving-the-samples">Saving the Samples</h2>
+<p>The JSON roundtrip above stores the built-in surface definition, grid, local
+stiffness samples, and provenance. Query <code>restored_atlas</code> using its restored
+surface without the original Python factory. See
+<a href="../../user-guide/external-workflows/#cell-inputs-and-sampled-atlases">files and sweeps</a>
+for the serialized data.</p>
+<p>The atlas retains the Tensyl version recorded when its samples were created.
+Loading it with a newer release preserves that provenance; sampling a new atlas
+with <code>ABDAtlas.from_field</code> records the current version. Each saved file also
+identifies the version that wrote the file in its <code>producer</code> block.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../orthogrid-panel/" class="btn btn-neutral float-left" title="Orthogrid Panel and Barrel"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../stiffness-field-maps/" class="btn btn-neutral float-right" title="Stiffness Field Maps">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../../user-guide/external-workflows/" class="btn btn-neutral float-left" title="Files and Design Sweeps"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../stiffness-field-maps/" class="btn btn-neutral float-right" title="Stiffness Maps">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -320,7 +290,7 @@ material, laminate, or stiffener orientation.</p>
         </span>
     
     
-      <span><a href="../orthogrid-panel/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../../user-guide/external-workflows/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../stiffness-field-maps/" style="color: #fcfcfc">Next &raquo;</a></span>

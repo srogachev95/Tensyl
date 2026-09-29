@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 540" role="img" aria-labelledby="title desc">
+<title id="title">Hat closed by the skin</title>
+<desc id="desc">The skin completes the median shear-flow path around the enclosed area.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#18344a"/></marker>
+<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V8" stroke="#bdcbd3" stroke-width="2"/></pattern>
+</defs>
+<rect width="760" height="540" fill="white"/>
+<text x="28.00" y="34.00" font-family="Arial, Helvetica, sans-serif" font-size="23" text-anchor="start" fill="#18344a">Hat closed by the skin</text>
+<text x="28.00" y="62.00" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="start" fill="#18344a">The skin completes the median shear-flow path around the enclosed area.</text>
+<rect x="140" y="380" width="564" height="16.49" fill="#f3f6f8" stroke="#a2b1ba"/>
+<rect x="140" y="380" width="564" height="16.49" fill="url(#hatch)"/>
+<text x="704.00" y="368.00" font-family="Arial, Helvetica, sans-serif" font-size="16" text-anchor="end" fill="#18344a">Skin face · z = 0</text>
+<path d="M62 414V354" fill="none" stroke="#18344a" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M62 414H112" fill="none" stroke="#18344a" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="120.00" y="420.00" font-family="Arial, Helvetica, sans-serif" font-size="17" text-anchor="start" fill="#18344a">+y</text>
+<text x="44.00" y="342.00" font-family="Arial, Helvetica, sans-serif" font-size="17" text-anchor="start" fill="#18344a">+z</text>
+<polygon points="208.07,358.56 278.16,358.56 278.16,380.00 208.07,380.00" fill="#dfedf3" stroke="#176b87" stroke-width="2"/>
+<line x1="208.07" y1="369.28" x2="278.16" y2="369.28" stroke="#176b87" stroke-width="1" stroke-dasharray="6 4"/>
+<polygon points="269.09,358.56 269.09,169.74 287.23,169.74 287.23,358.56" fill="#dfedf3" stroke="#176b87" stroke-width="2"/>
+<line x1="278.16" y1="358.56" x2="278.16" y2="169.74" stroke="#176b87" stroke-width="1" stroke-dasharray="6 4"/>
+<polygon points="278.16,145.00 401.84,145.00 401.84,169.74 278.16,169.74" fill="#dfedf3" stroke="#176b87" stroke-width="2"/>
+<line x1="278.16" y1="157.37" x2="401.84" y2="157.37" stroke="#176b87" stroke-width="1" stroke-dasharray="6 4"/>
+<polygon points="392.77,358.56 392.77,169.74 410.91,169.74 410.91,358.56" fill="#dfedf3" stroke="#176b87" stroke-width="2"/>
+<line x1="401.84" y1="358.56" x2="401.84" y2="169.74" stroke="#176b87" stroke-width="1" stroke-dasharray="6 4"/>
+<polygon points="401.84,358.56 471.93,358.56 471.93,380.00 401.84,380.00" fill="#dfedf3" stroke="#176b87" stroke-width="2"/>
+<line x1="401.84" y1="369.28" x2="471.93" y2="369.28" stroke="#176b87" stroke-width="1" stroke-dasharray="6 4"/>
+<polyline points="278.16,388.25 401.84,388.25 401.84,157.37 278.16,157.37 278.16,388.25" fill="none" stroke="#b65020" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="340.00" y="202.72" font-family="Arial, Helvetica, sans-serif" font-size="22" text-anchor="middle" fill="#18344a">A<tspan baseline-shift="sub" font-size="13">m</tspan></text>
+<line x1="278.16" y1="157.37" x2="278.16" y2="112.02" stroke="#71828c" stroke-width="1"/>
+<line x1="401.84" y1="157.37" x2="401.84" y2="112.02" stroke="#71828c" stroke-width="1"/>
+<line x1="278.16" y1="112.02" x2="401.84" y2="112.02" stroke="#18344a" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="340.00" y="100.02" font-family="Arial, Helvetica, sans-serif" font-size="20" text-anchor="middle" fill="#18344a">b<tspan baseline-shift="sub" font-size="13">c</tspan></text>
+<line x1="278.16" y1="388.25" x2="216.32" y2="388.25" stroke="#71828c" stroke-width="1"/>
+<line x1="278.16" y1="157.37" x2="216.32" y2="157.37" stroke="#71828c" stroke-width="1"/>
+<line x1="216.32" y1="388.25" x2="216.32" y2="157.37" stroke="#18344a" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="198.32" y="277.81" font-family="Arial, Helvetica, sans-serif" font-size="20" text-anchor="end" fill="#18344a">h<tspan baseline-shift="sub" font-size="13">m</tspan></text>
+<line x1="471.93" y1="396.49" x2="509.04" y2="396.49" stroke="#71828c" stroke-width="1"/>
+<line x1="471.93" y1="380.00" x2="509.04" y2="380.00" stroke="#71828c" stroke-width="1"/>
+<line x1="509.04" y1="396.49" x2="509.04" y2="380.00" stroke="#18344a" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="527.04" y="421.25" font-family="Arial, Helvetica, sans-serif" font-size="20" text-anchor="start" fill="#18344a">t<tspan baseline-shift="sub" font-size="13">s</tspan></text>
+<circle cx="340.00" cy="263.32" r="5" fill="#b65020" stroke="white" stroke-width="1"/>
+<text x="360.00" y="254.32" font-family="Arial, Helvetica, sans-serif" font-size="20" text-anchor="start" fill="#b65020">C</text>
+<line x1="28.00" y1="458.00" x2="732.00" y2="458.00" stroke="#d7e1e7" stroke-width="1"/>
+<rect x="32" y="477" width="22" height="10" fill="#dfedf3" stroke="#176b87"/>
+<text x="64.00" y="488.00" font-family="Arial, Helvetica, sans-serif" font-size="16" text-anchor="start" fill="#18344a">Section wall</text>
+<line x1="246.00" y1="482.00" x2="276.00" y2="482.00" stroke="#176b87" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="287.00" y="488.00" font-family="Arial, Helvetica, sans-serif" font-size="16" text-anchor="start" fill="#18344a">Wall midline</text>
+<circle cx="495" cy="482" r="4" fill="#b65020"/>
+<text x="510.00" y="488.00" font-family="Arial, Helvetica, sans-serif" font-size="16" text-anchor="start" fill="#18344a">C · computed centroid</text>
+<text x="28.00" y="522.00" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="start" fill="#18344a">The orange median path defines the enclosed area used in Bredt torsion.</text>
+</svg>

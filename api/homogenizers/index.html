@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
@@ -41,206 +42,241 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../core/">Core</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../materials/">Materials</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Homogenizers</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" >API</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers">homogenizers</a>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">Core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Homogenizers</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers">homogenizers</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationFailure">HomogenizationFailure</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationFailure">HomogenizationFailure</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationNumericalError">HomogenizationNumericalError</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationNumericalError">HomogenizationNumericalError</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.characteristic_height">characteristic_height</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.characteristic_height">characteristic_height</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.min_radius">min_radius</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.min_radius">min_radius</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.pitch">pitch</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.pitch">pitch</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.response_length">response_length</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.response_length">response_length</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityContext.from_surface_point">from_surface_point</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.coupling_ratio">coupling_ratio</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.coupling_ratio">coupling_ratio</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.h_over_R">h_over_R</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.h_over_R">h_over_R</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.p_over_L_response">p_over_L_response</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.p_over_L_response">p_over_L_response</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.p_over_R">p_over_R</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.p_over_R">p_over_R</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityThresholds.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.coupling_ratios">coupling_ratios</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.coupling_ratios">coupling_ratios</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.h_over_R">h_over_R</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.h_over_R">h_over_R</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.p_over_L_response">p_over_L_response</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.p_over_L_response">p_over_L_response</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.p_over_R">p_over_R</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.p_over_R">p_over_R</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.warnings">warnings</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.warnings">warnings</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.__eq__">__eq__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.__hash__">__hash__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.ValidityReport.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.assumptions">assumptions</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.assumptions">assumptions</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.coefficients">coefficients</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.coefficients">coefficients</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.diagnostics">diagnostics</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.diagnostics">diagnostics</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.source">source</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.source">source</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.stiffness">stiffness</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.stiffness">stiffness</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.validity">validity</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.validity">validity</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.__eq__">__eq__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.__post_init__">__post_init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.__hash__">__hash__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.orthotropic_coefficients">orthotropic_coefficients</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.reduced_orthotropic_properties">reduced_orthotropic_properties</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.__post_init__">__post_init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.orthotropic_coefficients">orthotropic_coefficients</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.reduced_orthotropic_properties">reduced_orthotropic_properties</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.HomogenizationResult.summary">summary</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.Homogenizer">Homogenizer</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.Homogenizer">Homogenizer</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.Homogenizer.compute">compute</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.Homogenizer.compute">compute</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer">EnergyHomogenizer</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer">EnergyHomogenizer</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer.thresholds">thresholds</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer.thresholds">thresholds</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer.__init__">__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer.compute">compute</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.EnergyHomogenizer.compute">compute</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.DirectECHomogenizer">DirectECHomogenizer</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads">MemberLoads</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.DirectECHomogenizer.thresholds">thresholds</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.axial_force">axial_force</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.DirectECHomogenizer.__init__">__init__</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.bending_moment">bending_moment</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.DirectECHomogenizer.compute">compute</a>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.in_plane_shear_force">in_plane_shear_force</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.label">label</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.member_index">member_index</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.torque">torque</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.transverse_shear_force">transverse_shear_force</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.__init__">__init__</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tensyl.homogenizers.MemberLoads.__post_init__">__post_init__</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tensyl.homogenizers.validity_report_for_stiffness">validity_report_for_stiffness</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.member_loads">member_loads</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.validity_report_for_stiffness">validity_report_for_stiffness</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#batch-workflows">Batch Workflows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.workflows.sweep">sweep</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tensyl.homogenizers.cell_thermal_resultants">cell_thermal_resultants</a>
     </li>
     </ul>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -256,10 +292,11 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">API Reference</li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">API</li>
       <li class="breadcrumb-item active">Homogenizers</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/api/homogenizers.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/api/homogenizers.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -603,6 +640,136 @@ geometry.</p>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.homogenizers.ValidityContext.from_surface_point" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_surface_point</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">characteristic_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build context using a surface point's minimum curvature radius.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>point</code></b>
+                  (<code><span title="tensyl.core.validity._SurfaceRadius">_SurfaceRadius</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>A <code>SurfacePoint</code> supplying <code>min_radius</code>. Flat geometry
+supplies infinity, so height/radius and pitch/radius are zero.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>characteristic_height</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive wall or stiffener height.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>pitch</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive repeat pitch. The homogenizer can fill
+this from the cell when it is omitted.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>response_length</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional positive response length, such as the
+intended buckle wavelength.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><a class="autorefs autorefs-internal" title="ValidityContext
+
+
+  
+      dataclass
+   (tensyl.core.validity.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a></code>
+              –
+              <div class="doc-md-description">
+                <p>Validated scale context for a pointwise homogenization.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If any supplied length is invalid.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -896,7 +1063,8 @@ were available.</p>
                   (<code><span title="tuple">tuple</span>[<span title="str">str</span>, ...]</code>)
               –
               <div class="doc-md-description">
-                <p>Stable warning identifiers for violated checks.</p>
+                <p>Stable identifiers for exceeded thresholds, missing context,
+unavailable checks, or numerical concerns.</p>
               </div>
             </li>
         </ul>
@@ -1027,6 +1195,38 @@ were available.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="tensyl.homogenizers.ValidityReport.__eq__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.homogenizers.ValidityReport.__hash__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="tensyl.homogenizers.ValidityReport.__init__" class="doc doc-heading">
             <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">h_over_R</span><span class="p">,</span> <span class="n">p_over_R</span><span class="p">,</span> <span class="n">p_over_L_response</span><span class="p">,</span> <span class="n">coupling_ratios</span><span class="p">,</span> <span class="n">warnings</span><span class="p">)</span></code>
 
@@ -1119,7 +1319,7 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>)
+   (tensyl.core.validity.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>)
               –
               <div class="doc-md-description">
                 <p>Validity report attached to the stiffness.</p>
@@ -1323,6 +1523,38 @@ when only <code>result.stiffness</code> is passed to fields, exports, or downstr
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.homogenizers.HomogenizationResult.__eq__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.homogenizers.HomogenizationResult.__hash__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__hash__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
@@ -1556,6 +1788,27 @@ terms are not physically admissible.</p>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h3 id="tensyl.homogenizers.HomogenizationResult.summary" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">summary</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the stiffness summary, source, and modeling assumptions.</p>
+<p><code>units</code> labels A, B, D, As, and areal_mass without unit conversion;
+<code>precision</code> sets decimal places in scientific notation. Use
+<code>print(result.summary())</code> for terminal output.</p>
+
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -1677,7 +1930,7 @@ terms are not physically admissible.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+   (tensyl.core.validity.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
                       <code>None</code>
 )
               –
@@ -1810,7 +2063,7 @@ contributions over a <code>CanonicalUnitCell</code>.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a></code>)
+   (tensyl.core.validity.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a></code>)
               –
               <div class="doc-md-description">
                 <p>Warning thresholds used when building the result validity
@@ -1924,13 +2177,14 @@ frame, convention, and repeated area.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+   (tensyl.core.validity.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
                       <code>None</code>
 )
               –
               <div class="doc-md-description">
                 <p>Optional geometric and response length scales for
-result warnings.</p>
+result warnings. Missing pitch is filled from the longest cell
+repeat vector, or the largest stiffener-family spacing.</p>
               </div>
             </li>
         </ul>
@@ -2028,8 +2282,8 @@ violates Tensyl's ABD block contract.</p>
 
 
 
-<h2 id="tensyl.homogenizers.DirectECHomogenizer" class="doc doc-heading">
-            <code>DirectECHomogenizer</code>
+<h2 id="tensyl.homogenizers.MemberLoads" class="doc doc-heading">
+            <code>MemberLoads</code>
 
 
   <span class="doc doc-labels">
@@ -2043,9 +2297,9 @@ violates Tensyl's ABD block contract.</p>
 
 
 
-        <p>Direct equilibrium-compatibility homogenizer for straight member families.</p>
-<p>Use this path for supported straight-family comparisons or accelerators,
-not as a replacement for the more general energy cell path.</p>
+        <p>First-approximation beam resultants for one physical member.</p>
+<p>Forces are per member, independent of its represented length/multiplicity.
+They are conjugate to the five member strains documented by <code>member_loads</code>.</p>
 
 
 <table class="field-list">
@@ -2059,17 +2313,59 @@ not as a replacement for the more general energy cell path.</p>
       <td class="field-body">
         <ul class="first simple">
             <li>
-              <b><code>thresholds</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="ValidityThresholds
-
-
-  
-      dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a></code>)
+              <b><code>member_index</code></b>
+                  (<code><span title="int">int</span></code>)
               –
               <div class="doc-md-description">
-                <p>Warning thresholds used when building the result validity
-report.</p>
+                <p>Index in <code>cell.members</code>.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>label</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Member label, which need not be unique.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>axial_force</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Force along the member, positive in extension.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>in_plane_shear_force</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Force conjugate to the in-plane member shear.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>transverse_shear_force</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Force conjugate to member transverse shear.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>bending_moment</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Moment conjugate to local kappa11.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>torque</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Torque conjugate to the member twist rate, -kappa12/2.</p>
               </div>
             </li>
         </ul>
@@ -2098,11 +2394,130 @@ report.</p>
 
 
 
-<h3 id="tensyl.homogenizers.DirectECHomogenizer.thresholds" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">thresholds</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ValidityThresholds</span><span class="p">)</span></code>
+<h3 id="tensyl.homogenizers.MemberLoads.axial_force" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">axial_force</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.homogenizers.MemberLoads.bending_moment" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bending_moment</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.homogenizers.MemberLoads.in_plane_shear_force" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">in_plane_shear_force</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.homogenizers.MemberLoads.label" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">label</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.homogenizers.MemberLoads.member_index" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">member_index</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.homogenizers.MemberLoads.torque" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">torque</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="tensyl.homogenizers.MemberLoads.transverse_shear_force" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">transverse_shear_force</span></code>
+
+  <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
@@ -2121,8 +2536,8 @@ report.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="tensyl.homogenizers.DirectECHomogenizer.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">thresholds</span><span class="o">=</span><span class="n">ValidityThresholds</span><span class="p">())</span></code>
+<h3 id="tensyl.homogenizers.MemberLoads.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">member_index</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">axial_force</span><span class="p">,</span> <span class="n">in_plane_shear_force</span><span class="p">,</span> <span class="n">transverse_shear_force</span><span class="p">,</span> <span class="n">bending_moment</span><span class="p">,</span> <span class="n">torque</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2137,15 +2552,45 @@ report.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="tensyl.homogenizers.DirectECHomogenizer.compute" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">skin</span><span class="p">,</span> <span class="n">families</span><span class="p">,</span> <span class="n">validity_context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">convention</span><span class="o">=</span><span class="n">DEFAULT_STRAIN_CONVENTION</span><span class="p">)</span></code>
+<h3 id="tensyl.homogenizers.MemberLoads.__post_init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">__post_init__</span><span class="p">()</span></code>
 
 </h3>
 
 
     <div class="doc doc-contents ">
 
-        <p>Compute direct EC stiffness from repeated straight families.</p>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="tensyl.homogenizers.member_loads" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">member_loads</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Recover first-approximation member forces and moments from wall strain.</p>
+<p>In member axes the five strains are eps11 + za<em>kappa11,
+(gamma12 + zs</em>kappa12)/2, gamma13, kappa11, and -kappa12/2.
+Multiplying by EA, kGAy, kGAz, EIy, and GJ gives the conjugate loads.
+Omitted shear stiffnesses give zero shear force, as in homogenization.</p>
 
 
 <table class="field-list">
@@ -2159,65 +2604,28 @@ report.</p>
       <td class="field-body">
         <ul class="first simple">
             <li>
-              <b><code>skin</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="ABDStiffness
+              <b><code>cell</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="CanonicalUnitCell
 
 
   
       dataclass
-   (tensyl.core.constitutive.ABDStiffness)" href="../core/#tensyl.core.constitutive.ABDStiffness">ABDStiffness</a></code>)
+   (tensyl.cells.tangent_plane.CanonicalUnitCell)" href="../cells-and-sections/#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a></code>)
               –
               <div class="doc-md-description">
-                <p>Baseline skin ABD stiffness.</p>
+                <p>Cell whose members and convention define the recovery model.</p>
               </div>
             </li>
             <li>
-              <b><code>families</code></b>
-                  (<code><span title="tuple">tuple</span>[<a class="autorefs autorefs-internal" title="StiffenerFamily
-
-
-  
-      dataclass
-   (tensyl.cells.tangent_plane.StiffenerFamily)" href="../cells-and-sections/#tensyl.cells.StiffenerFamily">StiffenerFamily</a>, ...]</code>)
-              –
-              <div class="doc-md-description">
-                <p>One or more straight repeated stiffener families.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>validity_context</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="ValidityContext
-
-
-  
-      dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
-                      <code>None</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>Optional geometric and response length scales for
-result warnings.</p>
-              </div>
-            </li>
-            <li>
-              <b><code>convention</code></b>
-                  (<code><a class="autorefs autorefs-internal" title="StrainConvention
-
-
-  
-      dataclass
-   (tensyl.core.conventions.StrainConvention)" href="../core/#tensyl.core.conventions.StrainConvention">StrainConvention</a></code>, default:
-                      <code><a class="autorefs autorefs-internal" title="DEFAULT_STRAIN_CONVENTION = StrainConvention()
+              <b><code>eta</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="GeneralizedStrain = NewType('GeneralizedStrain', np.ndarray[Any, np.dtype[np.float64]])
 
   
       module-attribute
-   (tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION)" href="../core/#tensyl.core.conventions.DEFAULT_STRAIN_CONVENTION">DEFAULT_STRAIN_CONVENTION</a></code>
-)
+   (tensyl.core.typing.GeneralizedStrain)" href="../core/#tensyl.core.typing.GeneralizedStrain">GeneralizedStrain</a> | <span title="tensyl.core.typing.FloatArray">FloatArray</span></code>)
               –
               <div class="doc-md-description">
-                <p>Strain convention for the assembled tangent. Only the
-default engineering-shear convention is currently supported.</p>
+                <p>Finite generalized strain in the cell frame, shape (8,).</p>
               </div>
             </li>
         </ul>
@@ -2237,27 +2645,22 @@ default engineering-shear convention is currently supported.</p>
       <td class="field-body">
         <ul class="first simple">
             <li>
-                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
+                  <code><a class="autorefs autorefs-internal" title="MemberLoads
 
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+   (tensyl.homogenizers.tangent_plane.MemberLoads)" href="#tensyl.homogenizers.MemberLoads">MemberLoads</a></code>
               –
               <div class="doc-md-description">
-                <p>Homogenization result assembled from skin plus family length-density</p>
+                <p>Loads in <code>cell.members</code> order, per physical member. These are the</p>
               </div>
             </li>
             <li>
-                  <code><a class="autorefs autorefs-internal" title="HomogenizationResult
-
-
-  
-      dataclass
-   (tensyl.homogenizers.tangent_plane.HomogenizationResult)" href="#tensyl.homogenizers.HomogenizationResult">HomogenizationResult</a></code>
+                  <code>...</code>
               –
               <div class="doc-md-description">
-                <p>contributions.</p>
+                <p>affine model's beam resultants, not local stresses or joint loads.</p>
               </div>
             </li>
         </ul>
@@ -2280,16 +2683,14 @@ default engineering-shear convention is currently supported.</p>
                   <code><a class="autorefs autorefs-internal" title="HomogenizationInputError (tensyl.homogenizers.tangent_plane.HomogenizationInputError)" href="#tensyl.homogenizers.HomogenizationInputError">HomogenizationInputError</a></code>
               –
               <div class="doc-md-description">
-                <p>If no families are supplied, or if the
-skin/convention pair is unsupported.</p>
+                <p>If the cell convention is unsupported.</p>
               </div>
             </li>
             <li>
-                  <code><a class="autorefs autorefs-internal" title="HomogenizationNumericalError (tensyl.homogenizers.tangent_plane.HomogenizationNumericalError)" href="#tensyl.homogenizers.HomogenizationNumericalError">HomogenizationNumericalError</a></code>
+                  <code><span title="ValueError">ValueError</span></code>
               –
               <div class="doc-md-description">
-                <p>If the assembled tangent materially
-violates Tensyl's ABD block contract.</p>
+                <p>If strains or recovered loads are invalid or non-finite.</p>
               </div>
             </li>
         </ul>
@@ -2301,16 +2702,6 @@ violates Tensyl's ABD block contract.</p>
     </div>
 
 </div>
-
-
-
-  </div>
-
-    </div>
-
-
-</div>
-
 
 <div class="doc doc-object doc-function">
 
@@ -2356,7 +2747,7 @@ violates Tensyl's ABD block contract.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
+   (tensyl.core.validity.ValidityContext)" href="#tensyl.homogenizers.ValidityContext">ValidityContext</a> | None</code>, default:
                       <code>None</code>
 )
               –
@@ -2371,7 +2762,7 @@ violates Tensyl's ABD block contract.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a> | None</code>, default:
+   (tensyl.core.validity.ValidityThresholds)" href="#tensyl.homogenizers.ValidityThresholds">ValidityThresholds</a> | None</code>, default:
                       <code>None</code>
 )
               –
@@ -2401,7 +2792,7 @@ violates Tensyl's ABD block contract.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>
+   (tensyl.core.validity.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>
               –
               <div class="doc-md-description">
                 <p>Validity report with scale-separation ratios, coupling indicators, and</p>
@@ -2413,7 +2804,7 @@ violates Tensyl's ABD block contract.</p>
 
   
       dataclass
-   (tensyl.homogenizers.tangent_plane.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>
+   (tensyl.core.validity.ValidityReport)" href="#tensyl.homogenizers.ValidityReport">ValidityReport</a></code>
               –
               <div class="doc-md-description">
                 <p>warning identifiers.</p>
@@ -2432,6 +2823,149 @@ violates Tensyl's ABD block contract.</p>
 
 
   </div>
+
+    </div>
+
+</div><h2 id="batch-workflows">Batch Workflows</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="tensyl.workflows.sweep"></a>
+    <div class="doc doc-contents first">
+
+        <p>Evaluate every parameter combination in mapping/iterable order.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>builder</code></b>
+                  (<code><span title="collections.abc.Callable">Callable</span>[..., <a class="autorefs autorefs-internal" title="CanonicalUnitCell
+
+
+  
+      dataclass
+   (tensyl.cells.CanonicalUnitCell)" href="../cells-and-sections/#tensyl.cells.CanonicalUnitCell">CanonicalUnitCell</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Cell factory called with each combination as keyword arguments.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>grid</code></b>
+                  (<code><span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="collections.abc.Iterable">Iterable</span>[<span title="typing.Any">Any</span>]]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Finite parameter iterables. Coefficient names, <code>areal_mass</code>, and
+<code>warning_codes</code> are reserved output columns.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>homogenizer</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="Homogenizer (tensyl.homogenizers.Homogenizer)" href="#tensyl.homogenizers.Homogenizer">Homogenizer</a> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Optional configured homogenizer; defaults to EnergyHomogenizer.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="list">list</span>[<span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>Rows containing input parameters, all named stiffness coefficients,</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="list">list</span>[<span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>areal mass, and a tuple of validity warning codes. An empty grid calls</p>
+              </div>
+            </li>
+            <li>
+                  <code><span title="list">list</span>[<span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>the builder once; an empty axis produces no rows.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Raises:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+                <p>If a parameter shadows a reserved output column. Builder
+and homogenizer exceptions propagate with a parameter note; failed
+combinations are never silently dropped.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="tensyl.homogenizers.cell_thermal_resultants"></a>
+    <div class="doc doc-contents first">
+
+        <p>Add skin loads and density-weighted EA alpha member contributions.</p>
+<p>Skin thermal loads must be explicitly supplied in the cell frame and at
+its reference surface. Every member needs <code>section.thermal_expansion</code>.
+This beam approximation represents uniform axial expansion only; it omits
+intrinsic thermal curvature of heterogeneous sections and local relaxation.</p>
+
 
     </div>
 

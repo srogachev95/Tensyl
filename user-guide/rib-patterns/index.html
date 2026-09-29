@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/rib-patterns/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Rib Patterns - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Rib Patterns";
+        var mkdocs_page_input_path = "user-guide/rib-patterns.md";
+        var mkdocs_page_url = "/Tensyl/user-guide/rib-patterns/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Rib Sections</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Rib Patterns</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#named-cells">Named Cells</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pattern-gallery">Pattern Gallery</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#parallel-ribs-and-orthogrids">Parallel Ribs and Orthogrids</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#braced-orthogrids">Braced Orthogrids</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#diamond-and-triangular-grids">Diamond and Triangular Grids</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#kagome-and-hexagonal-grids">Kagome and Hexagonal Grids</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#star-grids">Star Grids</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sandwich-cores">Sandwich Cores</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#independent-families">Independent Families</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#graph-cells">Graph Cells</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#check-the-drawn-member-density">Check the Drawn Member Density</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Surfaces and Fields</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Loads, Mass, and Reports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Building a Model</li>
+      <li class="breadcrumb-item active">Rib Patterns</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/user-guide/rib-patterns.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="rib-patterns-and-repeat-cells">Rib Patterns and Repeat Cells</h1>
+<p>Choose a named pattern when the drawing has a regular grid, independent families
+when each rib direction has its own spacing, or a graph when you want to specify
+the nodes and edges yourself. All three feed the same energy calculation.</p>
+<p>The examples share a 2 mm aluminum skin and a 25 mm blade:</p>
+<pre><code class="language-python">import math
+
+from tensyl import EnergyHomogenizer, IsotropicMaterial, blade_section, isotropic_plate
+
+aluminum = IsotropicMaterial(E=70e9, nu=0.33, density=2700, alpha=23e-6)
+skin = isotropic_plate(aluminum, 0.002)
+rib = blade_section(material=aluminum, height=0.025, thickness=0.002)
+offset = 0.001 + rib.centroid_z
+</code></pre>
+<h2 id="named-cells">Named Cells</h2>
+<table>
+<thead>
+<tr>
+<th>Constructor</th>
+<th>Pattern in plain terms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unidirectional_cell</code></td>
+<td>One family of parallel stiffeners at any angle</td>
+</tr>
+<tr>
+<td><code>orthogrid_cell</code></td>
+<td>Crossing members along <code>e1</code> and <code>e2</code></td>
+</tr>
+<tr>
+<td><code>braced_orthogrid_cell</code></td>
+<td>An orthogrid with one or two diagonal braces</td>
+</tr>
+<tr>
+<td><code>diamond_cell</code></td>
+<td><code>e1</code> members with crossing diagonals and no <code>e2</code> members</td>
+</tr>
+<tr>
+<td><code>equilateral_isogrid_cell</code></td>
+<td>Equal members at <code>0</code>, <code>+60</code>, and <code>-60</code> degrees</td>
+</tr>
+<tr>
+<td><code>isosceles_triangle_grid_cell</code></td>
+<td><code>e1</code> members joined by mirrored diagonals</td>
+</tr>
+<tr>
+<td><code>kagome_cell</code></td>
+<td>Short <code>e1</code> members joined by longer diagonals</td>
+</tr>
+<tr>
+<td><code>hexagonal_grid_cell</code></td>
+<td>Vertical members joined by mirrored diagonals</td>
+</tr>
+<tr>
+<td><code>regular_hexagonal_grid_cell</code></td>
+<td>A regular hexagonal grid defined by one side length</td>
+</tr>
+<tr>
+<td><code>star_cell</code></td>
+<td>A repeating six-point star pattern</td>
+</tr>
+<tr>
+<td><code>equilateral_star_cell</code></td>
+<td>An equilateral star grid defined by one side length</td>
+</tr>
+<tr>
+<td><code>sandwich_*_core_cell</code></td>
+<td>An orthogrid, hexagonal, or star core between two faces</td>
+</tr>
+</tbody>
+</table>
+<p>The <a href="../../getting-started/first-homogenized-cell/">orthogrid walkthrough</a> shows the
+pitch convention: <code>e1_pitch</code> measures the repeat along <code>e1</code>; members running in
+<code>e1</code> are separated by <code>e2_pitch</code>. The
+<a href="../../validation/nemeth-cells/#available-patterns">Nemeth pattern catalogue</a>
+shows the other topologies and their source definitions.</p>
+<p>For sandwich builders, use the core midplane as the common reference by default.
+Face offsets locate the faces relative to it. If another reference is chosen,
+set <code>core_axial_eccentricity</code> and both face offsets consistently.</p>
+<h2 id="pattern-gallery">Pattern Gallery</h2>
+<p>Each drawing below comes from an actual cell built by the
+<a href="../../examples/scripts/pattern_gallery.py">executable gallery</a>, using the aluminum
+skin and blade dimensions above. Blue lines mark rib centerlines. The dashed
+orange parallelogram spans the two repeat vectors returned by the builder;
+its area is the area used in homogenization. The right view enlarges that same
+cell, with neighboring ribs shown in pale blue. Both axes use the same length
+scale within each view. Click any drawing to open it at full size.</p>
+<p>The figures list dimensions in millimeters for reading; the script supplies
+meters to the constructors. The <a href="../../validation/nemeth-cells/#available-patterns">Nemeth catalogue</a>
+links these topologies to their source drawings and numerical checks.</p>
+<h3 id="parallel-ribs-and-orthogrids">Parallel Ribs and Orthogrids</h3>
+<p>The parallel-rib builder uses a 1 m reference length along the ribs. Its repeat
+area is that length times the perpendicular spacing. The orthogrid has two
+independent pitches; its highlighted cell is centered on a rib intersection.</p>
+<p><a href="../../assets/patterns/unidirectional.svg" title="Open full-size pattern"><img alt="Parallel ribs and their one-meter reference cell." src="../../assets/patterns/unidirectional.svg" /></a></p>
+<p><a href="../../assets/patterns/orthogrid.svg" title="Open full-size pattern"><img alt="Orthogrid with a node-centered repeat cell." src="../../assets/patterns/orthogrid.svg" /></a></p>
+<h3 id="braced-orthogrids">Braced Orthogrids</h3>
+<p>Double bracing places both diagonals in every bay. Single bracing alternates
+the diagonal direction between neighboring bays, so its repeat spans two
+pitches in each direction.</p>
+<p><a href="../../assets/patterns/braced-double.svg" title="Open full-size pattern"><img alt="Orthogrid with two diagonal braces per bay." src="../../assets/patterns/braced-double.svg" /></a></p>
+<p><a href="../../assets/patterns/braced-single.svg" title="Open full-size pattern"><img alt="Orthogrid with alternating single braces and a four-bay repeat." src="../../assets/patterns/braced-single.svg" /></a></p>
+<h3 id="diamond-and-triangular-grids">Diamond and Triangular Grids</h3>
+<p>The diamond grid joins horizontal ribs with crossing diagonals. The isosceles
+grid joins horizontal ribs with a staggered triangular pattern. For an
+equilateral isogrid, supply one side length: the three directions are then
+<code>0</code>, <code>+60</code>, and <code>-60</code> degrees. Its repeat parallelogram contains the area of
+two elementary triangles.</p>
+<p><a href="../../assets/patterns/diamond.svg" title="Open full-size pattern"><img alt="Diamond grid with horizontal members and crossing diagonals." src="../../assets/patterns/diamond.svg" /></a></p>
+<p><a href="../../assets/patterns/isosceles.svg" title="Open full-size pattern"><img alt="Isosceles triangular grid and its oblique repeat." src="../../assets/patterns/isosceles.svg" /></a></p>
+<p><a href="../../assets/patterns/isogrid.svg" title="Open full-size pattern"><img alt="Equilateral isogrid and its oblique repeat parallelogram." src="../../assets/patterns/isogrid.svg" /></a></p>
+<h3 id="kagome-and-hexagonal-grids">Kagome and Hexagonal Grids</h3>
+<p>The Kagome builder follows Nemeth's figure 18: horizontal members cross two
+diagonal families, with the horizontal rows offset from diagonal intersections.
+The general hexagonal
+builder lets you set the horizontal construction dimension, diagonal rise,
+and vertical member length separately. The regular variant sets their
+proportions from one side length.</p>
+<p><a href="../../assets/patterns/kagome.svg" title="Open full-size pattern"><img alt="Nemeth's Kagome arrangement of horizontal ribs and crossing diagonals." src="../../assets/patterns/kagome.svg" /></a></p>
+<p><a href="../../assets/patterns/hexagonal.svg" title="Open full-size pattern"><img alt="General hexagonal grid and its repeat parallelogram." src="../../assets/patterns/hexagonal.svg" /></a></p>
+<p><a href="../../assets/patterns/regular-hexagonal.svg" title="Open full-size pattern"><img alt="Regular hexagonal grid with equal side lengths." src="../../assets/patterns/regular-hexagonal.svg" /></a></p>
+<h3 id="star-grids">Star Grids</h3>
+<p>The star builders form repeated six-point openings. The general builder uses
+the star construction dimensions <code>e1_pitch</code> and <code>e2_pitch</code>; its vertical
+translation is <code>4 * e2_pitch / 3</code>. The equilateral variant derives those
+dimensions from one side length.</p>
+<p><a href="../../assets/patterns/star.svg" title="Open full-size pattern"><img alt="Star grid and the rectangular area used for its repeat." src="../../assets/patterns/star.svg" /></a></p>
+<p><a href="../../assets/patterns/equilateral-star.svg" title="Open full-size pattern"><img alt="Equilateral star grid built from one side length." src="../../assets/patterns/equilateral-star.svg" /></a></p>
+<h3 id="sandwich-cores">Sandwich Cores</h3>
+<p>These plan views show the ribs between two face sheets. The gallery builds
+each core with 25 mm high, 2 mm thick blades and two 2 mm aluminum faces.
+With the reference at the core midplane, the face midplanes lie at
+<span class="arithmatex">\(z=\pm13.5\)</span> mm. The corresponding face-to-reference shifts are <code>+0.0135</code> m
+for the bottom face and <code>-0.0135</code> m for the top face; the core eccentricity is
+zero. Each constructor combines the shifted face stiffnesses with the core
+members shown below.</p>
+<p><a href="../../assets/patterns/sandwich-orthogrid.svg" title="Open full-size pattern"><img alt="Orthogrid sandwich core in plan view." src="../../assets/patterns/sandwich-orthogrid.svg" /></a></p>
+<p><a href="../../assets/patterns/sandwich-hexagonal.svg" title="Open full-size pattern"><img alt="Hexagonal sandwich core in plan view." src="../../assets/patterns/sandwich-hexagonal.svg" /></a></p>
+<p><a href="../../assets/patterns/sandwich-star.svg" title="Open full-size pattern"><img alt="Star sandwich core in plan view." src="../../assets/patterns/sandwich-star.svg" /></a></p>
+<h2 id="independent-families">Independent Families</h2>
+<p>Specify the perpendicular spacing of each family directly:</p>
+<pre><code class="language-python">from tensyl import StiffenerFamily, stiffener_family_cell
+
+families = stiffener_family_cell(
+    skin=skin,
+    families=(
+        StiffenerFamily(rib.section, spacing=0.10, angle_rad=0, axial_eccentricity=offset),
+        StiffenerFamily(
+            rib.section,
+            spacing=0.15,
+            angle_rad=math.pi / 2,
+            axial_eccentricity=offset,
+        ),
+    ),
+)
+result = EnergyHomogenizer().compute(families)
+</code></pre>
+<p>Each family contributes <code>multiplicity / spacing</code> of rib length per area.
+Families can have unrelated spacings and angles; they need no common repeat box.
+The result has the same stiffness as the walkthrough's orthogrid.</p>
+<p>Angles are radians from local <code>e1</code> toward <code>e2</code> about <code>+n</code>. Eccentricities are
+signed distances along <code>+n</code> from the panel reference surface. The default shear
+eccentricity equals the axial eccentricity; set it separately for a section with
+distinct effective axial and shear offsets.</p>
+<h2 id="graph-cells">Graph Cells</h2>
+<p>Define a repeat rectangle with one complete rib on each of its lower and left
+edges. Repeating the rectangle supplies the adjacent copies:</p>
+<pre><code class="language-python">from tensyl import CellEdge, CellNode, CellVector, check_cell_geometry, graph_unit_cell
+
+custom_cell = graph_unit_cell(
+    skin=skin,
+    area=0.15 * 0.10,
+    nodes=(CellNode(0, 0), CellNode(0.15, 0), CellNode(0.15, 0.10), CellNode(0, 0.10)),
+    edges=(
+        CellEdge(0, 1, rib.section, axial_eccentricity=offset, family=&quot;e1&quot;),
+        CellEdge(0, 3, rib.section, axial_eccentricity=offset, family=&quot;e2&quot;),
+    ),
+    repeat_vectors=(CellVector(0.15, 0), CellVector(0, 0.10)),
+    boundary=(0, 1, 2, 3),
+)
+density_audit = check_cell_geometry(custom_cell)
+</code></pre>
+<p>The graph builder derives member lengths and angles from the node coordinates.
+This example produces the same repeated layout as the orthogrid shown above.
+Area has units m² and the repeat vectors have units m. For plotting,
+<code>custom_cell.geometry.segments(repeat_a=2, repeat_b=2)</code> returns line segments;
+the <a href="../../validation/nemeth-cells/#viewing-any-named-cell">plotting example</a>
+shows how to draw them.</p>
+<h2 id="check-the-drawn-member-density">Check the Drawn Member Density</h2>
+<p><code>density_audit</code> contains <code>(drawn, modeled)</code> length per area for each family:
+10 m⁻¹ for <code>e1</code>, and 6.66667 m⁻¹ for <code>e2</code> in this example. The modeled value is
+<span class="arithmatex">\(\sum_m\mu_m L_m/A_\mathrm{cell}\)</span>.</p>
+<p>The audit tiles the drawing 3×3, clips one repeat parallelogram, and merges
+overlapping collinear segments within each family. Opposite-boundary ribs are
+periodic copies: represent them as two half-members or one full member. Use a
+stable family name for each physical family, so drawn and modeled quantities
+refer to the same ribs. Unequal densities are returned for inspection.</p>
+<p>Next: <a href="../homogenization/">Read the homogenization result</a>.</p>
+<p><a href="../../examples/scripts/panel_workflows.py">Complete patterns and workflows script</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../beam-sections-and-cells/" class="btn btn-neutral float-left" title="Rib Sections"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../geometry-and-fields/" class="btn btn-neutral float-right" title="Surfaces and Fields">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../beam-sections-and-cells/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../geometry-and-fields/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

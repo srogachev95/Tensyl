@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/beam-sections-and-cells/" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Beam Sections and Cells - Tensyl</title>
+    <title>Rib Sections - Tensyl</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Beam Sections and Cells";
+        var mkdocs_page_name = "Rib Sections";
         var mkdocs_page_input_path = "user-guide/beam-sections-and-cells.md";
         var mkdocs_page_url = "/Tensyl/user-guide/beam-sections-and-cells/";
       </script>
@@ -41,44 +42,37 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Beam Sections and Cells</a>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Rib Sections</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#geometry-derived-sections">Geometry-Derived Sections</a>
         <ul>
@@ -94,65 +88,75 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#custom-thin-wall-sections">Custom Thin-Wall Sections</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#laminated-walls">Laminated Walls</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#hats-closed-by-the-skin">Hats Closed by the Skin</a>
+    </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#named-cells">Named Cells</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#angles-and-eccentricity">Angles and Eccentricity</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#graph-cells">Graph Cells</a>
+    <li class="toctree-l2"><a class="reference internal" href="#place-the-sections-in-a-panel">Place the Sections in a Panel</a>
     </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -168,10 +172,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">User Guide</li>
-      <li class="breadcrumb-item active">Beam Sections and Cells</li>
+          <li class="breadcrumb-item">Building a Model</li>
+      <li class="breadcrumb-item active">Rib Sections</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/beam-sections-and-cells.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/user-guide/beam-sections-and-cells.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -180,464 +184,359 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="beam-sections-and-cells">Beam Sections and Cells</h1>
-<p>Stiffener homogenization begins with member-local beam-section stiffnesses.
-If you already have centroidal stiffness products from a handbook, section
-solver, or CAD workflow, pass them directly:</p>
-<pre><code class="language-python">from tensyl import BeamSection
-
-section = BeamSection(
-    EA=3.2e6,
-    EIy=2.4e4,
-    EIz=6.5e3,
-    GJ=4.0e3,
-    kGAy=1.1e6,
-    kGAz=0.9e6,
-)
-</code></pre>
-<p>Tensyl asks for stiffness products instead of raw dimensions because the current
-homogenizer consumes centroidal beam stiffnesses.</p>
+<p>Describe a rib in two steps: calculate its cross-section stiffness, then place
+that section in the panel's repeating pattern. This page covers the section;
+<a href="../rib-patterns/">rib patterns</a> covers placement and repeat-area accounting.</p>
 <h2 id="geometry-derived-sections">Geometry-Derived Sections</h2>
-<p>For common isotropic thin-wall stiffeners, Tensyl can compute those products
-from section geometry. The section constructors use member-local <code>(y, z)</code>
-coordinates:</p>
-<ul>
-<li><code>+z</code> is the same direction as wall <code>+n</code>;</li>
-<li><code>z = 0</code> is the section construction datum;</li>
-<li>for the named external stiffeners below, <code>z = 0</code> is the skin outer face where
-  the stiffener touches the skin;</li>
-<li><code>centroid_z</code> is measured from that construction datum.</li>
-</ul>
-<p>The wall reference surface is often the skin mid-surface, not the skin outer
-face. For an external stiffener sitting on the <code>+n</code> face of an <code>isotropic_plate</code>,
-the member eccentricity is therefore:</p>
-<div class="arithmatex">\[
-e = \frac{t_\mathrm{skin}}{2} + z_c .
-\]</div>
-<p>Using <code>section.centroid_z</code> directly is correct only when your section datum
-already coincides with the wall reference surface.</p>
-<p>The diagrams below are schematic section-coordinate drawings. They define Tensyl
-input conventions; they are not fabrication drawings, bend-radius details, or a
-substitute for local stress recovery.</p>
-<pre><code class="language-python">from tensyl import IsotropicMaterial, blade_section, hat_section
-
-aluminum = IsotropicMaterial(E=10.6e6, nu=0.33)
-
-blade = blade_section(
-    material=aluminum,
-    height=0.50,
-    thickness=0.050,
-    shear_correction_y=5.0 / 6.0,
-    shear_correction_z=5.0 / 6.0,
-)
-
-hat = hat_section(
-    material=aluminum,
-    web_height=0.50,
-    web_thickness=0.050,
-    crown_width=0.40,
-    crown_thickness=0.050,
-    flange_width=0.20,
-    flange_thickness=0.050,
-)
-</code></pre>
-<p>Geometry-derived sections expose both the computed <code>BeamSection</code> and the
-section centroid:</p>
-<pre><code class="language-python">from tensyl import EnergyHomogenizer, isotropic_plate, orthogrid_cell
-
-skin_thickness = 0.080
-skin = isotropic_plate(aluminum, thickness=skin_thickness)
-skin_face_offset = 0.5 * skin_thickness
-
-cell = orthogrid_cell(
-    skin=skin,
-    e1_section=hat.section,
-    e2_section=blade.section,
-    e1_pitch=8.0,
-    e2_pitch=6.0,
-    e1_axial_eccentricity=skin_face_offset + hat.centroid_z,
-    e2_axial_eccentricity=skin_face_offset + blade.centroid_z,
-)
-
-result = EnergyHomogenizer().compute(cell)
-</code></pre>
-<p>The named helpers are convenience wrappers over <code>thin_wall_section</code>, which
-accepts custom <code>ThinWallSegment</code> layouts in member-local <code>(y, z)</code> coordinates.
-Use this for a stiffener shape that is just ordinary enough to be useful and just
-odd enough to avoid having its own constructor.</p>
-<p>Tensyl computes the section properties as a composite-area problem. Each
-<code>ThinWallSegment</code> becomes a rectangular strip whose midline is the supplied
-segment and whose thickness is measured normal to that line. For strip <code>i</code>,</p>
-<div class="arithmatex">\[
-A_i = l_i t_i .
-\]</div>
-<p>The section centroid is the area-weighted average of the strip centroids:</p>
-<div class="arithmatex">\[
-y_c = \frac{\sum_i A_i y_i}{\sum_i A_i},
-\qquad
-z_c = \frac{\sum_i A_i z_i}{\sum_i A_i}.
-\]</div>
-<p>Each strip first contributes its own centroidal inertia. Tensyl rotates that
-local strip inertia into the member-local <code>(y, z)</code> axes, then shifts it to the
-section centroid with the parallel-axis theorem:</p>
-<div class="arithmatex">\[
-I_y = \sum_i \left(I_{y,i}^{c} + A_i (z_i-z_c)^2\right),
-\]</div>
-<div class="arithmatex">\[
-I_z = \sum_i \left(I_{z,i}^{c} + A_i (y_i-y_c)^2\right),
-\]</div>
-<p>and</p>
-<div class="arithmatex">\[
-I_{yz} = \sum_i \left(I_{yz,i}^{c} + A_i (y_i-y_c)(z_i-z_c)\right).
-\]</div>
-<p>Those are area properties only. For an isotropic section, Tensyl converts them
-to stiffness products afterward with <code>EA = E A</code>, <code>EIy = E Iy</code>, <code>EIz = E Iz</code>, and
-<code>EIyz = E Iyz</code>. This is the standard composite-area and parallel-axis calculation
-for second moments of area; the section-property reference is listed in
-<a href="../../references/">References</a>.</p>
+<p>For a blade, tee, zee, channel, or hat, pass the material and dimensions to a
+section helper. Its <code>.section</code> contains the <code>BeamSection</code> used by the cell;
+<code>.centroid_z</code> locates the centroid relative to the section's construction datum.
+The <a href="../../getting-started/first-homogenized-cell/">walkthrough</a> uses a blade.</p>
+<p>Section coordinates are <code>(y, z)</code>, transverse to the rib's axis. Positive <code>z</code>
+follows panel <code>+n</code>. Named external sections place <code>z = 0</code> at the skin outer face,
+so a skin-midplane reference gives</p>
+<div class="arithmatex">\[z_a=t_\mathrm{skin}/2+z_c.\]</div>
+<p><a href="../../assets/diagrams/repeat-offset.svg" title="Open full-size diagram"><img alt="Skin midplane and rib centroid" src="../../assets/diagrams/repeat-offset.svg" /></a></p>
+<p>Each wall is a rectangular strip with area <span class="arithmatex">\(A_i=L_it_i\)</span>. Tensyl sums the areas,
+calculates the area-weighted centroid, and applies the parallel-axis theorem:</p>
+<div class="arithmatex">\[A=\sum_i A_i,\quad z_c=\frac{\sum_i A_iz_i}{A},\quad
+I_y=\sum_i[I_{y,i}^{c}+A_i(z_i-z_c)^2].\]</div>
+<p>It similarly calculates <span class="arithmatex">\(y_c\)</span>, <span class="arithmatex">\(I_z\)</span>, and <span class="arithmatex">\(I_{yz}\)</span>, including each strip's rotated
+centroidal inertia. For an isotropic section, multiply by <span class="arithmatex">\(E\)</span> to obtain axial
+and bending stiffnesses; see <a href="../../references/#section-properties">section-property sources</a>.</p>
+<table>
+<thead>
+<tr>
+<th><code>BeamSection</code> input</th>
+<th>SI unit</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EA</code></td>
+<td>N</td>
+<td>Axial stiffness</td>
+</tr>
+<tr>
+<td><code>EIy</code>, <code>EIz</code>, <code>EIyz</code></td>
+<td>N m²</td>
+<td>Centroidal bending stiffnesses and product</td>
+</tr>
+<tr>
+<td><code>GJ</code></td>
+<td>N m²</td>
+<td>Torsional stiffness</td>
+</tr>
+<tr>
+<td><code>kGAy</code>, <code>kGAz</code></td>
+<td>N</td>
+<td>Optional in-plane and transverse shear stiffnesses</td>
+</tr>
+<tr>
+<td><code>mass_per_length</code></td>
+<td>kg/m</td>
+<td>Rib mass per length</td>
+</tr>
+<tr>
+<td><code>thermal_expansion</code></td>
+<td>1/K</td>
+<td>Uniform axial thermal expansion</td>
+</tr>
+</tbody>
+</table>
+<p>You can also supply these products directly from a section solver using
+<code>BeamSection(...)</code>. The <a href="../../theory/tangent-plane-homogenization/#beam-section-quantities">member energy map</a>
+shows which section properties enter the plate stiffness.</p>
+<p>For an open thin-wall section, <span class="arithmatex">\(J\approx\sum_i L_it_i^3/3\)</span> and the torsional stiffness is the product of shear modulus <span class="arithmatex">\(G\)</span> and <span class="arithmatex">\(J\)</span>. Optional <code>shear_correction_y</code> and
+<code>shear_correction_z</code> give <span class="arithmatex">\(kGA=\kappa GA\)</span>; omitted corrections leave those
+member contributions zero. Density supplies mass automatically.</p>
 <h3 id="blade-section">Blade Section</h3>
-<p><img alt="Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness." src="../../assets/sections/blade-section.svg" /></p>
+<p>The drawings use the wall coordinates returned by the section builders. Blue
+dashes mark wall midlines; <strong>C</strong> marks the calculated centroid. Dimension symbols
+map to Python inputs in the tables below. Click a drawing to open it at full size.</p>
+<p><a href="../../assets/sections/blade-section.svg" title="Open full-size diagram"><img alt="Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness." src="../../assets/sections/blade-section.svg" /></a></p>
 <p><code>blade_section</code> creates one vertical web rooted at <code>z = 0</code>.</p>
 <table>
 <thead>
 <tr>
+<th>Symbol</th>
 <th>Input</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><span class="arithmatex">\(h\)</span></td>
 <td><code>height</code></td>
-<td>Web midline height measured from the construction datum in <code>+z</code>.</td>
+<td>Web height from the skin face to the free end in <code>+z</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t\)</span></td>
 <td><code>thickness</code></td>
-<td>Web thickness measured in the local <code>y</code> direction.</td>
+<td>Web thickness in the local <code>y</code> direction.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="tee-section">Tee Section</h3>
-<p><img alt="Tee section diagram showing a web rooted at z equals zero and a top flange above the web." src="../../assets/sections/tee-section.svg" /></p>
-<p><code>tee_section</code> creates a web at <code>y = 0</code> with a centered top flange. The flange is
-above the web, not touching the skin.</p>
+<p><a href="../../assets/sections/tee-section.svg" title="Open full-size diagram"><img alt="Tee section diagram showing a web rooted at z equals zero and a top flange above the web." src="../../assets/sections/tee-section.svg" /></a></p>
+<p><code>tee_section</code> creates a web at <code>y = 0</code> with a centered top flange.</p>
 <table>
 <thead>
 <tr>
+<th>Symbol</th>
 <th>Input</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><span class="arithmatex">\(h_w\)</span></td>
 <td><code>web_height</code></td>
-<td>Web midline height from <code>z = 0</code> to the flange midline junction.</td>
+<td>Clear web height from <code>z = 0</code> to the underside of the flange.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_w\)</span></td>
 <td><code>web_thickness</code></td>
-<td>Web thickness measured in the local <code>y</code> direction.</td>
+<td>Web thickness in local <code>y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(b_f\)</span></td>
 <td><code>flange_width</code></td>
-<td>Full flange midline width in the local <code>y</code> direction.</td>
+<td>Full flange width in local <code>y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_f\)</span></td>
 <td><code>flange_thickness</code></td>
-<td>Flange thickness measured in the local <code>z</code> direction.</td>
+<td>Flange thickness in local <code>z</code>.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="zee-section">Zee Section</h3>
-<p><img alt="Zee section diagram showing bottom and top flanges on opposite sides of the web." src="../../assets/sections/zee-section.svg" /></p>
+<p><a href="../../assets/sections/zee-section.svg" title="Open full-size diagram"><img alt="Zee section diagram showing bottom and top flanges on opposite sides of the web." src="../../assets/sections/zee-section.svg" /></a></p>
 <p><code>zee_section</code> creates a lower flange at the skin-face datum and an upper flange
 on the opposite side of the web. The lower flange extends toward <code>-y</code>; the upper
 flange extends toward <code>+y</code>.</p>
 <table>
 <thead>
 <tr>
+<th>Symbol</th>
 <th>Input</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><span class="arithmatex">\(h_w\)</span></td>
 <td><code>web_height</code></td>
-<td>Web midline height between the lower and upper flange regions.</td>
+<td>Clear distance between the facing surfaces of the flanges.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_w\)</span></td>
 <td><code>web_thickness</code></td>
-<td>Web thickness measured in the local <code>y</code> direction.</td>
+<td>Web thickness in local <code>y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(b_b\)</span></td>
 <td><code>bottom_flange_width</code></td>
-<td>Lower flange width extending toward <code>-y</code>.</td>
+<td>From the web midline to the lower flange tip in <code>-y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(b_t\)</span></td>
 <td><code>top_flange_width</code></td>
-<td>Upper flange width extending toward <code>+y</code>.</td>
+<td>From the web midline to the upper flange tip in <code>+y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_f\)</span></td>
 <td><code>flange_thickness</code></td>
-<td>Thickness used for both flanges, measured in local <code>z</code>.</td>
+<td>Thickness of both flanges in local <code>z</code>.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="channel-section">Channel Section</h3>
-<p><img alt="Channel section diagram showing top and bottom flanges extending to the same side of the web." src="../../assets/sections/channel-section.svg" /></p>
+<p><a href="../../assets/sections/channel-section.svg" title="Open full-size diagram"><img alt="Channel section diagram showing top and bottom flanges extending to the same side of the web." src="../../assets/sections/channel-section.svg" /></a></p>
 <p><code>channel_section</code> creates lower and upper flanges on the same side of the web.
 Both flanges extend toward <code>+y</code>; the lower flange sits at the skin-face datum.</p>
 <table>
 <thead>
 <tr>
+<th>Symbol</th>
 <th>Input</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><span class="arithmatex">\(h_w\)</span></td>
 <td><code>web_height</code></td>
-<td>Web midline height between the lower and upper flange regions.</td>
+<td>Clear distance between the facing surfaces of the flanges.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_w\)</span></td>
 <td><code>web_thickness</code></td>
-<td>Web thickness measured in the local <code>y</code> direction.</td>
+<td>Web thickness in local <code>y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(b_f\)</span></td>
 <td><code>flange_width</code></td>
-<td>Width of each flange extending toward <code>+y</code>.</td>
+<td>From the web midline to each flange tip in <code>+y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_f\)</span></td>
 <td><code>flange_thickness</code></td>
-<td>Thickness used for both flanges, measured in local <code>z</code>.</td>
+<td>Thickness of both flanges in local <code>z</code>.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="hat-section">Hat Section</h3>
-<p><img alt="Hat section diagram showing an open hat rising upward with lower mounting flanges at the skin-face datum." src="../../assets/sections/hat-section.svg" /></p>
+<p><a href="../../assets/sections/hat-section.svg" title="Open full-size diagram"><img alt="Hat section diagram showing an open hat rising upward with lower mounting flanges at the skin-face datum." src="../../assets/sections/hat-section.svg" /></a></p>
 <p><code>hat_section</code> creates an open hat that rises in <code>+z</code>. The two lower mounting
 flanges sit on the <code>z = 0</code> construction datum, so this is the usual external
-hat orientation with flanges touching the skin face. It is not flipped downward
-into the skin.</p>
+hat orientation with flanges touching the skin face.</p>
 <table>
 <thead>
 <tr>
+<th>Symbol</th>
 <th>Input</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><span class="arithmatex">\(h_w\)</span></td>
 <td><code>web_height</code></td>
-<td>Height of the two side webs from the mounting flanges toward the crown.</td>
+<td>Clear distance from the mounting flange's top face to the crown's underside.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_w\)</span></td>
 <td><code>web_thickness</code></td>
-<td>Thickness of each side web, measured in local <code>y</code>.</td>
+<td>Thickness of each side web in local <code>y</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(b_c\)</span></td>
 <td><code>crown_width</code></td>
-<td>Width of the top crown between the two web centerlines.</td>
+<td>Crown width between the web midlines.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_c\)</span></td>
 <td><code>crown_thickness</code></td>
-<td>Crown thickness measured in local <code>z</code>.</td>
+<td>Crown thickness in local <code>z</code>.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(b_f\)</span></td>
 <td><code>flange_width</code></td>
-<td>Width of each lower mounting flange.</td>
+<td>From each web midline outward to the mounting flange tip.</td>
 </tr>
 <tr>
+<td><span class="arithmatex">\(t_f\)</span></td>
 <td><code>flange_thickness</code></td>
-<td>Thickness of each lower mounting flange, measured in local <code>z</code>.</td>
+<td>Mounting flange thickness in local <code>z</code>.</td>
 </tr>
 </tbody>
 </table>
 <h3 id="custom-thin-wall-sections">Custom Thin-Wall Sections</h3>
-<p><img alt="Custom thin-wall segment diagram showing segment midline endpoints, thickness, axes, and centroid." src="../../assets/sections/thin-wall-segment.svg" /></p>
-<p>Use <code>thin_wall_section</code> with <code>ThinWallSegment</code> values for custom open thin-wall
-layouts:</p>
-<pre><code class="language-python">from tensyl import ThinWallSegment, thin_wall_section
+<p><a href="../../assets/sections/thin-wall-segment.svg" title="Open full-size diagram"><img alt="Wall segment coordinates and thickness" src="../../assets/sections/thin-wall-segment.svg" /></a></p>
+<p>Give the endpoints of each wall <strong>midline</strong>, with thickness <span class="arithmatex">\(t\)</span> normal to that
+line. The segment length <span class="arithmatex">\(L\)</span> is calculated from those endpoints.
+This example continues with <code>aluminum</code> defined in the <a href="../materials-and-laminates/#uniform-temperature-changes">material example</a>:</p>
+<pre><code class="language-python">from tensyl import thin_wall_section
 
-custom = thin_wall_section(
+custom_section = thin_wall_section(
     material=aluminum,
     segments=(
-        ThinWallSegment(-0.5, 0.0, 0.5, 0.0, 0.050, label=&quot;flange&quot;),
-        ThinWallSegment(0.0, 0.0, 0.0, 0.75, 0.040, label=&quot;web&quot;),
+        ThinWallSegment(-0.015, 0, 0.015, 0, 0.002, label=&quot;flange&quot;),
+        ThinWallSegment(0, 0, 0, 0.025, 0.002, label=&quot;web&quot;),
     ),
 )
 </code></pre>
-<p><code>start_y</code>, <code>start_z</code>, <code>end_y</code>, and <code>end_z</code> are segment midline endpoint
-coordinates. <code>thickness</code> is measured normal to that midline in the same <code>(y, z)</code>
-section plane.</p>
-<p>This is a thin-wall idealization, not an exact solid model of the corner
-material. When two segments meet at right angles, the coordinates describe the
-meeting of their midlines. That is the same convention a shell or plate model
-would usually use for a stiffener wall. If the local corner material, weld
-radius, flange/web overlap, or manufacturing detail matters to the section
-properties, compute the section externally and pass Tensyl a <code>BeamSection</code>
-instead.</p>
-<p>For US customary examples:</p>
-<ul>
-<li><code>EA</code>, <code>kGAy</code>, and <code>kGAz</code> use <code>lbf</code>;</li>
-<li><code>EIy</code>, <code>EIz</code>, and <code>GJ</code> use <code>lbf*in^2</code>;</li>
-<li>cell dimensions use <code>in</code>.</li>
-</ul>
-<h2 id="named-cells">Named Cells</h2>
-<p>Use a named constructor when the panel follows one of Tensyl's built-in repeat
-patterns. The constructor creates both the member data used for stiffness and
-the coordinates needed to draw the cell.</p>
-<table>
-<thead>
-<tr>
-<th>Constructor</th>
-<th>Pattern in plain terms</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>unidirectional_cell</code></td>
-<td>One family of parallel stiffeners at any angle</td>
-</tr>
-<tr>
-<td><code>orthogrid_cell</code></td>
-<td>Crossing members along <code>e1</code> and <code>e2</code></td>
-</tr>
-<tr>
-<td><code>braced_orthogrid_cell</code></td>
-<td>An orthogrid with one or two diagonal braces</td>
-</tr>
-<tr>
-<td><code>diamond_cell</code></td>
-<td><code>e1</code> members with crossing diagonals and no <code>e2</code> members</td>
-</tr>
-<tr>
-<td><code>equilateral_isogrid_cell</code></td>
-<td>Equal members at <code>0</code>, <code>+60</code>, and <code>-60</code> degrees</td>
-</tr>
-<tr>
-<td><code>isosceles_triangle_grid_cell</code></td>
-<td><code>e1</code> members joined by mirrored diagonals</td>
-</tr>
-<tr>
-<td><code>kagome_cell</code></td>
-<td>Short <code>e1</code> members joined by longer diagonals</td>
-</tr>
-<tr>
-<td><code>hexagonal_grid_cell</code></td>
-<td>Vertical members joined by mirrored diagonals</td>
-</tr>
-<tr>
-<td><code>star_cell</code></td>
-<td>A repeating six-point star pattern</td>
-</tr>
-<tr>
-<td><code>sandwich_*_core_cell</code></td>
-<td>A named grid core between two shifted faces</td>
-</tr>
-</tbody>
-</table>
-<p>Named cells represent the repeating grid, not the joint details. They do not
-calculate intersection stress, fastener behavior, local crippling, or weld
-effects.</p>
-<p>The figures below show the source patterns for the less familiar grids. The
-same shapes are checked numerically in
-<a href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>.</p>
-<table>
-<thead>
-<tr>
-<th>Constructor family</th>
-<th>Treatise topology</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>braced_orthogrid_cell</code></td>
-<td><img alt="Orthogonal stiffener pattern with two diagonal braces per bay and a basic cell." src="../../assets/nemeth-treatise/fig-14-braced-orthogrid-cell.jpg" /></td>
-</tr>
-<tr>
-<td><code>diamond_cell</code></td>
-<td>Nemeth figure 15, represented as the figure-14 cell without an <code>e2</code> family.</td>
-</tr>
-<tr>
-<td><code>isosceles_triangle_grid_cell</code></td>
-<td><img alt="Isosceles-triangle stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-17-isosceles-triangle-cell.jpg" /></td>
-</tr>
-<tr>
-<td><code>kagome_cell</code></td>
-<td><img alt="Kagome stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-18-kagome-cell.jpg" /></td>
-</tr>
-<tr>
-<td><code>hexagonal_grid_cell</code></td>
-<td><img alt="Hexagon-shaped stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-21-hexagon-cell.jpg" /></td>
-</tr>
-<tr>
-<td><code>star_cell</code></td>
-<td><img alt="Isosceles-star-shaped stiffener pattern and basic cell." src="../../assets/nemeth-treatise/fig-23-star-cell.jpg" /></td>
-</tr>
-</tbody>
-</table>
-<p><em>Source for topology definitions: Nemeth, NASA/TP-2011-216882, figures 14-18,
-21, and 23 and tables 4-9; full citation in <a href="../../references/">References</a>.</em></p>
-<div class="admonition tip">
-<p class="admonition-title">Read pitch as a repeat-box dimension</p>
-<p><code>e1_pitch</code> is measured along <code>e1</code>, and <code>e2_pitch</code> is measured along <code>e2</code>.
-An <code>e1</code> member is therefore spaced by <code>e2_pitch</code>. See the coordinate sketch
-in <a href="../../validation/nemeth-cells/#how-cell-dimensions-are-named">Nemeth Cell Verification</a>.</p>
-</div>
-<h2 id="angles-and-eccentricity">Angles and Eccentricity</h2>
-<p>Angles are measured in the local frame. <code>0</code> points along <code>e1</code>, <code>pi/2</code>
-points along <code>e2</code>, and positive angles follow the positive rotation convention
-about <code>n</code>.</p>
-<p>Every eccentricity is signed along <code>+n</code> from the reference surface. For an
-ordinary homogeneous stiffener, set <code>axial_eccentricity</code> to the centroid offset
-and leave <code>shear_eccentricity</code> unset. Tensyl then uses the same value for both.
-For an outward-normal cylinder, an external member has a positive offset and an
-internal member has a negative offset.</p>
-<p>Nemeth allows axial and in-plane shear response to use different effective
-offsets for a nonhomogeneous member. Use <code>shear_eccentricity</code> only when that
-distinction belongs to the section model.</p>
-<p>For a geometry-derived stiffener, <code>centroid_z</code> is measured from the section's own
-construction datum. If that datum is not the wall reference surface, shift the
-value before passing it to the cell constructor. A skin mid-surface reference and
-an outer-face stiffener datum differ by half the skin thickness. Tensyl cannot
-infer that offset for you; set it explicitly.</p>
-<div class="admonition warning">
-<p class="admonition-title">Check the eccentricity sign</p>
-<p>Reversing the sign changes the physical <code>B</code> coupling block. Tensyl cannot
-infer which side of the reference surface the stiffener occupies. See
-<a href="../../theory/conventions/">Frames and Conventions</a> for the full sign rule.</p>
-</div>
-<h2 id="graph-cells">Graph Cells</h2>
-<p>Use <code>graph_unit_cell</code> when a named pattern is not enough. It turns local node
-coordinates and beam edges into a repeating cell that the homogenizer can use.</p>
-<pre><code class="language-python">from tensyl import CellEdge, CellNode, CellVector, graph_unit_cell
+<p>The midlines define a thin-wall idealization. A section solver can supply the
+stiffness products when corner buildup or manufacturing detail affects them.</p>
+<h3 id="laminated-walls">Laminated Walls</h3>
+<p>A composite rib can give each wall a laminate. The laminate's direction 1 runs
+along the rib; direction 2 follows the wall midline. Use the symmetric stack
+from the <a href="../materials-and-laminates/#orthotropic-laminate">laminate example</a>:</p>
+<pre><code class="language-python">from tensyl import LaminatedThinWallSection, LaminatedWallSegment, ThinWallSegment
 
-cell = graph_unit_cell(
-    area=48.0,
-    skin=skin,
-    nodes=(
-        CellNode(0.0, 0.0),
-        CellNode(6.0, 0.0),
-        CellNode(0.0, 8.0),
-    ),
-    edges=(
-        CellEdge(0, 1, section, axial_eccentricity=0.45, family=&quot;e1&quot;),
-        CellEdge(0, 2, section, axial_eccentricity=0.45, family=&quot;e2&quot;),
-    ),
-    repeat_vectors=(CellVector(6.0, 0.0), CellVector(0.0, 8.0)),
-    boundary=(0, 1, 2),
+composite_blade = LaminatedThinWallSection(
+    (
+        LaminatedWallSegment(
+            ThinWallSegment(0, 0, 0, 0.025, 0.001),
+            symmetric_plies,
+        ),
+    )
 )
+composite_section = composite_blade.section
 </code></pre>
-<p>Node coordinates and area must use the same length unit. With repeat vectors,
-<code>cell.geometry.segments(repeat_a=2, repeat_b=2)</code> returns ordinary line segments
-for Matplotlib, Plotly, a CAD export, or another renderer. A complete plotting
-helper is shown in
-<a href="../../validation/nemeth-cells/#viewing-any-named-cell">Nemeth Cell Verification</a>.</p>
-<p>Next: <a href="../../theory/conventions/">Frames and Conventions</a>.</p>
+<p>A ply stack must match the segment thickness. An <code>ABDStiffness</code> can also be
+supplied when its thickness is known to match the wall.</p>
+<p>With membrane compliance <span class="arithmatex">\(a=A^{-1}\)</span> and wall thickness <span class="arithmatex">\(t\)</span>, the reduction uses</p>
+<div class="arithmatex">\[E_x=\frac{1}{a_{11}t},\qquad G=\frac{1}{a_{66}t}.\]</div>
+<p>These are the moduli for a wall free to contract laterally, following the
+laminate compliance construction in <a href="https://ntrs.nasa.gov/citations/19950009349">NASA RP-1351</a>.
+The beam's elastic centroid is weighted by <span class="arithmatex">\(E_i A_i\)</span>, and each rectangular
+strip contributes its own inertia plus the parallel-axis term, weighted by
+<span class="arithmatex">\(E_i\)</span>. Thus <code>centroid_z</code> is the axial stiffness centroid, not necessarily the
+mass or area centroid. Use it when setting axial eccentricity. Open torsion is
+approximated by <span class="arithmatex">\(GJ=\sum_i G_i L_i t_i^3/3\)</span>.</p>
+<p>This membrane-equivalent reduction uses uniform strips. Nonzero <code>B</code> and <code>A16/A26</code> coupling are refused (relative tolerance
+<span class="arithmatex">\(10^{-12}\)</span>), because <code>BeamSection</code> cannot carry those couplings. <code>D</code> and <code>As</code>
+are unused and beam shear stiffnesses remain unspecified. Mass is included
+only when every wall supplies areal mass.</p>
+<h3 id="hats-closed-by-the-skin">Hats Closed by the Skin</h3>
+<p><a href="../../assets/sections/closed-hat-section.svg" title="Open full-size diagram"><img alt="Hat with a dashed median shear-flow path through the skin, webs, and crown." src="../../assets/sections/closed-hat-section.svg" /></a></p>
+<p>An attached skin can close the hat's shear-flow path. Compare an open hat with
+one closed by a 2 mm skin, using the same aluminum material:</p>
+<pre><code class="language-python">from tensyl import hat_section
+
+hat_dimensions = dict(
+    material=aluminum,
+    web_height=0.025,
+    web_thickness=0.002,
+    crown_width=0.03,
+    crown_thickness=0.002,
+    flange_width=0.01,
+    flange_thickness=0.002,
+)
+open_hat = hat_section(**hat_dimensions)
+closed_hat = hat_section(**hat_dimensions, closure_thickness=0.002)
+</code></pre>
+<p>The example gives <code>GJ</code> of 7.01754 N m² for the open hat and 1350.40 N m² for the
+closed path. Area, centroid, bending properties, and rib mass stay the same.</p>
+<p>Pass <code>closure_thickness</code> to <code>hat_section</code> when the isotropic skin closes a
+continuous shear-flow path. The closure uses the hat material's shear modulus.
+For crown width <span class="arithmatex">\(b_c\)</span>, median height <span class="arithmatex">\(h_m\)</span>, web thickness <span class="arithmatex">\(t_w\)</span>, crown thickness
+<span class="arithmatex">\(t_c\)</span>, and closure thickness <span class="arithmatex">\(t_s\)</span>, the selected torsion constant is</p>
+<div class="arithmatex">\[A_m=b_c h_m,\qquad
+J=\frac{4A_m^2}{2h_m/t_w+b_c/t_c+b_c/t_s},\qquad
+h_m=h_w+t_f+\frac{t_c+t_s}{2}.\]</div>
+<p>Here <span class="arithmatex">\(t_s\)</span> is <code>closure_thickness</code>; the orange path encloses <span class="arithmatex">\(A_m\)</span>.</p>
+<p>This is the single-cell, thin-wall <a href="https://ocw.mit.edu/courses/16-20-structural-mechanics-fall-2002/a58ea050460c29f7389ff55e084521ed_ho3.pdf">Bredt formula</a>
+using median-line area. It replaces the open-strip estimate; the small open
+mounting-flange contribution is neglected. The skin midplane lies at
+<code>z = -closure_thickness/2</code> relative to the existing mounting datum. The closure
+changes only <code>properties.J</code> and <code>section.GJ</code>: the skin's area, bending, and mass
+stay in the plate model. For an independently calculated constant, construct
+<code>ThinWallSection(..., torsion_constant=J)</code>.</p>
+<p>The closure affects torsion only: the skin area and mass remain in the plate
+model. Its shear energy also participates in the closed-cell flow, so account
+for that shared contribution when combining the closed <code>GJ</code> with the skin's
+plate energy. The <a href="../../validation/sp8007-reconciliation/#which-j-should-be-used">SP-8007 discussion</a>
+explains the two idealizations. This option uses perfect bonding and free warping.</p>
+<p><span id="named-cells"></span>
+<span id="angles-and-eccentricity"></span>
+<span id="graph-cells"></span>
+<span id="check-the-drawn-member-density"></span></p>
+<h2 id="place-the-sections-in-a-panel">Place the Sections in a Panel</h2>
+<p>Continue with <a href="../rib-patterns/">named patterns, independent families, and custom graph cells</a>.
+That page also covers the drawn-versus-modeled rib-density audit. The
+<a href="../../theory/conventions/">axis and eccentricity conventions</a> apply to every builder.</p>
+<p><a href="../../examples/scripts/materials_sections.py">Complete executable section examples</a>.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../materials-and-laminates/" class="btn btn-neutral float-left" title="Materials and Laminates"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../homogenization/" class="btn btn-neutral float-right" title="Homogenization and Results">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../rib-patterns/" class="btn btn-neutral float-right" title="Rib Patterns">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -667,7 +566,7 @@ helper is shown in
       <span><a href="../materials-and-laminates/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../homogenization/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../rib-patterns/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

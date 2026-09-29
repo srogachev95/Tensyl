@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/user-guide/sp8007-data-handoff/" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>SP-8007 Data Handoff - Tensyl</title>
+    <title>SP-8007 Inputs - Tensyl</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "SP-8007 Data Handoff";
+        var mkdocs_page_name = "SP-8007 Inputs";
         var mkdocs_page_input_path = "user-guide/sp8007-data-handoff.md";
         var mkdocs_page_url = "/Tensyl/user-guide/sp8007-data-handoff/";
       </script>
@@ -41,54 +42,56 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
-              <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Surfaces and Fields</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
+              </ul>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">FEM Solver Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">Files and Design Sweeps</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SP-8007 Inputs</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#coefficient-extraction">Coefficient Extraction</a>
     </li>
@@ -101,44 +104,45 @@
     </ul>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Verification</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -154,10 +158,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">User Guide</li>
-      <li class="breadcrumb-item active">SP-8007 Data Handoff</li>
+          <li class="breadcrumb-item">Using the Results</li>
+      <li class="breadcrumb-item active">SP-8007 Inputs</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/sp8007-data-handoff.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/user-guide/sp8007-data-handoff.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -166,41 +170,9 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="sp-8007-data-handoff">SP-8007 Data Handoff</h1>
-<p>Tensyl can prepare equivalent stiffness-property data for a separate
-SP-8007-style or orthotropic-cylinder calculation. Tensyl does not compute
-SP-8007 knockdown factors, buckling loads, margins, or allowables. Its job here
-is narrower: compute and preserve local equivalent ABD stiffness data, geometry
-context, validity ratios, assumptions, and serialized artifacts for another
-calculation to consume.</p>
-<p>NASA SP-8007 is shell-buckling guidance. Nemeth's equivalent-plate work is a
-source for stiffened equivalent-plate stiffness concepts. Tensyl sits between
-those worlds: it produces local stiffness data, then gets out of the way.</p>
-<p>Treat an SP-8007 handoff as a translation, not as proof that either model is
-right. The barred constants below are the data shape expected by a classical
-orthotropic-cylinder calculation. They are useful precisely because they are
-small and familiar, but that also means they can hide terms that are present in
-the full ABD stiffness. The public
-<a href="../../validation/sp8007-reconciliation/">SP-8007 reconciliation report</a> shows
-where Tensyl and the SP-8007 elastic-constant formulas agree, and where they
-diverge because the models retain different bending physics. That report also
-calls out a printed-equation problem in SP-8007: isogrid Eqs. 97-98 omit the
-explicit eccentric <code>EA z^2</code> bending terms. Correct that omission before using
-the isogrid bending formulas as a physics reference.</p>
-<p>A downstream SP-8007-style workflow commonly needs these data categories from a
-stiffness model:</p>
-<ul>
-<li>SP-8007 orthotropic-cylinder extensional coefficients <code>Ebar_x</code>, <code>Ebar_y</code>,
-  <code>Ebar_xy</code>, and <code>Gbar_xy</code>;</li>
-<li>bending and twisting coefficients <code>Dbar_x</code>, <code>Dbar_y</code>, and <code>Dbar_xy</code>;</li>
-<li>membrane-bending coupling coefficients <code>Cbar_x</code>, <code>Cbar_y</code>, <code>Cbar_xy</code>, and
-  <code>Kbar_xy</code> when coupling is not negligible;</li>
-<li>transverse-shear stiffnesses <code>As</code> when relevant;</li>
-<li>whether membrane-bending coupling <code>B</code> is negligible or must be retained;</li>
-<li>cylinder radius and length from geometry;</li>
-<li>pitch, stiffener height, and validity ratios such as <code>h_over_R</code>, <code>p_over_R</code>,
-  and <code>p_over_L_response</code>;</li>
-<li>warnings, assumptions, and serialized artifacts for traceability.</li>
-</ul>
+<p>Extract the barred stiffness coefficients used by an orthotropic-cylinder
+calculation while keeping the full ABD stiffness alongside them. For a cylinder,
+local <code>e1</code> is axial and <code>e2</code> is circumferential.</p>
 <h2 id="coefficient-extraction">Coefficient Extraction</h2>
 <p>For the built-in <code>Cylinder</code>, Tensyl's local <code>e1</code> direction is axial and local
 <code>e2</code> is circumferential. Under the SP-8007 Section 4.1.2 orthotropic-cylinder
@@ -260,222 +232,50 @@ coefficients used in Eqs. 54-59 and 71-81 map to Tensyl's local ABD stiffness as
 </tr>
 </tbody>
 </table>
-<p><code>Dbar_xy</code> is not just <code>D[2, 2]</code>. It is the modified twisting coefficient: the
-combined bending-twist term used by classical orthotropic shell equations when
-they collapse the bending block into a smaller coefficient set. Tensyl's public
-strain convention uses engineering shear/twist ordering
-<code>(e11, e22, gamma12, k11, k22, k12, gamma13, gamma23)</code>, so the coefficient is
-<code>2*D12 + 4*D66</code>.</p>
-<p>For stiffened walls, pay special attention to <code>Dbar_x</code>, <code>Dbar_y</code>, and
-<code>Dbar_xy</code>. Tensyl retains centroidal beam-section terms through the member
-strain map. Some SP-8007 elastic-constant expressions omit beam contributions
-that Tensyl includes. When those numbers disagree, inspect section inertia,
-torsion constant, reference-surface choice, and eccentricity.</p>
-<p>For orthogrids, the main model choice is whether a member may bend within the
-panel plane. Tensyl leaves that effect out by default to follow Nemeth. The
-<a href="../../validation/sp8007-reconciliation/">SP-8007 reconciliation</a> turns it back
-on with <code>include_in_plane_bending=True</code> to study the difference. SP-8007
-ring/stringer Eqs. 89-91 do not expose the added <code>EIz</code> and <code>EIyz</code> terms, so a
-handoff based only on the barred coefficients can miss that optional stiffness
-for wide, flanged, capped, or closed stiffeners.</p>
-<p>For isogrids with eccentric members, use corrected bending terms:</p>
-<div class="arithmatex">\[
-\bar{D}_{x,\mathrm{corr}}
-=
-\bar{D}_{x,\mathrm{printed}}
-+
-\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
-\]</div>
-<div class="arithmatex">\[
-\bar{D}_{y,\mathrm{corr}}
-=
-\bar{D}_{y,\mathrm{printed}}
-+
-\frac{3\sqrt{3}}{4}\frac{EA}{a}z^2,
-\]</div>
-<p>and</p>
-<div class="arithmatex">\[
-\bar{D}_{xy,\mathrm{corr}}
-=
-\bar{D}_{xy,\mathrm{printed}}
-+
-\frac{3\sqrt{3}}{2}\frac{EA}{a}z^2.
-\]</div>
-<p>Use <code>orthotropic_coefficients()</code> when a downstream hand calculation wants this
-smaller coefficient set:</p>
-<pre><code class="language-python">coefficients = result.orthotropic_coefficients()
-
-print(coefficients.Ebar_x, coefficients.Dbar_x, coefficients.Dbar_xy)
-print(coefficients.warnings)
-print(coefficients.unsupported_terms)
-</code></pre>
-<div class="admonition warning">
-<p class="admonition-title">Do not silently drop the off-axis terms</p>
-<p>This coefficient set does not represent every possible ABD stiffness. If <code>A16</code>,
-<code>A26</code>, <code>B16</code>, <code>B26</code>, <code>B61</code>, <code>B62</code>, <code>D16</code>, or <code>D26</code> are not negligible,
-<code>orthotropic_coefficients()</code> returns the reduced values but records the issue
-in <code>warnings</code> and <code>unsupported_terms</code>, and also emits a Python warning. That
-is a prompt to decide whether the off-axis terms matter, not a command to
-ignore them.</p>
-<p>The default filter combines the absolute <code>tolerance</code> with a dimensionless
-<code>relative_tolerance</code> applied to the corresponding <code>A</code>, <code>B</code>, or <code>D</code> block.
-The relative term suppresses coordinate-transformation roundoff as the
-stiffness scale changes. Set <code>relative_tolerance=0.0</code> when an external
-procedure requires a purely absolute cutoff.</p>
-</div>
+<p><code>Dbar_xy</code> combines bending and twisting as <code>2*D12 + 4*D66</code>, following the
+engineering twist convention. It has the same force–length units as <code>D</code>.</p>
 <h2 id="orthogrid-handoff">Orthogrid Handoff</h2>
-<p>This worked handoff prepares an orthogrid equivalent stiffness for a separate
-SP-8007-style cylinder workflow.</p>
-<pre><code class="language-python">from tensyl import (
-    BeamSection,
-    Cylinder,
-    EnergyHomogenizer,
-    IsotropicMaterial,
-    ValidityContext,
-    isotropic_plate,
-    orthogrid_cell,
-)
-from tensyl.io import from_yaml, to_yaml
-
-
-skin = isotropic_plate(IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1), thickness=0.080)
-section = BeamSection(EA=3.2e6, EIy=2.4e4, EIz=6.5e3, GJ=4.0e3, kGAy=1.1e6, kGAz=0.9e6)
-cell = orthogrid_cell(
-    skin=skin,
-    e1_section=section,
-    e2_section=section,
-    e1_pitch=8.0,
-    e2_pitch=6.0,
-    e1_axial_eccentricity=0.45,
-    e2_axial_eccentricity=0.45,
-)
-result = EnergyHomogenizer().compute(
-    cell,
-    validity_context=ValidityContext(
-        characteristic_height=0.50,
-        pitch=8.0,
-        min_radius=120.0,
-        response_length=80.0,
-    ),
-)
-surface = Cylinder(radius=120.0, length=300.0)
-point = surface.point_at(150.0, 0.0)
-sp8007 = result.orthotropic_coefficients()
-
-report = {
-    &quot;radius&quot;: surface.radius,
-    &quot;length&quot;: surface.length,
-    &quot;sp8007&quot;: sp8007,
-    &quot;transverse_shear&quot;: {
-        &quot;Abar_xz&quot;: result.stiffness.As[0, 0],
-        &quot;Abar_yz&quot;: result.stiffness.As[1, 1],
-    },
-    &quot;h_over_R&quot;: result.validity.h_over_R,
-    &quot;p_over_R&quot;: result.validity.p_over_R,
-    &quot;p_over_L_response&quot;: result.validity.p_over_L_response,
-    &quot;warnings&quot;: result.validity.warnings,
-    &quot;assumptions&quot;: result.assumptions,
-    &quot;frame_label&quot;: point.frame.label,
-}
-
-artifact = to_yaml(
-    result,
-    units={&quot;length&quot;: &quot;in&quot;, &quot;force&quot;: &quot;lbf&quot;, &quot;stress&quot;: &quot;psi&quot;},
-)
-loaded = from_yaml(artifact)
-
-assert loaded.stiffness.C8.shape == (8, 8)
-assert report[&quot;sp8007&quot;].Ebar_x == result.stiffness.A[0, 0]
-assert report[&quot;sp8007&quot;].Dbar_xy == 2.0 * result.stiffness.D[0, 1] + 4.0 * result.stiffness.D[2, 2]
-assert report[&quot;p_over_R&quot;] == 8.0 / 120.0
-</code></pre>
-<p>Use the serialized artifact as a traceable record of the stiffness-property
-calculation. Unit labels are metadata; Tensyl does not convert values.</p>
-<h2 id="isogrid-variant">Isogrid Variant</h2>
-<p>For an equilateral isogrid whose local <code>0</code> degree member family is axial,
-extract the same SP-8007 coefficient set from the homogenized ABD stiffness:</p>
+<p>Continue with the aluminum panel from the <a href="../rib-patterns/">family workflow</a>.
+The same script also builds an equilateral isogrid:</p>
 <pre><code class="language-python">from tensyl import equilateral_isogrid_cell
 
-
-isogrid_skin = isotropic_plate(
-    IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1),
-    thickness=0.060,
+orthogrid_constants = result.orthotropic_coefficients()
+isogrid = equilateral_isogrid_cell(
+    skin=skin,
+    member_section=rib.section,
+    side_length=0.10,
+    axial_eccentricity=offset,
 )
-isogrid_section = BeamSection(
-    EA=2.8e6,
-    EIy=1.8e4,
-    EIz=5.2e3,
-    GJ=3.2e3,
-    kGAy=0.9e6,
-    kGAz=0.7e6,
-)
-isogrid_cell = equilateral_isogrid_cell(
-    skin=isogrid_skin,
-    member_section=isogrid_section,
-    side_length=6.0,
-    axial_eccentricity=0.35,
-)
-isogrid_result = EnergyHomogenizer().compute(
-    isogrid_cell,
-    validity_context=ValidityContext(
-        characteristic_height=0.42,
-        pitch=6.0,
-        min_radius=120.0,
-        response_length=80.0,
-    ),
-)
-isogrid_sp8007 = isogrid_result.orthotropic_coefficients()
-
-assert abs(isogrid_sp8007.Ebar_x - isogrid_sp8007.Ebar_y) &lt; 1.0e-6
-assert abs(isogrid_sp8007.Cbar_x - isogrid_sp8007.Cbar_y) &lt; 1.0e-6
+isogrid_constants = EnergyHomogenizer().compute(isogrid).orthotropic_coefficients()
 </code></pre>
-<p>The equality checks are not SP-8007 requirements. They are useful sanity checks
-for this equilateral, equal-member example because the isogrid should be
-balanced in the local axial and circumferential directions.</p>
+<p>The returned values have units N/m for the extensional constants, N for coupling,
+and N m for bending. Carry cylinder radius, length, reference surface, and the
+validity context into the downstream calculation with these constants.</p>
+<p><code>orthotropic_coefficients()</code> records off-axis entries in <code>unsupported_terms</code>
+and <code>warnings</code> when they exceed the requested tolerance. That identifies which
+parts of the full stiffness need treatment in the chosen cylinder equations.
+The default filter combines absolute <code>tolerance</code> and block-relative
+<code>relative_tolerance</code>; setting the latter to zero uses an absolute cutoff.</p>
+<h2 id="isogrid-variant">Isogrid Variant</h2>
+<p>The isogrid uses equal ribs at 0° and ±60°. Its axial and circumferential barred
+extensional constants agree to roundoff. For eccentric ribs, SP-8007's printed
+isogrid bending equations need the explicit <code>EA*z²</code> terms described in the
+<a href="../../validation/sp8007-reconciliation/#correcting-the-isogrid-typo">reconciliation report</a>.
+That report compares all barred coefficients in the source's original units.</p>
 <h2 id="symmetric-laminate-variant">Symmetric Laminate Variant</h2>
-<p>For a skin-only laminate cylinder, build the laminate ABD stiffness directly and
-extract the same barred coefficients. This example uses a symmetric cross-ply
-stack so the membrane-bending coupling block is negligible.</p>
-<pre><code class="language-python">from tensyl import OrthotropicPlyMaterial, Ply, laminate_plate
-
-
-carbon_epoxy = OrthotropicPlyMaterial(
-    E1=18.0e6,
-    E2=1.4e6,
-    G12=0.75e6,
-    nu12=0.28,
-    G13=0.75e6,
-    G23=0.50e6,
-    density=0.058,
-)
-laminate_stiffness = laminate_plate(
-    (
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=1.5707963267948966),
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=1.5707963267948966),
-        Ply(material=carbon_epoxy, thickness=0.005, angle_rad=0.0),
-    )
-)
-laminate_sp8007 = laminate_stiffness.orthotropic_coefficients()
-laminate_report = {
-    &quot;radius&quot;: surface.radius,
-    &quot;length&quot;: surface.length,
-    &quot;sp8007&quot;: laminate_sp8007,
-    &quot;transverse_shear&quot;: {
-        &quot;Abar_xz&quot;: laminate_stiffness.As[0, 0],
-        &quot;Abar_yz&quot;: laminate_stiffness.As[1, 1],
-    },
-}
-
-assert abs(laminate_report[&quot;sp8007&quot;].Cbar_x) &lt; 1.0e-9
-assert abs(laminate_report[&quot;sp8007&quot;].Cbar_y) &lt; 1.0e-9
-</code></pre>
+<p>Use <code>symmetric.orthotropic_coefficients()</code> with the symmetric stack from the
+<a href="../materials-and-laminates/#orthotropic-laminate">laminate example</a>. The same
+coefficient view applies to a laminate or a homogenized ribbed panel. A symmetric
+stack about its midplane gives coupling constants near zero.</p>
+<p>Save the original stiffness or result through the
+<a href="../external-workflows/#yaml-and-json">JSON/YAML workflow</a> so the downstream
+analysis retains the complete local constitutive data.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../solver-handoff/" class="btn btn-neutral float-left" title="FEM Solver Handoff"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../../validation/" class="btn btn-neutral float-right" title="Validation Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../solver-handoff/" class="btn btn-neutral float-left" title="Solver Handoff"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../validation/" class="btn btn-neutral float-right" title="Evidence Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>

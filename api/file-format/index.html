@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/api/file-format/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>File Format - Tensyl</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "File Format";
+        var mkdocs_page_input_path = "api/file-format.md";
+        var mkdocs_page_url = "/Tensyl/api/file-format/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/brand/tensyl-logo.jpeg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >API</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../core/">Core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../io/">Files</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">File Format</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#schema">Schema</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#migration-from-version-2">Migration from Version 2</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cell-inputs-and-sampled-atlases">Cell Inputs and Sampled Atlases</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Tensyl</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">API</li>
+      <li class="breadcrumb-item active">File Format</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/api/file-format.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="file-format">File Format</h1>
+<h2 id="schema">Schema</h2>
+<p>Every external-workflow artifact has:</p>
+<ul>
+<li><code>schema_name</code>;</li>
+<li><code>schema_version</code>;</li>
+<li><code>artifact_type</code>;</li>
+<li><code>producer</code>;</li>
+<li><code>units</code>;</li>
+<li><code>payload</code>.</li>
+</ul>
+<p>Schema <strong>version 3</strong> supports:</p>
+<table>
+<thead>
+<tr>
+<th>Artifact type</th>
+<th>Reconstructed object</th>
+<th>Preserved inputs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>abd_stiffness</code></td>
+<td><code>ABDStiffness</code></td>
+<td>Tangent, frame, convention, mass, metadata, validity</td>
+</tr>
+<tr>
+<td><code>homogenization_result</code></td>
+<td><code>HomogenizationResult</code></td>
+<td>Stiffness plus diagnostics and assumptions</td>
+</tr>
+<tr>
+<td><code>canonical_unit_cell</code></td>
+<td><code>CanonicalUnitCell</code></td>
+<td>Skin, area, members and full beam sections, offsets, multiplicity, frame, drawing, metadata</td>
+</tr>
+<tr>
+<td><code>abd_atlas</code></td>
+<td><code>ABDAtlas</code></td>
+<td>Built-in surface definition, coordinate grids, stiffness samples, metadata</td>
+</tr>
+<tr>
+<td><code>thermal_resultants</code></td>
+<td><code>ThermalResultants</code></td>
+<td>N_T and M_T per temperature increment, frame and convention</td>
+</tr>
+</tbody>
+</table>
+<p>The canonical stiffness payload is the <span class="arithmatex">\(8\times8\)</span> <code>tangent_c8</code> operator. ABD and
+transverse-shear blocks are reconstructed from that canonical tangent on load.</p>
+<p>Malformed payloads raise <code>SchemaError</code>. Loading cells and atlases runs their
+normal constructors, so positive dimensions, valid indices, compatible frames,
+consistent conventions, increasing grids, and rectangular sample shape remain
+mandatory. Mechanics numbers must be finite numbers, not booleans or numeric
+strings. If an atlas carries a <code>sample_digest</code>, it must match the restored
+samples. This is a numeric consistency check, not a digital signature.</p>
+<h2 id="migration-from-version-2">Migration from Version 2</h2>
+<p>The readers still accept version 2 stiffness and homogenization-result
+artifacts. Their numerical meaning is unchanged. All writers now emit version
+3, including when re-exporting a v2 artifact. Version 2 cannot claim one of the
+new artifact types, and other versions are refused. Downstream readers should
+accept v3 before consuming newly written files. The package version remains
+independent of this schema version; the validation campaign schemas have their
+own names and versions.</p>
+<h2 id="cell-inputs-and-sampled-atlases">Cell Inputs and Sampled Atlases</h2>
+<p>Save the canonical inputs alongside a result when you need to repeat its
+homogenization. For example, after building <code>cell</code>:</p>
+<pre><code class="language-python">from tensyl import CanonicalUnitCell, EnergyHomogenizer
+from tensyl.io import from_json, to_json
+
+saved = to_json(cell)
+restored = from_json(saved)
+assert isinstance(restored, CanonicalUnitCell)
+recomputed = EnergyHomogenizer().compute(restored)
+</code></pre>
+<p>The artifact stores the resolved skin and beam properties used in the solve.
+It does not serialize a Python factory or reconstruct the original material
+layup or named-builder arguments. Member thermal expansion is preserved; skin
+thermal loads remain a separate <code>thermal_resultants</code> artifact.</p>
+<p>Atlases use the same <code>to_json</code>, <code>to_yaml</code>, and file helpers. The supported
+surfaces are <code>FlatPlate</code>, <code>Cylinder</code>, <code>Sphere</code>, <code>SphericalCap</code>,
+<code>ConicalFrustum</code>, and <code>Ellipsoid</code>, with their explicit constructor parameters.
+Custom surface implementations and live field callables are refused; no Python
+code is executed from a serialized factory. Loading rebuilds the sampled atlas
+and recomputes its derived metadata, while retaining caller provenance. Save a
+sampled atlas rather than its live field when you need a portable handoff.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../io/" class="btn btn-neutral float-left" title="Files"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../adapters/" class="btn btn-neutral float-right" title="Solver Adapters">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/srogachev95/Tensyl" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../io/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../adapters/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../javascripts/mathjax.js"></script>
+      <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

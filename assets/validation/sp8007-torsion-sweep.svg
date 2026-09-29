@@ -9,7 +9,7 @@
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
-      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
      </cc:Agent>
     </dc:creator>
    </cc:Work>
@@ -1184,11 +1184,11 @@ z
     </g>
    </g>
    <g id="line2d_91">
-    <path d="M 54.073172 266.75508
-L 166.061111 266.748389
+    <path d="M 54.073172 266.7551
+L 166.061111 266.748407
 L 278.04905 266.681482
-L 390.036989 266.012406
-L 502.024928 259.321649
+L 390.036989 266.012228
+L 502.024928 259.319697
 " clip-path="url(#p6b97901cf5)" style="fill: none; stroke: #1f77b4; stroke-width: 1.5; stroke-linecap: square"/>
     <defs>
      <path id="mca9ef5936c" d="M 0 3
@@ -1204,11 +1204,11 @@ z
 " style="stroke: #1f77b4"/>
     </defs>
     <g clip-path="url(#p6b97901cf5)">
-     <use xlink:href="#mca9ef5936c" x="54.073172" y="266.75508" style="fill: #1f77b4; stroke: #1f77b4"/>
-     <use xlink:href="#mca9ef5936c" x="166.061111" y="266.748389" style="fill: #1f77b4; stroke: #1f77b4"/>
+     <use xlink:href="#mca9ef5936c" x="54.073172" y="266.7551" style="fill: #1f77b4; stroke: #1f77b4"/>
+     <use xlink:href="#mca9ef5936c" x="166.061111" y="266.748407" style="fill: #1f77b4; stroke: #1f77b4"/>
      <use xlink:href="#mca9ef5936c" x="278.04905" y="266.681482" style="fill: #1f77b4; stroke: #1f77b4"/>
-     <use xlink:href="#mca9ef5936c" x="390.036989" y="266.012406" style="fill: #1f77b4; stroke: #1f77b4"/>
-     <use xlink:href="#mca9ef5936c" x="502.024928" y="259.321649" style="fill: #1f77b4; stroke: #1f77b4"/>
+     <use xlink:href="#mca9ef5936c" x="390.036989" y="266.012228" style="fill: #1f77b4; stroke: #1f77b4"/>
+     <use xlink:href="#mca9ef5936c" x="502.024928" y="259.319697" style="fill: #1f77b4; stroke: #1f77b4"/>
     </g>
    </g>
    <g id="line2d_92">
@@ -1261,7 +1261,7 @@ L 530.612369 18.118365
    </g>
    <g id="text_13">
     <!-- isogrid -->
-    <g transform="translate(507.024928 261.400086) scale(0.08 -0.08)">
+    <g transform="translate(507.024928 261.398134) scale(0.08 -0.08)">
      <defs>
       <path id="DejaVuSans-52" d="M 1959 3097
 Q 1497 3097 1228 2736

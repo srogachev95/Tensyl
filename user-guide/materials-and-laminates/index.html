@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
@@ -41,102 +42,109 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Materials and Laminates</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#isotropic-plate">Isotropic Plate</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#orthotropic-laminate">Orthotropic Laminate</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#angles-and-stacking-strings">Angles and Stacking Strings</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#shear-correction">Shear Correction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#uniform-temperature-changes">Uniform Temperature Changes</a>
     </li>
     </ul>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Validation Overview</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../validation/nemeth-cells/">Nemeth Formulas</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../validation/sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -152,10 +160,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">User Guide</li>
+          <li class="breadcrumb-item">Building a Model</li>
       <li class="breadcrumb-item active">Materials and Laminates</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/user-guide/materials-and-laminates.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/user-guide/materials-and-laminates.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -164,53 +172,133 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="materials-and-laminates">Materials and Laminates</h1>
-<p>Tensyl supports skin-only ABD stiffnesses for isotropic plates and orthotropic
-laminates.</p>
+<p>Start with the skin construction. An isotropic skin needs a modulus, Poisson's
+ratio, and thickness. A laminate needs the material, thickness, and angle of each
+ply. Both produce the same <code>ABDStiffness</code> interface for the next modeling step.</p>
 <h2 id="isotropic-plate">Isotropic Plate</h2>
 <pre><code class="language-python">from tensyl import IsotropicMaterial, isotropic_plate
 
-material = IsotropicMaterial(E=10.6e6, nu=0.33, density=0.1)
-stiffness = isotropic_plate(material, thickness=0.080)
+aluminum = IsotropicMaterial(E=70e9, nu=0.33, density=2700)
+skin_thickness = 0.002
+skin = isotropic_plate(aluminum, thickness=skin_thickness)
 </code></pre>
-<p>Inputs must be consistent. In the US customary examples here, <code>E</code> is in <code>psi</code>
-and <code>thickness</code> is in <code>in</code> — see <a href="../units-and-consistency/">Units and Consistency</a>.</p>
+<p>These SI inputs give the <a href="../../getting-started/first-abd-stiffness/">walkthrough's 2 mm skin</a>.
+Density is mass per volume, here kg/m³. Supply it to obtain areal mass in kg/m².</p>
 <h2 id="orthotropic-laminate">Orthotropic Laminate</h2>
-<p>Laminate plies are supplied bottom-to-top through the section thickness.</p>
-<pre><code class="language-python">import math
+<p>A ply's direction 1 follows its fibers; direction 2 is transverse in the ply.
+Define the elastic and shear moduli in Pa, density in kg/m³, and thermal
+expansion coefficients in 1/K. The values below illustrate a carbon/epoxy ply:</p>
+<pre><code class="language-python">from tensyl import OrthotropicPlyMaterial, Ply, laminate_plate, layup
 
-from tensyl import OrthotropicPlyMaterial, Ply, laminate_plate
-
-ply_material = OrthotropicPlyMaterial(
-    E1=20.0e6,
-    E2=1.4e6,
-    G12=0.8e6,
-    nu12=0.28,
-    G13=0.7e6,
-    G23=0.55e6,
+carbon = OrthotropicPlyMaterial(
+    E1=135e9,
+    E2=10e9,
+    G12=5e9,
+    nu12=0.3,
+    G13=5e9,
+    G23=3.8e9,
+    density=1600,
+    alpha1=-0.2e-6,
+    alpha2=30e-6,
 )
-
-stiffness = laminate_plate(
-    [
-        Ply(ply_material, thickness=0.005, angle_rad=0.0),
-        Ply(ply_material, thickness=0.005, angle_rad=math.pi / 2.0),
-        Ply(ply_material, thickness=0.005, angle_rad=math.pi / 2.0),
-        Ply(ply_material, thickness=0.005, angle_rad=0.0),
-    ]
+symmetric_plies = layup(carbon, 0.000125, &quot;[0/±45/90]s&quot;)
+symmetric = laminate_plate(symmetric_plies)
+unsymmetric_plies = (
+    Ply.from_degrees(carbon, 0.0005, 0),
+    Ply.from_degrees(carbon, 0.0005, 90),
 )
+unsymmetric = laminate_plate(unsymmetric_plies)
 </code></pre>
-<p>For a symmetric laminate about the reference surface, the <code>B</code> block should be
-zero within numerical tolerance. Unsymmetric layups can produce nonzero
-membrane-bending coupling.</p>
+<p>Plies are ordered <strong>bottom to top along <code>+n</code></strong>, with the reference at the laminate
+midplane. The symmetric stack has a near-zero <code>B</code> block. The <code>[0/90]</code> stack is
+unsymmetric and couples extension to curvature; reversing that stack reverses
+<code>B</code> while preserving <code>A</code> and <code>D</code>.</p>
+<p>Classical laminate theory integrates each transformed ply stiffness
+<span class="arithmatex">\(\bar{\mathbf Q}_k\)</span> between its lower and upper coordinates:</p>
+<div class="arithmatex">\[
+\mathbf A=\sum_k\bar{\mathbf Q}_k(z_k-z_{k-1}),\quad
+\mathbf B=\frac12\sum_k\bar{\mathbf Q}_k(z_k^2-z_{k-1}^2),\quad
+\mathbf D=\frac13\sum_k\bar{\mathbf Q}_k(z_k^3-z_{k-1}^3).
+\]</div>
+<p>See <a href="https://ntrs.nasa.gov/citations/19950009349">NASA RP-1351</a> for the laminate
+constitutive and thermal derivations. Each ply angle rotates material axes into
+the laminate axes before integration.</p>
+<h2 id="angles-and-stacking-strings">Angles and Stacking Strings</h2>
+<p><code>Ply.from_degrees</code> accepts angles from a drawing directly. <code>Ply(..., angle_rad=...)</code>
+uses radians. For equal-thickness plies of one material, <code>layup</code> expands common
+stacking notation:</p>
+<table>
+<thead>
+<tr>
+<th>String</th>
+<th>Angles from bottom to top, degrees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[0/±45/90]s</code></td>
+<td>0, +45, −45, 90, 90, −45, +45, 0</td>
+</tr>
+<tr>
+<td><code>[0/90]2s</code></td>
+<td>0, 90, 0, 90, 90, 0, 90, 0</td>
+</tr>
+<tr>
+<td><code>[0_2/90]</code></td>
+<td>0, 0, 90</td>
+</tr>
+<tr>
+<td><code>[±45_2]</code></td>
+<td>+45, −45, +45, −45</td>
+</tr>
+</tbody>
+</table>
+<p><code>+-</code> also spells <code>±</code>; <code>∓</code> expands the negative angle first. Repeats use positive
+integers. The symmetric suffix mirrors the whole expanded stack, including its
+middle ply. Use explicit <code>Ply</code> objects for mixed materials or thicknesses.</p>
 <h2 id="shear-correction">Shear Correction</h2>
-<p><code>isotropic_plate</code> and <code>laminate_plate</code> expose transverse-shear behavior through
-the <code>As</code> block. The shear correction factor is an explicit modeling choice; it
-should be chosen consistently with the plate or shell theory used downstream.</p>
+<p><code>isotropic_plate</code> and <code>laminate_plate</code> use a default transverse-shear correction
+of 5/6. Set <code>shear_correction</code> explicitly to match the plate or shell theory in
+your analysis. It scales the <code>As</code> block, while <code>A</code>, <code>B</code>, and <code>D</code> follow the
+through-thickness integration above.</p>
+<h2 id="uniform-temperature-changes">Uniform Temperature Changes</h2>
+<p>Supply isotropic <code>alpha</code>, or orthotropic <code>alpha1</code> and <code>alpha2</code>, to calculate
+expansion under a uniform temperature change. Zero specifies zero expansion;
+<code>None</code> leaves the property unknown. Thermal resultants are a separate object
+so the same elastic stiffness can be used for several temperature changes.</p>
+<pre><code class="language-python">from tensyl import IsotropicMaterial, laminate_thermal_resultants
+
+aluminum = IsotropicMaterial(E=70e9, nu=0.33, density=2700, alpha=23e-6)
+metal_plies = (Ply(aluminum, thickness=0.002),)
+metal_skin = laminate_plate(metal_plies)
+thermal = laminate_thermal_resultants(metal_plies)
+delta_temperature = 50.0  # K
+free_strain = metal_skin.strains(thermal.equivalent_load(delta_temperature))
+</code></pre>
+<p>The free aluminum skin expands by <span class="arithmatex">\(23\times10^{-6}\times50=0.00115\)</span> in each
+in-plane direction, with zero curvature. The section law is</p>
+<div class="arithmatex">\[\mathbf r=\mathbf C_8\boldsymbol\eta-\mathbf r_T\Delta T,\qquad
+\mathbf r_T=[\mathbf N_T,\mathbf M_T,0,0]^T,\]</div>
+<p>where <span class="arithmatex">\(\mathbf N_T\)</span> and <span class="arithmatex">\(\mathbf M_T\)</span> are force and moment resultants per kelvin.
+Laminate theory gives</p>
+<div class="arithmatex">\[\mathbf N_T=\sum_k\bar{\mathbf Q}_k\bar{\boldsymbol\alpha}_k(z_k-z_{k-1}),\quad
+\mathbf M_T=\frac12\sum_k\bar{\mathbf Q}_k\bar{\boldsymbol\alpha}_k(z_k^2-z_{k-1}^2).\]</div>
+<p>The transformed expansion vector uses engineering shear. For applied mechanical
+loads, solve <code>stiffness.strains(loads + thermal.equivalent_load(delta_temperature))</code>.
+Full restraint sets strain to zero and therefore gives negative thermal resultants.
+Properties are linear elastic and temperature independent over the chosen increment.</p>
+<p>Keep mechanical and thermal objects in the same axes and at the same reference
+surface. <code>thermal.rotate(angle)</code> follows the stiffness rotation;
+<code>thermal.shift_reference_surface(d)</code> changes <code>M_T</code> to <code>M_T - d*N_T</code>.
+The <a href="../homogenization/#thermal-loading-of-a-stiffened-cell">stiffened-cell example</a>
+adds rib expansion using the same sign convention.</p>
+<p><a href="../../examples/scripts/materials_sections.py">Complete material and section script</a>.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../units-and-consistency/" class="btn btn-neutral float-left" title="Units and Consistency"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../beam-sections-and-cells/" class="btn btn-neutral float-right" title="Beam Sections and Cells">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../../theory/validity/" class="btn btn-neutral float-left" title="Modeling Choices"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../beam-sections-and-cells/" class="btn btn-neutral float-right" title="Rib Sections">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -237,7 +325,7 @@ should be chosen consistently with the plate or shell theory used downstream.</p
         </span>
     
     
-      <span><a href="../units-and-consistency/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../../theory/validity/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../beam-sections-and-cells/" style="color: #fcfcfc">Next &raquo;</a></span>

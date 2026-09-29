@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://srogachev95.github.io/Tensyl/validation/nemeth-cells/" />
       <link rel="shortcut icon" href="../../img/favicon.ico" />
-    <title>Nemeth Cell Verification - Tensyl</title>
+    <title>Nemeth Formulas - Tensyl</title>
     <link rel="stylesheet" href="../../css/theme.css" />
     <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../stylesheets/handbook.css" rel="stylesheet" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Nemeth Cell Verification";
+        var mkdocs_page_name = "Nemeth Formulas";
         var mkdocs_page_input_path = "validation/nemeth-cells.md";
         var mkdocs_page_url = "/Tensyl/validation/nemeth-cells/";
       </script>
@@ -41,61 +42,65 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Start Here</span></p>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Getting Started</span></p>
-              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation/">Installation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">First ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-abd-stiffness/">Skin Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">First Homogenized Cell</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-homogenized-cell/">Add Stiffeners</a>
                   </li>
-              </ul>
-              <p class="caption"><span class="caption-text">Background</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">Motivation and History</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Terminology</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/use-the-result/">Apply Loads and Save</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Theory</span></p>
+              <p class="caption"><span class="caption-text">How the Model Works</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Equivalent-Stiffness Mechanics</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/equivalent-stiffness/">Plate Stiffness</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Frames and Conventions</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Energy Homogenization</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/conventions/">Axes and Reference Surface</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Validity Limits</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../theory/validity/">Modeling Choices</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <p class="caption"><span class="caption-text">Building a Model</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/units-and-consistency/">Units and Consistency</a>
-                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../user-guide/materials-and-laminates/">Materials and Laminates</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Beam Sections and Cells</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/beam-sections-and-cells/">Rib Sections</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Homogenization and Results</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/rib-patterns/">Rib Patterns</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Geometry and Stiffness Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">External Workflows</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">FEM Solver Handoff</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Data Handoff</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/geometry-and-fields/">Surfaces and Fields</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Validation</span></p>
-              <ul class="current">
-                  <li class="toctree-l1"><a class="reference internal" href="../">Validation Overview</a>
+              <p class="caption"><span class="caption-text">Using the Results</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/homogenization/">Loads, Mass, and Reports</a>
                   </li>
-                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Nemeth Cell Verification</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/external-workflows/">Files and Design Sweeps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Sampled Stiffness</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/solver-handoff/">Solver Handoff</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../user-guide/sp8007-data-handoff/">SP-8007 Inputs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Verification</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../">Evidence Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../calculix-skin/">CalculiX Skin Comparison</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Nemeth Formulas</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#what-was-checked">What Was Checked</a>
     </li>
@@ -118,35 +123,34 @@
                   <li class="toctree-l1"><a class="reference internal" href="../sp8007-reconciliation/">SP-8007 Reconciliation</a>
                   </li>
               </ul>
-              <p class="caption"><span class="caption-text">Examples</span></p>
+              <p class="caption"><span class="caption-text">Reference</span></p>
               <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/skin-only/">Skin and Laminate ABD Stiffness</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/terminology/">Glossary</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/orthogrid-panel/">Orthogrid Panel and Barrel</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../background/motivation/">History and Motivation</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/sampled-stiffness-atlas/">Variable Stiffness Fields</a>
+                  <li class="toctree-l1"><a class="reference internal" href="../../references/">Sources</a>
                   </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../examples/stiffness-field-maps/">Stiffness Field Maps</a>
-                  </li>
-              </ul>
-              <p class="caption"><span class="caption-text">API Reference</span></p>
-              <ul>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/core/">Core</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/materials/">Materials</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
-                  </li>
-                  <li class="toctree-l1"><a class="reference internal" href="../../api/io/">External Workflow I/O</a>
-                  </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../../references/">References</a>
+                  <li class="toctree-l1"><a class="reference internal" >API</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/core/">Core</a>
                 </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/materials/">Materials</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/cells-and-sections/">Cells and Sections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/homogenizers/">Homogenizers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/geometry-and-fields/">Geometry and Fields</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/io/">Files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/file-format/">File Format</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/adapters/">Solver Adapters</a>
+                </li>
+    </ul>
+                  </li>
               </ul>
       </div>
     </div>
@@ -162,10 +166,10 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
-          <li class="breadcrumb-item">Validation</li>
-      <li class="breadcrumb-item active">Nemeth Cell Verification</li>
+          <li class="breadcrumb-item">Verification</li>
+      <li class="breadcrumb-item active">Nemeth Formulas</li>
     <li class="wy-breadcrumbs-aside">
-          <a href="https://github.com/srogachev95/Tensyl/edit/master/docs/validation/nemeth-cells.md" class="icon icon-github"> Edit on GitHub</a>
+          <a href="https://github.com/srogachev95/Tensyl/edit/main/docs/validation/nemeth-cells.md" class="icon icon-github"> Edit on GitHub</a>
     </li>
   </ul>
   <hr/>
@@ -174,18 +178,9 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="nemeth-cell-verification">Nemeth Cell Verification</h1>
-<p>A named cell is a recipe for one repeating piece of a stiffener grid. The
-recipe says which members are present, which way they run, and how much panel
-area they represent. A missing member or a wrong repeat area changes the
-equivalent stiffness even when the calculation itself runs without complaint.</p>
-<p>We checked Tensyl's named cells against the layouts and basic-cell tables in
-Michael P. Nemeth's <em>A Treatise on Equivalent-Plate Stiffnesses for Stiffened
-Laminated-Composite Plates and Plate-Like Lattices</em>.</p>
-<div class="admonition success">
-<p class="admonition-title">Result</p>
-<p>All eight source cases agree with an independent calculation to floating-point
-rounding.</p>
-</div>
+<p>Eight named grid cases agree with a separately written calculation of Nemeth's
+stiffness equations to floating-point roundoff. The checks cover both the repeat
+geometry and every entry of the assembled stiffness blocks.</p>
 <h2 id="what-was-checked">What Was Checked</h2>
 <p>The review covered two parts of every pattern:</p>
 <ol>
@@ -200,62 +195,15 @@ and counts used in the stiffness calculation. This distinction prevents a
 shared edge from being counted twice simply because it appears on both sides of
 a drawing.</p>
 <h2 id="how-cell-dimensions-are-named">How Cell Dimensions Are Named</h2>
-<p>Every cell uses the local directions <code>e1</code>, <code>e2</code>, and <code>n</code>. The first two lie in
-the panel; <code>n</code> points away from its reference surface.</p>
-<pre><code class="language-text">               e2
-               ^
-               |  e2_pitch
-               |
-               +------------&gt; e1
-                    e1_pitch
-</code></pre>
-<p>The pitch names describe the width and height of the repeat box:</p>
-<table>
-<thead>
-<tr>
-<th>Input</th>
-<th>Physical meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>e1_pitch</code></td>
-<td>Repeat distance measured along <code>e1</code></td>
-</tr>
-<tr>
-<td><code>e2_pitch</code></td>
-<td>Repeat distance measured along <code>e2</code></td>
-</tr>
-<tr>
-<td><code>e1_section</code></td>
-<td>Members that point along <code>e1</code></td>
-</tr>
-<tr>
-<td><code>e2_section</code></td>
-<td>Members that point along <code>e2</code></td>
-</tr>
-<tr>
-<td><code>positive_diagonal</code></td>
-<td>A diagonal that rises as <code>e1</code> increases</td>
-</tr>
-<tr>
-<td><code>negative_diagonal</code></td>
-<td>A diagonal that falls as <code>e1</code> increases</td>
-</tr>
-</tbody>
-</table>
-<p>This means an <code>e1</code> member repeats across the panel by <code>e2_pitch</code>, while an
-<code>e2</code> member repeats by <code>e1_pitch</code>. Thinking of the pitches as repeat-box
-dimensions is usually clearer than trying to name them after a stiffener
-family.</p>
-<div class="admonition tip">
-<p class="admonition-title">The usual eccentricity input</p>
-<p>For an ordinary homogeneous stiffener, provide its signed
-<code>axial_eccentricity</code> and omit <code>shear_eccentricity</code>. Tensyl then uses the
-same offset for both effects. Separate values are available for the less
-common nonhomogeneous-member case.</p>
-</div>
+<p><code>e1_pitch</code> and <code>e2_pitch</code> measure repeat dimensions along the panel axes.
+The <a href="../../user-guide/rib-patterns/#named-cells">cell-building guide</a> explains
+spacing, angles, eccentricities, and shared-boundary accounting.</p>
 <h2 id="available-patterns">Available Patterns</h2>
+<p>The <a href="../../user-guide/rib-patterns/#pattern-gallery">pattern gallery</a> shows every
+named builder using its actual cell geometry, with a repeated layout beside
+one highlighted translation cell. The executable examples also check drawn
+and modeled rib density. The table below maps those builders to Nemeth's
+source definitions.</p>
 <table>
 <thead>
 <tr>
@@ -332,40 +280,66 @@ common nonhomogeneous-member case.</p>
 </tr>
 </tbody>
 </table>
-<p>The source figures are reproduced alongside the constructor guide in
-<a href="../../user-guide/beam-sections-and-cells/#named-cells">Beam Sections and Cells</a>.</p>
+<p>Representative source drawings:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Nemeth drawing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Braced orthogrid</td>
+<td><img alt="Crossed-brace cell" src="../../assets/nemeth-treatise/fig-14-braced-orthogrid-cell.jpg" /></td>
+</tr>
+<tr>
+<td>Triangular</td>
+<td><img alt="Isosceles triangle cell" src="../../assets/nemeth-treatise/fig-17-isosceles-triangle-cell.jpg" /></td>
+</tr>
+<tr>
+<td>Kagome</td>
+<td><img alt="Kagome cell" src="../../assets/nemeth-treatise/fig-18-kagome-cell.jpg" /></td>
+</tr>
+<tr>
+<td>Hexagonal</td>
+<td><img alt="Hexagonal cell" src="../../assets/nemeth-treatise/fig-21-hexagon-cell.jpg" /></td>
+</tr>
+<tr>
+<td>Star</td>
+<td><img alt="Star cell" src="../../assets/nemeth-treatise/fig-23-star-cell.jpg" /></td>
+</tr>
+</tbody>
+</table>
+<p>Source: <a href="https://ntrs.nasa.gov/citations/20110004039">Nemeth, NASA/TP-2011-216882</a>,
+figures 14, 17, 18, 21, and 23.</p>
 <h2 id="viewing-any-named-cell">Viewing Any Named Cell</h2>
-<p>Every named constructor returns a cell with drawable geometry. Tensyl does not
-depend on a plotting library, but it returns ordinary line segments that a
-plotter, CAD preview, or SVG writer can use.</p>
-<p>This optional Matplotlib helper works with any named cell:</p>
+<p>Use <code>cell.geometry.segments(...)</code> to obtain the lines in repeated cells. The
+following helper draws the <a href="../../user-guide/rib-patterns/#graph-cells">custom orthogrid</a>:</p>
 <pre><code class="language-python">from matplotlib import pyplot as plt
 
 
 def plot_cell(cell, *, repeat_a=2, repeat_b=2):
     geometry = cell.geometry
     if geometry is None:
-        raise ValueError(&quot;This cell does not include drawable geometry.&quot;)
-
+        raise ValueError(&quot;Supply a cell with drawable geometry.&quot;)
     _, axes = plt.subplots()
     for segment in geometry.segments(repeat_a=repeat_a, repeat_b=repeat_b):
         axes.plot(
             [segment.start_e1, segment.end_e1],
             [segment.start_e2, segment.end_e2],
-            color=&quot;black&quot;,
+            color=&quot;#176b87&quot;,
         )
-
     axes.set_aspect(&quot;equal&quot;)
-    axes.set_xlabel(&quot;e1&quot;)
-    axes.set_ylabel(&quot;e2&quot;)
+    axes.set_xlabel(&quot;e1 (m)&quot;)
+    axes.set_ylabel(&quot;e2 (m)&quot;)
     return axes
+
+
 </code></pre>
-<p>After building a named cell, call <code>plot_cell(cell)</code> to draw two repeats in each
-direction.</p>
-<p><code>segment.family</code> identifies the member family when a renderer needs separate
-colors or line styles. <code>geometry.repeat_vectors</code> gives the two translations
-that tile the pattern, and <code>geometry.boundary</code> gives the basic-cell outline when
-the source defines one.</p>
+<p>The <a href="../../examples/scripts/plot_cell.py">complete script</a> supplies the cell and
+writes its drawing. <code>segment.family</code> supplies a name for assigning colors;
+repeat vectors and boundary nodes define the tiling and cell outline.</p>
 <h2 id="how-the-numerical-check-works">How the Numerical Check Works</h2>
 <p>The comparison is intentionally independent of the production calculation:</p>
 <ol>
@@ -435,7 +409,9 @@ Frobenius-norm error.</p>
 </tr>
 </tbody>
 </table>
-<p>These differences are floating-point rounding, not fitted tolerances.</p>
+<p>These are retained source-check results. The independent reference is in
+<a href="https://github.com/srogachev95/Tensyl/blob/main/validation/lib/tensyl_validation/nemeth.py"><code>validation/lib/tensyl_validation/nemeth.py</code></a>;
+current regression checks run with <code>uv run pytest -q tests -k nemeth</code>.</p>
 <h2 id="what-this-result-means">What This Result Means</h2>
 <p>The comparison supports the following claims:</p>
 <ul>
@@ -445,34 +421,19 @@ Frobenius-norm error.</p>
 <li>The corrected diagonal angle, single-brace member count, offset signs, and
   default member-bending behavior are covered by regression tests.</li>
 </ul>
-<p>It is not a physical test campaign. It does not validate joints, local stress,
-crippling, buckling, manufacturing details, or the accuracy of a homogenized
-model when the grid is too coarse for the structural response of interest.</p>
 <h2 id="advanced-mechanics-notes">Advanced Mechanics Notes</h2>
-<p>Nemeth defines separate effective offsets for axial and in-plane shear response.
-Tensyl exposes them as <code>axial_eccentricity</code> and <code>shear_eccentricity</code>. Both are
-signed along <code>+n</code>; when the shear value is omitted, it defaults to the axial
-value.</p>
-<p>By default, Tensyl also follows Nemeth's first approximation and leaves out
-member bending within the panel plane. <code>BeamSection</code> still stores <code>EIz</code> and
-<code>EIyz</code>, but the cell uses them only when
-<code>include_in_plane_bending=True</code> is requested explicitly. The result records
-that extension in its assumptions.</p>
-<p>Positive shear eccentricity produces positive <code>B66</code> coupling under Tensyl's
-documented <code>+n</code> convention. The equations and sign definitions are given in
-<a href="../../theory/tangent-plane-homogenization/">Tangent-Plane Homogenization</a> and
-<a href="../../theory/conventions/">Frames and Conventions</a>.</p>
-<p>The single-brace pattern uses the larger basic cell from Nemeth's table 5, so
-its diagonal amount per unit area is half that of the crossed-brace pattern.
-The Kagome cell similarly uses a larger repeat area and the corresponding
-member counts from table 7.</p>
-<p>The source is Nemeth, NASA/TP-2011-216882; see the complete citation in
-<a href="../../references/">References</a>.</p>
+<p>The <a href="../../theory/tangent-plane-homogenization/#beam-section-quantities">member strain map</a>
+defines axial and shear eccentricities, twist factors, and the first-approximation
+bending modes used by both calculations.</p>
+<p>The alternating single-brace pattern uses the larger basic cell from table 5,
+giving half the diagonal length per area of the crossed-brace pattern. The
+Kagome cell similarly uses its table 7 area and member counts. Distinct section
+properties in each family make these density differences visible in the tests.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../" class="btn btn-neutral float-left" title="Validation Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../calculix-skin/" class="btn btn-neutral float-left" title="CalculiX Skin Comparison"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../sp8007-reconciliation/" class="btn btn-neutral float-right" title="SP-8007 Reconciliation">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -500,7 +461,7 @@ member counts from table 7.</p>
         </span>
     
     
-      <span><a href="../" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../calculix-skin/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../sp8007-reconciliation/" style="color: #fcfcfc">Next &raquo;</a></span>
