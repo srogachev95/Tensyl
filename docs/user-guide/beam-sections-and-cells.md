@@ -48,28 +48,31 @@ member contributions zero. Density supplies mass automatically.
 
 ### Blade Section
 
+The drawings use the wall coordinates returned by the section builders. Blue
+dashes mark wall midlines; **C** marks the calculated centroid. Dimension symbols
+map to Python inputs in the tables below. Click a drawing to open it at full size.
+
 [![Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness.](../assets/sections/blade-section.svg)](../assets/sections/blade-section.svg "Open full-size diagram")
 
 `blade_section` creates one vertical web rooted at `z = 0`.
 
-| Input | Meaning |
-| --- | --- |
-| `height` | Web midline height measured from the construction datum in `+z`. |
-| `thickness` | Web thickness measured in the local `y` direction. |
+| Symbol | Input | Meaning |
+| --- | --- | --- |
+| $h$ | `height` | Web height from the skin face to the free end in `+z`. |
+| $t$ | `thickness` | Web thickness in the local `y` direction. |
 
 ### Tee Section
 
 [![Tee section diagram showing a web rooted at z equals zero and a top flange above the web.](../assets/sections/tee-section.svg)](../assets/sections/tee-section.svg "Open full-size diagram")
 
-`tee_section` creates a web at `y = 0` with a centered top flange. The flange is
-above the web, not touching the skin.
+`tee_section` creates a web at `y = 0` with a centered top flange.
 
-| Input | Meaning |
-| --- | --- |
-| `web_height` | Web midline height from `z = 0` to the flange midline junction. |
-| `web_thickness` | Web thickness measured in the local `y` direction. |
-| `flange_width` | Full flange midline width in the local `y` direction. |
-| `flange_thickness` | Flange thickness measured in the local `z` direction. |
+| Symbol | Input | Meaning |
+| --- | --- | --- |
+| $h_w$ | `web_height` | Clear web height from `z = 0` to the underside of the flange. |
+| $t_w$ | `web_thickness` | Web thickness in local `y`. |
+| $b_f$ | `flange_width` | Full flange width in local `y`. |
+| $t_f$ | `flange_thickness` | Flange thickness in local `z`. |
 
 ### Zee Section
 
@@ -79,13 +82,13 @@ above the web, not touching the skin.
 on the opposite side of the web. The lower flange extends toward `-y`; the upper
 flange extends toward `+y`.
 
-| Input | Meaning |
-| --- | --- |
-| `web_height` | Web midline height between the lower and upper flange regions. |
-| `web_thickness` | Web thickness measured in the local `y` direction. |
-| `bottom_flange_width` | Lower flange width extending toward `-y`. |
-| `top_flange_width` | Upper flange width extending toward `+y`. |
-| `flange_thickness` | Thickness used for both flanges, measured in local `z`. |
+| Symbol | Input | Meaning |
+| --- | --- | --- |
+| $h_w$ | `web_height` | Clear distance between the facing surfaces of the flanges. |
+| $t_w$ | `web_thickness` | Web thickness in local `y`. |
+| $b_b$ | `bottom_flange_width` | From the web midline to the lower flange tip in `-y`. |
+| $b_t$ | `top_flange_width` | From the web midline to the upper flange tip in `+y`. |
+| $t_f$ | `flange_thickness` | Thickness of both flanges in local `z`. |
 
 ### Channel Section
 
@@ -94,12 +97,12 @@ flange extends toward `+y`.
 `channel_section` creates lower and upper flanges on the same side of the web.
 Both flanges extend toward `+y`; the lower flange sits at the skin-face datum.
 
-| Input | Meaning |
-| --- | --- |
-| `web_height` | Web midline height between the lower and upper flange regions. |
-| `web_thickness` | Web thickness measured in the local `y` direction. |
-| `flange_width` | Width of each flange extending toward `+y`. |
-| `flange_thickness` | Thickness used for both flanges, measured in local `z`. |
+| Symbol | Input | Meaning |
+| --- | --- | --- |
+| $h_w$ | `web_height` | Clear distance between the facing surfaces of the flanges. |
+| $t_w$ | `web_thickness` | Web thickness in local `y`. |
+| $b_f$ | `flange_width` | From the web midline to each flange tip in `+y`. |
+| $t_f$ | `flange_thickness` | Thickness of both flanges in local `z`. |
 
 ### Hat Section
 
@@ -109,20 +112,21 @@ Both flanges extend toward `+y`; the lower flange sits at the skin-face datum.
 flanges sit on the `z = 0` construction datum, so this is the usual external
 hat orientation with flanges touching the skin face.
 
-| Input | Meaning |
-| --- | --- |
-| `web_height` | Height of the two side webs from the mounting flanges toward the crown. |
-| `web_thickness` | Thickness of each side web, measured in local `y`. |
-| `crown_width` | Width of the top crown between the two web centerlines. |
-| `crown_thickness` | Crown thickness measured in local `z`. |
-| `flange_width` | Width of each lower mounting flange. |
-| `flange_thickness` | Thickness of each lower mounting flange, measured in local `z`. |
+| Symbol | Input | Meaning |
+| --- | --- | --- |
+| $h_w$ | `web_height` | Clear distance from the mounting flange's top face to the crown's underside. |
+| $t_w$ | `web_thickness` | Thickness of each side web in local `y`. |
+| $b_c$ | `crown_width` | Crown width between the web midlines. |
+| $t_c$ | `crown_thickness` | Crown thickness in local `z`. |
+| $b_f$ | `flange_width` | From each web midline outward to the mounting flange tip. |
+| $t_f$ | `flange_thickness` | Mounting flange thickness in local `z`. |
 
 ### Custom Thin-Wall Sections
 
 [![Wall segment coordinates and thickness](../assets/sections/thin-wall-segment.svg)](../assets/sections/thin-wall-segment.svg "Open full-size diagram")
 
-Give the endpoints of each wall **midline**, with thickness normal to that line.
+Give the endpoints of each wall **midline**, with thickness $t$ normal to that
+line. The segment length $L$ is calculated from those endpoints.
 This example continues with `aluminum` defined in the [material example](materials-and-laminates.md#uniform-temperature-changes):
 
 ```python
@@ -164,6 +168,8 @@ only when every wall supplies areal mass.
 
 ### Hats Closed by the Skin
 
+[![Hat with a dashed median shear-flow path through the skin, webs, and crown.](../assets/sections/closed-hat-section.svg)](../assets/sections/closed-hat-section.svg "Open full-size diagram")
+
 An attached skin can close the hat's shear-flow path. Compare an open hat with
 one closed by a 2 mm skin, using the same aluminum material:
 
@@ -176,11 +182,14 @@ closed path. Area, centroid, bending properties, and rib mass stay the same.
 
 Pass `closure_thickness` to `hat_section` when the isotropic skin closes a
 continuous shear-flow path. The closure uses the hat material's shear modulus.
-For crown width $w$, median height $h$, web thickness $t_w$, crown thickness
+For crown width $b_c$, median height $h_m$, web thickness $t_w$, crown thickness
 $t_c$, and closure thickness $t_s$, the selected torsion constant is
 
-$$J=\frac{4(wh)^2}{2h/t_w+w/t_c+w/t_s},\qquad
-h=h_{web}+t_{flange}+\frac{t_c+t_s}{2}.$$
+$$A_m=b_c h_m,\qquad
+J=\frac{4A_m^2}{2h_m/t_w+b_c/t_c+b_c/t_s},\qquad
+h_m=h_w+t_f+\frac{t_c+t_s}{2}.$$
+
+Here $t_s$ is `closure_thickness`; the orange path encloses $A_m$.
 
 This is the single-cell, thin-wall [Bredt formula](https://ocw.mit.edu/courses/16-20-structural-mechanics-fall-2002/a58ea050460c29f7389ff55e084521ed_ho3.pdf)
 using median-line area. It replaces the open-strip estimate; the small open

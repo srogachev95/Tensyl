@@ -27,6 +27,12 @@ spacing, angles, eccentricities, and shared-boundary accounting.
 
 ## Available Patterns
 
+The [pattern gallery](../user-guide/rib-patterns.md#pattern-gallery) shows every
+named builder using its actual cell geometry, with a repeated layout beside
+one highlighted translation cell. The executable examples also check drawn
+and modeled rib density. The table below maps those builders to Nemeth's
+source definitions.
+
 | Constructor | What the repeating pattern contains | Nemeth source |
 | --- | --- | --- |
 | `unidirectional_cell` | One family of parallel members at any angle | Figures 4-6 |

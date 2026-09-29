@@ -22,8 +22,10 @@ The examples share a 2 mm aluminum skin and a 25 mm blade:
 | `isosceles_triangle_grid_cell` | `e1` members joined by mirrored diagonals |
 | `kagome_cell` | Short `e1` members joined by longer diagonals |
 | `hexagonal_grid_cell` | Vertical members joined by mirrored diagonals |
+| `regular_hexagonal_grid_cell` | A regular hexagonal grid defined by one side length |
 | `star_cell` | A repeating six-point star pattern |
-| `sandwich_*_core_cell` | A named grid core between two shifted faces |
+| `equilateral_star_cell` | An equilateral star grid defined by one side length |
+| `sandwich_*_core_cell` | An orthogrid, hexagonal, or star core between two faces |
 
 
 The [orthogrid walkthrough](../getting-started/first-homogenized-cell.md) shows the
@@ -35,6 +37,96 @@ shows the other topologies and their source definitions.
 For sandwich builders, use the core midplane as the common reference by default.
 Face offsets locate the faces relative to it. If another reference is chosen,
 set `core_axial_eccentricity` and both face offsets consistently.
+
+## Pattern Gallery
+
+Each drawing below comes from an actual cell built by the
+[executable gallery](../examples/scripts/pattern_gallery.py), using the aluminum
+skin and blade dimensions above. Blue lines mark rib centerlines. The dashed
+orange parallelogram spans the two repeat vectors returned by the builder;
+its area is the area used in homogenization. The right view enlarges that same
+cell, with neighboring ribs shown in pale blue. Both axes use the same length
+scale within each view. Click any drawing to open it at full size.
+
+The figures list dimensions in millimeters for reading; the script supplies
+meters to the constructors. The [Nemeth catalogue](../validation/nemeth-cells.md#available-patterns)
+links these topologies to their source drawings and numerical checks.
+
+### Parallel Ribs and Orthogrids
+
+The parallel-rib builder uses a 1 m reference length along the ribs. Its repeat
+area is that length times the perpendicular spacing. The orthogrid has two
+independent pitches; its highlighted cell is centered on a rib intersection.
+
+[![Parallel ribs and their one-meter reference cell.](../assets/patterns/unidirectional.svg)](../assets/patterns/unidirectional.svg "Open full-size pattern")
+
+[![Orthogrid with a node-centered repeat cell.](../assets/patterns/orthogrid.svg)](../assets/patterns/orthogrid.svg "Open full-size pattern")
+
+### Braced Orthogrids
+
+Double bracing places both diagonals in every bay. Single bracing alternates
+the diagonal direction between neighboring bays, so its repeat spans two
+pitches in each direction.
+
+[![Orthogrid with two diagonal braces per bay.](../assets/patterns/braced-double.svg)](../assets/patterns/braced-double.svg "Open full-size pattern")
+
+[![Orthogrid with alternating single braces and a four-bay repeat.](../assets/patterns/braced-single.svg)](../assets/patterns/braced-single.svg "Open full-size pattern")
+
+### Diamond and Triangular Grids
+
+The diamond grid joins horizontal ribs with crossing diagonals. The isosceles
+grid joins horizontal ribs with a staggered triangular pattern. For an
+equilateral isogrid, supply one side length: the three directions are then
+`0`, `+60`, and `-60` degrees. Its repeat parallelogram contains the area of
+two elementary triangles.
+
+[![Diamond grid with horizontal members and crossing diagonals.](../assets/patterns/diamond.svg)](../assets/patterns/diamond.svg "Open full-size pattern")
+
+[![Isosceles triangular grid and its oblique repeat.](../assets/patterns/isosceles.svg)](../assets/patterns/isosceles.svg "Open full-size pattern")
+
+[![Equilateral isogrid and its oblique repeat parallelogram.](../assets/patterns/isogrid.svg)](../assets/patterns/isogrid.svg "Open full-size pattern")
+
+### Kagome and Hexagonal Grids
+
+The Kagome builder follows Nemeth's figure 18: horizontal members cross two
+diagonal families, with the horizontal rows offset from diagonal intersections.
+The general hexagonal
+builder lets you set the horizontal construction dimension, diagonal rise,
+and vertical member length separately. The regular variant sets their
+proportions from one side length.
+
+[![Nemeth's Kagome arrangement of horizontal ribs and crossing diagonals.](../assets/patterns/kagome.svg)](../assets/patterns/kagome.svg "Open full-size pattern")
+
+[![General hexagonal grid and its repeat parallelogram.](../assets/patterns/hexagonal.svg)](../assets/patterns/hexagonal.svg "Open full-size pattern")
+
+[![Regular hexagonal grid with equal side lengths.](../assets/patterns/regular-hexagonal.svg)](../assets/patterns/regular-hexagonal.svg "Open full-size pattern")
+
+### Star Grids
+
+The star builders form repeated six-point openings. The general builder uses
+the star construction dimensions `e1_pitch` and `e2_pitch`; its vertical
+translation is `4 * e2_pitch / 3`. The equilateral variant derives those
+dimensions from one side length.
+
+[![Star grid and the rectangular area used for its repeat.](../assets/patterns/star.svg)](../assets/patterns/star.svg "Open full-size pattern")
+
+[![Equilateral star grid built from one side length.](../assets/patterns/equilateral-star.svg)](../assets/patterns/equilateral-star.svg "Open full-size pattern")
+
+### Sandwich Cores
+
+These plan views show the ribs between two face sheets. The gallery builds
+each core with 25 mm high, 2 mm thick blades and two 2 mm aluminum faces.
+With the reference at the core midplane, the face midplanes lie at
+$z=\pm13.5$ mm. The corresponding face-to-reference shifts are `+0.0135` m
+for the bottom face and `-0.0135` m for the top face; the core eccentricity is
+zero. Each constructor combines the shifted face stiffnesses with the core
+members shown below.
+
+[![Orthogrid sandwich core in plan view.](../assets/patterns/sandwich-orthogrid.svg)](../assets/patterns/sandwich-orthogrid.svg "Open full-size pattern")
+
+[![Hexagonal sandwich core in plan view.](../assets/patterns/sandwich-hexagonal.svg)](../assets/patterns/sandwich-hexagonal.svg "Open full-size pattern")
+
+[![Star sandwich core in plan view.](../assets/patterns/sandwich-star.svg)](../assets/patterns/sandwich-star.svg "Open full-size pattern")
 
 ## Independent Families
 
@@ -63,6 +155,7 @@ edges. Repeating the rectangle supplies the adjacent copies:
 ```
 
 The graph builder derives member lengths and angles from the node coordinates.
+This example produces the same repeated layout as the orthogrid shown above.
 Area has units m² and the repeat vectors have units m. For plotting,
 `custom_cell.geometry.segments(repeat_a=2, repeat_b=2)` returns line segments;
 the [plotting example](../validation/nemeth-cells.md#viewing-any-named-cell)

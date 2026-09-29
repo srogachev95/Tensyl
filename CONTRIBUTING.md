@@ -51,11 +51,15 @@ Regenerate the SVG schematics from their Python sources:
 ```bash
 uv run python scripts/generate_handbook_diagrams.py
 uv run python scripts/generate_section_diagrams.py
+uv run python scripts/generate_pattern_diagrams.py
 ```
 
 The handbook renderer uses the walkthrough's repeat dimensions and blade dimensions,
 the cylinder's local frame, and analytic plate deformation shapes. Section
 drawings use the section builders' wall segments and computed centroids. Keep
+pattern drawings tied to the cells built in `docs/examples/scripts/pattern_gallery.py`:
+tile their geometry, and use the repeat vectors to define the highlighted area.
+The optional boundary outline can describe a motif with a different area. Keep
 physical coordinates separate from page placement, use one scale per view, and
 derive dimension endpoints from the geometry. Review rendered drawings for
 symmetry, projection, signs, readable labels, and overlaps before committing.

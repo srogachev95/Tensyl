@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from math import hypot
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -44,19 +44,27 @@ class Diagram:
     section: ThinWallSection
     dimensions: tuple[Dimension, ...]
     note: str
+    closure_thickness: float | None = None
 
 
 WIDTH = 760
-HEIGHT = 470
-MARGIN_LEFT = 84
-MARGIN_RIGHT = 224
-MARGIN_TOP = 78
-MARGIN_BOTTOM = 112
-TEXT_STYLE = (
-    'font-family="Inter, Arial, sans-serif" paint-order="stroke" stroke="#ffffff" '
-    'stroke-width="3" stroke-linejoin="round"'
-)
+HEIGHT = 540
 DUMMY_MATERIAL = IsotropicMaterial(E=1.0, nu=0.3)
+SYMBOLS = {
+    "height": "h",
+    "thickness": "t",
+    "web_height": "h_w",
+    "web_thickness": "t_w",
+    "flange_width": "b_f",
+    "flange_thickness": "t_f",
+    "crown_width": "b_c",
+    "crown_thickness": "t_c",
+    "top_flange_width": "b_t",
+    "bottom_flange_width": "b_b",
+    "segment midline length": "L",
+    "closure_thickness": "t_s",
+    "median_height": "h_m",
+}
 
 
 def diagrams() -> tuple[Diagram, ...]:
@@ -99,7 +107,7 @@ def diagrams() -> tuple[Diagram, ...]:
     hat_flange_z = 0.5 * hat_flange_thickness
     wall_segment = ThinWallSegment(-1.15, 0.50, 1.15, 2.35, 0.26, label="segment")
 
-    return (
+    sections = (
         Diagram(
             filename="blade-section.svg",
             title="Blade section",
@@ -123,7 +131,7 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_anchor="start",
                 ),
             ),
-            note="Web root touches z = 0; centroid_z is measured upward from that datum.",
+            note="h runs from the skin face to the free end of the blade.",
         ),
         Diagram(
             filename="tee-section.svg",
@@ -168,7 +176,7 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_anchor="start",
                 ),
             ),
-            note="The flange is on the +z side of the web.",
+            note="The web height ends at the underside of the flange.",
         ),
         Diagram(
             filename="zee-section.svg",
@@ -223,7 +231,7 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_anchor="start",
                 ),
             ),
-            note="Bottom and top flanges point to opposite sides in y.",
+            note="Flange widths start at the web midline; web height is the clear gap.",
         ),
         Diagram(
             filename="channel-section.svg",
@@ -276,7 +284,7 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_anchor="start",
                 ),
             ),
-            note="Both flanges extend to the same +y side.",
+            note="Both flanges extend in +y; web height is the clear distance between them.",
         ),
         Diagram(
             filename="hat-section.svg",
@@ -350,7 +358,7 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_anchor="start",
                 ),
             ),
-            note="The mounting flanges sit on the skin face; the crown rises in +z.",
+            note="Crown width is between web midlines; web height is the clear gap.",
         ),
         Diagram(
             filename="thin-wall-segment.svg",
@@ -372,6 +380,59 @@ def diagrams() -> tuple[Diagram, ...]:
                 _segment_thickness_dimension(wall_segment),
             ),
             note="start_y/start_z and end_y/end_z are midline endpoints.",
+        ),
+    )
+    hat = next(section for section in sections if section.filename == "hat-section.svg")
+    closure = 0.20
+    closed = hat_section(
+        material=DUMMY_MATERIAL,
+        web_height=hat_web_height,
+        web_thickness=hat_web_thickness,
+        crown_width=hat_crown_width,
+        crown_thickness=hat_crown_thickness,
+        flange_width=hat_flange_width,
+        flange_thickness=hat_flange_thickness,
+        closure_thickness=closure,
+    )
+    return (
+        *sections,
+        replace(
+            hat,
+            filename="closed-hat-section.svg",
+            title="Hat closed by the skin",
+            desc="The skin completes the median shear-flow path around the enclosed area.",
+            section=closed,
+            closure_thickness=closure,
+            dimensions=(
+                Dimension(
+                    -hat_half_crown,
+                    hat_crown_z,
+                    hat_half_crown,
+                    hat_crown_z,
+                    "crown_width",
+                    offset=0.55,
+                ),
+                Dimension(
+                    -hat_half_crown,
+                    -closure / 2,
+                    -hat_half_crown,
+                    hat_crown_z,
+                    "median_height",
+                    offset=0.75,
+                ),
+                Dimension(
+                    hat_half_crown + hat_flange_width,
+                    -closure,
+                    hat_half_crown + hat_flange_width,
+                    0,
+                    "closure_thickness",
+                    offset=-0.45,
+                    label_dx=18,
+                    label_dy=33,
+                    label_anchor="start",
+                ),
+            ),
+            note="The orange median path defines the enclosed area used in Bredt torsion.",
         ),
     )
 
@@ -403,320 +464,232 @@ def _segment_thickness_dimension(segment: ThinWallSegment) -> Dimension:
     )
 
 
-def render(diagram: Diagram) -> str:
-    bounds = _bounds(diagram)
-    scale, origin_x, origin_y = _transform(bounds)
+def _label(value: str) -> str:
+    """Use compact engineering symbols, with proper SVG subscripts."""
+    symbol = SYMBOLS.get(value, value)
+    if "_" not in symbol:
+        return escape(symbol)
+    base, subscript = symbol.split("_", 1)
+    return f'{escape(base)}<tspan baseline-shift="sub" font-size="13">{escape(subscript)}</tspan>'
 
-    def xy(y: float, z: float) -> tuple[float, float]:
-        return origin_x + (y - bounds[0]) * scale, origin_y - (z - bounds[1]) * scale
+
+def _text(x, y, label, *, size=17, anchor="start", color="#18344a", symbol=False):
+    content = _label(label) if symbol else escape(label)
+    return (
+        f'<text x="{x:.2f}" y="{y:.2f}" font-family="Arial, Helvetica, sans-serif" '
+        f'font-size="{size}" text-anchor="{anchor}" fill="{color}">{content}</text>'
+    )
+
+
+def _line(a, b, *, color="#71828c", width=1, dash=False, dimension=False):
+    attrs = ' stroke-dasharray="6 4"' if dash else ""
+    if dimension:
+        attrs += ' marker-start="url(#arrow)" marker-end="url(#arrow)"'
+    return (
+        f'<line x1="{a[0]:.2f}" y1="{a[1]:.2f}" x2="{b[0]:.2f}" y2="{b[1]:.2f}" '
+        f'stroke="{color}" stroke-width="{width}"{attrs}/>'
+    )
+
+
+def wall_corners(segment: ThinWallSegment):
+    """Wall face coordinates calculated normal to its centerline."""
+    ny = -(segment.end_z - segment.start_z) / segment.length
+    nz = (segment.end_y - segment.start_y) / segment.length
+    half = segment.thickness / 2
+    return (
+        (segment.start_y + ny * half, segment.start_z + nz * half),
+        (segment.end_y + ny * half, segment.end_z + nz * half),
+        (segment.end_y - ny * half, segment.end_z - nz * half),
+        (segment.start_y - ny * half, segment.start_z - nz * half),
+    )
+
+
+def render(diagram: Diagram) -> str:
+    corners = [point for segment in diagram.section.segments for point in wall_corners(segment)]
+    min_y, max_y = min(p[0] for p in corners), max(p[0] for p in corners)
+    max_z = max(p[1] for p in corners)
+    scale = min(235 / max_z, 330 / (max_y - min_y))
+    origin_x = 340 - (min_y + max_y) * scale / 2
+
+    def xy(y, z):
+        return origin_x + y * scale, 380 - z * scale
 
     parts = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" '
         'role="img" aria-labelledby="title desc">',
         f'<title id="title">{escape(diagram.title)}</title>',
         f'<desc id="desc">{escape(diagram.desc)}</desc>',
-        *_draw_defs(),
-        f'<rect x="0" y="0" width="{WIDTH}" height="{HEIGHT}" fill="#ffffff"/>',
-        *_draw_header(diagram),
-        *_draw_skin_and_axes(xy),
-        *(_draw_segment(segment, xy) for segment in diagram.section.segments),
-        *(_draw_dimension(dimension, xy) for dimension in diagram.dimensions),
-        _draw_centroid((diagram.section.centroid_y, diagram.section.centroid_z), xy),
-        *(
-            _draw_endpoints(diagram.section.segments[0], xy)
-            if diagram.filename == "thin-wall-segment.svg"
-            else []
+        "<defs>",
+        (
+            '<marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" '
+            'markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" '
+            'orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#18344a"/></marker>'
         ),
-        *_draw_legend(),
-        *_draw_note(diagram.note),
-        "</svg>",
+        (
+            '<pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" '
+            'patternTransform="rotate(45)"><path d="M0 0V8" stroke="#bdcbd3" stroke-width="2"/>'
+            "</pattern>"
+        ),
+        "</defs>",
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="white"/>',
+        _text(28, 34, diagram.title, size=23),
+        _text(28, 62, diagram.desc, size=15),
     ]
-    return "\n".join(parts) + "\n"
-
-
-def _bounds(diagram: Diagram) -> tuple[float, float, float, float]:
-    ys: list[float] = []
-    zs: list[float] = [-0.52, 0.0]
-    for segment in diagram.section.segments:
-        pad = segment.thickness
-        ys.extend(
+    custom = diagram.filename == "thin-wall-segment.svg"
+    skin_height = scale * (diagram.closure_thickness or 0.16)
+    if not custom:
+        parts.extend(
             [
-                segment.start_y - pad,
-                segment.start_y + pad,
-                segment.end_y - pad,
-                segment.end_y + pad,
+                f'<rect x="140" y="380" width="564" height="{skin_height:.2f}" '
+                'fill="#f3f6f8" stroke="#a2b1ba"/>',
+                (
+                    f'<rect x="140" y="380" width="564" height="{skin_height:.2f}" '
+                    'fill="url(#hatch)"/>'
+                ),
+                _text(704, 368, "Skin face · z = 0", anchor="end", size=16),
             ]
         )
-        zs.extend(
+    else:
+        parts.extend(
             [
-                segment.start_z - pad,
-                segment.start_z + pad,
-                segment.end_z - pad,
-                segment.end_z + pad,
+                _line((140, 380), (704, 380), dash=True),
+                _text(704, 404, "Construction datum · z = 0", anchor="end", size=16),
+            ]
+        )
+    # Axes are a separate orientation key; dimensions use the datum above.
+    parts.extend(
+        [
+            (
+                '<path d="M62 414V354" fill="none" stroke="#18344a" '
+                'stroke-width="1.5" marker-end="url(#arrow)"/>'
+            ),
+            (
+                '<path d="M62 414H112" fill="none" stroke="#18344a" '
+                'stroke-width="1.5" marker-end="url(#arrow)"/>'
+            ),
+            _text(120, 420, "+y"),
+            _text(44, 342, "+z"),
+        ]
+    )
+    for segment in diagram.section.segments:
+        points = " ".join(
+            f"{x:.2f},{y:.2f}" for x, y in map(lambda p: xy(*p), wall_corners(segment))
+        )
+        parts.extend(
+            [
+                f'<polygon points="{points}" fill="#dfedf3" stroke="#176b87" stroke-width="2"/>',
+                _line(
+                    xy(segment.start_y, segment.start_z),
+                    xy(segment.end_y, segment.end_z),
+                    color="#176b87",
+                    dash=True,
+                ),
+            ]
+        )
+    if diagram.closure_thickness is not None:
+        crown = next(s for s in diagram.section.segments if s.label == "crown")
+        left, right = crown.start_y, crown.end_y
+        bottom, top = -diagram.closure_thickness / 2, crown.start_z
+        points = [xy(left, bottom), xy(right, bottom), xy(right, top), xy(left, top)]
+        path = " ".join(f"{x:.2f},{y:.2f}" for x, y in [*points, points[0]])
+        parts.extend(
+            [
+                f'<polyline points="{path}" fill="none" stroke="#b65020" stroke-width="2" '
+                'stroke-dasharray="7 4"/>',
+                _text(
+                    *xy(0, (bottom + top) / 2 + 0.85), "A_m", size=22, anchor="middle", symbol=True
+                ),
             ]
         )
     for dimension in diagram.dimensions:
-        for y, z in _dimension_points_world(dimension):
-            ys.append(y)
-            zs.append(z)
-    ys.append(diagram.section.centroid_y)
-    zs.append(diagram.section.centroid_z)
-    min_y = min(ys) - 0.42
-    max_y = max(ys) + 0.42
-    min_z = min(zs) - 0.34
-    max_z = max(zs) + 0.48
-    return min_y, min_z, max_y, max_z
-
-
-def _transform(bounds: tuple[float, float, float, float]) -> tuple[float, float, float]:
-    min_y, min_z, max_y, max_z = bounds
-    span_y = max_y - min_y
-    span_z = max_z - min_z
-    available_y = WIDTH - MARGIN_LEFT - MARGIN_RIGHT
-    available_z = HEIGHT - MARGIN_TOP - MARGIN_BOTTOM
-    scale = min(available_y / span_y, available_z / span_z)
-    origin_x = MARGIN_LEFT + 0.5 * (available_y - span_y * scale)
-    origin_y = HEIGHT - MARGIN_BOTTOM - 0.5 * (available_z - span_z * scale)
-    return scale, origin_x, origin_y
-
-
-def _draw_defs() -> list[str]:
-    return [
-        "<defs>",
-        '<pattern id="skin-hatch" width="8" height="8" patternUnits="userSpaceOnUse" '
-        'patternTransform="rotate(45)">',
-        '<rect width="8" height="8" fill="#f8fafc"/>',
-        '<line x1="0" y1="0" x2="0" y2="8" stroke="#cbd5e1" stroke-width="2"/>',
-        "</pattern>",
-        (
-            '<marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" '
-            'markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" '
-            'orient="auto-start-reverse">'
-        ),
-        '<path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>',
-        "</marker>",
-        "</defs>",
-    ]
-
-
-def _draw_header(diagram: Diagram) -> list[str]:
-    return [
-        f'<text x="28" y="32" {TEXT_STYLE} font-size="20" font-weight="760" '
-        f'letter-spacing="0" fill="#0f172a">{escape(diagram.title)}</text>',
-        f'<text x="28" y="54" {TEXT_STYLE} font-size="12.5" fill="#475569">'
-        f"{escape(diagram.desc)}</text>",
-    ]
-
-
-def _draw_skin_and_axes(xy) -> list[str]:
-    _, datum = xy(0.0, 0.0)
-    left = 28.0
-    right = WIDTH - 28.0
-    _, skin_bottom = xy(0.0, -0.42)
-    _, ref = xy(0.0, -0.21)
-    axis_x = 52.0
-    axis_z0 = HEIGHT - MARGIN_BOTTOM - 18.0
-    axis_y_end = axis_x + 58.0
-    axis_z_end = axis_z0 - 54.0
-    return [
-        f'<rect x="{left:.2f}" y="{datum:.2f}" width="{right - left:.2f}" '
-        f'height="{skin_bottom - datum:.2f}" fill="url(#skin-hatch)" stroke="#cbd5e1" '
-        'stroke-width="0.8"/>',
-        f'<line x1="{left:.2f}" y1="{datum:.2f}" x2="{right:.2f}" y2="{datum:.2f}" '
-        'stroke="#0f172a" stroke-width="1.5" stroke-dasharray="6 5"/>',
-        f'<line x1="{left:.2f}" y1="{ref:.2f}" x2="{right:.2f}" y2="{ref:.2f}" '
-        'stroke="#64748b" stroke-width="1.2" stroke-dasharray="3 5"/>',
-        f'<text x="{right - 190:.2f}" y="{datum - 22:.2f}" {TEXT_STYLE} font-size="12" '
-        'fill="#334155">section datum z = 0 / skin face</text>',
-        f'<text x="{right - 190:.2f}" y="{skin_bottom + 17:.2f}" {TEXT_STYLE} '
-        'font-size="12" fill="#64748b">skin reference surface</text>',
-        f'<line x1="{axis_x:.2f}" y1="{axis_z0:.2f}" x2="{axis_y_end:.2f}" y2="{axis_z0:.2f}" '
-        'stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>',
-        f'<line x1="{axis_x:.2f}" y1="{axis_z0:.2f}" x2="{axis_x:.2f}" y2="{axis_z_end:.2f}" '
-        'stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>',
-        f'<text x="{axis_y_end + 9:.2f}" y="{axis_z0 + 4:.2f}" {TEXT_STYLE} '
-        'font-size="12" fill="#334155">+y</text>',
-        f'<text x="{axis_x + 8:.2f}" y="{axis_z_end - 5:.2f}" {TEXT_STYLE} '
-        'font-size="12" fill="#334155">+z / +n</text>',
-    ]
-
-
-def _draw_segment(segment: ThinWallSegment, xy) -> str:
-    length = segment.length
-    unit_y = (segment.end_y - segment.start_y) / length
-    unit_z = (segment.end_z - segment.start_z) / length
-    normal_y = -unit_z
-    normal_z = unit_y
-    half_t = 0.5 * segment.thickness
-    corners = (
-        (segment.start_y + normal_y * half_t, segment.start_z + normal_z * half_t),
-        (segment.end_y + normal_y * half_t, segment.end_z + normal_z * half_t),
-        (segment.end_y - normal_y * half_t, segment.end_z - normal_z * half_t),
-        (segment.start_y - normal_y * half_t, segment.start_z - normal_z * half_t),
+        parts.extend(_dimension(dimension, xy))
+    cx, cy = xy(diagram.section.centroid_y, diagram.section.centroid_z)
+    parts.extend(
+        [
+            (
+                f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="5" fill="#b65020" '
+                'stroke="white" stroke-width="1"/>'
+            ),
+            _text(
+                cx + (55 if custom else 20),
+                cy + (38 if custom else -9),
+                "C",
+                color="#b65020",
+                size=20,
+            ),
+        ]
     )
-    points = " ".join(f"{x:.2f},{y:.2f}" for x, y in (xy(y, z) for y, z in corners))
-    mid1 = xy(segment.start_y, segment.start_z)
-    mid2 = xy(segment.end_y, segment.end_z)
-    return (
-        f'<polygon points="{points}" fill="#e6f0f5" stroke="#176b87" '
-        'stroke-width="1.8" stroke-linejoin="round"/>'
-        f'\n<line x1="{mid1[0]:.2f}" y1="{mid1[1]:.2f}" x2="{mid2[0]:.2f}" '
-        f'y2="{mid2[1]:.2f}" stroke="#1d4ed8" stroke-width="1" '
-        'stroke-dasharray="4 4" opacity="0.55"/>'
+    if custom:
+        parts.append(_line((cx + 5, cy + 5), (cx + 48, cy + 30), color="#b65020"))
+        segment = diagram.section.segments[0]
+        for point, label, offset in [
+            ((segment.start_y, segment.start_z), "(start_y, start_z)", (-110, 28)),
+            ((segment.end_y, segment.end_z), "(end_y, end_z)", (24, -18)),
+        ]:
+            x, y = xy(*point)
+            parts.extend(
+                [
+                    f'<circle cx="{x:.2f}" cy="{y:.2f}" r="3" fill="#18344a"/>',
+                    _text(x + offset[0], y + offset[1], label, size=16),
+                ]
+            )
+    parts.extend(
+        [
+            _line((28, 458), (732, 458), color="#d7e1e7"),
+            '<rect x="32" y="477" width="22" height="10" fill="#dfedf3" stroke="#176b87"/>',
+            _text(64, 488, "Section wall", size=16),
+            _line((246, 482), (276, 482), color="#176b87", dash=True),
+            _text(287, 488, "Wall midline", size=16),
+            '<circle cx="495" cy="482" r="4" fill="#b65020"/>',
+            _text(510, 488, "C · computed centroid", size=16),
+            _text(28, 522, diagram.note, size=15),
+            "</svg>",
+        ]
     )
+    return "\n".join(parts) + "\n"
 
 
-def _draw_dimension(dimension: Dimension, xy) -> str:
-    start, end, dim_start, dim_end = _dimension_points_world(dimension)
-    x1, y1 = xy(*start)
-    x2, y2 = xy(*end)
-    dx1, dy1 = xy(*dim_start)
-    dx2, dy2 = xy(*dim_end)
-    tx = 0.5 * (dx1 + dx2)
-    ty = 0.5 * (dy1 + dy2)
-    label_dx, label_dy, anchor = _dimension_label_offset(dimension, dx1, dy1, dx2, dy2)
-    leader = ""
-    if dimension.label in {"thickness", "web_thickness"} and abs(dy2 - dy1) < 1:
-        leader = (
-            f'<line x1="{max(dx1, dx2):.2f}" y1="{ty:.2f}" '
-            f'x2="{tx + label_dx - 6:.2f}" y2="{ty:.2f}" stroke="#94a3b8"/>'
-        )
-    return leader + (
-        f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{dx1:.2f}" y2="{dy1:.2f}" '
-        'stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>'
-        f'\n<line x1="{x2:.2f}" y1="{y2:.2f}" x2="{dx2:.2f}" y2="{dy2:.2f}" '
-        'stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>'
-        f'\n<line x1="{dx1:.2f}" y1="{dy1:.2f}" x2="{dx2:.2f}" y2="{dy2:.2f}" '
-        'stroke="#475569" stroke-width="1.3" marker-start="url(#arrow)" '
-        'marker-end="url(#arrow)"/>'
-        f'\n<text x="{tx + label_dx:.2f}" y="{ty + label_dy:.2f}" {TEXT_STYLE} '
-        f'font-size="12" text-anchor="{anchor}" fill="#334155">'
-        f"{escape(dimension.label)}</text>"
-    )
-
-
-def _dimension_points_world(
-    dimension: Dimension,
-) -> tuple[
-    tuple[float, float],
-    tuple[float, float],
-    tuple[float, float],
-    tuple[float, float],
-]:
+def _dimension_points_world(dimension: Dimension):
     start = (dimension.start_y, dimension.start_z)
     end = (dimension.end_y, dimension.end_z)
-    length = ((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2) ** 0.5
-    unit_y = (end[0] - start[0]) / length
-    unit_z = (end[1] - start[1]) / length
-    normal_y = -unit_z
-    normal_z = unit_y
-    dim_start = (
-        start[0] + normal_y * dimension.offset,
-        start[1] + normal_z * dimension.offset,
-    )
-    dim_end = (
-        end[0] + normal_y * dimension.offset,
-        end[1] + normal_z * dimension.offset,
-    )
-    return start, end, dim_start, dim_end
-
-
-def _dimension_label_offset(
-    dimension: Dimension,
-    x1: float,
-    y1: float,
-    x2: float,
-    y2: float,
-) -> tuple[float, float, str]:
-    label_dx = dimension.label_dx
-    label_dy = dimension.label_dy
-    anchor = dimension.label_anchor
-    if label_dx is None or label_dy is None or anchor is None:
-        if abs(x1 - x2) < 4.0:
-            sign = -1.0 if dimension.offset > 0.0 else 1.0
-            label_dx = 18.0 * sign if label_dx is None else label_dx
-            label_dy = 4.0 if label_dy is None else label_dy
-            if anchor is None:
-                anchor = "end" if sign < 0.0 else "start"
-        elif abs(y1 - y2) < 4.0:
-            sign = -1.0 if dimension.offset > 0.0 else 1.0
-            label_dx = 0.0 if label_dx is None else label_dx
-            if label_dy is None:
-                label_dy = -8.0 if sign < 0.0 else 17.0
-            anchor = "middle" if anchor is None else anchor
-        else:
-            label_dx = 0.0 if label_dx is None else label_dx
-            label_dy = -8.0 if label_dy is None else label_dy
-            anchor = "middle" if anchor is None else anchor
-    return label_dx, label_dy, anchor
-
-
-def _draw_centroid(centroid: tuple[float, float], xy) -> str:
-    x, y = xy(*centroid)
+    length = hypot(end[0] - start[0], end[1] - start[1])
+    normal = (-(end[1] - start[1]) / length, (end[0] - start[0]) / length)
     return (
-        f'<circle cx="{x:.2f}" cy="{y:.2f}" r="7.2" fill="#ffffff" stroke="#dc2626" '
-        'stroke-width="1.2"/>'
-        f'\n<circle cx="{x:.2f}" cy="{y:.2f}" r="4.3" fill="#dc2626"/>'
-        f'\n<line x1="{x - 10:.2f}" y1="{y:.2f}" x2="{x + 10:.2f}" y2="{y:.2f}" '
-        'stroke="#dc2626" stroke-width="1.2"/>'
-        f'\n<line x1="{x:.2f}" y1="{y - 10:.2f}" x2="{x:.2f}" y2="{y + 10:.2f}" '
-        'stroke="#dc2626" stroke-width="1.2"/>'
+        start,
+        end,
+        (
+            start[0] + normal[0] * dimension.offset,
+            start[1] + normal[1] * dimension.offset,
+        ),
+        (
+            end[0] + normal[0] * dimension.offset,
+            end[1] + normal[1] * dimension.offset,
+        ),
     )
 
 
-def _draw_endpoints(segment: ThinWallSegment, xy) -> list[str]:
-    parts = []
-    for y, z, label, dx, dy in [
-        (segment.start_y, segment.start_z, "(start_y, start_z)", -110, 15),
-        (segment.end_y, segment.end_z, "(end_y, end_z)", 20, -20),
-    ]:
-        x, screen_y = xy(y, z)
-        parts.extend(
-            [
-                f'<circle cx="{x:.2f}" cy="{screen_y:.2f}" r="3" fill="#18344a"/>',
-                f'<text x="{x + dx:.2f}" y="{screen_y + dy:.2f}" {TEXT_STYLE} '
-                f'font-size="13" fill="#18344a">{label}</text>',
-            ]
-        )
+def _dimension(dimension, xy):
+    start, end, first, last = [xy(*p) for p in _dimension_points_world(dimension)]
+    tx, ty = (first[0] + last[0]) / 2, (first[1] + last[1]) / 2
+    vertical = abs(first[0] - last[0]) < 1
+    dx = dimension.label_dx
+    dy = dimension.label_dy
+    anchor = dimension.label_anchor
+    if dx is None:
+        dx = (-18 if dimension.offset > 0 else 18) if vertical else 0
+    if dy is None:
+        dy = 5 if vertical else (-12 if dimension.offset > 0 else 24)
+    if anchor is None:
+        anchor = ("end" if dx < 0 else "start") if vertical else "middle"
+    parts = [
+        _line(start, first),
+        _line(end, last),
+        _line(first, last, color="#18344a", dimension=True),
+    ]
+    if dimension.label in {"thickness", "web_thickness"} and abs(first[1] - last[1]) < 1:
+        parts.append(_line((max(first[0], last[0]), ty), (tx + dx - 7, ty)))
+    parts.append(_text(tx + dx, ty + dy, dimension.label, size=20, anchor=anchor, symbol=True))
     return parts
-
-
-def _draw_legend() -> list[str]:
-    x = WIDTH - 194.0
-    y = 78.0
-    return [
-        f'<rect x="{x:.2f}" y="{y:.2f}" width="166" height="104" rx="5" '
-        'fill="#ffffff" stroke="#cbd5e1"/>',
-        f'<text x="{x + 14:.2f}" y="{y + 22:.2f}" {TEXT_STYLE} font-size="12" '
-        'font-weight="700" fill="#0f172a">Legend</text>',
-        f'<rect x="{x + 14:.2f}" y="{y + 34:.2f}" width="22" height="10" '
-        'fill="#e6f0f5" stroke="#176b87" stroke-width="1"/>',
-        f'<text x="{x + 44:.2f}" y="{y + 44:.2f}" {TEXT_STYLE} font-size="11.5" '
-        'fill="#334155">section wall</text>',
-        f'<line x1="{x + 14:.2f}" y1="{y + 58:.2f}" x2="{x + 36:.2f}" y2="{y + 58:.2f}" '
-        'stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4 4" opacity="0.7"/>',
-        f'<text x="{x + 44:.2f}" y="{y + 62:.2f}" {TEXT_STYLE} font-size="11.5" '
-        'fill="#334155">segment midline</text>',
-        f'<circle cx="{x + 25:.2f}" cy="{y + 76:.2f}" r="4" fill="#dc2626"/>',
-        f'<text x="{x + 44:.2f}" y="{y + 80:.2f}" {TEXT_STYLE} font-size="11.5" '
-        'fill="#334155">computed centroid</text>',
-        f'<line x1="{x + 14:.2f}" y1="{y + 94:.2f}" x2="{x + 36:.2f}" y2="{y + 94:.2f}" '
-        'stroke="#0f172a" stroke-width="1.3" stroke-dasharray="6 5"/>',
-        f'<text x="{x + 44:.2f}" y="{y + 98:.2f}" {TEXT_STYLE} font-size="11.5" '
-        'fill="#334155">z = 0 datum</text>',
-    ]
-
-
-def _draw_note(note: str) -> list[str]:
-    y = HEIGHT - 48.0
-    return [
-        f'<rect x="28" y="{y:.2f}" width="{WIDTH - 56}" height="32" rx="5" '
-        'fill="#f8fafc" stroke="#cbd5e1"/>',
-        f'<rect x="28" y="{y:.2f}" width="4" height="32" rx="2" fill="#2563eb"/>',
-        f'<text x="44" y="{y + 21:.2f}" {TEXT_STYLE} font-size="12.5" '
-        f'fill="#334155">{escape(note)}</text>',
-    ]
 
 
 if __name__ == "__main__":
