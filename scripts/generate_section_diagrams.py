@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass
+from math import hypot
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -37,22 +37,12 @@ class Dimension:
 
 
 @dataclass(frozen=True, slots=True)
-class LabelPlacement:
-    label: str
-    offset_y: float = 0.0
-    offset_z: float = 0.0
-    rotate: float = 0.0
-    anchor: str = "middle"
-
-
-@dataclass(frozen=True, slots=True)
 class Diagram:
     filename: str
     title: str
     desc: str
     section: ThinWallSection
     dimensions: tuple[Dimension, ...]
-    labels: Mapping[str, LabelPlacement]
     note: str
 
 
@@ -107,11 +97,12 @@ def diagrams() -> tuple[Diagram, ...]:
     hat_top_z = hat_flange_thickness + hat_web_height
     hat_crown_z = hat_top_z + 0.5 * hat_crown_thickness
     hat_flange_z = 0.5 * hat_flange_thickness
+    wall_segment = ThinWallSegment(-1.15, 0.50, 1.15, 2.35, 0.26, label="segment")
 
     return (
         Diagram(
             filename="blade-section.svg",
-            title="blade_section geometry",
+            title="Blade section",
             desc="A blade web rises in positive z from the skin-face construction datum.",
             section=blade_section(
                 material=DUMMY_MATERIAL,
@@ -127,17 +118,16 @@ def diagrams() -> tuple[Diagram, ...]:
                     1.05,
                     "thickness",
                     offset=-0.28,
-                    label_dy=17,
+                    label_dx=65,
+                    label_dy=4,
+                    label_anchor="start",
                 ),
             ),
-            labels={
-                "": LabelPlacement("blade web", offset_y=0.45, offset_z=0.42, rotate=-90),
-            },
             note="Web root touches z = 0; centroid_z is measured upward from that datum.",
         ),
         Diagram(
             filename="tee-section.svg",
-            title="tee_section geometry",
+            title="Tee section",
             desc="A tee section has a web rooted at z = 0 and a flange above the web.",
             section=tee_section(
                 material=DUMMY_MATERIAL,
@@ -173,18 +163,16 @@ def diagrams() -> tuple[Diagram, ...]:
                     1.10,
                     "web_thickness",
                     offset=-0.30,
-                    label_dy=17,
+                    label_dx=65,
+                    label_dy=4,
+                    label_anchor="start",
                 ),
             ),
-            labels={
-                "web": LabelPlacement("web", offset_y=0.38, offset_z=0.10, rotate=-90),
-                "flange": LabelPlacement("flange", offset_z=-0.33),
-            },
             note="The flange is on the +z side of the web.",
         ),
         Diagram(
             filename="zee-section.svg",
-            title="zee_section geometry",
+            title="Zee section",
             desc="A zee section has bottom and top flanges on opposite sides of the web.",
             section=zee_section(
                 material=DUMMY_MATERIAL,
@@ -214,6 +202,17 @@ def diagrams() -> tuple[Diagram, ...]:
                 ),
                 Dimension(0.0, zee_web_start_z, 0.0, zee_web_end_z, "web_height", offset=0.67),
                 Dimension(
+                    -zee_web_thickness / 2,
+                    1.25,
+                    zee_web_thickness / 2,
+                    1.25,
+                    "web_thickness",
+                    offset=-0.32,
+                    label_dx=65,
+                    label_dy=4,
+                    label_anchor="start",
+                ),
+                Dimension(
                     zee_top_flange_width,
                     zee_web_end_z,
                     zee_top_flange_width,
@@ -224,16 +223,11 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_anchor="start",
                 ),
             ),
-            labels={
-                "bottom_flange": LabelPlacement("bottom flange", offset_z=0.34),
-                "web": LabelPlacement("web", offset_y=-0.36, rotate=-90),
-                "top_flange": LabelPlacement("top flange", offset_z=-0.34),
-            },
             note="Bottom and top flanges point to opposite sides in y.",
         ),
         Diagram(
             filename="channel-section.svg",
-            title="channel_section geometry",
+            title="Channel section",
             desc="A channel section has top and bottom flanges on the same side of the web.",
             section=channel_section(
                 material=DUMMY_MATERIAL,
@@ -277,19 +271,16 @@ def diagrams() -> tuple[Diagram, ...]:
                     1.25,
                     "web_thickness",
                     offset=-0.32,
-                    label_dy=17,
+                    label_dx=65,
+                    label_dy=4,
+                    label_anchor="start",
                 ),
             ),
-            labels={
-                "bottom_flange": LabelPlacement("bottom flange", offset_z=0.34),
-                "web": LabelPlacement("web", offset_y=-0.36, rotate=-90),
-                "top_flange": LabelPlacement("top flange", offset_z=-0.34),
-            },
             note="Both flanges extend to the same +y side.",
         ),
         Diagram(
             filename="hat-section.svg",
-            title="hat_section geometry",
+            title="Hat section",
             desc="An open hat section rises in positive z with lower mounting flanges at z = 0.",
             section=hat_section(
                 material=DUMMY_MATERIAL,
@@ -347,23 +338,27 @@ def diagrams() -> tuple[Diagram, ...]:
                     label_dy=-11,
                     label_anchor="start",
                 ),
+                Dimension(
+                    hat_half_crown - hat_web_thickness / 2,
+                    1.25,
+                    hat_half_crown + hat_web_thickness / 2,
+                    1.25,
+                    "web_thickness",
+                    offset=-0.32,
+                    label_dx=65,
+                    label_dy=4,
+                    label_anchor="start",
+                ),
             ),
-            labels={
-                "left_flange": LabelPlacement("left flange", offset_z=0.32),
-                "left_web": LabelPlacement("left web", offset_y=0.32, rotate=-90),
-                "crown": LabelPlacement("crown", offset_z=-0.34),
-                "right_web": LabelPlacement("right web", offset_y=-0.32, rotate=-90),
-                "right_flange": LabelPlacement("right flange", offset_z=0.32),
-            },
-            note="The hat is not flipped downward; mounting flanges sit on the skin-face datum.",
+            note="The mounting flanges sit on the skin face; the crown rises in +z.",
         ),
         Diagram(
             filename="thin-wall-segment.svg",
-            title="thin_wall_section segment coordinates",
+            title="Thin-wall segment coordinates",
             desc="A custom thin-wall segment is defined by midline endpoints and thickness.",
             section=thin_wall_section(
                 material=DUMMY_MATERIAL,
-                segments=(ThinWallSegment(-1.15, 0.50, 1.15, 2.35, 0.26, label="segment"),),
+                segments=(wall_segment,),
             ),
             dimensions=(
                 Dimension(
@@ -374,21 +369,8 @@ def diagrams() -> tuple[Diagram, ...]:
                     "segment midline length",
                     offset=0.34,
                 ),
-                Dimension(
-                    0.15,
-                    1.64,
-                    0.32,
-                    1.43,
-                    "thickness",
-                    offset=-0.23,
-                    label_dx=-28,
-                    label_dy=-8,
-                    label_anchor="end",
-                ),
+                _segment_thickness_dimension(wall_segment),
             ),
-            labels={
-                "segment": LabelPlacement("segment", offset_y=0.24, offset_z=-0.28, rotate=38),
-            },
             note="start_y/start_z and end_y/end_z are midline endpoints.",
         ),
     )
@@ -398,6 +380,27 @@ def render_all(output_dir: Path = DEFAULT_OUTPUT_DIR) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     for diagram in diagrams():
         (output_dir / diagram.filename).write_text(render(diagram), encoding="utf-8")
+
+
+def _segment_thickness_dimension(segment: ThinWallSegment) -> Dimension:
+    # Place both endpoints on the wall faces, exactly normal to its midline.
+    dy = segment.end_y - segment.start_y
+    dz = segment.end_z - segment.start_z
+    thickness = segment.thickness
+    length = hypot(dy, dz)
+    ny, nz = -dz / length, dy / length
+    y, z = segment.start_y + 0.72 * dy, segment.start_z + 0.72 * dz
+    return Dimension(
+        y + ny * thickness / 2,
+        z + nz * thickness / 2,
+        y - ny * thickness / 2,
+        z - nz * thickness / 2,
+        "thickness",
+        offset=0.75,
+        label_dx=20,
+        label_dy=15,
+        label_anchor="start",
+    )
 
 
 def render(diagram: Diagram) -> str:
@@ -420,7 +423,11 @@ def render(diagram: Diagram) -> str:
         *(_draw_segment(segment, xy) for segment in diagram.section.segments),
         *(_draw_dimension(dimension, xy) for dimension in diagram.dimensions),
         _draw_centroid((diagram.section.centroid_y, diagram.section.centroid_z), xy),
-        *_draw_segment_labels(diagram.section.segments, diagram.labels, xy),
+        *(
+            _draw_endpoints(diagram.section.segments[0], xy)
+            if diagram.filename == "thin-wall-segment.svg"
+            else []
+        ),
         *_draw_legend(),
         *_draw_note(diagram.note),
         "</svg>",
@@ -477,21 +484,16 @@ def _transform(bounds: tuple[float, float, float, float]) -> tuple[float, float,
 def _draw_defs() -> list[str]:
     return [
         "<defs>",
-        '<linearGradient id="wall-fill" x1="0" y1="0" x2="0" y2="1">',
-        '<stop offset="0%" stop-color="#dbeafe"/>',
-        '<stop offset="100%" stop-color="#bfdbfe"/>',
-        "</linearGradient>",
-        '<filter id="wall-shadow" x="-20%" y="-20%" width="140%" height="150%">',
-        '<feDropShadow dx="0" dy="1.2" stdDeviation="1.4" flood-color="#0f172a" '
-        'flood-opacity="0.18"/>',
-        "</filter>",
         '<pattern id="skin-hatch" width="8" height="8" patternUnits="userSpaceOnUse" '
         'patternTransform="rotate(45)">',
         '<rect width="8" height="8" fill="#f8fafc"/>',
         '<line x1="0" y1="0" x2="0" y2="8" stroke="#cbd5e1" stroke-width="2"/>',
         "</pattern>",
-        '<marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" '
-        'markerWidth="6" markerHeight="6" orient="auto-start-reverse">',
+        (
+            '<marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" '
+            'markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" '
+            'orient="auto-start-reverse">'
+        ),
         '<path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>',
         "</marker>",
         "</defs>",
@@ -557,8 +559,8 @@ def _draw_segment(segment: ThinWallSegment, xy) -> str:
     mid1 = xy(segment.start_y, segment.start_z)
     mid2 = xy(segment.end_y, segment.end_z)
     return (
-        f'<polygon points="{points}" fill="url(#wall-fill)" stroke="#2563eb" '
-        'stroke-width="1.8" stroke-linejoin="round" filter="url(#wall-shadow)"/>'
+        f'<polygon points="{points}" fill="#e6f0f5" stroke="#176b87" '
+        'stroke-width="1.8" stroke-linejoin="round"/>'
         f'\n<line x1="{mid1[0]:.2f}" y1="{mid1[1]:.2f}" x2="{mid2[0]:.2f}" '
         f'y2="{mid2[1]:.2f}" stroke="#1d4ed8" stroke-width="1" '
         'stroke-dasharray="4 4" opacity="0.55"/>'
@@ -574,7 +576,13 @@ def _draw_dimension(dimension: Dimension, xy) -> str:
     tx = 0.5 * (dx1 + dx2)
     ty = 0.5 * (dy1 + dy2)
     label_dx, label_dy, anchor = _dimension_label_offset(dimension, dx1, dy1, dx2, dy2)
-    return (
+    leader = ""
+    if dimension.label in {"thickness", "web_thickness"} and abs(dy2 - dy1) < 1:
+        leader = (
+            f'<line x1="{max(dx1, dx2):.2f}" y1="{ty:.2f}" '
+            f'x2="{tx + label_dx - 6:.2f}" y2="{ty:.2f}" stroke="#94a3b8"/>'
+        )
+    return leader + (
         f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{dx1:.2f}" y2="{dy1:.2f}" '
         'stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>'
         f'\n<line x1="{x2:.2f}" y1="{y2:.2f}" x2="{dx2:.2f}" y2="{dy2:.2f}" '
@@ -657,31 +665,21 @@ def _draw_centroid(centroid: tuple[float, float], xy) -> str:
     )
 
 
-def _draw_segment_labels(
-    segments: tuple[ThinWallSegment, ...],
-    placements: Mapping[str, LabelPlacement],
-    xy,
-) -> list[str]:
-    labels: list[str] = []
-    for segment in segments:
-        placement = placements.get(segment.label)
-        if placement is None:
-            display_label = segment.label.replace("_", " ") if segment.label else "segment"
-            placement = LabelPlacement(display_label)
-        mid_y = 0.5 * (segment.start_y + segment.end_y) + placement.offset_y
-        mid_z = 0.5 * (segment.start_z + segment.end_z) + placement.offset_z
-        x, y = xy(mid_y, mid_z)
-        transform = (
-            f' transform="rotate({placement.rotate:.1f} {x:.2f} {y:.2f})"'
-            if placement.rotate
-            else ""
+def _draw_endpoints(segment: ThinWallSegment, xy) -> list[str]:
+    parts = []
+    for y, z, label, dx, dy in [
+        (segment.start_y, segment.start_z, "(start_y, start_z)", -110, 15),
+        (segment.end_y, segment.end_z, "(end_y, end_z)", 20, -20),
+    ]:
+        x, screen_y = xy(y, z)
+        parts.extend(
+            [
+                f'<circle cx="{x:.2f}" cy="{screen_y:.2f}" r="3" fill="#18344a"/>',
+                f'<text x="{x + dx:.2f}" y="{screen_y + dy:.2f}" {TEXT_STYLE} '
+                f'font-size="13" fill="#18344a">{label}</text>',
+            ]
         )
-        labels.append(
-            f'<text x="{x:.2f}" y="{y:.2f}"{transform} {TEXT_STYLE} font-size="11.5" '
-            f'text-anchor="{placement.anchor}" dominant-baseline="middle" '
-            f'fill="#1e3a8a">{escape(placement.label)}</text>'
-        )
-    return labels
+    return parts
 
 
 def _draw_legend() -> list[str]:
@@ -693,7 +691,7 @@ def _draw_legend() -> list[str]:
         f'<text x="{x + 14:.2f}" y="{y + 22:.2f}" {TEXT_STYLE} font-size="12" '
         'font-weight="700" fill="#0f172a">Legend</text>',
         f'<rect x="{x + 14:.2f}" y="{y + 34:.2f}" width="22" height="10" '
-        'fill="url(#wall-fill)" stroke="#2563eb" stroke-width="1"/>',
+        'fill="#e6f0f5" stroke="#176b87" stroke-width="1"/>',
         f'<text x="{x + 44:.2f}" y="{y + 44:.2f}" {TEXT_STYLE} font-size="11.5" '
         'fill="#334155">section wall</text>',
         f'<line x1="{x + 14:.2f}" y1="{y + 58:.2f}" x2="{x + 36:.2f}" y2="{y + 58:.2f}" '

@@ -4,7 +4,7 @@ Add two perpendicular families of blade ribs to the skin from the previous page.
 Each blade is 25 mm high and 2 mm thick. The repeat rectangle is 150 mm along
 `e1` and 100 mm along `e2`: ribs running along `e1` are therefore **100 mm apart**.
 
-![Repeat dimensions and positive rib eccentricity](../assets/diagrams/repeat-offset.svg)
+[![Repeat dimensions and positive rib eccentricity](../assets/diagrams/repeat-offset.svg)](../assets/diagrams/repeat-offset.svg "Open full-size diagram")
 
 Use `blade_section` to calculate the rib's axial, bending, and torsional stiffness
 from its material and dimensions. The blade centroid lies 12.5 mm above its base.

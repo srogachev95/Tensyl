@@ -29,7 +29,7 @@ value. Face and core offsets in sandwich builders follow this sign convention.
 A rotation changes the directions used to express the stiffness. A reference
 shift changes where membrane strain and moment are measured through thickness.
 
-![In-plane axis rotation compared with a reference-surface shift](../assets/diagrams/axes-reference.svg)
+[![In-plane axis rotation compared with a reference-surface shift](../assets/diagrams/axes-reference.svg)](../assets/diagrams/axes-reference.svg "Open full-size diagram")
 
 For a positive axis rotation $\psi$,
 

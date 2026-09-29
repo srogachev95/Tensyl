@@ -10,14 +10,15 @@ Run from the checkout with ``uv run python docs/examples/scripts/walkthrough.py`
 from tensyl import IsotropicMaterial, isotropic_plate
 
 aluminum = IsotropicMaterial(E=70e9, nu=0.33, density=2700)
-skin = isotropic_plate(aluminum, thickness=0.002)
+skin_thickness = 0.002
+skin = isotropic_plate(aluminum, thickness=skin_thickness)
 # --8<-- [end:skin]
 
 # --8<-- [start:grid]
 from tensyl import EnergyHomogenizer, ValidityContext, blade_section, orthogrid_cell
 
 rib = blade_section(material=aluminum, height=0.025, thickness=0.002)
-centroid_offset = 0.002 / 2 + rib.centroid_z
+centroid_offset = skin_thickness / 2 + rib.centroid_z
 cell = orthogrid_cell(
     skin=skin,
     e1_section=rib.section,

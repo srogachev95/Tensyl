@@ -1,1 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 260" role="img" aria-labelledby="title"><title id="title">Rotation changes the in-plane axes; reference shift moves the surface</title><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#176b87"/></marker></defs><rect width="800" height="260" fill="#f6f9fc"/><g font-family="Arial,sans-serif" font-size="17" fill="#18344a" stroke-linecap="round" stroke-linejoin="round"><g fill="none" stroke="#176b87" stroke-width="2" marker-end="url(#arrow)"><path d="M100 190H290 M100 190V40 M100 190L270 85 M100 190L45 95"/><path d="M480 190V35 M665 180V105"/></g><g stroke="#c46127" stroke-width="3"><path d="M430 180H750 M430 105H750"/></g><text x="285" y="213">e1</text><text x="110" y="45">e2</text><text x="270" y="75">e1′</text><text x="20" y="80">e2′</text><text x="100" y="235">Rotate axes in the plane</text><text x="490" y="42">+n</text><text x="525" y="95">New reference</text><text x="525" y="205">Old reference</text><text x="678" y="148">+d</text><text x="475" y="235">Shift the reference along +n</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 370" role="img" aria-labelledby="title desc">
+<title id="title">Axis rotation and reference-surface shift</title>
+<desc id="desc">A positive in-plane rotation preserves perpendicular unit axes. A positive reference shift moves the reference along the same normal.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#18344a"/></marker></defs>
+<rect width="760" height="370" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#18344a" stroke-linejoin="round">
+<text x="24.000" y="34.000" font-size="18" fill="#18344a" text-anchor="start" font-weight="600">Rotate the in-plane axes</text>
+<text x="410.000" y="34.000" font-size="18" fill="#18344a" text-anchor="start" font-weight="600">Move the reference surface</text>
+<polyline points="147.000,246.000 293.000,246.000" fill="none" stroke="#72838d" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="305.000" y="250.000" font-size="18" fill="#72838d" text-anchor="start" font-weight="400">e1</text>
+<polyline points="147.000,246.000 147.000,100.000" fill="none" stroke="#72838d" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="159.000" y="104.000" font-size="18" fill="#72838d" text-anchor="start" font-weight="400">e2</text>
+<polyline points="147.000,246.000 273.440,173.000" fill="none" stroke="#176b87" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="283.440" y="173.000" font-size="18" fill="#18344a" text-anchor="start" font-weight="400">e1′</text>
+<polyline points="147.000,246.000 74.000,119.560" fill="none" stroke="#176b87" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="44.000" y="109.560" font-size="18" fill="#18344a" text-anchor="start" font-weight="400">e2′</text>
+<polyline points="206.000,246.000 205.990,244.935 205.962,243.870 205.913,242.806 205.846,241.743 205.760,240.681 205.654,239.621 205.529,238.563 205.386,237.508 205.223,236.455 205.041,235.405 204.840,234.359 204.621,233.317 204.382,232.279 204.125,231.245 203.849,230.216 203.555,229.192 203.243,228.174 202.912,227.161 202.562,226.155 202.195,225.155 201.810,224.162 201.406,223.176 200.985,222.197 200.547,221.227 200.091,220.264 199.618,219.310 199.127,218.364 198.620,217.427 198.095,216.500" fill="none" stroke="#b65020" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="213.000" y="232.000" font-size="18" fill="#b65020" text-anchor="start" font-weight="400">+ψ</text>
+<circle cx="147.000" cy="246.000" r="3" fill="#18344a"/>
+<text x="24.000" y="297.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">View from +n toward the panel</text>
+<polyline points="422.000,243.000 733.000,243.000" fill="none" stroke="#72838d" stroke-width="2"/>
+<polyline points="422.000,154.000 733.000,154.000" fill="none" stroke="#176b87" stroke-width="2"/>
+<polyline points="446.000,266.000 446.000,90.000" fill="none" stroke="#18344a" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="436.000" y="76.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">+n</text>
+<polyline points="694.000,243.000 694.000,154.000" fill="none" stroke="#b65020" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="704.000" y="204.000" font-size="18" fill="#b65020" text-anchor="start" font-weight="400">+d</text>
+<text x="482.000" y="140.000" font-size="18" fill="#176b87" text-anchor="start" font-weight="400">New reference</text>
+<text x="482.000" y="270.000" font-size="18" fill="#72838d" text-anchor="start" font-weight="400">Old reference</text>
+<text x="410.000" y="297.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">Section along the normal</text>
+<text x="24.000" y="345.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">Positive ψ turns e1 toward e2.</text>
+<text x="410.000" y="345.000" font-size="16" fill="#18344a" text-anchor="start" font-weight="400">Positive d follows the normal.</text>
+</g>
+</svg>

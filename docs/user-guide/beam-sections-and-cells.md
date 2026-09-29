@@ -17,7 +17,7 @@ so a skin-midplane reference gives
 
 $$z_a=t_\mathrm{skin}/2+z_c.$$
 
-![Skin midplane and rib centroid](../assets/diagrams/repeat-offset.svg)
+[![Skin midplane and rib centroid](../assets/diagrams/repeat-offset.svg)](../assets/diagrams/repeat-offset.svg "Open full-size diagram")
 
 Each wall is a rectangular strip with area $A_i=L_it_i$. Tensyl sums the areas,
 calculates the area-weighted centroid, and applies the parallel-axis theorem:
@@ -48,7 +48,7 @@ member contributions zero. Density supplies mass automatically.
 
 ### Blade Section
 
-![Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness.](../assets/sections/blade-section.svg)
+[![Blade section diagram showing a vertical web rising from the skin-face datum, local y and z axes, centroid, height, and thickness.](../assets/sections/blade-section.svg)](../assets/sections/blade-section.svg "Open full-size diagram")
 
 `blade_section` creates one vertical web rooted at `z = 0`.
 
@@ -59,7 +59,7 @@ member contributions zero. Density supplies mass automatically.
 
 ### Tee Section
 
-![Tee section diagram showing a web rooted at z equals zero and a top flange above the web.](../assets/sections/tee-section.svg)
+[![Tee section diagram showing a web rooted at z equals zero and a top flange above the web.](../assets/sections/tee-section.svg)](../assets/sections/tee-section.svg "Open full-size diagram")
 
 `tee_section` creates a web at `y = 0` with a centered top flange. The flange is
 above the web, not touching the skin.
@@ -73,7 +73,7 @@ above the web, not touching the skin.
 
 ### Zee Section
 
-![Zee section diagram showing bottom and top flanges on opposite sides of the web.](../assets/sections/zee-section.svg)
+[![Zee section diagram showing bottom and top flanges on opposite sides of the web.](../assets/sections/zee-section.svg)](../assets/sections/zee-section.svg "Open full-size diagram")
 
 `zee_section` creates a lower flange at the skin-face datum and an upper flange
 on the opposite side of the web. The lower flange extends toward `-y`; the upper
@@ -89,7 +89,7 @@ flange extends toward `+y`.
 
 ### Channel Section
 
-![Channel section diagram showing top and bottom flanges extending to the same side of the web.](../assets/sections/channel-section.svg)
+[![Channel section diagram showing top and bottom flanges extending to the same side of the web.](../assets/sections/channel-section.svg)](../assets/sections/channel-section.svg "Open full-size diagram")
 
 `channel_section` creates lower and upper flanges on the same side of the web.
 Both flanges extend toward `+y`; the lower flange sits at the skin-face datum.
@@ -103,7 +103,7 @@ Both flanges extend toward `+y`; the lower flange sits at the skin-face datum.
 
 ### Hat Section
 
-![Hat section diagram showing an open hat rising upward with lower mounting flanges at the skin-face datum.](../assets/sections/hat-section.svg)
+[![Hat section diagram showing an open hat rising upward with lower mounting flanges at the skin-face datum.](../assets/sections/hat-section.svg)](../assets/sections/hat-section.svg "Open full-size diagram")
 
 `hat_section` creates an open hat that rises in `+z`. The two lower mounting
 flanges sit on the `z = 0` construction datum, so this is the usual external
@@ -120,7 +120,7 @@ hat orientation with flanges touching the skin face.
 
 ### Custom Thin-Wall Sections
 
-![Wall segment coordinates and thickness](../assets/sections/thin-wall-segment.svg)
+[![Wall segment coordinates and thickness](../assets/sections/thin-wall-segment.svg)](../assets/sections/thin-wall-segment.svg "Open full-size diagram")
 
 Give the endpoints of each wall **midline**, with thickness normal to that line.
 This example continues with `aluminum` defined in the [material example](materials-and-laminates.md#uniform-temperature-changes):
