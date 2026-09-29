@@ -455,12 +455,12 @@ class ABDAtlas:
         metadata = dict(self.metadata)
         metadata.setdefault("source", "abd_atlas")
         metadata.setdefault("interpolation", "bilinear_c8")
+        metadata.setdefault("tensyl_version", tensyl_version())
         metadata.update(
             {
                 "u_values": u_values,
                 "v_values": v_values,
                 "sample_shape": (len(u_values), len(v_values)),
-                "tensyl_version": tensyl_version(),
                 "sample_digest": _sample_digest(u_values, v_values, stiffness_rows),
                 "sample_warning_ids": _corner_warnings(
                     tuple(stiffness for row in stiffness_rows for stiffness in row)
@@ -514,6 +514,10 @@ class ABDAtlas:
         atlas_metadata = {"source": "abd_atlas", "interpolation": "bilinear_c8"}
         if metadata is not None:
             atlas_metadata.update(metadata)
+        # A new sampling operation records its own version, even when metadata
+        # was copied from an older atlas. Reconstructing saved samples above
+        # preserves the recorded version instead.
+        atlas_metadata["tensyl_version"] = tensyl_version()
         return cls(
             surface=surface,
             u_values=checked_u,
