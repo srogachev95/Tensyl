@@ -31,7 +31,8 @@ Calculate a 2 mm aluminum plate using metres, newtons, and kilograms:
 from tensyl import IsotropicMaterial, isotropic_plate
 
 aluminum = IsotropicMaterial(E=70e9, nu=0.33, density=2700)
-skin = isotropic_plate(aluminum, thickness=0.002)
+skin_thickness = 0.002
+skin = isotropic_plate(aluminum, thickness=skin_thickness)
 ```
 
 The skin has membrane stiffness `A11 = 157.109 MN/m`, bending stiffness

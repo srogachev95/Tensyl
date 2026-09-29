@@ -18,7 +18,7 @@ physical questions:
 | `D` | How much moment per width produces bending or twisting? | N m |
 | `As` | How much transverse force per width produces shear? | N/m |
 
-![Stretching, bending, twisting, and transverse shear](../assets/diagrams/deformations.svg)
+[![Stretching, bending, twisting, and transverse shear](../assets/diagrams/deformations.svg)](../assets/diagrams/deformations.svg "Open full-size diagram")
 
 For this uniform plate, the reference surface is its midplane, so `B` is zero.
 The familiar isotropic plate formulas give two useful checks:

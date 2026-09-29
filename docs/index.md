@@ -5,7 +5,7 @@ the skin, rib sections, and repeating pattern in Python, then use the resulting
 plate stiffness to calculate strains, recover rib forces, compare designs, or
 prepare a shell model.
 
-![A ribbed panel, one repeat cell, and its equivalent plate](assets/diagrams/panel-model.svg)
+[![A ribbed panel, one repeat cell, and its equivalent plate](assets/diagrams/panel-model.svg)](assets/diagrams/panel-model.svg "Open full-size diagram")
 
 ## What Tensyl Computes
 

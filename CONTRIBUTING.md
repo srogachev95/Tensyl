@@ -44,6 +44,23 @@ Preserve public page URLs and heading anchors when moving a topic. The built-sit
 check covers the heading baseline, local links, scripts, and images. Review
 changed pages at desktop and narrow widths as well as running the strict build.
 
+## Engineering Diagrams
+
+Regenerate the SVG schematics from their Python sources:
+
+```bash
+uv run python scripts/generate_handbook_diagrams.py
+uv run python scripts/generate_section_diagrams.py
+```
+
+The handbook renderer uses the walkthrough's cell geometry and blade dimensions,
+the cylinder's local frame, and analytic plate deformation shapes. Section
+drawings use the section builders' wall segments and computed centroids. Keep
+physical coordinates separate from page placement, use one scale per view, and
+derive dimension endpoints from the geometry. Review rendered drawings for
+symmetry, projection, signs, readable labels, and overlaps before committing.
+The asset checks catch stale generated files; visual review checks the drawing.
+
 ## Packaging Checks
 
 Build the release artifacts locally with:

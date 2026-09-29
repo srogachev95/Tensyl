@@ -4,7 +4,7 @@ A stiffness field places a panel construction on a plate or shell. The surface
 supplies position, local directions, and curvature; the field supplies the
 stiffness expressed in those directions.
 
-![Cylinder local directions](../assets/diagrams/cylinder-axes.svg)
+[![Cylinder local directions](../assets/diagrams/cylinder-axes.svg)](../assets/diagrams/cylinder-axes.svg "Open full-size diagram")
 
 ## Built-In Surfaces
 
