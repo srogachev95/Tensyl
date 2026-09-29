@@ -489,9 +489,11 @@ def _draw_defs() -> list[str]:
         '<rect width="8" height="8" fill="#f8fafc"/>',
         '<line x1="0" y1="0" x2="0" y2="8" stroke="#cbd5e1" stroke-width="2"/>',
         "</pattern>",
-        '<marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" '
-        'markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" '
-        'orient="auto-start-reverse">',
+        (
+            '<marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" '
+            'markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" '
+            'orient="auto-start-reverse">'
+        ),
         '<path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>',
         "</marker>",
         "</defs>",
